@@ -1,0 +1,87 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="percept.myplan.fragments.fragmentHome">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <ImageView
+        android:id="@id/imgUserImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layHomeButton"
+        android:scaleType="centerInside" />
+
+    <LinearLayout
+        android:id="@+id/layHomeButton"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true">
+
+        <!--   <Button
+               android:id="@+id/btnHelp"
+               android:background="@color/toolbarback"
+               android:layout_width="0dp"
+               android:layout_height="match_parent"
+               android:layout_weight="1"
+               android:text="@string/help" />-->
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingTop="10dp"
+            android:id="@+id/layHelpHome"
+            android:background="@color/home_help"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:src="@drawable/home_help" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:text="@string/help"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/layEmergencyHome"
+            android:paddingTop="10dp"
+            android:background="@color/home_emergency"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:src="@drawable/home_emergency" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:text="@string/emergency"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+
+        <!--  <Button
+              android:id="@+id/btnEmergency"
+              android:layout_width="0dp"
+              android:layout_height="match_parent"
+              android:layout_weight="1"
+              android:background="@color/appBackColor"
+              android:text="@string/emergency" />-->
+    </LinearLayout>
+</RelativeLayout>

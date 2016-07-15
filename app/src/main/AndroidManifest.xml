@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="percept.myplan">
+
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".Activities.LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.HomeActivity"
+            android:label="@string/title_activity_home"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Activities.BaseActivity" />
+
+        <receiver
+            android:name=".receivers.AlarmReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <service
+            android:name=".services.MyIntentService"
+            android:exported="false" />
+
+        <activity
+            android:name=".Activities.AddContactActivity"
+            android:label="@string/title_activity_add_contact"
+            android:parentActivityName=".Activities.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="percept.myplan.Activities.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".Activities.AddContactFromPhoneActivity"
+            android:label="@string/title_activity_add_contact_from_phone"
+            android:parentActivityName=".Activities.AddContactActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="percept.myplan.Activities.AddContactActivity" />
+        </activity>
+        <activity
+            android:name=".SplashActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Activities.LoginActivity_1"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity
+            android:name=".Activities.SignUpActivity"
+            android:label="@string/myplan"
+            android:parentActivityName=".Activities.LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="percept.myplan.Activities.LoginActivity" />
+        </activity>
+        <activity
+            android:name=".Activities.ForgetPwdActivity"
+            android:label="@string/forgetpwdtitle"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"
+            android:parentActivityName=".Activities.LoginActivity_1">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="percept.myplan.Activities.LoginActivity_1" />
+        </activity>
+    </application>
+
+</manifest>

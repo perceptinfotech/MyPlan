@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hello Mood Ratings" />
+
+
+    <percept.myplan.Graph.BarGraph
+        android:id="@+id/bargraph"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="12dip"
+        app:barAxisColor="@color/transparent_blue"
+        app:barShowAxis="true"
+        app:barShowText="true" />
+
+
+    <percept.myplan.Graph.PieGraph
+        android:id="@+id/piegraph"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:pieInnerCircleRatio="128"
+        app:pieSlicePadding="0dip" />
+</LinearLayout>
