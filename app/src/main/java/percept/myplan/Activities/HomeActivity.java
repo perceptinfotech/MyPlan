@@ -65,6 +65,7 @@ public class HomeActivity extends BaseActivity {
         LST_SIDEMENU.add(" ");
         LST_SIDEMENU.add(getString(R.string.settings));
         LST_SIDEMENU.add(getString(R.string.logout));
+
         ADAPTER = new NavigationDrawerAdapter(HomeActivity.this, LST_SIDEMENU);
         LST_MENUITEMS.setAdapter(ADAPTER);
         toolbar = setToolBar();

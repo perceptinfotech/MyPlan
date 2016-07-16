@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:id="@+id/layMoodRatingsSaveNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:background="@drawable/lay_moodrating_addnote_border"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/appBackColor"
+            android:drawableRight="@drawable/ic_menu_black"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:text="@string/addnotetotodaymoodrating"
+            android:textColor="@android:color/white" />
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:id="@+id/edtNote"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/edt_register_border"
+            android:lines="4"
+            android:visibility="visible"
+            android:textColor="@android:color/black" />
+
+        <Button
+            android:id="@+id/btnSaveNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:padding="10dp"
+            android:layout_marginTop="5dp"
+            android:textSize="18sp"
+            android:background="@drawable/btn_register_border"
+            android:text="@string/savenote"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+</RelativeLayout>

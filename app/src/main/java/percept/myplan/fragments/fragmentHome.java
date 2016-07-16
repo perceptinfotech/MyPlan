@@ -1,18 +1,26 @@
 package percept.myplan.fragments;
 
+import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.Fragment.SavedState;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,6 +29,9 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 
+import percept.myplan.Dialogs.fragmentAddNote;
+import percept.myplan.Dialogs.fragmentMoodSummary;
+import percept.myplan.Dialogs.fragmentSidasRating;
 import percept.myplan.R;
 import percept.myplan.receivers.AlarmReceiver;
 
@@ -29,12 +40,14 @@ import static android.content.Context.ALARM_SERVICE;
 
 public class fragmentHome extends Fragment {
 
+
     public static final int INDEX = 0;
 
     private ImageView IMG_USER;
     private LinearLayout LAY_HELP, LAY_EMERGENCY;
 
     private AlarmManager ALARM_MANAGER;
+    public static final int DIALOG_ADDNOTE = 1;
 
     public fragmentHome() {
         // Required empty public constructor
@@ -72,7 +85,100 @@ public class fragmentHome extends Fragment {
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Home Fragments");
 //        setAlarmForMood();
+
+//        MoodRatingAddNoteConfirmDialog();
+
+        SidasDialog();
         return _View;
+    }
+
+    private void SidasDialog() {
+
+        FragmentManager manager = getFragmentManager();
+        Fragment frag = manager.findFragmentByTag("fragment_add_note");
+        if (frag != null) {
+            manager.beginTransaction().remove(frag).commit();
+        }
+        fragmentSidasRating fraSidasDialog = new fragmentSidasRating();
+//        fraSidasDialog.setTargetFragment(this, DIALOG_ADDNOTE);
+
+        fraSidasDialog.show(getFragmentManager().beginTransaction(), "fragment_add_note");
+    }
+
+    private void MoodRatingAddNoteConfirmDialog() {
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        // Include dialog.xml file
+        dialog.setContentView(R.layout.lay_moodratings_addnote);
+        // Set dialog title
+        dialog.setTitle("Custom Dialog");
+
+        // set values for custom dialog components - text, image and button
+        TextView _tvNo = (TextView) dialog.findViewById(R.id.tvNo);
+        TextView _tvYes = (TextView) dialog.findViewById(R.id.tvYes);
+
+        dialog.show();
+        _tvNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        _tvYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                MoodRatingAddNoteDialog();
+            }
+        });
+    }
+
+    private void MoodRatingAddNoteDialog() {
+
+        // close existing dialog fragments
+        FragmentManager manager = getFragmentManager();
+        Fragment frag = manager.findFragmentByTag("fragment_add_note");
+        if (frag != null) {
+            manager.beginTransaction().remove(frag).commit();
+        }
+        fragmentAddNote fraAddNoteDialog = new fragmentAddNote();
+        fraAddNoteDialog.setTargetFragment(this, DIALOG_ADDNOTE);
+
+        fraAddNoteDialog.show(getFragmentManager().beginTransaction(), "fragment_add_note");
+    }
+
+    private void MoodRatingSummaryDialog(String note) {
+
+        // close existing dialog fragments
+        FragmentManager manager = getFragmentManager();
+        Fragment frag = manager.findFragmentByTag("fragment_add_note");
+        if (frag != null) {
+            manager.beginTransaction().remove(frag).commit();
+        }
+        DialogFragment fraMoodSummartDialog = fragmentMoodSummary.newInstance(note);
+        fraMoodSummartDialog.setTargetFragment(this, DIALOG_ADDNOTE);
+
+        fraMoodSummartDialog.show(getFragmentManager().beginTransaction(), "fragment_add_note");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case DIALOG_ADDNOTE:
+                if (resultCode == Activity.RESULT_OK) {
+                    String str = data.getStringExtra("NOTE");
+                    Log.d(":::::::::::::::: ", str);
+                    MoodRatingSummaryDialog(str);
+                    // After Ok code.
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+                    // After Cancel code.
+                    MoodRatingSummaryDialog("");
+                }
+                break;
+        }
     }
 
     private void setAlarmForMood() {
@@ -102,6 +208,4 @@ public class fragmentHome extends Fragment {
 
 
     }
-
-
 }

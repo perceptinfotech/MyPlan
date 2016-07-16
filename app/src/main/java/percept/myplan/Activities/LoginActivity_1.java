@@ -28,8 +28,8 @@ public class LoginActivity_1 extends AppCompatActivity {
                 public void onPinEntered(CharSequence str) {
                     if (str.toString().equals("1234")) {
                         Toast.makeText(LoginActivity_1.this, "SUCCESS", Toast.LENGTH_SHORT).show();
-                        //startActivity(new Intent(LoginActivity_1.this, HomeActivity.class));
-                        //LoginActivity_1.this.finish();
+                        startActivity(new Intent(LoginActivity_1.this, HomeActivity.class));
+                        LoginActivity_1.this.finish();
                     } else {
                         pinEntry.setError(true);
                         Toast.makeText(LoginActivity_1.this, "FAIL", Toast.LENGTH_SHORT).show();

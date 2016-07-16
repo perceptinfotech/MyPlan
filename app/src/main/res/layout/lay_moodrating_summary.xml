@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:id="@+id/layMoodRatings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:background="@drawable/lay_moodrating_addnote_border"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/appBackColor"
+            android:drawableRight="@drawable/ic_menu_black"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:text="@string/todaysmoodrating"
+            android:textColor="@android:color/white" />
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="15dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/toobarbelow"></View>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:id="@+id/tvMoodNote"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:textColor="@android:color/black" />
+
+    </LinearLayout>
+
+</RelativeLayout>

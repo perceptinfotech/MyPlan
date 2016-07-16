@@ -55,4 +55,14 @@
     <string name="pwdprotectdata">A password protects your data</string>
     <string name="enteremailtoreset">Enter email to reset your password</string>
     <string name="send">Send</string>
+    <string name="howareyoufeelingtoday">How are you feeling today?</string>
+    <string name="todaysmoodrating">Today\'s Mood Rating</string>
+    <string name="wouldliketoaddnote">Would you like to add a note</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="addnotetotodaymoodrating">Add note to todays mood rating</string>
+    <string name="savenote">Save Note</string>
+    <string name="never">Never</string>
+    <string name="always">Always</string>
+    <string name="nextquesion">Next Question (2/5)</string>
 </resources>
