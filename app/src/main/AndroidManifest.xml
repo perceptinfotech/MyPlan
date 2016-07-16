@@ -60,7 +60,7 @@
         <activity
             android:name=".Activities.LoginActivity_1"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Activities.SignUpActivity"
             android:label="@string/myplan"
@@ -74,12 +74,21 @@
         <activity
             android:name=".Activities.ForgetPwdActivity"
             android:label="@string/forgetpwdtitle"
+            android:parentActivityName=".Activities.LoginActivity_1"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden"
-            android:parentActivityName=".Activities.LoginActivity_1">
+            android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="percept.myplan.Activities.LoginActivity_1" />
+        </activity>
+        <activity
+            android:name=".Activities.QuickMessageDetailsActivity"
+            android:label="@string/title_activity_quick_message_details"
+            android:parentActivityName=".Activities.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="percept.myplan.Activities.HomeActivity" />
         </activity>
     </application>
 

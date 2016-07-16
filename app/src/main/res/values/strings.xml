@@ -65,4 +65,7 @@
     <string name="never">Never</string>
     <string name="always">Always</string>
     <string name="nextquesion">Next Question (2/5)</string>
+    <string name="title_activity_quick_message_details">QuickMessageDetailsActivity</string>
+    <string name="messages">Messages</string>
+    <string name="editlist">Edit List</string>
 </resources>
