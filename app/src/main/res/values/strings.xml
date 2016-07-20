@@ -68,4 +68,9 @@
     <string name="title_activity_quick_message_details">QuickMessageDetailsActivity</string>
     <string name="messages">Messages</string>
     <string name="editlist">Edit List</string>
+    <string name="addnewmsg">Add new message</string>
+    <string name="help_list">Help List</string>
+    <string name="title_activity_emergency_contact">Emergency Contact</string>
+    <string name="onlyoneemergencycontact">You can have maximum of 1 contact assigned to emergency</string>
+    <string name="title_activity_help_list">Edit Help List</string>
 </resources>

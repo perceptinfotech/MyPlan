@@ -29,17 +29,19 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/actionBar"
         android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
-        android:padding="5dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
         android:text="@string/addcontactfromphone"
         android:textColor="@android:color/black" />
 
     <TextView
+        android:id="@+id/tvNewContact"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvNewContact"
         android:layout_below="@+id/tvPhoneList"
         android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
-        android:padding="5dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
         android:text="@string/addnewcontact"
         android:textColor="@android:color/black" />
 

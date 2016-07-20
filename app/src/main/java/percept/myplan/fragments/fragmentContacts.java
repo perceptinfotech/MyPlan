@@ -5,15 +5,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import percept.myplan.Activities.AddContactActivity;
+import percept.myplan.Activities.EmergencyContactActivity;
+import percept.myplan.Classes.Contact;
 import percept.myplan.R;
+import percept.myplan.adapters.ContactHelpListAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,7 +31,11 @@ import percept.myplan.R;
 public class fragmentContacts extends Fragment {
 
     public static final int INDEX = 3;
+    private TextView TV_EMERGENCYNO, TV_EDIT_EMERGENCYNO;
+    private RecyclerView LST_HELP, LST_CONTACTS;
+    private List<Contact> LIST_HELPCONTACT;
 
+    private ContactHelpListAdapter ADPT_CONTACTHELPLIST;
 
     public fragmentContacts() {
         // Required empty public constructor
@@ -36,8 +50,41 @@ public class fragmentContacts extends Fragment {
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Contacts");
 
+        TV_EMERGENCYNO = (TextView) _View.findViewById(R.id.tvEmergencyNo);
+        TV_EDIT_EMERGENCYNO = (TextView) _View.findViewById(R.id.tvEditEmergencyContact);
+        LST_HELP = (RecyclerView) _View.findViewById(R.id.lstHelpList);
+        LST_CONTACTS = (RecyclerView) _View.findViewById(R.id.lstContacts);
+
+        LIST_HELPCONTACT = new ArrayList<>();
+        LIST_HELPCONTACT.add(new Contact("Children Phone", "1234567890", false));
+        LIST_HELPCONTACT.add(new Contact("Paul", "1234567890", false));
+        LIST_HELPCONTACT.add(new Contact("Mom", "1234567890", false));
+        LIST_HELPCONTACT.add(new Contact("Madelaine", "1234567890", false));
+        LIST_HELPCONTACT.add(new Contact("Kate", "1234567890", false));
+        LIST_HELPCONTACT.add(new Contact("Jenna", "1234567890", false));
+        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACT);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        LST_HELP.setLayoutManager(mLayoutManager);
+        LST_HELP.setItemAnimator(new DefaultItemAnimator());
+        LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
+
+
+        TV_EMERGENCYNO.setText("112");
+
+        RecyclerView.LayoutManager mLayoutManagerContact = new LinearLayoutManager(getActivity());
+        LST_CONTACTS.setLayoutManager(mLayoutManagerContact);
+        LST_CONTACTS.setItemAnimator(new DefaultItemAnimator());
+        LST_CONTACTS.setAdapter(ADPT_CONTACTHELPLIST);
         setHasOptionsMenu(true);
 
+        TV_EDIT_EMERGENCYNO.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent _intent = new Intent(getActivity(), EmergencyContactActivity.class);
+                startActivity(_intent);
+            }
+        });
         return _View;
     }
 

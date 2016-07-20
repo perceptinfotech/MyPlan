@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +28,26 @@ public class AddContactFromPhoneActivity extends AppCompatActivity {
     private RecyclerView LST_CONTACT;
     private List<Contact> LIST_CONTACTS;
     private ContactAdapter ADAPTER;
+    private String FROM_PAGE = "";
+    private boolean SINGLE_CHECK = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getIntent().hasExtra("FROM")) {
+            FROM_PAGE = getIntent().getStringExtra("FROM");
+        }
+
+        if (FROM_PAGE.toLowerCase().trim().equals("emergency")) {
+            SINGLE_CHECK = true;
+        }
+
         setContentView(R.layout.add_contact_from_phone);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         LST_CONTACT = (RecyclerView) findViewById(R.id.lstContact);
         LIST_CONTACTS = new ArrayList<>();
 //        LIST_CONTACTS.add(new Contact("dadsa", false));
@@ -45,7 +58,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity {
 //        LIST_CONTACTS.add(new Contact("m,nm", true));
 //        LIST_CONTACTS.add(new Contact("eqw", false));
 //        LIST_CONTACTS.add(new Contact("op", true));
-        ADAPTER = new ContactAdapter(LIST_CONTACTS);
+        ADAPTER = new ContactAdapter(LIST_CONTACTS, SINGLE_CHECK);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         LST_CONTACT.setLayoutManager(mLayoutManager);
@@ -57,12 +70,20 @@ public class AddContactFromPhoneActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.add_contact, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            AddContactFromPhoneActivity.this.finish();
+            return true;
+        } else if (item.getItemId() == R.id.action_InsertContact) {
+            Toast.makeText(AddContactFromPhoneActivity.this, "Add Contact Pressed", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
     }
 
     private void readContacts() {
