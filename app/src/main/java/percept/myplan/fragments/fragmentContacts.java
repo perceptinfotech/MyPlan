@@ -21,6 +21,7 @@ import java.util.List;
 
 import percept.myplan.Activities.AddContactActivity;
 import percept.myplan.Activities.EmergencyContactActivity;
+import percept.myplan.Activities.HelpListActivity;
 import percept.myplan.Classes.Contact;
 import percept.myplan.R;
 import percept.myplan.adapters.ContactHelpListAdapter;
@@ -31,11 +32,12 @@ import percept.myplan.adapters.ContactHelpListAdapter;
 public class fragmentContacts extends Fragment {
 
     public static final int INDEX = 3;
-    private TextView TV_EMERGENCYNO, TV_EDIT_EMERGENCYNO;
+    private TextView TV_EMERGENCYNO, TV_EDIT_EMERGENCYNO, TV_EDIT_HELPLIST, TV_ADDCONTACT;
     private RecyclerView LST_HELP, LST_CONTACTS;
     private List<Contact> LIST_HELPCONTACT;
 
     private ContactHelpListAdapter ADPT_CONTACTHELPLIST;
+
 
     public fragmentContacts() {
         // Required empty public constructor
@@ -52,6 +54,9 @@ public class fragmentContacts extends Fragment {
 
         TV_EMERGENCYNO = (TextView) _View.findViewById(R.id.tvEmergencyNo);
         TV_EDIT_EMERGENCYNO = (TextView) _View.findViewById(R.id.tvEditEmergencyContact);
+        TV_EDIT_HELPLIST = (TextView) _View.findViewById(R.id.tvEditHelpList);
+        TV_ADDCONTACT = (TextView) _View.findViewById(R.id.tvAddContact);
+
         LST_HELP = (RecyclerView) _View.findViewById(R.id.lstHelpList);
         LST_CONTACTS = (RecyclerView) _View.findViewById(R.id.lstContacts);
 
@@ -82,6 +87,22 @@ public class fragmentContacts extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent _intent = new Intent(getActivity(), EmergencyContactActivity.class);
+                startActivity(_intent);
+            }
+        });
+
+        TV_EDIT_HELPLIST.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent _intent = new Intent(getActivity(), HelpListActivity.class);
+                startActivity(_intent);
+            }
+        });
+
+        TV_ADDCONTACT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent _intent = new Intent(getActivity().getApplicationContext(), AddContactActivity.class);
                 startActivity(_intent);
             }
         });

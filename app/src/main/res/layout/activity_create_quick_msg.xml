@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context="percept.myplan.Activities.CreateQuickMsgActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/toolbarTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/toolbarback"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/toobarbelow" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/lay_help_contact"></include>
+
+    <include layout="@layout/lay_contact_list"></include>
+</LinearLayout>

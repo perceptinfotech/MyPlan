@@ -30,9 +30,9 @@
                     android:textAllCaps="true" />
 
                 <TextView
+                    android:id="@+id/tvEditEmergencyContact"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvEditEmergencyContact"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="15dp"
@@ -66,84 +66,14 @@
                 android:background="@color/toobarbelow"></View>
 
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <include
+                android:id="@+id/inHelpContact"
+                layout="@layout/lay_help_contact"></include>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="15dp"
-                    android:text="@string/help_list"
-                    android:textAllCaps="true" />
+            <include
+                android:id="@+id/inContactList"
+                layout="@layout/lay_contact_list"></include>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="15dp"
-                    android:text="@string/editlist" />
-            </RelativeLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dp"
-                android:background="@color/toobarbelow"></View>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/lstHelpList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                android:paddingLeft="10dp" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="15dp"
-                    android:text="@string/contacts"
-                    android:textAllCaps="true" />
-
-            </RelativeLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/toobarbelow"></View>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/lstContacts"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                android:paddingLeft="10dp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/toobarbelow"></View>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:drawableLeft="@drawable/ic_menu_slideshow"
-                android:drawablePadding="10dp"
-                android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
-                android:gravity="center_vertical"
-                android:padding="5dp"
-                android:text="@string/addnewcontact"
-                android:textColor="@android:color/black" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

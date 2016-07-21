@@ -113,7 +113,7 @@ public class PieGraph extends View implements HoloGraphAnimate {
         }
         radius -= mPadding;
         innerRadius = radius * mInnerCircleRatio / 255;
-
+        innerRadius = 0;
         for (PieSlice slice : mSlices) {
             totalValue += slice.getValue();
         }
