@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
 
     public List<Contact> LIST_HELPCONTACT;
 
-    public class ContactHelpListHolder extends RecyclerView.ViewHolder {
+    public class ContactHelpListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView TV_HELPCONTACT;
         public RoundedImageView IMG_CONTACT;
 
@@ -31,11 +32,17 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
             TV_HELPCONTACT = (TextView) itemView.findViewById(R.id.tvContactName);
             IMG_CONTACT = (RoundedImageView) itemView.findViewById(R.id.imgContact);
         }
+
+        @Override
+        public void onClick(View view) {
+
+        }
     }
 
     public ContactHelpListAdapter(List<Contact> helpContactList) {
         this.LIST_HELPCONTACT = helpContactList;
     }
+
 
     @Override
     public ContactHelpListHolder onCreateViewHolder(ViewGroup parent, int viewType) {

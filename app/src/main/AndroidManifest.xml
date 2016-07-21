@@ -86,7 +86,20 @@
         <activity
             android:name=".Activities.CreateQuickMsgActivity"
             android:label="@string/title_activity_create_quick_msg"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.SendMessageActivity"
+            android:label="@string/title_activity_send_message"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.ProfileActivity"
+            android:label="@string/title_activity_profile"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".Activities.MoodRatingsActivity"
+            android:label="@string/title_activity_moodratings"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

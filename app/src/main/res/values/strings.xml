@@ -75,4 +75,20 @@
     <string name="title_activity_help_list">Edit Help List</string>
     <string name="edithelplistmsg">You can have maximum of 10 assigned contact listed in help.Please reassigned priority to one contact before adding a new.</string>
     <string name="title_activity_create_quick_msg">Choose recipient</string>
+    <string name="title_activity_send_message">Send Message</string>
+    <string name="notimsg">Notification Message</string>
+    <string name="notimsgdetail">I am using the app myplan to help me cope. The following message has been set as an automatic message and can be sent by me when I need your help.This is just an information to you, so that you know the reason for sending the following message :-</string>
+    <string name="yourqckmsg">Your quick message</string>
+    <string name="profile">Profile</string>
+    <string name="geotracking">Geo Tracking</string>
+    <string name="exportmyplan">Export MyPlan</string>
+    <string name="notifications">Notifications</string>
+    <string name="feedback">FeedBack</string>
+    <string name="share">Share</string>
+    <string name="profiledit">Profile Edit</string>
+    <string name="title_activity_profile">Profile</string>
+    <string name="save">Save</string>
+    <string name="title_activity_moodratings">Mood Ratings</string>
+    <string name="sidas">Sidas</string>
+    <string name="mood">Mood</string>
 </resources>

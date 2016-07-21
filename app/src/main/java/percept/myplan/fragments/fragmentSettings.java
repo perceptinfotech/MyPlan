@@ -1,13 +1,17 @@
 package percept.myplan.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import percept.myplan.Activities.MoodRatingsActivity;
+import percept.myplan.Activities.ProfileActivity;
 import percept.myplan.R;
 
 /**
@@ -16,6 +20,7 @@ import percept.myplan.R;
 public class fragmentSettings extends Fragment {
 
     public static final int INDEX = 11;
+    private TextView TV_PROFILE, TV_MOODRATINGS, TV_GEOTRACKING, TV_EXPORTMYPLAN, TV_NOTIFICATIONS, TV_FEEDBACK, TV_SHARE;
 
     public fragmentSettings() {
         // Required empty public constructor
@@ -27,7 +32,65 @@ public class fragmentSettings extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Settings");
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        View _View = inflater.inflate(R.layout.fragment_settings, container, false);
+        TV_PROFILE = (TextView) _View.findViewById(R.id.tvProfile);
+        TV_MOODRATINGS = (TextView) _View.findViewById(R.id.tvMoodRatings);
+        TV_GEOTRACKING = (TextView) _View.findViewById(R.id.tvGeoTracking);
+        TV_EXPORTMYPLAN = (TextView) _View.findViewById(R.id.tvExportPlan);
+        TV_NOTIFICATIONS = (TextView) _View.findViewById(R.id.tvNotification);
+        TV_FEEDBACK = (TextView) _View.findViewById(R.id.tvFeedBack);
+        TV_SHARE = (TextView) _View.findViewById(R.id.tvShare);
+
+        TV_PROFILE.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), ProfileActivity.class));
+
+            }
+        });
+
+        TV_MOODRATINGS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), MoodRatingsActivity.class));
+            }
+        });
+
+        TV_GEOTRACKING.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        TV_EXPORTMYPLAN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        TV_NOTIFICATIONS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        TV_FEEDBACK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        TV_SHARE.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+        return _View;
     }
 
 }
