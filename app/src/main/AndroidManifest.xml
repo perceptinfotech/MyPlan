@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -95,11 +96,26 @@
             android:name=".Activities.ProfileActivity"
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".Activities.MoodRatingsActivity"
             android:label="@string/title_activity_moodratings"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.GeoTrackingActivity"
+            android:label="@string/title_activity_geotracking"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.ExportMyPlanActivity"
+            android:label="@string/title_activity_exportplan"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.NotificationActivity"
+            android:label="@string/title_activity_notification"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.AddHopeBoxActivity"
+            android:label="@string/title_activity_addhopebox"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

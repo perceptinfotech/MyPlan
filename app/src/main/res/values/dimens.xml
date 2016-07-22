@@ -16,4 +16,11 @@
     <dimen name="text_margin_bottom">15dp</dimen>
     <dimen name="hint_margin_bottom">25dp</dimen>
     <dimen name="view_height">70dp</dimen>
+
+    <!--Card Creation-->
+    <dimen name="album_cover_height">160dp</dimen>
+    <dimen name="album_title_padding">10dp</dimen>
+    <dimen name="card_margin">5dp</dimen>
+    <dimen name="card_album_radius">0dp</dimen>
+    <dimen name="album_title">15dp</dimen>
 </resources>

@@ -8,32 +8,15 @@
     android:fitsSystemWindows="true"
     tools:context="percept.myplan.Activities.SignUpActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/toolbarTop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/toolbarback"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/toobarbelow" />
-
-    </android.support.design.widget.AppBarLayout>
+    <include layout="@layout/app_toolbar"
+        android:id="@+id/include"></include>
 
 
     <RelativeLayout
         android:id="@+id/layImg"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:layout_below="@+id/toolbarTop"
+        android:layout_below="@+id/include"
         android:background="@color/toolbarback">
 
         <ImageView

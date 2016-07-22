@@ -91,4 +91,17 @@
     <string name="title_activity_moodratings">Mood Ratings</string>
     <string name="sidas">Sidas</string>
     <string name="mood">Mood</string>
+    <string name="test_interval">Test Interval</string>
+    <string name="everyweek">Every Week</string>
+    <string name="everytwoweek">Every 2 week</string>
+    <string name="everythreeweek">Every 3 week</string>
+    <string name="onceamonth">Once a month</string>
+    <string name="enablelocationsharing">Enable sharing of location</string>
+    <string name="title_activity_geotracking">Geotracking</string>
+    <string name="includemoodratings">Include Mood Ratings</string>
+    <string name="exportpdftoemail">Export PDF to email</string>
+    <string name="title_activity_exportplan">Export MyPlan</string>
+    <string name="title_activity_notification">Notifications</string>
+    <string name="addnewbox">Add new box</string>
+    <string name="title_activity_addhopebox">Add Hope Box</string>
 </resources>

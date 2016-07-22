@@ -192,7 +192,7 @@ public class HomeActivity extends BaseActivity {
                 .replace(R.id.flContent, fragment)
                 .commit();
 
-        // Highlight the selected item, update the title, and close the drawer
+        // Highlight the selected item, update the TV_TITLE, and close the drawer
     }
 
 }

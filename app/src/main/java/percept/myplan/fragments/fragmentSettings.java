@@ -10,7 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import percept.myplan.Activities.ExportMyPlanActivity;
+import percept.myplan.Activities.GeoTrackingActivity;
 import percept.myplan.Activities.MoodRatingsActivity;
+import percept.myplan.Activities.NotificationActivity;
 import percept.myplan.Activities.ProfileActivity;
 import percept.myplan.R;
 
@@ -59,21 +62,21 @@ public class fragmentSettings extends Fragment {
         TV_GEOTRACKING.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(getActivity(), GeoTrackingActivity.class));
             }
         });
 
         TV_EXPORTMYPLAN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(getActivity(), ExportMyPlanActivity.class));
             }
         });
 
         TV_NOTIFICATIONS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(getActivity(), NotificationActivity.class));
             }
         });
 

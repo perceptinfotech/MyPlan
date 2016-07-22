@@ -112,7 +112,7 @@ public class fragmentHome extends Fragment {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         // Include dialog.xml file
         dialog.setContentView(R.layout.lay_moodratings_addnote);
-        // Set dialog title
+        // Set dialog TV_TITLE
         dialog.setTitle("Custom Dialog");
 
         // set values for custom dialog components - text, image and button
