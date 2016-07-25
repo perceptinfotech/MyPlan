@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -13,10 +14,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
 import com.squareup.picasso.Picasso;
 
-import java.util.Calendar;
+import org.json.JSONObject;
 
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
+import percept.myplan.Global.General;
+import percept.myplan.Global.VolleyResponseListener;
 import percept.myplan.R;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -71,8 +79,34 @@ public class SignUpActivity extends AppCompatActivity {
         BTN_ENTER.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
-                SignUpActivity.this.finish();
+//                startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
+//                SignUpActivity.this.finish();
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("first_name", EDT_FIRSTNAME.getText().toString().trim());
+                params.put("last_name", EDT_LASTNAME.getText().toString().trim());
+                params.put("email", EDT_EMAIL.getText().toString().trim());
+                params.put("phone", EDT_PHONENO.getText().toString().trim());
+                params.put("dob", EDT_BIRTHDAY.getText().toString().trim());
+                params.put("password", EDT_PASSWORD.getText().toString().trim());
+                params.put("profile_image", "admin");
+                try {
+                    new General().getJSONContentFromInternetService(SignUpActivity.this, General.PHPServices.REGISTER, params, false, false, new VolleyResponseListener() {
+                        @Override
+                        public void onError(VolleyError message) {
+                            Log.d("::::::::::", message.toString());
+                        }
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("::::::::::", response.toString());
+                            startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
+                            SignUpActivity.this.finish();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         });
         setViews();

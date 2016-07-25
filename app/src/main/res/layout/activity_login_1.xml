@@ -40,6 +40,7 @@
             android:background="@drawable/edt_register_border"
             android:hint="@string/emailadd"
             android:padding="5dp"
+            android:id="@+id/edtEmail"
             android:textColor="@android:color/black"
             android:textSize="14dp" />
 
@@ -83,6 +84,7 @@
         android:maxLength="4"
         android:textIsSelectable="false"
         android:textSize="20sp"
+        android:paddingBottom="20dp"
         android:visibility="visible"
         app:pinLineColors="@color/pin_line_colors" />
 

@@ -98,6 +98,18 @@ public class fragmentMoodRatings extends Fragment {
         bar = new Bar();
         bar.setColor(resources.getColor(R.color.orange));
         bar.setName("Test2");
+        bar.setValue(3000);
+        bar.setValueString("$3,000");
+        LST_BARDATA.add(bar);
+        bar = new Bar();
+        bar.setColor(resources.getColor(R.color.orange));
+        bar.setName("Test2");
+        bar.setValue(4000);
+        bar.setValueString("$4,000");
+        LST_BARDATA.add(bar);
+        bar = new Bar();
+        bar.setColor(resources.getColor(R.color.orange));
+        bar.setName("Test2");
         bar.setValue(2000);
         bar.setValueString("$2,000");
         LST_BARDATA.add(bar);

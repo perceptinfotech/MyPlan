@@ -21,3 +21,13 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+def supportVersion   = "23.2.1"
+def rxVersion        = "1.1.0"
+def imageVersion     = "3.7.0"
+
+ext{
+    imageloader   = "com.github.bumptech.glide:glide:${imageVersion}"
+    rxJava        = "io.reactivex:rxjava:${rxVersion}"
+    rxAndroid     = "io.reactivex:rxandroid:${rxVersion}"
+}

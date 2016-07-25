@@ -7,4 +7,7 @@ package percept.myplan.Global;
 public class Constant {
 
     public static int CURRENT_FRAGMENT=0;
+
+    public static String SID="";
+    public static String SNAME="";
 }

@@ -55,8 +55,8 @@ public class PinEntryEditText extends EditText {
     private OnClickListener mClickListener;
     private OnPinEnteredListener mOnPinEnteredListener = null;
 
-    private float mLineStroke = 6; //1dp by default
-    private float mLineStrokeSelected = 7; //2dp by default
+    private float mLineStroke = 4; //1dp by default
+    private float mLineStrokeSelected = 6; //2dp by default
     private Paint mLinesPaint;
     private boolean mAnimate = false;
     private boolean mHasError = false;

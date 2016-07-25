@@ -5,11 +5,16 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
+import me.crosswall.photo.pick.PickConfig;
 import percept.myplan.R;
 
 public class AddHopeBoxActivity extends AppCompatActivity {
+
+    private Button BTN_ADDFOLDERIMG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +26,22 @@ public class AddHopeBoxActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
 
+        BTN_ADDFOLDERIMG = (Button) findViewById(R.id.btnAddFolderImage);
+
+        BTN_ADDFOLDERIMG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new PickConfig.Builder(AddHopeBoxActivity.this)
+                        .pickMode(PickConfig.MODE_MULTIP_PICK)
+                        .maxPickSize(10)
+                        .spanCount(3)
+                        //.showGif(true)
+                        .checkImage(false) //default false
+                        .useCursorLoader(false) //default true
+                        .toolbarColor(R.color.colorPrimary)
+                        .build();
+            }
+        });
     }
 
     @Override

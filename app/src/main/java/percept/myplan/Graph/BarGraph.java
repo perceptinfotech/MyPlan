@@ -30,6 +30,8 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -142,7 +144,7 @@ public class BarGraph extends View implements HoloGraphAnimate {
 
         float maxValue = 0;
         float padding = 7 * resources.getDisplayMetrics().density;
-        float bottomPadding = 30 * resources.getDisplayMetrics().density;
+        float bottomPadding = 60 * resources.getDisplayMetrics().density;
 
         float usableHeight;
         if (mShowBarText) {
@@ -316,7 +318,10 @@ public class BarGraph extends View implements HoloGraphAnimate {
                 float textWidth = mPaint.measureText(bar.getName());
                 int x = (int) (((mBoundsRect.left + mBoundsRect.right) / 2) - (textWidth / 2));
                 int y = (int) (getHeight() - 3 * resources.getDisplayMetrics().scaledDensity);
-                canvas.drawText(bar.getName(), x, y, mPaint);
+//                canvas.drawText(bar.getName(), x, y, mPaint);
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.back_button);
+                int _yImg = (int) (getHeight() - 50 * resources.getDisplayMetrics().scaledDensity);
+                canvas.drawBitmap(bitmap, x, _yImg, mPaint);
             }
 
             // Draw value text

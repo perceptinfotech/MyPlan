@@ -104,4 +104,9 @@
     <string name="title_activity_notification">Notifications</string>
     <string name="addnewbox">Add new box</string>
     <string name="title_activity_addhopebox">Add Hope Box</string>
+    <string name="addfolderimage">Add folder image</string>
+    <string name="title">Title</string>
+    <string name="namefolder">Name Folder</string>
+    <string name="err_network_not_available">Check Internet connection!</string>
+
 </resources>
