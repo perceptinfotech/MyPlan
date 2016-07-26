@@ -108,5 +108,7 @@
     <string name="title">Title</string>
     <string name="namefolder">Name Folder</string>
     <string name="err_network_not_available">Check Internet connection!</string>
+    <string name="addnewsymptom">Add new symptom</string>
+    <string name="signuperror">Sign Up Error</string>
 
 </resources>

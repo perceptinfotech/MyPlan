@@ -37,6 +37,10 @@ public class LoginActivity_1 extends AppCompatActivity {
         UTILS = new Utils(LoginActivity_1.this);
         TV_FORGETPWD = (TextView) findViewById(R.id.tvForgotPwd);
         EDT_EMAIL = (EditText) findViewById(R.id.edtEmail);
+
+        if (!UTILS.getPreference(Constant.PREF_EMAIL).equals("")) {
+            EDT_EMAIL.setText(UTILS.getPreference(Constant.PREF_EMAIL));
+        }
         final PinEntryEditText pinEntry = (PinEntryEditText) findViewById(R.id.txt_pin_entry);
         if (pinEntry != null) {
             pinEntry.setOnPinEnteredListener(new PinEntryEditText.OnPinEnteredListener() {
@@ -49,8 +53,8 @@ public class LoginActivity_1 extends AppCompatActivity {
 
                     try {
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("username", EDT_EMAIL.getText().toString().trim());
-                        params.put("password", str.toString().trim());
+                        params.put(Constant.USER_NAME, EDT_EMAIL.getText().toString().trim());
+                        params.put(Constant.PASSWORD, str.toString().trim());
                         new General().getJSONContentFromInternetService(LoginActivity_1.this, General.PHPServices.LOGIN, params, false, false, new VolleyResponseListener() {
 
                             @Override
@@ -62,8 +66,22 @@ public class LoginActivity_1 extends AppCompatActivity {
                             public void onResponse(JSONObject response) {
                                 Log.d(":::::::::: ", response.toString());
                                 try {
-                                    Constant.SID = response.getString("sid");
-                                    Constant.SNAME = response.getString("sname");
+                                    if (response.has(Constant.DATA)) {
+                                        if (response.getJSONObject(Constant.DATA).getString(Constant.STATUS).equals("Success")) {
+                                            Constant.SID = response.getJSONObject(Constant.DATA).getString("sid");
+                                            Constant.SNAME = response.getJSONObject(Constant.DATA).getString("sname");
+                                            Constant.PROFILE_IMG_LINK = response.getJSONObject(Constant.DATA).getString(Constant.PROFILE_IMAGE);
+                                            Constant.PROFILE_EMAIL = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.EMAIL);
+                                            Constant.PROFILE_USER_NAME = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.USER_NAME);
+                                            Constant.PROFILE_NAME = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.NAME);
+
+                                            UTILS.setPreference(Constant.PREF_EMAIL, EDT_EMAIL.getText().toString().trim());
+                                            startActivity(new Intent(LoginActivity_1.this, HomeActivity.class));
+                                            LoginActivity_1.this.finish();
+                                        } else {
+                                            Toast.makeText(LoginActivity_1.this, "Login Error", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }

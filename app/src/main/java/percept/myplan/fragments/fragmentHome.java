@@ -27,11 +27,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.Calendar;
 
 import percept.myplan.Dialogs.fragmentAddNote;
 import percept.myplan.Dialogs.fragmentMoodSummary;
 import percept.myplan.Dialogs.fragmentSidasRating;
+import percept.myplan.Global.Constant;
 import percept.myplan.R;
 import percept.myplan.receivers.AlarmReceiver;
 
@@ -44,7 +47,9 @@ public class fragmentHome extends Fragment {
     public static final int INDEX = 0;
 
     private ImageView IMG_USER;
-    private LinearLayout LAY_HELP, LAY_EMERGENCY;
+    private LinearLayout LAY_HELP, LAY_EMERGENCY, LAY_MOODRATING;
+
+    private ImageView IMG_USERPROFILE;
 
     private AlarmManager ALARM_MANAGER;
     public static final int DIALOG_ADDNOTE = 1;
@@ -66,6 +71,15 @@ public class fragmentHome extends Fragment {
         View _View = inflater.inflate(R.layout.fragment_home, container, false);
 
         LAY_HELP = (LinearLayout) _View.findViewById(R.id.layHelpHome);
+        LAY_MOODRATING = (LinearLayout) _View.findViewById(R.id.layMoodRatings);
+
+        IMG_USERPROFILE = (ImageView) _View.findViewById(R.id.imgUserImage);
+
+
+        Picasso.with(getActivity()).load(Constant.PROFILE_IMG_LINK).into(IMG_USERPROFILE);
+
+        LAY_MOODRATING.setVisibility(View.GONE);
+
         LAY_EMERGENCY = (LinearLayout) _View.findViewById(R.id.layEmergencyHome);
         LAY_EMERGENCY.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +102,7 @@ public class fragmentHome extends Fragment {
 
 //        MoodRatingAddNoteConfirmDialog();
 
-        SidasDialog();
+//        SidasDialog();
         return _View;
     }
 
