@@ -36,4 +36,16 @@
             android:textColor="@android:color/black" />
     </LinearLayout>
 
+
+    <Button
+        android:id="@+id/btnDangerSignal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="15dp"
+        android:background="@drawable/btn_register_border"
+        android:text="@string/dangersignal"
+        android:textColor="@android:color/white" />
+
 </RelativeLayout>

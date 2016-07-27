@@ -22,7 +22,7 @@ import java.util.List;
 import percept.myplan.Activities.AddContactActivity;
 import percept.myplan.Activities.EmergencyContactActivity;
 import percept.myplan.Activities.HelpListActivity;
-import percept.myplan.Classes.Contact;
+import percept.myplan.POJO.Contact;
 import percept.myplan.R;
 import percept.myplan.adapters.ContactHelpListAdapter;
 

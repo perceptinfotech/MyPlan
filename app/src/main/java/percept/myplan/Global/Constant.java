@@ -23,8 +23,8 @@ public class Constant {
     public final static String MESSAGE = "message";
     public final static String STATUS = "status";
     public final static String DATA = "data";
-    public final static String USER="user";
-    public final static String NAME="name";
+    public final static String USER = "user";
+    public final static String NAME = "name";
 
     //Register Page
     public final static String FIRST_NAME = "first_name";
@@ -33,4 +33,9 @@ public class Constant {
     public final static String PHONE = "phone";
     public final static String DOB = "dob";
     public final static String PROFILE_IMAGE = "profile_image";
+
+    //SymptomDetails Pate
+    public final static String TITLE = "title";
+    public final static String DESC = "description";
+    public final static String STRATEGIE = "strategie";
 }

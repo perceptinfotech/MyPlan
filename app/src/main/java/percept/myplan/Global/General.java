@@ -3,10 +3,7 @@ package percept.myplan.Global;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.util.Config;
 import android.util.Log;
-import android.view.View;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -14,24 +11,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import percept.myplan.AppController;
-import percept.myplan.Classes.AndroidMultiPartEntity;
 import percept.myplan.R;
 
 /**
@@ -101,6 +85,26 @@ public class General {
 
         });
 
+
+//        Cache cache = AppController.getInstance().getRequestQueue().getCache();
+//        Cache.Entry entry = cache.get(_str);
+//        if (entry != null) {
+//            try {
+//                String data = new String(entry.data, "UTF-8");
+//                // handle data, like converting it to xml, json, bitmap etc.,
+//                JSONObject _obj = new JSONObject(data);
+//                Log.d("::: FROM ", "CACHE");
+//                volleyResponseListener.onResponse(_obj);
+//                AppController.getInstance().getRequestQueue().getCache().invalidate(_str, true);
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            }
+//        } else {
+//            // Cached response doesn't exists. Make network call here
+//            Log.d("::: CALLED JSON", "NETWORK");
+//            AppController.getInstance().addToRequestQueue(jsonObjReq, "tag_json_obj");
+//        }
+//        AppController.getInstance().getRequestQueue().getCache().invalidate(_str, true);
         AppController.getInstance().addToRequestQueue(jsonObjReq, "tag_json_obj");
         return "";
     }

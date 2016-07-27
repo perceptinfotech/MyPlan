@@ -1,4 +1,4 @@
-package percept.myplan.Classes;
+package percept.myplan.POJO;
 
 /**
  * Created by percept on 11/7/16.

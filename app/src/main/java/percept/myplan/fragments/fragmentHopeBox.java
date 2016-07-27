@@ -24,8 +24,7 @@ import java.util.List;
 
 import percept.myplan.Activities.AddHopeBoxActivity;
 import percept.myplan.Activities.CreateQuickMsgActivity;
-import percept.myplan.Activities.SendMessageActivity;
-import percept.myplan.Classes.Hope;
+import percept.myplan.POJO.Hope;
 import percept.myplan.R;
 import percept.myplan.adapters.HopeAdapter;
 

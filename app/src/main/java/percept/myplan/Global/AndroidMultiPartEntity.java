@@ -1,4 +1,4 @@
-package percept.myplan.Classes;
+package percept.myplan.Global;
 
 /**
  * Created by percept on 26/7/16.

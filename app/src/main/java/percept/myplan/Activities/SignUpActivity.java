@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Config;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -19,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.VolleyError;
 import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
@@ -38,13 +35,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
-import percept.myplan.Classes.AndroidMultiPartEntity;
+import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
-import percept.myplan.Global.General;
-import percept.myplan.Global.VolleyResponseListener;
 import percept.myplan.R;
 
 public class SignUpActivity extends AppCompatActivity {

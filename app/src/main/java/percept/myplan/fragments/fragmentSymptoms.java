@@ -1,14 +1,23 @@
 package percept.myplan.fragments;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
@@ -22,7 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import percept.myplan.Classes.Symptom;
+import percept.myplan.Activities.SymptomDetailsActivity;
+import percept.myplan.POJO.Symptom;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.VolleyResponseListener;
@@ -39,6 +49,7 @@ public class fragmentSymptoms extends Fragment {
     private RecyclerView LST_SYMPTOM;
     private List<Symptom> LIST_SYMPTOM;
     private SymptomAdapter ADAPTER;
+    private Button BTN_DANGERSIGNAL;
 
     public fragmentSymptoms() {
         // Required empty public constructor
@@ -52,10 +63,18 @@ public class fragmentSymptoms extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Symptoms");
         View _View = inflater.inflate(R.layout.fragment_symptoms, container, false);
         LST_SYMPTOM = (RecyclerView) _View.findViewById(R.id.lstSymptom);
+        BTN_DANGERSIGNAL = (Button) _View.findViewById(R.id.btnDangerSignal);
+
         LIST_SYMPTOM = new ArrayList<>();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        LST_SYMPTOM.setLayoutManager(mLayoutManager);
+        LST_SYMPTOM.setItemAnimator(new DefaultItemAnimator());
+
+
         try {
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_SYMPTOMS, params, false, false, new VolleyResponseListener() {
                 @Override
@@ -75,7 +94,6 @@ public class fragmentSymptoms extends Fragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Log.d("::::::::", "::::::::");
                     ADAPTER = new SymptomAdapter(LIST_SYMPTOM);
                     LST_SYMPTOM.setAdapter(ADAPTER);
                 }
@@ -84,8 +102,76 @@ public class fragmentSymptoms extends Fragment {
             e.printStackTrace();
         }
 
+        LST_SYMPTOM.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), LST_SYMPTOM, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                LIST_SYMPTOM.get(position);
+                Intent _intent = new Intent(getActivity(), SymptomDetailsActivity.class);
+                _intent.putExtra("SYMPTOM_ID", LIST_SYMPTOM.get(position).getId());
+                startActivity(_intent);
+            }
 
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
         return _View;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.contact, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    public interface ClickListener {
+        void onClick(View view, int position);
+
+        void onLongClick(View view, int position);
+    }
+
+    public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+
+        private GestureDetector gestureDetector;
+        private fragmentSymptoms.ClickListener clickListener;
+
+        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final fragmentSymptoms.ClickListener clickListener) {
+            this.clickListener = clickListener;
+            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                    if (child != null && clickListener != null) {
+                        clickListener.onLongClick(child, recyclerView.getChildPosition(child));
+                    }
+                }
+            });
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            View child = rv.findChildViewUnder(e.getX(), e.getY());
+            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
+                clickListener.onClick(child, rv.getChildPosition(child));
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+        }
     }
 
 }

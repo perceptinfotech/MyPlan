@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import percept.myplan.Activities.CreateQuickMsgActivity;
-import percept.myplan.Classes.QuickMessage;
+import percept.myplan.POJO.QuickMessage;
 import percept.myplan.R;
 import percept.myplan.adapters.QuickMessageAdapter;
 

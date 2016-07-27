@@ -131,55 +131,113 @@ public class HomeActivity extends BaseActivity {
     private void selectItem(int position) {
         // Create a new fragment and specify the planet to show based on position
         Fragment fragment = null;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        String tag = "";
         switch (position) {
             case fragmentHome.INDEX:
-                fragment = new fragmentHome();
+                tag = fragmentHome.class.getSimpleName();
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment == null) {
+                    fragment = new fragmentHome();
+                }
                 Constant.CURRENT_FRAGMENT = fragmentHome.INDEX;
+
                 break;
             case fragmentSymptoms.INDEX:
-                fragment = new fragmentSymptoms();
+                tag = fragmentSymptoms.class.getSimpleName();
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment == null) {
+                    fragment = new fragmentSymptoms();
+                }
+
                 Constant.CURRENT_FRAGMENT = fragmentSymptoms.INDEX;
+
                 break;
             case fragmentStrategies.INDEX:
-                fragment = new fragmentStrategies();
+                tag = fragmentStrategies.class.getSimpleName();
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment == null) {
+                    fragment = new fragmentStrategies();
+                }
                 Constant.CURRENT_FRAGMENT = fragmentStrategies.INDEX;
+
                 break;
             case fragmentContacts.INDEX:
-                fragment = new fragmentContacts();
+                tag = fragmentContacts.class.getSimpleName();
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment == null) {
+                    fragment = new fragmentContacts();
+                }
+
+
                 Constant.CURRENT_FRAGMENT = fragmentContacts.INDEX;
                 break;
             case fragmentHopeBox.INDEX:
-                fragment = new fragmentHopeBox();
+                tag = fragmentHopeBox.class.getSimpleName();
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment == null) {
+                    fragment = new fragmentHopeBox();
+                }
                 Constant.CURRENT_FRAGMENT = fragmentHopeBox.INDEX;
+
                 break;
             case fragmentMoodRatings.INDEX:
-                fragment = new fragmentMoodRatings();
+                tag = fragmentMoodRatings.class.getSimpleName();
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment == null) {
+                    fragment = new fragmentMoodRatings();
+                }
                 Constant.CURRENT_FRAGMENT = fragmentMoodRatings.INDEX;
                 break;
             case fragmentNearestEmergencyRoom.INDEX:
-                fragment = new fragmentNearestEmergencyRoom();
+                tag = fragmentNearestEmergencyRoom.class.getSimpleName();
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment == null) {
+                    fragment = new fragmentNearestEmergencyRoom();
+                }
                 Constant.CURRENT_FRAGMENT = fragmentNearestEmergencyRoom.INDEX;
                 break;
             case fragmentQuickMessage.INDEX:
-                fragment = new fragmentQuickMessage();
+                tag = fragmentQuickMessage.class.getSimpleName();
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment == null) {
+                    fragment = new fragmentQuickMessage();
+                }
                 Constant.CURRENT_FRAGMENT = fragmentQuickMessage.INDEX;
                 break;
             case fragmentShareMyLocation.INDEX:
-                fragment = new fragmentShareMyLocation();
+                tag = fragmentShareMyLocation.class.getSimpleName();
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment == null) {
+                    fragment = new fragmentShareMyLocation();
+                }
                 Constant.CURRENT_FRAGMENT = fragmentShareMyLocation.INDEX;
                 break;
             case fragmentSettings.INDEX:
-                fragment = new fragmentSettings();
+                tag = fragmentSettings.class.getSimpleName();
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment == null) {
+                    fragment = new fragmentSettings();
+                }
                 Constant.CURRENT_FRAGMENT = fragmentSettings.INDEX;
                 break;
             case 12:
+                tag = fragmentHome.class.getSimpleName();
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment == null) {
+                    fragment = new fragmentHome();
+                }
                 // Logout
-                fragment = new fragmentHome();
                 Constant.CURRENT_FRAGMENT = 0;
                 break;
             default:
-                fragment = new fragmentHome();
+                tag = fragmentHome.class.getSimpleName();
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment == null) {
+                    fragment = new fragmentHome();
+                }
                 Constant.CURRENT_FRAGMENT = 0;
+
         }
 
 //        Bundle args = new Bundle();
@@ -187,9 +245,8 @@ public class HomeActivity extends BaseActivity {
 //        fragment.setArguments(args);
 
         // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.flContent, fragment)
+                .replace(R.id.flContent, fragment, tag)
                 .commit();
 
         // Highlight the selected item, update the TV_TITLE, and close the drawer

@@ -8,8 +8,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import percept.myplan.Classes.Contact;
-import percept.myplan.Classes.QuickMessage;
+import percept.myplan.POJO.QuickMessage;
 import percept.myplan.R;
 
 /**

@@ -110,5 +110,13 @@
     <string name="err_network_not_available">Check Internet connection!</string>
     <string name="addnewsymptom">Add new symptom</string>
     <string name="signuperror">Sign Up Error</string>
+    <string name="dangersignal">Danger signals</string>
+    <string name="text">Text</string>
+    <string name="title_activity_symptoms">Symptoms</string>
+    <string name="action_edit">Edit</string>
+    <string name="title_activity_strategy">Strategy</string>
+    <string name="title_activity_strategy_details_other">StrategyDetailsOtherActivity</string>
+    <string name="addnewstrategy">Add new strategy</string>
+    <string name="inspiration">Inspiration</string>
 
 </resources>

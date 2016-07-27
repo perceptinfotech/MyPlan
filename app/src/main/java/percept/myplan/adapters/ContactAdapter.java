@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import percept.myplan.Classes.Contact;
+import percept.myplan.POJO.Contact;
 import percept.myplan.R;
 
 /**

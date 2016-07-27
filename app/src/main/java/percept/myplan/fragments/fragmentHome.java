@@ -27,10 +27,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 
+import percept.myplan.AppController;
 import percept.myplan.Dialogs.fragmentAddNote;
 import percept.myplan.Dialogs.fragmentMoodSummary;
 import percept.myplan.Dialogs.fragmentSidasRating;
@@ -76,7 +79,26 @@ public class fragmentHome extends Fragment {
         IMG_USERPROFILE = (ImageView) _View.findViewById(R.id.imgUserImage);
 
 
-        Picasso.with(getActivity()).load(Constant.PROFILE_IMG_LINK).into(IMG_USERPROFILE);
+//        Picasso.with(getActivity()).load(Constant.PROFILE_IMG_LINK).into(IMG_USERPROFILE);
+
+
+        ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+
+        imageLoader.get(Constant.PROFILE_IMG_LINK, new ImageLoader.ImageListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+                if (response.getBitmap() != null) {
+                    // load image into imageview
+                    IMG_USERPROFILE.setImageBitmap(response.getBitmap());
+                }
+            }
+        });
 
         LAY_MOODRATING.setVisibility(View.GONE);
 
