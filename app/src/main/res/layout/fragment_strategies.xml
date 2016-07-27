@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backcolor"
     android:orientation="vertical"
     tools:context="percept.myplan.fragments.fragmentStrategies">
 
@@ -18,11 +19,6 @@
             android:background="@android:color/white"
             android:paddingLeft="10dp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/toobarbelow"></View>
-
         <TextView
             android:id="@+id/tvAddNewStrategy"
             android:layout_width="match_parent"
@@ -30,7 +26,7 @@
             android:layout_marginLeft="50dp"
             android:drawableLeft="@drawable/ic_menu_slideshow"
             android:drawablePadding="10dp"
-            android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:drawableRight="@drawable/right_arrow"
             android:gravity="center_vertical"
             android:padding="5dp"
             android:text="@string/addnewstrategy"

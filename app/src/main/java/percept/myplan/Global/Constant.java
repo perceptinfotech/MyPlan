@@ -16,6 +16,13 @@ public class Constant {
     public static String PROFILE_NAME = "";
 
     public final static String PREF_EMAIL = "EMAIL";
+    public final static String PREF_LOGGEDIN = "LOGGEDIN";
+    public final static String PREF_SID = "sid";
+    public final static String PREF_SNAME = "sname";
+    public final static String PREF_PROFILE_IMG_LINK = "profileImg";
+    public final static String PREF_PROFILE_USER_NAME = "profileUSerName";
+    public final static String PREF_PROFILE_EMAIL = "profileEmail";
+    public final static String PREF_PROFILE_NAME = "profileName";
 
     //Login Page
     public final static String USER_NAME = "username";

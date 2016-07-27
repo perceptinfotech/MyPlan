@@ -12,6 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import percept.myplan.Activities.AddContactActivity;
+import percept.myplan.Activities.StrategyDetailsOwnActivity;
 import percept.myplan.Activities.SymptomDetailsActivity;
 import percept.myplan.POJO.Strategy;
 import percept.myplan.POJO.Symptom;
@@ -63,7 +68,7 @@ public class fragmentStrategies extends Fragment {
 
         LST_STRATEGY = (RecyclerView) _View.findViewById(R.id.lstStrategy);
         BTN_INSPIRATION = (Button) _View.findViewById(R.id.btnInspiration);
-
+        setHasOptionsMenu(true);
         LIST_STRATEGY = new ArrayList<>();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
@@ -104,7 +109,7 @@ public class fragmentStrategies extends Fragment {
             @Override
             public void onClick(View view, int position) {
                 LIST_STRATEGY.get(position);
-                Intent _intent = new Intent(getActivity(), SymptomDetailsActivity.class);
+                Intent _intent = new Intent(getActivity(), StrategyDetailsOwnActivity.class);
                 _intent.putExtra("STRATEGY_ID", LIST_STRATEGY.get(position).getId());
                 startActivity(_intent);
             }
@@ -114,7 +119,48 @@ public class fragmentStrategies extends Fragment {
 
             }
         }));
+
+        BTN_INSPIRATION.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("sid", Constant.SID);
+                params.put("sname", Constant.SNAME);
+                try {
+                    new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_INSPIRATIONS, params, false, false, new VolleyResponseListener() {
+                        @Override
+                        public void onError(VolleyError message) {
+                            Log.d("::::::::::: ", ":::");
+                        }
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("::::::::::: ", response.toString());
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         return _View;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.strategy, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_addStrategy) {
+//            Intent _intent = new Intent(getActivity().getApplicationContext(), AddContactActivity.class);
+//            startActivity(_intent);
+
+            return true;
+        }
+        return false;
     }
 
     public interface ClickListener {

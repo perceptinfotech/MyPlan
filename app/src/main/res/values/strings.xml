@@ -118,5 +118,10 @@
     <string name="title_activity_strategy_details_other">StrategyDetailsOtherActivity</string>
     <string name="addnewstrategy">Add new strategy</string>
     <string name="inspiration">Inspiration</string>
+    <string name="action_add">Add</string>
+    <string name="alarms">Alarms</string>
+    <string name="morning">Morning</string>
+    <string name="network">Network</string>
+    <string name="images">Images</string>
 
 </resources>

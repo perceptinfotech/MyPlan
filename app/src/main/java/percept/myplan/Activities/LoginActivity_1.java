@@ -41,6 +41,7 @@ public class LoginActivity_1 extends AppCompatActivity {
         if (!UTILS.getPreference(Constant.PREF_EMAIL).equals("")) {
             EDT_EMAIL.setText(UTILS.getPreference(Constant.PREF_EMAIL));
         }
+
         final PinEntryEditText pinEntry = (PinEntryEditText) findViewById(R.id.txt_pin_entry);
         if (pinEntry != null) {
             pinEntry.setOnPinEnteredListener(new PinEntryEditText.OnPinEnteredListener() {
@@ -78,6 +79,13 @@ public class LoginActivity_1 extends AppCompatActivity {
                                             UTILS.setPreference(Constant.PREF_EMAIL, EDT_EMAIL.getText().toString().trim());
                                             startActivity(new Intent(LoginActivity_1.this, HomeActivity.class));
                                             LoginActivity_1.this.finish();
+                                            UTILS.setPreference(Constant.PREF_LOGGEDIN, "true");
+                                            UTILS.setPreference(Constant.PREF_SID, Constant.SID);
+                                            UTILS.setPreference(Constant.PREF_SNAME, Constant.SNAME);
+                                            UTILS.setPreference(Constant.PREF_PROFILE_IMG_LINK, Constant.PROFILE_IMG_LINK);
+                                            UTILS.setPreference(Constant.PREF_PROFILE_USER_NAME, Constant.PROFILE_USER_NAME);
+                                            UTILS.setPreference(Constant.PREF_PROFILE_EMAIL, Constant.PROFILE_EMAIL);
+                                            UTILS.setPreference(Constant.PREF_PROFILE_NAME, Constant.PROFILE_NAME);
                                         } else {
                                             Toast.makeText(LoginActivity_1.this, "Login Error", Toast.LENGTH_SHORT).show();
                                         }

@@ -76,45 +76,45 @@ public class NavigationDrawerAdapter extends BaseAdapter {
                 break;
             case 1:
                 //Strategies
-                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_symptom);
+                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_strategies);
                 break;
             case 2:
                 //Contacts
-                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_symptom);
+                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_contact);
                 break;
             case 3:
                 //HopeBox
-                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_symptom);
+                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_hopebox);
                 break;
             case 4:
                 //Mood Ratings
-                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_symptom);
+                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_moodrating);
                 break;
             case 5:
                 //Blank Row
                 break;
             case 6:
                 //Nearest Emergency Room
-                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_symptom);
+                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_emergency);
                 break;
             case 7:
                 //Quick Message
-                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_symptom);
+                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_quickmsg);
                 break;
             case 8:
                 //Share My Location
-                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_symptom);
+                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_shareloc);
                 break;
             case 9:
                 //Blank Row
                 break;
             case 10:
                 //Setting
-                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_symptom);
+                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_settings);
                 break;
             case 11:
                 //Logout
-                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_symptom);
+                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_logout);
                 break;
 
         }

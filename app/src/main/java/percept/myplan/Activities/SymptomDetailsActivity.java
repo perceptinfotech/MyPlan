@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -59,6 +60,10 @@ public class SymptomDetailsActivity extends AppCompatActivity {
         LST_SYMPTOMSTRATEGY.setItemAnimator(new DefaultItemAnimator());
 
         GetSymptomDetail();
+        // For opening strategy details of other
+//        Intent _intent = new Intent(getActivity(), StrategyDetailsOtherActivity.class);
+//        _intent.putExtra("STRATEGY_ID", LIST_STRATEGY.get(position).getId());
+//        startActivity(_intent);
     }
 
     @Override

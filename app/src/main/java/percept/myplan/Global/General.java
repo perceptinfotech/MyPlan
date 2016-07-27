@@ -36,9 +36,9 @@ public class General {
         } else if (serviceName == PHPServices.GET_STRATEGIES) {
             return ".getStrategies";
         } else if (serviceName == PHPServices.GET_INSPIRATIONS) {
-            return "";
+            return ".getInspirations";
         } else if (serviceName == PHPServices.GET_INSPIRATION) {
-            return "";
+            return ".getInspiration";
         } else if (serviceName == PHPServices.GET_CONTACTS) {
             return "";
         } else if (serviceName == PHPServices.GET_CONTACT) {

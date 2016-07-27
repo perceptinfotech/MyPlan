@@ -13,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import percept.myplan.Global.Constant;
+import percept.myplan.Global.Utils;
 import percept.myplan.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -20,12 +22,24 @@ public class LoginActivity extends AppCompatActivity {
     private Button BTN_LOGIN, BTN_SIGNUP, BTN_INFO, BTN_SHOWINFOINSIDE;
     private TextView TV_FORGOTPWD;
     private RelativeLayout LAY_INFO, REL_MAIN;
+    private Utils UTILS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        UTILS = new Utils(LoginActivity.this);
+        if (UTILS.getPreference(Constant.PREF_LOGGEDIN).equals("true")) {
+            Constant.SID = UTILS.getPreference(Constant.PREF_SID);
+            Constant.SNAME = UTILS.getPreference(Constant.PREF_SNAME);
+            Constant.PROFILE_IMG_LINK = UTILS.getPreference(Constant.PREF_PROFILE_IMG_LINK);
+            Constant.PROFILE_EMAIL = UTILS.getPreference(Constant.PREF_PROFILE_EMAIL);
+            Constant.PROFILE_USER_NAME = UTILS.getPreference(Constant.PREF_PROFILE_USER_NAME);
+            Constant.PROFILE_NAME = UTILS.getPreference(Constant.PREF_PROFILE_NAME);
 
+            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+            LoginActivity.this.finish();
+        }
 
         LAY_INFO = (RelativeLayout) findViewById(R.id.layInfo);
         REL_MAIN = (RelativeLayout) findViewById(R.id.relMainLogin);
@@ -111,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
         TV_FORGOTPWD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(LoginActivity.this,ForgetPwdActivity.class));
+                startActivity(new Intent(LoginActivity.this, ForgetPwdActivity.class));
                 LoginActivity.this.finish();
             }
         });
