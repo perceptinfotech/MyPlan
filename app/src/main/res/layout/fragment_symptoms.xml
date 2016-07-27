@@ -30,7 +30,7 @@
             android:layout_marginLeft="50dp"
             android:drawableLeft="@drawable/ic_menu_slideshow"
             android:drawablePadding="10dp"
-            android:drawableRight="@drawable/right_arrow"
+            android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:gravity="center_vertical"
             android:padding="5dp"
             android:text="@string/addnewsymptom"
