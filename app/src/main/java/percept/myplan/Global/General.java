@@ -18,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import percept.myplan.AppController;
+import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
 
 /**
@@ -51,6 +52,10 @@ public class General {
             return "";
         } else if (serviceName == PHPServices.GET_MOODCALENDER) {
             return "";
+        } else if (serviceName == PHPServices.GET_HOPEBOXES) {
+            return ".getHopeboxes";
+        } else if (serviceName == PHPServices.GET_HOPEBOX) {
+            return ".getHopeboxe";
         }
         return "";
     }
@@ -145,6 +150,8 @@ public class General {
         GET_CONTACT,
         GET_SIDASTEST,
         GET_SIDASCALENDER,
-        GET_MOODCALENDER
+        GET_MOODCALENDER,
+        GET_HOPEBOXES,
+        GET_HOPEBOX
     }
 }

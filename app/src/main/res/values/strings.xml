@@ -123,5 +123,8 @@
     <string name="morning">Morning</string>
     <string name="network">Network</string>
     <string name="images">Images</string>
+    <string name="addastrategy">Add a strategy</string>
+    <string name="internetconn">Please check internet connection</string>
+    <string name="writevalidemail">Please write valid email address</string>
 
 </resources>

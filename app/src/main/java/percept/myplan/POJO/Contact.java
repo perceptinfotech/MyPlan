@@ -8,9 +8,17 @@ public class Contact {
 
     private String ContactName;
     private String PhoneNo;
+    private String ContactID;
     private boolean isSelected;
 
-    public Contact(String contactName,String contactNo, boolean isSelected) {
+    public Contact(String contactName, String phoneNo, String contactID, boolean isSelected) {
+        ContactName = contactName;
+        PhoneNo = phoneNo;
+        ContactID = contactID;
+        this.isSelected = isSelected;
+    }
+
+    public Contact(String contactName, String contactNo, boolean isSelected) {
         this.ContactName = contactName;
         this.isSelected = isSelected;
         this.PhoneNo=contactNo;
@@ -38,5 +46,13 @@ public class Contact {
 
     public void setPhoneNo(String phoneNo) {
         PhoneNo = phoneNo;
+    }
+
+    public String getContactID() {
+        return ContactID;
+    }
+
+    public void setContactID(String contactID) {
+        ContactID = contactID;
     }
 }

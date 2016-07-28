@@ -1,6 +1,5 @@
 package percept.myplan.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -28,7 +27,7 @@ import java.util.Map;
 import percept.myplan.POJO.SymptomStrategy;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
-import percept.myplan.Global.VolleyResponseListener;
+import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
 import percept.myplan.adapters.SymptomStrategyAdapter;
 

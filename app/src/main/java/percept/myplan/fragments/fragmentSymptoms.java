@@ -18,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
@@ -35,7 +36,7 @@ import percept.myplan.Activities.SymptomDetailsActivity;
 import percept.myplan.POJO.Symptom;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
-import percept.myplan.Global.VolleyResponseListener;
+import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
 import percept.myplan.adapters.SymptomAdapter;
 
@@ -50,6 +51,7 @@ public class fragmentSymptoms extends Fragment {
     private List<Symptom> LIST_SYMPTOM;
     private SymptomAdapter ADAPTER;
     private Button BTN_DANGERSIGNAL;
+    private TextView TV_ADDNEW_SYMPTOM;
 
     public fragmentSymptoms() {
         // Required empty public constructor
@@ -74,9 +76,16 @@ public class fragmentSymptoms extends Fragment {
         LST_SYMPTOM.setLayoutManager(mLayoutManager);
         LST_SYMPTOM.setItemAnimator(new DefaultItemAnimator());
 
+        TV_ADDNEW_SYMPTOM = (TextView) _View.findViewById(R.id.tvAddNewSymptom);
+        TV_ADDNEW_SYMPTOM.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                
+            }
+        });
 
         try {
-            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_SYMPTOMS, params, false, false,false, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_SYMPTOMS, params, false, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
 

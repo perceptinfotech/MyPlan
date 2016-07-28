@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -19,11 +20,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import percept.myplan.Activities.AddHopeBoxActivity;
-import percept.myplan.Activities.CreateQuickMsgActivity;
+import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
+import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.Hope;
 import percept.myplan.R;
 import percept.myplan.adapters.HopeAdapter;
@@ -61,13 +70,14 @@ public class fragmentHopeBox extends Fragment {
         LST_HOPE.setAdapter(ADAPTER);
         prepareAlbums();
 
-        LST_HOPE.addOnItemTouchListener(new CreateQuickMsgActivity.RecyclerTouchListener(getActivity(), LST_HOPE, new CreateQuickMsgActivity.ClickListener() {
+        LST_HOPE.addOnItemTouchListener(new fragmentHopeBox.RecyclerTouchListener(getActivity(), LST_HOPE, new fragmentHopeBox.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 LIST_HOPE.get(position);
-                Toast.makeText(getActivity(), LIST_HOPE.get(position).getTITLE(), Toast.LENGTH_SHORT).show();
-
-                startActivity(new Intent(getActivity(), AddHopeBoxActivity.class));
+                if (position == LIST_HOPE.size() - 1) {
+                    Toast.makeText(getActivity(), LIST_HOPE.get(position).getTITLE(), Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(getActivity(), AddHopeBoxActivity.class));
+                }
             }
 
             @Override
@@ -75,6 +85,26 @@ public class fragmentHopeBox extends Fragment {
 
             }
         }));
+
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        try {
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_HOPEBOXES, params, false, false, false, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    Log.d(":::::::::::::::: ", message.toString());
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d(":::::::::::::::: ", response.toString());
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return _View;
     }
 
@@ -151,9 +181,9 @@ public class fragmentHopeBox extends Fragment {
     public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
         private GestureDetector gestureDetector;
-        private CreateQuickMsgActivity.ClickListener clickListener;
+        private fragmentHopeBox.ClickListener clickListener;
 
-        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final CreateQuickMsgActivity.ClickListener clickListener) {
+        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final fragmentHopeBox.ClickListener clickListener) {
             this.clickListener = clickListener;
             gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
                 @Override

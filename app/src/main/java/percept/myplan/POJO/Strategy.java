@@ -16,8 +16,9 @@ public class Strategy {
     private String state;
     private String ordering;
     private String image;
+    private boolean isSelected;
 
-    public Strategy(String created_by, String music, String id, String title, String contact_id, String description, String link, String state, String ordering, String image) {
+    public Strategy(String created_by, String music, String id, String title, String contact_id, String description, String link, String state, String ordering, String image, boolean isSelected) {
         this.created_by = created_by;
         this.music = music;
         this.id = id;
@@ -28,6 +29,7 @@ public class Strategy {
         this.state = state;
         this.ordering = ordering;
         this.image = image;
+        this.isSelected = isSelected;
     }
 
     public String getImage() {
@@ -111,4 +113,11 @@ public class Strategy {
     }
 
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
 }

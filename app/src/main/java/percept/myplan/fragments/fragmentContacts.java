@@ -1,20 +1,24 @@
 package percept.myplan.fragments;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
@@ -30,7 +34,7 @@ import percept.myplan.Activities.EmergencyContactActivity;
 import percept.myplan.Activities.HelpListActivity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
-import percept.myplan.Global.VolleyResponseListener;
+import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.Contact;
 import percept.myplan.R;
 import percept.myplan.adapters.ContactHelpListAdapter;
@@ -60,7 +64,6 @@ public class fragmentContacts extends Fragment {
         View _View = inflater.inflate(R.layout.fragment_contacts, container, false);
 
 
-
         TV_EMERGENCYNO = (TextView) _View.findViewById(R.id.tvEmergencyNo);
         TV_EDIT_EMERGENCYNO = (TextView) _View.findViewById(R.id.tvEditEmergencyContact);
         TV_EDIT_HELPLIST = (TextView) _View.findViewById(R.id.tvEditHelpList);
@@ -73,7 +76,7 @@ public class fragmentContacts extends Fragment {
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         try {
-            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, false, false,false, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, false, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
 
@@ -81,7 +84,7 @@ public class fragmentContacts extends Fragment {
 
                 @Override
                 public void onResponse(JSONObject response) {
-
+                    Log.d(":::::::::::::: ", response.toString());
                 }
             });
         } catch (Exception e) {
@@ -134,6 +137,30 @@ public class fragmentContacts extends Fragment {
                 startActivity(_intent);
             }
         });
+
+        LST_HELP.addOnItemTouchListener(new fragmentContacts.RecyclerTouchListener(getActivity(), LST_HELP, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Toast.makeText(getActivity(), LIST_HELPCONTACT.get(position).getContactName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+
+        LST_CONTACTS.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), LST_CONTACTS, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Toast.makeText(getActivity(), LIST_HELPCONTACT.get(position).getContactName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
         return _View;
     }
 
@@ -152,6 +179,55 @@ public class fragmentContacts extends Fragment {
             return true;
         }
         return false;
+    }
+
+    public interface ClickListener {
+        void onClick(View view, int position);
+
+        void onLongClick(View view, int position);
+    }
+
+    public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+
+        private GestureDetector gestureDetector;
+        private fragmentContacts.ClickListener clickListener;
+
+        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final fragmentContacts.ClickListener clickListener) {
+            this.clickListener = clickListener;
+            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                    if (child != null && clickListener != null) {
+                        clickListener.onLongClick(child, recyclerView.getChildPosition(child));
+                    }
+                }
+            });
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            View child = rv.findChildViewUnder(e.getX(), e.getY());
+            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
+                clickListener.onClick(child, rv.getChildPosition(child));
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+        }
     }
 
 

@@ -283,6 +283,7 @@
                 android:layout_weight="0.7"
                 android:background="@drawable/edt_register_border"
                 android:ems="4"
+                android:maxLength="4"
                 android:hint="@string/choose_pwd"
                 android:inputType="numberPassword"
                 android:padding="5dp"

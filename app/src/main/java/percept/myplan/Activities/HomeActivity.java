@@ -1,6 +1,7 @@
 package percept.myplan.Activities;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.Utils;
 import percept.myplan.R;
 import percept.myplan.adapters.NavigationDrawerAdapter;
 import percept.myplan.fragments.fragmentContacts;
@@ -38,16 +40,18 @@ import percept.myplan.fragments.fragmentShareMyLocation;
 import percept.myplan.fragments.fragmentStrategies;
 import percept.myplan.fragments.fragmentSymptoms;
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends AppCompatActivity {
     // implements NavigationView.OnNavigationItemSelectedListener {
     private Toolbar toolbar;
     private NavigationDrawerAdapter ADAPTER;
     private ListView LST_MENUITEMS;
+    private Utils UTILS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        UTILS = new Utils(HomeActivity.this);
         if (getIntent().hasExtra("FROM")) {
             String FROM = getIntent().getExtras().getString("FROM", "");
             if (FROM.equals("NOTIFICATION")) {
@@ -71,7 +75,8 @@ public class HomeActivity extends BaseActivity {
 
         ADAPTER = new NavigationDrawerAdapter(HomeActivity.this, LST_SIDEMENU);
         LST_MENUITEMS.setAdapter(ADAPTER);
-        toolbar = setToolBar();
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Home Page");
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -249,14 +254,23 @@ public class HomeActivity extends BaseActivity {
                 Constant.CURRENT_FRAGMENT = fragmentSettings.INDEX;
                 break;
             case 12:
-                tag = fragmentHome.class.getSimpleName();
-                fragment = getSupportFragmentManager().findFragmentByTag(tag);
-                if (fragment == null) {
-                    fragment = new fragmentHome();
-                }
+//                tag = fragmentHome.class.getSimpleName();
+//                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+//                if (fragment == null) {
+//                    fragment = new fragmentHome();
+//                }
                 // Logout
-                mTitle.setText(getResources().getString(R.string.myplan));
+//                mTitle.setText(getResources().getString(R.string.myplan));
                 Constant.CURRENT_FRAGMENT = 0;
+                UTILS.setPreference(Constant.PREF_LOGGEDIN, "false");
+                UTILS.setPreference(Constant.PREF_SID, "");
+                UTILS.setPreference(Constant.PREF_SNAME, "");
+                UTILS.setPreference(Constant.PREF_PROFILE_IMG_LINK, "");
+                UTILS.setPreference(Constant.PREF_PROFILE_USER_NAME, "");
+                UTILS.setPreference(Constant.PREF_PROFILE_EMAIL, "");
+                UTILS.setPreference(Constant.PREF_PROFILE_NAME, "");
+                startActivity(new Intent(HomeActivity.this, LoginActivity_1.class));
+                HomeActivity.this.finish();
                 break;
             default:
                 tag = fragmentHome.class.getSimpleName();

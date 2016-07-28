@@ -2,6 +2,7 @@ package percept.myplan.Activities;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -10,6 +11,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import percept.myplan.POJO.Contact;
 import percept.myplan.R;
@@ -68,6 +71,8 @@ public class AddContactFromPhoneActivity extends AppCompatActivity {
         LST_CONTACT.setAdapter(ADAPTER);
 
         readContacts();
+
+        getContactIDFromNumber(LIST_CONTACTS.get(2).getContactID());
     }
 
     @Override
@@ -88,6 +93,28 @@ public class AddContactFromPhoneActivity extends AppCompatActivity {
         return false;
     }
 
+    public ArrayList<String> getContactIDFromNumber(String _id) {
+        ContentResolver cr = getContentResolver();
+//        String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
+//                ContactsContract.CommonDataKinds.Phone._ID};
+//        Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
+
+        ArrayList<String> phones = new ArrayList<String>();
+
+        Cursor cursor = cr.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                null,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                new String[]{_id}, null);
+
+        while (cursor.moveToNext()) {
+            phones.add(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
+        }
+
+        cursor.close();
+        return (phones);
+    }
+
     private void readContacts() {
 
         new AsyncTask<Void, Void, Void>() {
@@ -102,7 +129,8 @@ public class AddContactFromPhoneActivity extends AppCompatActivity {
             protected Void doInBackground(Void... voids) {
                 ContentResolver cr = getContentResolver();
 
-                String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.PHOTO_URI};
+                String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID};
                 Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
                 if (cur.moveToFirst()) {
                     do {
@@ -110,7 +138,11 @@ public class AddContactFromPhoneActivity extends AppCompatActivity {
                                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                         String phoneNo = cur.getString(cur.getColumnIndex(
                                 ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        LIST_CONTACTS.add(new Contact(name, phoneNo, false));
+                        String _contactID = cur.getString(cur.getColumnIndex(
+                                ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
+
+                        Log.d(":::::::::::: ", _contactID);
+                        LIST_CONTACTS.add(new Contact(name, phoneNo, _contactID, false));
                     } while (cur.moveToNext());
                 }
                 return null;

@@ -9,24 +9,7 @@
     android:orientation="vertical"
     tools:context="percept.myplan.Activities.ProfileActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/toolbarback"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/toobarbelow" />
-
-    </android.support.design.widget.AppBarLayout>
+    <include layout="@layout/app_toolbar"></include>
 
     <Switch
         android:id="@+id/switchLocationSharing"

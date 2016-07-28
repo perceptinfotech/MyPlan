@@ -38,6 +38,7 @@ import java.util.Calendar;
 
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.Utils;
 import percept.myplan.R;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -46,7 +47,8 @@ public class SignUpActivity extends AppCompatActivity {
     private Button BTN_ENTER;
     private int SDAY = 0, SMONTH = 0, SYEAR = 0;
     private TextView TV_CAPTUREIMG;
-    private String FILE_PATH;
+    private String FILE_PATH = "";
+    private Utils UTILS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +63,7 @@ public class SignUpActivity extends AppCompatActivity {
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.myplan));
 
-
+        UTILS = new Utils(SignUpActivity.this);
         TV_CAPTUREIMG = (TextView) findViewById(R.id.tvCaptureImg);
         IMG_USER = (ImageView) findViewById(R.id.imgUserImage);
         EDT_FIRSTNAME = (EditText) findViewById(R.id.edtFirstName);
@@ -100,7 +102,17 @@ public class SignUpActivity extends AppCompatActivity {
 //                startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
 //                SignUpActivity.this.finish();
 
-                new UploadFileToServer().execute();
+
+                if (UTILS.isNetConnected()) {
+                    if(UTILS.isEmailValid(EDT_EMAIL.getText().toString())){
+                        new UploadFileToServer().execute();
+                    }else{
+                        Toast.makeText(SignUpActivity.this, getResources().getString(R.string.writevalidemail), Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                else
+                    Toast.makeText(SignUpActivity.this, getResources().getString(R.string.internetconn), Toast.LENGTH_SHORT).show();
 //                Map<String, String> params = new HashMap<String, String>();
 //                params.put(Constant.FIRST_NAME, EDT_FIRSTNAME.getText().toString().trim());
 //                params.put(Constant.LAST_NAME, EDT_LASTNAME.getText().toString().trim());
@@ -163,11 +175,12 @@ public class SignUpActivity extends AppCompatActivity {
                             }
                         });
 
-                File sourceFile = new File(FILE_PATH);
+                if (!FILE_PATH.equals("")) {
+                    File sourceFile = new File(FILE_PATH);
 
-                // Adding file data to http body
-                entity.addPart("profile_image", new FileBody(sourceFile));
-
+                    // Adding file data to http body
+                    entity.addPart("profile_image", new FileBody(sourceFile));
+                }
                 // Extra parameters if you want to pass to server
                 try {
                     entity.addPart(Constant.FIRST_NAME, new StringBody(EDT_FIRSTNAME.getText().toString().trim()));
