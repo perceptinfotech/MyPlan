@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import me.crosswall.photo.pick.PickConfig;
@@ -25,6 +26,9 @@ public class AddHopeBoxActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        mTitle.setText(getResources().getString(R.string.title_activity_addhopebox));
 
         BTN_ADDFOLDERIMG = (Button) findViewById(R.id.btnAddFolderImage);
 

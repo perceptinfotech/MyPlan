@@ -57,6 +57,10 @@ public class SignUpActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        mTitle.setText(getResources().getString(R.string.myplan));
+
 
         TV_CAPTUREIMG = (TextView) findViewById(R.id.tvCaptureImg);
         IMG_USER = (ImageView) findViewById(R.id.imgUserImage);

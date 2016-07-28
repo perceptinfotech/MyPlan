@@ -38,7 +38,9 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        mTitle.setText(getResources().getString(R.string.title_activity_create_quick_msg));
 
         TV_EDIT_HELPLIST = (TextView) findViewById(R.id.tvEditHelpList);
         TV_EDIT_HELPLIST.setVisibility(View.INVISIBLE);

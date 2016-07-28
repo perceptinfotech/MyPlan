@@ -11,12 +11,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -71,7 +73,7 @@ public class HomeActivity extends BaseActivity {
         LST_MENUITEMS.setAdapter(ADAPTER);
         toolbar = setToolBar();
         getSupportActionBar().setTitle("Home Page");
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -103,7 +105,7 @@ public class HomeActivity extends BaseActivity {
             }
 
             this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please click back again to exit", Toast.LENGTH_SHORT).show();
 
             new Handler().postDelayed(new Runnable() {
 
@@ -150,6 +152,7 @@ public class HomeActivity extends BaseActivity {
         Fragment fragment = null;
         FragmentManager fragmentManager = getSupportFragmentManager();
         String tag = "";
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         switch (position) {
             case fragmentHome.INDEX:
                 tag = fragmentHome.class.getSimpleName();
@@ -157,6 +160,7 @@ public class HomeActivity extends BaseActivity {
                 if (fragment == null) {
                     fragment = new fragmentHome();
                 }
+                mTitle.setText(getResources().getString(R.string.myplan));
                 Constant.CURRENT_FRAGMENT = fragmentHome.INDEX;
 
                 break;
@@ -166,7 +170,7 @@ public class HomeActivity extends BaseActivity {
                 if (fragment == null) {
                     fragment = new fragmentSymptoms();
                 }
-
+                mTitle.setText(getResources().getString(R.string.symptops));
                 Constant.CURRENT_FRAGMENT = fragmentSymptoms.INDEX;
 
                 break;
@@ -176,6 +180,7 @@ public class HomeActivity extends BaseActivity {
                 if (fragment == null) {
                     fragment = new fragmentStrategies();
                 }
+                mTitle.setText(getResources().getString(R.string.strategies));
                 Constant.CURRENT_FRAGMENT = fragmentStrategies.INDEX;
 
                 break;
@@ -185,8 +190,7 @@ public class HomeActivity extends BaseActivity {
                 if (fragment == null) {
                     fragment = new fragmentContacts();
                 }
-
-
+                mTitle.setText(getResources().getString(R.string.contacts));
                 Constant.CURRENT_FRAGMENT = fragmentContacts.INDEX;
                 break;
             case fragmentHopeBox.INDEX:
@@ -195,6 +199,7 @@ public class HomeActivity extends BaseActivity {
                 if (fragment == null) {
                     fragment = new fragmentHopeBox();
                 }
+                mTitle.setText(getResources().getString(R.string.hopebox));
                 Constant.CURRENT_FRAGMENT = fragmentHopeBox.INDEX;
 
                 break;
@@ -204,6 +209,7 @@ public class HomeActivity extends BaseActivity {
                 if (fragment == null) {
                     fragment = new fragmentMoodRatings();
                 }
+                mTitle.setText(getResources().getString(R.string.moodratings));
                 Constant.CURRENT_FRAGMENT = fragmentMoodRatings.INDEX;
                 break;
             case fragmentNearestEmergencyRoom.INDEX:
@@ -212,6 +218,7 @@ public class HomeActivity extends BaseActivity {
                 if (fragment == null) {
                     fragment = new fragmentNearestEmergencyRoom();
                 }
+                mTitle.setText(getResources().getString(R.string.nearestemerroom));
                 Constant.CURRENT_FRAGMENT = fragmentNearestEmergencyRoom.INDEX;
                 break;
             case fragmentQuickMessage.INDEX:
@@ -220,6 +227,7 @@ public class HomeActivity extends BaseActivity {
                 if (fragment == null) {
                     fragment = new fragmentQuickMessage();
                 }
+                mTitle.setText(getResources().getString(R.string.quickmsg));
                 Constant.CURRENT_FRAGMENT = fragmentQuickMessage.INDEX;
                 break;
             case fragmentShareMyLocation.INDEX:
@@ -228,6 +236,7 @@ public class HomeActivity extends BaseActivity {
                 if (fragment == null) {
                     fragment = new fragmentShareMyLocation();
                 }
+                mTitle.setText(getResources().getString(R.string.shareloc));
                 Constant.CURRENT_FRAGMENT = fragmentShareMyLocation.INDEX;
                 break;
             case fragmentSettings.INDEX:
@@ -236,6 +245,7 @@ public class HomeActivity extends BaseActivity {
                 if (fragment == null) {
                     fragment = new fragmentSettings();
                 }
+                mTitle.setText(getResources().getString(R.string.settings));
                 Constant.CURRENT_FRAGMENT = fragmentSettings.INDEX;
                 break;
             case 12:
@@ -245,6 +255,7 @@ public class HomeActivity extends BaseActivity {
                     fragment = new fragmentHome();
                 }
                 // Logout
+                mTitle.setText(getResources().getString(R.string.myplan));
                 Constant.CURRENT_FRAGMENT = 0;
                 break;
             default:

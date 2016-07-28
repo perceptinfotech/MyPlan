@@ -49,6 +49,9 @@ public class SymptomDetailsActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        mTitle.setText(getResources().getString(R.string.title_activity_symptoms));
 
         SYMPTOM_ID = getIntent().getExtras().getString("SYMPTOM_ID");
         TV_TITLE = (TextView) findViewById(R.id.tvTitle);
@@ -89,7 +92,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
         params.put("sname", Constant.SNAME);
         params.put("id", SYMPTOM_ID);
         try {
-            new General().getJSONContentFromInternetService(SymptomDetailsActivity.this, General.PHPServices.GET_SYMPTOM, params, false, false, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(SymptomDetailsActivity.this, General.PHPServices.GET_SYMPTOM, params, false, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
 

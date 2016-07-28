@@ -76,7 +76,7 @@ public class fragmentSymptoms extends Fragment {
 
 
         try {
-            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_SYMPTOMS, params, false, false, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_SYMPTOMS, params, false, false,false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
 

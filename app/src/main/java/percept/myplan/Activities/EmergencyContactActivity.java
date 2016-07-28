@@ -26,7 +26,9 @@ public class EmergencyContactActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        mTitle.setText(getResources().getString(R.string.title_activity_emergency_contact));
 
         TV_ADDEMERGENCYCONTACT = (TextView) findViewById(R.id.tvAddNewContactEmergency);
         TV_ADDEMERGENCYCONTACT.setOnClickListener(new View.OnClickListener() {

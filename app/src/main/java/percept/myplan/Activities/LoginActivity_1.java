@@ -56,7 +56,7 @@ public class LoginActivity_1 extends AppCompatActivity {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put(Constant.USER_NAME, EDT_EMAIL.getText().toString().trim());
                         params.put(Constant.PASSWORD, str.toString().trim());
-                        new General().getJSONContentFromInternetService(LoginActivity_1.this, General.PHPServices.LOGIN, params, false, false, new VolleyResponseListener() {
+                        new General().getJSONContentFromInternetService(LoginActivity_1.this, General.PHPServices.LOGIN, params, false, false,false, new VolleyResponseListener() {
 
                             @Override
                             public void onError(VolleyError message) {

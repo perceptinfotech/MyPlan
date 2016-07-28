@@ -16,12 +16,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import percept.myplan.Activities.AddContactActivity;
 import percept.myplan.Activities.EmergencyContactActivity;
 import percept.myplan.Activities.HelpListActivity;
+import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
+import percept.myplan.Global.VolleyResponseListener;
 import percept.myplan.POJO.Contact;
 import percept.myplan.R;
 import percept.myplan.adapters.ContactHelpListAdapter;
@@ -50,7 +59,7 @@ public class fragmentContacts extends Fragment {
         // Inflate the layout for this fragment
         View _View = inflater.inflate(R.layout.fragment_contacts, container, false);
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Contacts");
+
 
         TV_EMERGENCYNO = (TextView) _View.findViewById(R.id.tvEmergencyNo);
         TV_EDIT_EMERGENCYNO = (TextView) _View.findViewById(R.id.tvEditEmergencyContact);
@@ -59,6 +68,25 @@ public class fragmentContacts extends Fragment {
 
         LST_HELP = (RecyclerView) _View.findViewById(R.id.lstHelpList);
         LST_CONTACTS = (RecyclerView) _View.findViewById(R.id.lstContacts);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        try {
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, false, false,false, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         LIST_HELPCONTACT = new ArrayList<>();
         LIST_HELPCONTACT.add(new Contact("Children Phone", "1234567890", false));

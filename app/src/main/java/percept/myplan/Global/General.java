@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.android.volley.Cache;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -13,6 +14,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import percept.myplan.AppController;
@@ -40,9 +42,9 @@ public class General {
         } else if (serviceName == PHPServices.GET_INSPIRATION) {
             return ".getInspiration";
         } else if (serviceName == PHPServices.GET_CONTACTS) {
-            return "";
+            return ".getContacts";
         } else if (serviceName == PHPServices.GET_CONTACT) {
-            return "";
+            return ".getContact";
         } else if (serviceName == PHPServices.GET_SIDASTEST) {
             return "";
         } else if (serviceName == PHPServices.GET_SIDASCALENDER) {
@@ -54,7 +56,12 @@ public class General {
     }
 
 
-    public String getJSONContentFromInternetService(Context context, PHPServices servicesName, Map<String, String> params, Boolean checkInternetConnectivity, Boolean encryptedDataTransfer, final VolleyResponseListener volleyResponseListener) throws Exception {
+    public String getJSONContentFromInternetService(Context context, PHPServices servicesName,
+                                                    Map<String, String> params,
+                                                    Boolean checkInternetConnectivity,
+                                                    Boolean encryptedDataTransfer, Boolean forceNetwork,
+                                                    final VolleyResponseListener volleyResponseListener)
+            throws Exception {
 
 
         // CHeck internet connection
@@ -85,27 +92,30 @@ public class General {
 
         });
 
-
-//        Cache cache = AppController.getInstance().getRequestQueue().getCache();
-//        Cache.Entry entry = cache.get(_str);
-//        if (entry != null) {
-//            try {
-//                String data = new String(entry.data, "UTF-8");
-//                // handle data, like converting it to xml, json, bitmap etc.,
-//                JSONObject _obj = new JSONObject(data);
-//                Log.d("::: FROM ", "CACHE");
-//                volleyResponseListener.onResponse(_obj);
-//                AppController.getInstance().getRequestQueue().getCache().invalidate(_str, true);
-//            } catch (UnsupportedEncodingException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            // Cached response doesn't exists. Make network call here
-//            Log.d("::: CALLED JSON", "NETWORK");
-//            AppController.getInstance().addToRequestQueue(jsonObjReq, "tag_json_obj");
-//        }
+        if (forceNetwork) {
+            AppController.getInstance().addToRequestQueue(jsonObjReq, "tag_json_obj");
+        } else {
+            Cache cache = AppController.getInstance().getRequestQueue().getCache();
+            Cache.Entry entry = cache.get(_str);
+            if (entry != null) {
+                try {
+                    String data = new String(entry.data, "UTF-8");
+                    // handle data, like converting it to xml, json, bitmap etc.,
+                    JSONObject _obj = new JSONObject(data);
+                    Log.d("::: FROM ", "CACHE");
+                    volleyResponseListener.onResponse(_obj);
+                    AppController.getInstance().getRequestQueue().getCache().invalidate(_str, true);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                // Cached response doesn't exists. Make network call here
+                Log.d("::: CALLED JSON", "NETWORK");
+                AppController.getInstance().addToRequestQueue(jsonObjReq, "tag_json_obj");
+            }
+        }
 //        AppController.getInstance().getRequestQueue().getCache().invalidate(_str, true);
-        AppController.getInstance().addToRequestQueue(jsonObjReq, "tag_json_obj");
+
         return "";
     }
 

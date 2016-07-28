@@ -24,6 +24,9 @@ public class AddContactActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        mTitle.setText(getResources().getString(R.string.title_activity_add_contact));
 
         TV_NEWCONTACT = (TextView) findViewById(R.id.tvNewContact);
         TV_PHONELIST = (TextView) findViewById(R.id.tvPhoneList);
@@ -46,7 +49,7 @@ public class AddContactActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             AddContactActivity.this.finish();
             return true;
         }

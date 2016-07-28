@@ -35,6 +35,10 @@ public class HelpListActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        mTitle.setText(getResources().getString(R.string.title_activity_help_list));
+
         TV_ADDHELPLIST = (TextView) findViewById(R.id.tvAddHelpContact);
         LST_HELP = (RecyclerView) findViewById(R.id.lstHelpList);
 

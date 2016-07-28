@@ -80,7 +80,7 @@ public class fragmentStrategies extends Fragment {
 
 
         try {
-            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_STRATEGIES, params, false, false, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_STRATEGIES, params, false, false, false,new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
 
@@ -127,7 +127,7 @@ public class fragmentStrategies extends Fragment {
                 params.put("sid", Constant.SID);
                 params.put("sname", Constant.SNAME);
                 try {
-                    new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_INSPIRATIONS, params, false, false, new VolleyResponseListener() {
+                    new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_INSPIRATIONS, params, false, false,false, new VolleyResponseListener() {
                         @Override
                         public void onError(VolleyError message) {
                             Log.d("::::::::::: ", ":::");
