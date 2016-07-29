@@ -133,5 +133,7 @@
     <string name="action_save">Save</string>
     <string name="addstrategy">Add Strategy</string>
     <string name="fillupfield">Please fill up all field to sign up.</string>
+    <string name="addcontact">Add Contact</string>
+    <string name="search">Search</string>
 
 </resources>

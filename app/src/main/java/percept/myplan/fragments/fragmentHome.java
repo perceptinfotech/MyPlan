@@ -29,7 +29,6 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 

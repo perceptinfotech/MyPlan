@@ -4,15 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backcolor"
     android:fitsSystemWindows="true"
     tools:context="percept.myplan.Activities.AddContactFromPhoneActivity">
 
-    <include layout="@layout/app_toolbar"
-        android:id="@+id/include"></include>
+    <include
+        android:id="@+id/include"
+        layout="@layout/app_toolbar"></include>
 
-    <android.support.v7.widget.RecyclerView
+    <!--<android.support.v7.widget.RecyclerView
         android:id="@+id/lstContact"
-        android:layout_below="@+id/include"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/include" />-->
+
+    <RelativeLayout
+        android:id="@+id/laySearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/include"
+        android:layout_margin="10dp"
+        android:background="@android:drawable/editbox_background"
+        android:gravity="center">
+
+        <EditText
+            android:id="@+id/edtSearchContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:drawableLeft="@drawable/ic_menu_camera"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:hint="@string/search"
+            android:padding="7dp" />
+    </RelativeLayout>
+
+
+    <se.emilsjolander.stickylistheaders.StickyListHeadersListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/laySearch"
+        android:background="@android:color/white"
+        android:clipToPadding="false"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:drawSelectorOnTop="true"
+        android:fastScrollEnabled="true"
+        android:listSelector="@android:color/transparent"
+        android:overScrollMode="never"
+        android:scrollbarStyle="outsideOverlay" />
 </RelativeLayout>

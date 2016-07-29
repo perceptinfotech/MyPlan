@@ -34,7 +34,7 @@ public class AddContactActivity extends AppCompatActivity {
         TV_NEWCONTACT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                
             }
         });
 

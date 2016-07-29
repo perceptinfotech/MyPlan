@@ -11,9 +11,14 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,13 +29,20 @@ import java.util.Random;
 import percept.myplan.POJO.Contact;
 import percept.myplan.R;
 import percept.myplan.adapters.ContactAdapter;
+import percept.myplan.adapters.TestBaseAdapter;
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
-public class AddContactFromPhoneActivity extends AppCompatActivity {
-    private RecyclerView LST_CONTACT;
+public class AddContactFromPhoneActivity extends AppCompatActivity implements
+        StickyListHeadersListView.OnStickyHeaderOffsetChangedListener,
+        StickyListHeadersListView.OnStickyHeaderChangedListener {
+    //    private RecyclerView LST_CONTACT;
     private List<Contact> LIST_CONTACTS;
-    private ContactAdapter ADAPTER;
+    //    private ContactAdapter ADAPTER;
+    private TestBaseAdapter ADAPTER;
     private String FROM_PAGE = "";
     private boolean SINGLE_CHECK = false;
+    private StickyListHeadersListView stickyList;
+    private EditText EDT_SEARCHTEXT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +65,8 @@ public class AddContactFromPhoneActivity extends AppCompatActivity {
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.title_activity_add_contact_from_phone));
 
-        LST_CONTACT = (RecyclerView) findViewById(R.id.lstContact);
+        EDT_SEARCHTEXT = (EditText) findViewById(R.id.edtSearchContact);
+//        LST_CONTACT = (RecyclerView) findViewById(R.id.lstContact);
         LIST_CONTACTS = new ArrayList<>();
 //        LIST_CONTACTS.add(new Contact("dadsa", false));
 //        LIST_CONTACTS.add(new Contact("dsaz", false));
@@ -63,16 +76,36 @@ public class AddContactFromPhoneActivity extends AppCompatActivity {
 //        LIST_CONTACTS.add(new Contact("m,nm", true));
 //        LIST_CONTACTS.add(new Contact("eqw", false));
 //        LIST_CONTACTS.add(new Contact("op", true));
-        ADAPTER = new ContactAdapter(LIST_CONTACTS, SINGLE_CHECK);
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        LST_CONTACT.setLayoutManager(mLayoutManager);
-        LST_CONTACT.setItemAnimator(new DefaultItemAnimator());
-        LST_CONTACT.setAdapter(ADAPTER);
+
+        stickyList = (StickyListHeadersListView) findViewById(R.id.list);
+        stickyList.setOnStickyHeaderChangedListener(this);
+        stickyList.setOnStickyHeaderOffsetChangedListener(this);
+        stickyList.setDrawingListUnderStickyHeader(true);
+        stickyList.setAreHeadersSticky(true);
+
+//        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+//        LST_CONTACT.setLayoutManager(mLayoutManager);
+//        LST_CONTACT.setItemAnimator(new DefaultItemAnimator());
+//        LST_CONTACT.setAdapter(ADAPTER);
 
         readContacts();
+        EDT_SEARCHTEXT.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int i, int i2, int i3) {
 
-        getContactIDFromNumber(LIST_CONTACTS.get(2).getContactID());
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int i, int i2, int i3) {
+                ADAPTER.getFilter().filter(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+//        getContactIDFromNumber(LIST_CONTACTS.get(2).getContactID());
     }
 
     @Override
@@ -88,9 +121,36 @@ public class AddContactFromPhoneActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == R.id.action_InsertContact) {
             Toast.makeText(AddContactFromPhoneActivity.this, "Add Contact Pressed", Toast.LENGTH_SHORT).show();
+            for (int i = 0; i < LIST_CONTACTS.size(); i++) {
+                if (LIST_CONTACTS.get(i).isSelected()) {
+                    getContactInfoFromID(LIST_CONTACTS.get(i).getContactID());
+                }
+            }
             return true;
         }
         return false;
+    }
+
+    private void getContactInfoFromID(String contactID) {
+        ContentResolver cr = getContentResolver();
+        String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
+                ContactsContract.CommonDataKinds.Phone._ID};
+//        Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
+
+        ArrayList<String> phones = new ArrayList<String>();
+
+        Cursor cursor = cr.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                projection,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                new String[]{contactID}, null);
+
+        while (cursor.moveToNext()) {
+            phones.add(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
+        }
+
+        cursor.close();
+        Log.d("::::::::: ", String.valueOf(phones.size()));
     }
 
     public ArrayList<String> getContactIDFromNumber(String _id) {
@@ -130,7 +190,9 @@ public class AddContactFromPhoneActivity extends AppCompatActivity {
                 ContentResolver cr = getContentResolver();
 
                 String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
-                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID};
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                        ContactsContract.CommonDataKinds.Email.ADDRESS,
+                        ContactsContract.CommonDataKinds.Note.NOTE};
                 Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
                 if (cur.moveToFirst()) {
                     do {
@@ -151,10 +213,22 @@ public class AddContactFromPhoneActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                ADAPTER.notifyDataSetChanged();
+                ADAPTER = new TestBaseAdapter(AddContactFromPhoneActivity.this, LIST_CONTACTS, SINGLE_CHECK);
+                stickyList.setAdapter(ADAPTER);
             }
         }.execute();
 
+
+    }
+
+
+    @Override
+    public void onStickyHeaderChanged(StickyListHeadersListView l, View header, int itemPosition, long headerId) {
+
+    }
+
+    @Override
+    public void onStickyHeaderOffsetChanged(StickyListHeadersListView l, View header, int offset) {
 
     }
 }
