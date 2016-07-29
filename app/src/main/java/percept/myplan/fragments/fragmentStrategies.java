@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import percept.myplan.Activities.AddStrategyActivity;
 import percept.myplan.Activities.StrategyDetailsOwnActivity;
 import percept.myplan.POJO.Strategy;
 import percept.myplan.Global.Constant;
@@ -81,7 +82,7 @@ public class fragmentStrategies extends Fragment {
         TV_ADDNEWSTRATEGY.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                
+                startActivity(new Intent(getActivity(), AddStrategyActivity.class));
             }
         });
 
