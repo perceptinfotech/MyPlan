@@ -16,7 +16,7 @@ public class Strategy {
     private String state;
     private String ordering;
     private String image;
-    private boolean isSelected;
+    private boolean isSelected = false;
 
     public Strategy(String created_by, String music, String id, String title, String contact_id, String description, String link, String state, String ordering, String image, boolean isSelected) {
         this.created_by = created_by;

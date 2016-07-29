@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -7,8 +8,10 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +35,7 @@ import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.Strategy;
 import percept.myplan.R;
 import percept.myplan.adapters.StrategyAdapter;
+import percept.myplan.adapters.StrategySelectionAdapter;
 
 public class AddStrategyToSymptomActivity extends AppCompatActivity {
 
@@ -39,13 +43,22 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
     private TextView TV_ADDSTRATEGY;
     private RecyclerView LST_STRATEGY;
     private List<Strategy> LIST_STRATEGY;
-    private StrategyAdapter ADAPTER;
+    private StrategySelectionAdapter ADAPTER;
     private Button BTN_INSPIRATION;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_strategy_to_symptom);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        mTitle.setText(getResources().getString(R.string.addastrategy));
+
 
         TV_ADDSTRATEGY = (TextView) findViewById(R.id.tvAddNewSymptom);
 
@@ -87,7 +100,7 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    ADAPTER = new StrategyAdapter(LIST_STRATEGY);
+                    ADAPTER = new StrategySelectionAdapter(LIST_STRATEGY);
                     LST_STRATEGY.setAdapter(ADAPTER);
                 }
             });
@@ -99,9 +112,9 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
             @Override
             public void onClick(View view, int position) {
                 LIST_STRATEGY.get(position);
-                Intent _intent = new Intent(AddStrategyToSymptomActivity.this, StrategyDetailsOwnActivity.class);
-                _intent.putExtra("STRATEGY_ID", LIST_STRATEGY.get(position).getId());
-                startActivity(_intent);
+//                Intent _intent = new Intent(AddStrategyToSymptomActivity.this, StrategyDetailsOwnActivity.class);
+//                _intent.putExtra("STRATEGY_ID", LIST_STRATEGY.get(position).getId());
+//                startActivity(_intent);
             }
 
             @Override
@@ -135,6 +148,18 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Intent returnIntent = new Intent();
+//            returnIntent.putExtra("result",result);
+            setResult(Activity.RESULT_OK, returnIntent);
+            AddStrategyToSymptomActivity.this.finish();
+            return true;
+        }
+        return false;
+    }
 
     public interface ClickListener {
         void onClick(View view, int position);

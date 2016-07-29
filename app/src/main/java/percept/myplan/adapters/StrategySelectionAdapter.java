@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -23,24 +24,23 @@ public class StrategySelectionAdapter extends RecyclerView.Adapter<StrategySelec
     public List<Strategy> LIST_STRATEGY;
     private boolean onBind;
 
-    public class SymptomHolder extends RecyclerView.ViewHolder implements CircleCheckBox.OnCheckedChangeListener {
+    public class SymptomHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView TV_STRATEGY;
-        public CircleCheckBox CHK_BOX;
+        public ImageView IMG_TICK;
 
         public SymptomHolder(View itemView) {
             super(itemView);
             TV_STRATEGY = (TextView) itemView.findViewById(R.id.tvStrategy);
-            CHK_BOX = (CircleCheckBox) itemView.findViewById(R.id.chbx);
-            CHK_BOX.setOnCheckedChangeListener(this);
+            IMG_TICK = (ImageView) itemView.findViewById(R.id.imgTick);
+            IMG_TICK.setOnClickListener(this);
         }
 
+
         @Override
-        public void onCheckedChanged(CircleCheckBox view, boolean isChecked) {
+        public void onClick(View view) {
             if (!onBind) {
-                // your process when checkBox changed
-                // ...
-                int _i = (int) CHK_BOX.getTag();
-                LIST_STRATEGY.get(_i).setSelected(isChecked);
+                int _i = (int) IMG_TICK.getTag();
+                LIST_STRATEGY.get(_i).setSelected(!LIST_STRATEGY.get(_i).isSelected());
 //                notifyDataSetChanged();
                 notifyDataSetChanged();
             }
@@ -64,14 +64,14 @@ public class StrategySelectionAdapter extends RecyclerView.Adapter<StrategySelec
         holder.TV_STRATEGY.setText(_strategy.getTitle());
         if (_strategy.isSelected()) {
             onBind = true;
-            holder.CHK_BOX.setChecked(true);
+            holder.IMG_TICK.setImageResource(R.drawable.tick); //setChecked(true);
             onBind = false;
         } else {
             onBind = true;
-            holder.CHK_BOX.setChecked(false);
+            holder.IMG_TICK.setImageResource(R.drawable.untick); //setChecked(false);
             onBind = false;
         }
-        holder.CHK_BOX.setTag(position);
+        holder.IMG_TICK.setTag(position);
     }
 
     @Override

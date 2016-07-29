@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
@@ -50,6 +51,7 @@ public class fragmentStrategies extends Fragment {
     private List<Strategy> LIST_STRATEGY;
     private StrategyAdapter ADAPTER;
     private Button BTN_INSPIRATION;
+    private TextView TV_ADDNEWSTRATEGY;
 
     public fragmentStrategies() {
         // Required empty public constructor
@@ -65,6 +67,7 @@ public class fragmentStrategies extends Fragment {
 
         LST_STRATEGY = (RecyclerView) _View.findViewById(R.id.lstStrategy);
         BTN_INSPIRATION = (Button) _View.findViewById(R.id.btnInspiration);
+        TV_ADDNEWSTRATEGY = (TextView) _View.findViewById(R.id.tvAddNewStrategy);
         setHasOptionsMenu(true);
         LIST_STRATEGY = new ArrayList<>();
         Map<String, String> params = new HashMap<String, String>();
@@ -75,9 +78,15 @@ public class fragmentStrategies extends Fragment {
         LST_STRATEGY.setLayoutManager(mLayoutManager);
         LST_STRATEGY.setItemAnimator(new DefaultItemAnimator());
 
+        TV_ADDNEWSTRATEGY.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                
+            }
+        });
 
         try {
-            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_STRATEGIES, params, false, false, false,new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_STRATEGIES, params, false, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
 
@@ -124,7 +133,7 @@ public class fragmentStrategies extends Fragment {
                 params.put("sid", Constant.SID);
                 params.put("sname", Constant.SNAME);
                 try {
-                    new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_INSPIRATIONS, params, false, false,false, new VolleyResponseListener() {
+                    new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_INSPIRATIONS, params, false, false, false, new VolleyResponseListener() {
                         @Override
                         public void onError(VolleyError message) {
                             Log.d("::::::::::: ", ":::");

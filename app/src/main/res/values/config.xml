@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="server_url"><![CDATA[http://192.168.100.110/myplan351/index.php?option=com_plans&task=webservice]]></string>
+    <string name="server_url"><![CDATA[http://www.weiswise.com/myplan/index.php?option=com_plans&task=webservice]]></string>
 
 </resources>

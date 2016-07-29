@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".AppController"
@@ -134,8 +134,17 @@
             android:name=".Activities.StrategyDetailsOtherActivity"
             android:label="@string/title_activity_strategy_details_other"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Activities.AddNewSymptomActivity" />
-        <activity android:name=".Activities.AddStrategyToSymptomActivity"></activity>
+        <activity
+            android:name=".Activities.AddNewSymptomActivity"
+            android:label="@string/title_activity_addsymptom"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.AddStrategyToSymptomActivity"
+            android:label="@string/addastrategy"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Activities.AddStrategyActivity"
+            android:label="@string/addastrategy"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
