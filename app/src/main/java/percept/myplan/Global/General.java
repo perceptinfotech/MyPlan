@@ -1,6 +1,7 @@
 package percept.myplan.Global;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+import percept.myplan.Activities.LoginActivity_1;
 import percept.myplan.AppController;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
@@ -56,12 +58,14 @@ public class General {
             return ".getHopeboxes";
         } else if (serviceName == PHPServices.GET_HOPEBOX) {
             return ".getHopeboxe";
+        } else if (serviceName == PHPServices.SAVE_SYMPTOM) {
+            return ".saveSymptom";
         }
         return "";
     }
 
 
-    public String getJSONContentFromInternetService(Context context, PHPServices servicesName,
+    public String getJSONContentFromInternetService(final Context context, PHPServices servicesName,
                                                     Map<String, String> params,
                                                     Boolean checkInternetConnectivity,
                                                     Boolean encryptedDataTransfer, Boolean forceNetwork,
@@ -84,6 +88,11 @@ public class General {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(":::::::::::: ", response.toString());
+                    //Uncomment call for Session code.
+//                        Intent intent = new Intent(context.getApplicationContext(), LoginActivity_1.class);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        context.startActivity(intent);
+
                         volleyResponseListener.onResponse(response);
                     }
                 }, new Response.ErrorListener() {
@@ -97,6 +106,7 @@ public class General {
 
         });
 
+        forceNetwork = true;
         if (forceNetwork) {
             AppController.getInstance().addToRequestQueue(jsonObjReq, "tag_json_obj");
         } else {
@@ -152,6 +162,7 @@ public class General {
         GET_SIDASCALENDER,
         GET_MOODCALENDER,
         GET_HOPEBOXES,
-        GET_HOPEBOX
+        GET_HOPEBOX,
+        SAVE_SYMPTOM
     }
 }

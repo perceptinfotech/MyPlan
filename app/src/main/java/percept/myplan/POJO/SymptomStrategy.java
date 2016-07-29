@@ -10,7 +10,7 @@ public class SymptomStrategy {
     private String id;
     private String title;
 
-    public SymptomStrategy(String state, String id, String ordering, String title, String strategy_id, String description) {
+    public SymptomStrategy(String id, String title) {
         this.id = id;
         this.title = title;
     }

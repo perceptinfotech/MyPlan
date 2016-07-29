@@ -53,6 +53,7 @@ public class fragmentSymptoms extends Fragment {
     private SymptomAdapter ADAPTER;
     private Button BTN_DANGERSIGNAL;
     private TextView TV_ADDNEW_SYMPTOM;
+    public static Boolean GET_STRATEGY = false;
 
     public fragmentSymptoms() {
         // Required empty public constructor
@@ -133,6 +134,43 @@ public class fragmentSymptoms extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.contact, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (fragmentSymptoms.GET_STRATEGY) {
+            try {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("sid", Constant.SID);
+                params.put("sname", Constant.SNAME);
+                new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_SYMPTOMS, params, false, false, true, new VolleyResponseListener() {
+                    @Override
+                    public void onError(VolleyError message) {
+
+                    }
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        Log.d(":::: ", response.toString());
+                        Gson gson = new Gson();
+                        try {
+                            LIST_SYMPTOM = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                    .toString(), new TypeToken<List<Symptom>>() {
+                            }.getType());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        ADAPTER = new SymptomAdapter(LIST_SYMPTOM);
+                        LST_SYMPTOM.setAdapter(ADAPTER);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            fragmentSymptoms.GET_STRATEGY = false;
+        }
     }
 
     public interface ClickListener {

@@ -8,13 +8,17 @@
         android:id="@+id/tvContactName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
         android:layout_alignParentLeft="true"
-        android:text="My Name" />
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/imgTick"
+        android:text="My Name"
+        android:textColor="@android:color/black" />
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:id="@+id/chkSelection"/>
+    <ImageView
+        android:id="@+id/imgTick"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true" />
+
+
 </RelativeLayout>

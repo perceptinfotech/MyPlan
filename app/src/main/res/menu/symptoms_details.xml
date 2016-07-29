@@ -6,4 +6,10 @@
         android:orderInCategory="100"
         android:title="@string/action_edit"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_saveSymptoms"
+        android:orderInCategory="100"
+        android:title="@string/action_save"
+        app:showAsAction="always" />
 </menu>

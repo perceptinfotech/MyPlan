@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +34,13 @@ import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.Strategy;
+import percept.myplan.POJO.SymptomStrategy;
 import percept.myplan.R;
 import percept.myplan.adapters.StrategyAdapter;
 import percept.myplan.adapters.StrategySelectionAdapter;
+
+import static percept.myplan.Activities.AddNewSymptomActivity.LIST_ADDSYMPTOMSTRATEGY;
+import static percept.myplan.Activities.SymptomDetailsActivity.LIST_SYMPTOMSTRATEGY;
 
 public class AddStrategyToSymptomActivity extends AppCompatActivity {
 
@@ -45,6 +50,7 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
     private List<Strategy> LIST_STRATEGY;
     private StrategySelectionAdapter ADAPTER;
     private Button BTN_INSPIRATION;
+    private List<String> LIST_SELECTEDID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,12 +66,21 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
         mTitle.setText(getResources().getString(R.string.addastrategy));
 
 
+        if (getIntent().hasExtra("ADDED_STRATEGY")) {
+            String _str = getIntent().getExtras().getString("ADDED_STRATEGY");
+
+            String[] _arr = _str.split(",");
+            LIST_SELECTEDID = new ArrayList<String>(Arrays.asList(_arr));
+        } else {
+            LIST_SELECTEDID = new ArrayList<>();
+        }
+
         TV_ADDSTRATEGY = (TextView) findViewById(R.id.tvAddNewSymptom);
 
         TV_ADDSTRATEGY.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(AddStrategyToSymptomActivity.this, AddStrategyActivity.class));
             }
         });
 
@@ -99,6 +114,14 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
                         }.getType());
                     } catch (JSONException e) {
                         e.printStackTrace();
+                    }
+
+                    if (LIST_SELECTEDID.size() > 0) {
+                        for (int i = 0; i < LIST_STRATEGY.size(); i++) {
+                            if (LIST_SELECTEDID.contains(LIST_STRATEGY.get(i).getId())) {
+                                LIST_STRATEGY.get(i).setSelected(true);
+                            }
+                        }
                     }
                     ADAPTER = new StrategySelectionAdapter(LIST_STRATEGY);
                     LST_STRATEGY.setAdapter(ADAPTER);
@@ -153,7 +176,31 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             Intent returnIntent = new Intent();
-//            returnIntent.putExtra("result",result);
+            String _str = "";
+            if (getIntent().hasExtra("ADDED_STRATEGY")) {
+                LIST_SYMPTOMSTRATEGY.clear();
+            } else {
+                LIST_ADDSYMPTOMSTRATEGY.clear();
+            }
+            for (int i = 0; i < LIST_STRATEGY.size(); i++) {
+                if (LIST_STRATEGY.get(i).isSelected()) {
+                    if (_str.equals(""))
+                        _str += LIST_STRATEGY.get(i).getId();
+                    else
+                        _str += "," + LIST_STRATEGY.get(i).getId();
+
+                    if (getIntent().hasExtra("ADDED_STRATEGY")) {
+                        LIST_SYMPTOMSTRATEGY.add(new SymptomStrategy(LIST_STRATEGY.get(i).getId(),
+                                LIST_STRATEGY.get(i).getTitle()));
+                    } else {
+                        LIST_ADDSYMPTOMSTRATEGY.add(new SymptomStrategy(LIST_STRATEGY.get(i).getId(),
+                                LIST_STRATEGY.get(i).getTitle()));
+                    }
+
+                }
+
+            }
+            returnIntent.putExtra("result", _str);
             setResult(Activity.RESULT_OK, returnIntent);
             AddStrategyToSymptomActivity.this.finish();
             return true;

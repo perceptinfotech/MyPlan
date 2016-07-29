@@ -131,5 +131,7 @@
     <string name="music">Music</string>
     <string name="links">Links</string>
     <string name="action_save">Save</string>
+    <string name="addstrategy">Add Strategy</string>
+    <string name="fillupfield">Please fill up all field to sign up.</string>
 
 </resources>

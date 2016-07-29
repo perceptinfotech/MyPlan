@@ -271,7 +271,7 @@ public class HomeActivity extends AppCompatActivity {
                 UTILS.setPreference(Constant.PREF_PROFILE_NAME, "");
                 startActivity(new Intent(HomeActivity.this, LoginActivity_1.class));
                 HomeActivity.this.finish();
-                break;
+                return;
             default:
                 tag = fragmentHome.class.getSimpleName();
                 fragment = getSupportFragmentManager().findFragmentByTag(tag);

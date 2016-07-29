@@ -1,5 +1,7 @@
 package percept.myplan.Activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -9,6 +11,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,14 +35,21 @@ import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
 import percept.myplan.adapters.SymptomStrategyAdapter;
+import percept.myplan.fragments.fragmentSymptoms;
 
 public class SymptomDetailsActivity extends AppCompatActivity {
 
     private String SYMPTOM_ID;
-    private TextView TV_TITLE, TV_TEXT;
+    private EditText TV_TITLE, TV_TEXT;
     private RecyclerView LST_SYMPTOMSTRATEGY;
-    private List<SymptomStrategy> LIST_SYMPTOMSTRATEGY;
+    public static List<SymptomStrategy> LIST_SYMPTOMSTRATEGY;
     private SymptomStrategyAdapter ADAPTER;
+    private LinearLayout LAY_ADDSTRATEGY;
+    private TextView TV_ADDSTRATEGY;
+    private boolean isEDIT = false;
+    private String STR_STRATEGYID = "";
+
+    private static final int ADDSTRATEGY = 6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,24 +65,61 @@ public class SymptomDetailsActivity extends AppCompatActivity {
         mTitle.setText(getResources().getString(R.string.title_activity_symptoms));
 
         SYMPTOM_ID = getIntent().getExtras().getString("SYMPTOM_ID");
-        TV_TITLE = (TextView) findViewById(R.id.tvTitle);
-        TV_TEXT = (TextView) findViewById(R.id.tvText);
+        TV_TITLE = (EditText) findViewById(R.id.tvTitle);
+        TV_TEXT = (EditText) findViewById(R.id.tvText);
+        TV_TITLE.setEnabled(false);
+        TV_TEXT.setEnabled(false);
+
         LST_SYMPTOMSTRATEGY = (RecyclerView) findViewById(R.id.lstSymptomStrategy);
+
+        LAY_ADDSTRATEGY = (LinearLayout) findViewById(R.id.layAddStrategy);
+        TV_ADDSTRATEGY = (TextView) findViewById(R.id.tvAddStrategy);
+
         LIST_SYMPTOMSTRATEGY = new ArrayList<>();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(SymptomDetailsActivity.this);
         LST_SYMPTOMSTRATEGY.setLayoutManager(mLayoutManager);
         LST_SYMPTOMSTRATEGY.setItemAnimator(new DefaultItemAnimator());
 
         GetSymptomDetail();
-        // For opening strategy details of other
-//        Intent _intent = new Intent(getActivity(), StrategyDetailsOtherActivity.class);
-//        _intent.putExtra("STRATEGY_ID", LIST_STRATEGY.get(position).getId());
-//        startActivity(_intent);
+        TV_ADDSTRATEGY.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent _intent = new Intent(SymptomDetailsActivity.this, AddStrategyToSymptomActivity.class);
+                _intent.putExtra("ADDED_STRATEGY", STR_STRATEGYID);
+                startActivityForResult(_intent, ADDSTRATEGY);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == ADDSTRATEGY) {
+            if (resultCode == Activity.RESULT_OK) {
+                STR_STRATEGYID = data.getStringExtra("result");
+                ADAPTER.notifyDataSetChanged();
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.symptoms_details, menu);
+        if (isEDIT) {
+            menu.getItem(1).setVisible(true);
+            menu.getItem(0).setVisible(false);
+            TV_TITLE.setEnabled(true);
+            TV_TEXT.setEnabled(true);
+            isEDIT = false;
+        } else {
+            menu.getItem(0).setVisible(true);
+            menu.getItem(1).setVisible(false);
+            TV_TITLE.setEnabled(false);
+            TV_TEXT.setEnabled(false);
+        }
         return true;
     }
 
@@ -79,7 +128,43 @@ public class SymptomDetailsActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             SymptomDetailsActivity.this.finish();
         } else if (item.getItemId() == R.id.action_editSymptoms) {
-            Toast.makeText(SymptomDetailsActivity.this, "edit Called", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(SymptomDetailsActivity.this, "edit Called", Toast.LENGTH_SHORT).show();
+            LAY_ADDSTRATEGY.setVisibility(View.VISIBLE);
+            isEDIT = true;
+            invalidateOptionsMenu();
+        } else if (item.getItemId() == R.id.action_saveSymptoms) {
+            LAY_ADDSTRATEGY.setVisibility(View.GONE);
+            isEDIT = false;
+            invalidateOptionsMenu();
+
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("sid", Constant.SID);
+            params.put("sname", Constant.SNAME);
+            params.put("id", SYMPTOM_ID);
+            params.put("title", TV_TITLE.getText().toString().trim());
+            params.put("description", TV_TEXT.getText().toString().trim());
+            params.put("strategy_id", STR_STRATEGYID);
+            params.put("state", "1");
+
+            try {
+                new General().getJSONContentFromInternetService(SymptomDetailsActivity.this, General.PHPServices.SAVE_SYMPTOM, params, true, false, true, new VolleyResponseListener() {
+                    @Override
+                    public void onError(VolleyError message) {
+
+                    }
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        fragmentSymptoms.GET_STRATEGY = true;
+                        Log.d(":::::", response.toString());
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+            SymptomDetailsActivity.this.finish();
+            return true;
         }
         return false;
     }
@@ -113,6 +198,14 @@ public class SymptomDetailsActivity extends AppCompatActivity {
                         }
 
                         ADAPTER = new SymptomStrategyAdapter(LIST_SYMPTOMSTRATEGY);
+
+                        for (int i = 0; i < LIST_SYMPTOMSTRATEGY.size(); i++) {
+                            if (STR_STRATEGYID.equals(""))
+                                STR_STRATEGYID += LIST_SYMPTOMSTRATEGY.get(i).getId();
+                            else
+                                STR_STRATEGYID += "," + LIST_SYMPTOMSTRATEGY.get(i).getId();
+                        }
+
                         LST_SYMPTOMSTRATEGY.setAdapter(ADAPTER);
 
                     } catch (JSONException e) {

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -23,31 +24,48 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     private boolean SINGLE_CHECK;
     private boolean onBind;
 
-    public class ContactViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener {
+    public class ContactViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener {
 
         public TextView TV_CONTACTNAME;
-        public CheckBox CHK_CONTACTSELECTION;
-
+//        public CheckBox CHK_CONTACTSELECTION;
+        public ImageView IMG_TICK;
         public ContactViewHolder(View itemView) {
             super(itemView);
             TV_CONTACTNAME = (TextView) itemView.findViewById(R.id.tvContactName);
-            CHK_CONTACTSELECTION = (CheckBox) itemView.findViewById(R.id.chkSelection);
-            CHK_CONTACTSELECTION.setOnCheckedChangeListener(this);
+            IMG_TICK = (ImageView) itemView.findViewById(R.id.imgTick);
+            IMG_TICK.setOnClickListener(this);
+//            CHK_CONTACTSELECTION = (CheckBox) itemView.findViewById(R.id.chkSelection);
+//            CHK_CONTACTSELECTION.setOnCheckedChangeListener(this);
         }
 
+//        @Override
+//        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//            if (!onBind) {
+//                // your process when checkBox changed
+//                // ...
+//                int _i = (int) CHK_CONTACTSELECTION.getTag();
+//                if (SINGLE_CHECK) {
+//                    for (int i = 0; i < LIST_CONTACT.size(); i++) {
+//                        LIST_CONTACT.get(i).setSelected(false);
+//                    }
+//                }
+//                LIST_CONTACT.get(_i).setSelected(b);
+////                notifyDataSetChanged();
+//                notifyDataSetChanged();
+//            }
+//        }
+
         @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        public void onClick(View view) {
             if (!onBind) {
-                // your process when checkBox changed
-                // ...
-                int _i = (int) CHK_CONTACTSELECTION.getTag();
+                int _i = (int) IMG_TICK.getTag();
+//                notifyDataSetChanged();
                 if (SINGLE_CHECK) {
                     for (int i = 0; i < LIST_CONTACT.size(); i++) {
                         LIST_CONTACT.get(i).setSelected(false);
                     }
                 }
-                LIST_CONTACT.get(_i).setSelected(b);
-//                notifyDataSetChanged();
+                LIST_CONTACT.get(_i).setSelected(!LIST_CONTACT.get(_i).isSelected());
                 notifyDataSetChanged();
             }
         }
@@ -70,9 +88,19 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         Contact _contact = LIST_CONTACT.get(position);
         holder.TV_CONTACTNAME.setText(_contact.getContactName());
         onBind = true;
-        holder.CHK_CONTACTSELECTION.setChecked(_contact.isSelected());
+//        holder.CHK_CONTACTSELECTION.setChecked(_contact.isSelected());
         onBind = false;
-        holder.CHK_CONTACTSELECTION.setTag(position);
+        if (_contact.isSelected()) {
+            onBind = true;
+            holder.IMG_TICK.setImageResource(R.drawable.tick); //setChecked(true);
+            onBind = false;
+        } else {
+            onBind = true;
+            holder.IMG_TICK.setImageResource(R.drawable.untick); //setChecked(false);
+            onBind = false;
+        }
+
+        holder.IMG_TICK.setTag(position);
     }
 
 

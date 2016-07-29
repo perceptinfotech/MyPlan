@@ -26,13 +26,13 @@
             android:textColor="@android:color/black" />
 
         <EditText
+            android:id="@+id/edtTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/edt_register_border"
             android:gravity="right"
             android:padding="10dp"
-            android:text="@string/title"
             android:textColor="@color/appBackColor" />
     </LinearLayout>
 
@@ -50,9 +50,11 @@
         android:textColor="@android:color/black" />
 
     <EditText
+        android:id="@+id/edtDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/edt_register_border_white"
+        android:gravity="center_vertical"
         android:lines="3"
         android:padding="10dp" />
 
@@ -63,13 +65,28 @@
 
 
     <TextView
+        android:id="@+id/tvAddStrategy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
         android:gravity="center_vertical"
-        android:padding="10dp"
-        android:id="@+id/tvAddStrategy"
+        android:paddingTop="10dp"
+        android:paddingLeft="15dp"
+        android:paddingBottom="10dp"
+        android:paddingRight="10dp"
         android:text="@string/addastrategy"
         android:textColor="@android:color/black" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="15dp"
+        android:background="@color/sidemenu_seperator"></View>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/lstSymptomStrategy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white" />
 </LinearLayout>

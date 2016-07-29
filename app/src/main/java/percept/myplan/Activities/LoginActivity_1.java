@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ public class LoginActivity_1 extends AppCompatActivity {
     private TextView TV_FORGETPWD;
     private Utils UTILS;
     private EditText EDT_EMAIL;
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,8 @@ public class LoginActivity_1 extends AppCompatActivity {
         UTILS = new Utils(LoginActivity_1.this);
         TV_FORGETPWD = (TextView) findViewById(R.id.tvForgotPwd);
         EDT_EMAIL = (EditText) findViewById(R.id.edtEmail);
+
+        PB = (ProgressBar) findViewById(R.id.progressBar);
 
         if (!UTILS.getPreference(Constant.PREF_EMAIL).equals("")) {
             EDT_EMAIL.setText(UTILS.getPreference(Constant.PREF_EMAIL));
@@ -56,16 +60,19 @@ public class LoginActivity_1 extends AppCompatActivity {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put(Constant.USER_NAME, EDT_EMAIL.getText().toString().trim());
                         params.put(Constant.PASSWORD, str.toString().trim());
-                        new General().getJSONContentFromInternetService(LoginActivity_1.this, General.PHPServices.LOGIN, params, false, false,true, new VolleyResponseListener() {
+                        PB.setVisibility(View.VISIBLE);
+                        new General().getJSONContentFromInternetService(LoginActivity_1.this, General.PHPServices.LOGIN, params, false, false, true, new VolleyResponseListener() {
 
                             @Override
                             public void onError(VolleyError message) {
                                 Log.d(":::::::::: ", message.toString());
+                                PB.setVisibility(View.GONE);
                             }
 
                             @Override
                             public void onResponse(JSONObject response) {
                                 Log.d(":::::::::: ", response.toString());
+                                PB.setVisibility(View.GONE);
                                 try {
                                     if (response.has(Constant.DATA)) {
                                         if (response.getJSONObject(Constant.DATA).getString(Constant.STATUS).equals("Success")) {
@@ -92,11 +99,13 @@ public class LoginActivity_1 extends AppCompatActivity {
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
+                                    PB.setVisibility(View.GONE);
                                 }
                             }
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
+                        PB.setVisibility(View.GONE);
                     }
 
 //                    } else {

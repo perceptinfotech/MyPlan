@@ -34,13 +34,13 @@
             android:textColor="@android:color/black" />
 
         <EditText
+            android:id="@+id/edtEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:background="@drawable/edt_register_border"
             android:hint="@string/emailadd"
             android:padding="5dp"
-            android:id="@+id/edtEmail"
             android:textColor="@android:color/black"
             android:textSize="14dp" />
 
@@ -78,13 +78,13 @@
         android:layout_marginTop="50dp"
         android:background="@null"
         android:cursorVisible="false"
-        android:textColor="@android:color/white"
         android:digits="1234567890"
         android:inputType="textPassword|number"
         android:maxLength="4"
+        android:paddingBottom="20dp"
+        android:textColor="@android:color/white"
         android:textIsSelectable="false"
         android:textSize="20sp"
-        android:paddingBottom="20dp"
         android:visibility="visible"
         app:pinLineColors="@color/pin_line_colors" />
 
@@ -97,4 +97,12 @@
         android:layout_marginTop="50dp"
         android:text="@string/forgetpwd"
         android:textColor="@color/login_forget_color" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
 </RelativeLayout>

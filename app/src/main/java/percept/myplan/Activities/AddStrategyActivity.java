@@ -86,7 +86,7 @@ public class AddStrategyActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             AddStrategyActivity.this.finish();
             return true;
-        } else if (item.getItemId() == R.id.action_editStrategy) {
+        } else if (item.getItemId() == R.id.action_saveStrategy) {
             return true;
         }
         return false;

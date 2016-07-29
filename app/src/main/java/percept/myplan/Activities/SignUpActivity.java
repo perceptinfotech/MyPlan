@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +50,7 @@ public class SignUpActivity extends AppCompatActivity {
     private TextView TV_CAPTUREIMG;
     private String FILE_PATH = "";
     private Utils UTILS;
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,7 @@ public class SignUpActivity extends AppCompatActivity {
         mTitle.setText(getResources().getString(R.string.myplan));
 
         UTILS = new Utils(SignUpActivity.this);
+        PB = (ProgressBar) findViewById(R.id.progressBar);
         TV_CAPTUREIMG = (TextView) findViewById(R.id.tvCaptureImg);
         IMG_USER = (ImageView) findViewById(R.id.imgUserImage);
         EDT_FIRSTNAME = (EditText) findViewById(R.id.edtFirstName);
@@ -104,14 +107,34 @@ public class SignUpActivity extends AppCompatActivity {
 
 
                 if (UTILS.isNetConnected()) {
-                    if(UTILS.isEmailValid(EDT_EMAIL.getText().toString())){
+                    boolean error = false;
+                    if (EDT_FIRSTNAME.getText().toString().trim().equals("")) {
+
+                        error = true;
+                    } else if (EDT_LASTNAME.getText().toString().trim().equals("")) {
+                        error = true;
+                    } else if (EDT_PASSWORD.getText().toString().trim().equals("")) {
+                        error = true;
+                    } else if (EDT_PHONENO.getText().toString().trim().equals("")) {
+                        error = true;
+                    } else if (EDT_BIRTHDAY.getText().toString().trim().equals("")) {
+                        error = true;
+                    }
+
+                    if (error) {
+                        Toast.makeText(SignUpActivity.this, getResources().getString(R.string.fillupfield),
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (UTILS.isEmailValid(EDT_EMAIL.getText().toString())) {
+                        PB.setVisibility(View.VISIBLE);
                         new UploadFileToServer().execute();
-                    }else{
+                    } else {
                         Toast.makeText(SignUpActivity.this, getResources().getString(R.string.writevalidemail), Toast.LENGTH_SHORT).show();
                     }
 
-                }
-                else
+                } else
                     Toast.makeText(SignUpActivity.this, getResources().getString(R.string.internetconn), Toast.LENGTH_SHORT).show();
 //                Map<String, String> params = new HashMap<String, String>();
 //                params.put(Constant.FIRST_NAME, EDT_FIRSTNAME.getText().toString().trim());
@@ -224,7 +247,7 @@ public class SignUpActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
 
             super.onPostExecute(result);
-
+            PB.setVisibility(View.GONE);
             try {
                 JSONObject _object = new JSONObject(result);
                 JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
