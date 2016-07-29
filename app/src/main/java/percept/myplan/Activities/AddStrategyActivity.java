@@ -3,6 +3,8 @@ package percept.myplan.Activities;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -35,6 +37,48 @@ public class AddStrategyActivity extends AppCompatActivity {
         TV_NETWORK = (TextView) findViewById(R.id.tvNetwork);
         TV_MUSIC = (TextView) findViewById(R.id.tvMusic);
 
+        TV_ALARM.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+            }
+        });
+
+        TV_IMAGES.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        TV_LINKS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        TV_NETWORK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        TV_MUSIC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            AddStrategyActivity.this.finish();
+            return true;
+        }
+        return false;
     }
 }
