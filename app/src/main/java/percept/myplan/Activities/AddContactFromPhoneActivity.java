@@ -131,26 +131,57 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         return false;
     }
 
-    private void getContactInfoFromID(String contactID) {
+    private void getContactInfoFromID(String _contactID) {
         ContentResolver cr = getContentResolver();
-        String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
-                ContactsContract.CommonDataKinds.Phone._ID};
-//        Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
 
-        ArrayList<String> phones = new ArrayList<String>();
+        String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID,};
+        Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
+        //Get Email...
+        Cursor emailCur = cr.query(
+                ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                null,
+                ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                new String[]{_contactID}, null);
+        while (emailCur.moveToNext()) {
+            // This would allow you get several email addresses
+            // if the email addresses were stored in an array
+            String email = emailCur.getString(
+                    emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+            String emailType = emailCur.getString(
+                    emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
 
-        Cursor cursor = cr.query(
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                projection,
-                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
-                new String[]{contactID}, null);
-
-        while (cursor.moveToNext()) {
-            phones.add(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
+            System.out.println("Email " + email + " Email Type : " + emailType);
         }
+        emailCur.close();
 
-        cursor.close();
-        Log.d("::::::::: ", String.valueOf(phones.size()));
+        // Get note.......
+        String noteWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?";
+        String[] noteWhereParams = new String[]{_contactID,
+                ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE};
+        Cursor noteCur = cr.query(ContactsContract.Data.CONTENT_URI, null, noteWhere, noteWhereParams, null);
+        if (noteCur.moveToFirst()) {
+            String note = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
+            System.out.println("Note " + note);
+        }
+        noteCur.close();
+
+        // Get firstname and all names
+        String whereName = ContactsContract.Data.MIMETYPE + " = ? AND " + ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID + " = ?";
+        String[] whereNameParams = new String[]{ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE, _contactID};
+        Cursor nameCur = cr.query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams, ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+        while (nameCur.moveToNext()) {
+            String given = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
+            String family = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
+            String display = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME));
+            System.out.println("Given " + given);
+            System.out.println("family " + family);
+            System.out.println("Display " + display);
+        }
+        nameCur.close();
+
     }
 
     public ArrayList<String> getContactIDFromNumber(String _id) {
@@ -189,10 +220,10 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             protected Void doInBackground(Void... voids) {
                 ContentResolver cr = getContentResolver();
 
-                String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
-                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
-                        ContactsContract.CommonDataKinds.Email.ADDRESS,
-                        ContactsContract.CommonDataKinds.Note.NOTE};
+                String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER,
+                        ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID,};
                 Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
                 if (cur.moveToFirst()) {
                     do {
@@ -202,6 +233,11 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                                 ContactsContract.CommonDataKinds.Phone.NUMBER));
                         String _contactID = cur.getString(cur.getColumnIndex(
                                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
+                        String _EMAIL = cur.getString(cur.getColumnIndex(
+                                ContactsContract.CommonDataKinds.Email.DATA));
+                        String _photouri = cur.getString(cur.getColumnIndex(
+                                ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
+
 
                         Log.d(":::::::::::: ", _contactID);
                         LIST_CONTACTS.add(new Contact(name, phoneNo, _contactID, false));
