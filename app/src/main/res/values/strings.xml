@@ -135,5 +135,6 @@
     <string name="fillupfield">Please fill up all field to sign up.</string>
     <string name="addcontact">Add Contact</string>
     <string name="search">Search</string>
+    <string name="contactsaved">Contact saved successfully</string>
 
 </resources>

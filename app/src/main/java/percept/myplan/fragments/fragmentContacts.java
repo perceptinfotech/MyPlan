@@ -21,7 +21,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -34,10 +37,14 @@ import percept.myplan.Activities.EmergencyContactActivity;
 import percept.myplan.Activities.HelpListActivity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
+import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.Contact;
+import percept.myplan.POJO.ContactDisplay;
+import percept.myplan.POJO.Symptom;
 import percept.myplan.R;
 import percept.myplan.adapters.ContactHelpListAdapter;
+import percept.myplan.adapters.SymptomAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,10 +54,18 @@ public class fragmentContacts extends Fragment {
     public static final int INDEX = 3;
     private TextView TV_EMERGENCYNO, TV_EDIT_EMERGENCYNO, TV_EDIT_HELPLIST, TV_ADDCONTACT;
     private RecyclerView LST_HELP, LST_CONTACTS;
-    private List<Contact> LIST_HELPCONTACT;
+    private List<ContactDisplay> LIST_ALLCONTACTS;
+    public static List<ContactDisplay> LIST_HELPCONTACTS;
+    public static List<ContactDisplay> LIST_CONTACTS;
+    public static HashMap<String, String> CONTACT_NAME;
+    public static HashMap<String, String> HELP_CONTACT_NAME;
+    public static String EMERGENCY_CONTACT_NAME;
 
     private ContactHelpListAdapter ADPT_CONTACTHELPLIST;
 
+    private ContactHelpListAdapter ADPT_CONTACTLIST;
+    public static boolean GET_CONTACTS = false;
+    private Utils UTILS;
 
     public fragmentContacts() {
         // Required empty public constructor
@@ -72,10 +87,24 @@ public class fragmentContacts extends Fragment {
         LST_HELP = (RecyclerView) _View.findViewById(R.id.lstHelpList);
         LST_CONTACTS = (RecyclerView) _View.findViewById(R.id.lstContacts);
 
+        LIST_ALLCONTACTS = new ArrayList<>();
+        LIST_HELPCONTACTS = new ArrayList<>();
+        LIST_CONTACTS = new ArrayList<>();
+        CONTACT_NAME = new HashMap<>();
+        HELP_CONTACT_NAME = new HashMap<>();
+        UTILS = new Utils(getActivity());
+
+        if (!UTILS.getPreference("EMERGENCY_CONTACT_NAME").equals("")) {
+            TV_EMERGENCYNO.setText(UTILS.getPreference("EMERGENCY_CONTACT_NAME"));
+        } else {
+            TV_EMERGENCYNO.setText("112");
+        }
+
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         try {
+            clearData();
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, false, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
@@ -85,28 +114,46 @@ public class fragmentContacts extends Fragment {
                 @Override
                 public void onResponse(JSONObject response) {
                     Log.d(":::::::::::::: ", response.toString());
+
+                    Gson gson = new Gson();
+                    try {
+                        LIST_ALLCONTACTS = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                .toString(), new TypeToken<List<ContactDisplay>>() {
+                        }.getType());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    for (ContactDisplay _obj : LIST_ALLCONTACTS) {
+
+
+                        if (_obj.getHelplist().equals("0")) {
+                            CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
+                            LIST_CONTACTS.add(_obj);
+                        } else {
+                            HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
+                            LIST_HELPCONTACTS.add(_obj);
+                        }
+                    }
+
+                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS);
+                    LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
+
+                    ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS);
+                    LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        LIST_HELPCONTACT = new ArrayList<>();
-        LIST_HELPCONTACT.add(new Contact("Children Phone", "1234567890", false));
-        LIST_HELPCONTACT.add(new Contact("Paul", "1234567890", false));
-        LIST_HELPCONTACT.add(new Contact("Mom", "1234567890", false));
-        LIST_HELPCONTACT.add(new Contact("Madelaine", "1234567890", false));
-        LIST_HELPCONTACT.add(new Contact("Kate", "1234567890", false));
-        LIST_HELPCONTACT.add(new Contact("Jenna", "1234567890", false));
-        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACT);
+
+        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_ALLCONTACTS);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         LST_HELP.setLayoutManager(mLayoutManager);
         LST_HELP.setItemAnimator(new DefaultItemAnimator());
         LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
-
-
-        TV_EMERGENCYNO.setText("112");
 
         RecyclerView.LayoutManager mLayoutManagerContact = new LinearLayoutManager(getActivity());
         LST_CONTACTS.setLayoutManager(mLayoutManagerContact);
@@ -141,7 +188,7 @@ public class fragmentContacts extends Fragment {
         LST_HELP.addOnItemTouchListener(new fragmentContacts.RecyclerTouchListener(getActivity(), LST_HELP, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(getActivity(), LIST_HELPCONTACT.get(position).getContactName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), LIST_ALLCONTACTS.get(position).getFirst_name(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -153,7 +200,7 @@ public class fragmentContacts extends Fragment {
         LST_CONTACTS.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), LST_CONTACTS, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(getActivity(), LIST_HELPCONTACT.get(position).getContactName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), LIST_ALLCONTACTS.get(position).getFirst_name(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -162,6 +209,64 @@ public class fragmentContacts extends Fragment {
             }
         }));
         return _View;
+    }
+
+    private void clearData() {
+        LIST_ALLCONTACTS.clear();
+        LIST_CONTACTS.clear();
+        LIST_HELPCONTACTS.clear();
+        CONTACT_NAME.clear();
+        HELP_CONTACT_NAME.clear();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (fragmentContacts.GET_CONTACTS) {
+            try {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("sid", Constant.SID);
+                params.put("sname", Constant.SNAME);
+                clearData();
+                new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, false, false, true, new VolleyResponseListener() {
+                    @Override
+                    public void onError(VolleyError message) {
+
+                    }
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Gson gson = new Gson();
+                        try {
+                            LIST_ALLCONTACTS = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                    .toString(), new TypeToken<List<ContactDisplay>>() {
+                            }.getType());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        for (ContactDisplay _obj : LIST_ALLCONTACTS) {
+                            if (_obj.getHelplist().equals("0")) {
+                                CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
+                                LIST_CONTACTS.add(_obj);
+                            } else {
+                                HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
+                                LIST_HELPCONTACTS.add(_obj);
+                            }
+                        }
+
+                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS);
+                        LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
+
+                        ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS);
+                        LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            fragmentSymptoms.GET_STRATEGY = false;
+        }
     }
 
     @Override

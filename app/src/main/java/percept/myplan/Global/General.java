@@ -60,6 +60,8 @@ public class General {
             return ".getHopeboxe";
         } else if (serviceName == PHPServices.SAVE_SYMPTOM) {
             return ".saveSymptom";
+        } else if (serviceName == PHPServices.DELETE_CONTACT) {
+            return ".deleteContact";
         }
         return "";
     }
@@ -88,7 +90,7 @@ public class General {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(":::::::::::: ", response.toString());
-                    //Uncomment call for Session code.
+                        //Uncomment call for Session code.
 //                        Intent intent = new Intent(context.getApplicationContext(), LoginActivity_1.class);
 //                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //                        context.startActivity(intent);
@@ -163,6 +165,7 @@ public class General {
         GET_MOODCALENDER,
         GET_HOPEBOXES,
         GET_HOPEBOX,
-        SAVE_SYMPTOM
+        SAVE_SYMPTOM,
+        DELETE_CONTACT
     }
 }

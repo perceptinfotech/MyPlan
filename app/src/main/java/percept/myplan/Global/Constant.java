@@ -45,4 +45,12 @@ public class Constant {
     public final static String TITLE = "title";
     public final static String DESC = "description";
     public final static String STRATEGIE = "strategie";
+
+
+    //Contact Add
+    public final static String ID="id";
+    public final static String CON_IMAGE="con_image";
+    public final static String SKYPE="skype";
+    public final static String HELPLIST="helplist";
+    public final static String NOTE="note";
 }

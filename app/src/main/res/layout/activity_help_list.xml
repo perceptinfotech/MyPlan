@@ -8,8 +8,9 @@
     android:fitsSystemWindows="true"
     tools:context="percept.myplan.Activities.HelpListActivity">
 
-    <include layout="@layout/app_toolbar"
-        android:id="@+id/include"></include>
+    <include
+        android:id="@+id/include"
+        layout="@layout/app_toolbar"></include>
 
     <RelativeLayout
         android:id="@+id/layTitle"
@@ -49,12 +50,9 @@
             android:background="@android:color/white"
             android:paddingLeft="10dp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/toobarbelow"></View>
 
         <TextView
+            android:id="@+id/tvAddHelpContact"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
@@ -62,7 +60,6 @@
             android:drawablePadding="10dp"
             android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:gravity="center_vertical"
-            android:id="@+id/tvAddHelpContact"
             android:padding="5dp"
             android:text="@string/addnewcontact"
             android:textColor="@android:color/black" />
@@ -87,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="@string/edithelplistmsg"
             android:textColor="@android:color/black" />

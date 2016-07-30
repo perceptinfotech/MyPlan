@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import percept.myplan.POJO.Contact;
+import percept.myplan.POJO.ContactDisplay;
 import percept.myplan.R;
 import percept.myplan.adapters.ContactHelpListAdapter;
 
@@ -27,7 +28,7 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
 
     private TextView TV_EDIT_HELPLIST, TV_ADD_CONTACT;
     private RecyclerView LST_HELP, LST_CONTACTS;
-    private List<Contact> LIST_HELPCONTACT;
+    private List<ContactDisplay> LIST_HELPCONTACT;
     private ContactHelpListAdapter ADPT_CONTACTHELPLIST;
 
     @Override
@@ -48,12 +49,6 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
         LST_CONTACTS = (RecyclerView) findViewById(R.id.lstContacts);
 
         LIST_HELPCONTACT = new ArrayList<>();
-        LIST_HELPCONTACT.add(new Contact("Children Phone", "1234567890", false));
-        LIST_HELPCONTACT.add(new Contact("Paul", "1234567890", false));
-        LIST_HELPCONTACT.add(new Contact("Mom", "1234567890", false));
-        LIST_HELPCONTACT.add(new Contact("Madelaine", "1234567890", false));
-        LIST_HELPCONTACT.add(new Contact("Kate", "1234567890", false));
-        LIST_HELPCONTACT.add(new Contact("Jenna", "1234567890", false));
         ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACT);
 
 
@@ -81,7 +76,7 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
             @Override
             public void onClick(View view, int position) {
                 LIST_HELPCONTACT.get(position);
-                Toast.makeText(CreateQuickMsgActivity.this, LIST_HELPCONTACT.get(position).getContactName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(CreateQuickMsgActivity.this, LIST_HELPCONTACT.get(position).getFirst_name(), Toast.LENGTH_SHORT).show();
 
                 startActivity(new Intent(CreateQuickMsgActivity.this, SendMessageActivity.class));
                 CreateQuickMsgActivity.this.finish();

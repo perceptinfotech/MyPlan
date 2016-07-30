@@ -1,15 +1,14 @@
 package percept.myplan.Activities;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.database.Cursor;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,19 +16,45 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.android.volley.VolleyError;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import percept.myplan.Global.AndroidMultiPartEntity;
+import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
+import percept.myplan.Global.Utils;
+import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.Contact;
 import percept.myplan.R;
-import percept.myplan.adapters.ContactAdapter;
 import percept.myplan.adapters.TestBaseAdapter;
+import percept.myplan.fragments.fragmentContacts;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 public class AddContactFromPhoneActivity extends AppCompatActivity implements
@@ -43,6 +68,12 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
     private boolean SINGLE_CHECK = false;
     private StickyListHeadersListView stickyList;
     private EditText EDT_SEARCHTEXT;
+    private int NO_COUNT = 0;
+    private int SAVED_NO_COUNT = 0;
+    private ProgressBar PB_SAVECONTACT;
+
+    private String ADD_TO_HELP_LIST = "0";
+    private Utils UTILS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +86,12 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         if (FROM_PAGE.toLowerCase().trim().equals("emergency")) {
             SINGLE_CHECK = true;
         }
+        if (getIntent().hasExtra("ADD_TO_HELP")) {
+            ADD_TO_HELP_LIST = "1";
+        }
 
         setContentView(R.layout.add_contact_from_phone);
+        UTILS = new Utils(AddContactFromPhoneActivity.this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -65,29 +100,17 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.title_activity_add_contact_from_phone));
 
+        PB_SAVECONTACT = (ProgressBar) findViewById(R.id.pbSaveContact);
+        PB_SAVECONTACT.setVisibility(View.GONE);
         EDT_SEARCHTEXT = (EditText) findViewById(R.id.edtSearchContact);
 //        LST_CONTACT = (RecyclerView) findViewById(R.id.lstContact);
         LIST_CONTACTS = new ArrayList<>();
-//        LIST_CONTACTS.add(new Contact("dadsa", false));
-//        LIST_CONTACTS.add(new Contact("dsaz", false));
-//        LIST_CONTACTS.add(new Contact("eq", true));
-//        LIST_CONTACTS.add(new Contact("cxz", false));
-//        LIST_CONTACTS.add(new Contact("jhgkj", false));
-//        LIST_CONTACTS.add(new Contact("m,nm", true));
-//        LIST_CONTACTS.add(new Contact("eqw", false));
-//        LIST_CONTACTS.add(new Contact("op", true));
-
 
         stickyList = (StickyListHeadersListView) findViewById(R.id.list);
         stickyList.setOnStickyHeaderChangedListener(this);
         stickyList.setOnStickyHeaderOffsetChangedListener(this);
         stickyList.setDrawingListUnderStickyHeader(true);
         stickyList.setAreHeadersSticky(true);
-
-//        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-//        LST_CONTACT.setLayoutManager(mLayoutManager);
-//        LST_CONTACT.setItemAnimator(new DefaultItemAnimator());
-//        LST_CONTACT.setAdapter(ADAPTER);
 
         readContacts();
         EDT_SEARCHTEXT.addTextChangedListener(new TextWatcher() {
@@ -105,7 +128,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             public void afterTextChanged(Editable editable) {
             }
         });
-//        getContactIDFromNumber(LIST_CONTACTS.get(2).getContactID());
+
     }
 
     @Override
@@ -120,10 +143,54 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             AddContactFromPhoneActivity.this.finish();
             return true;
         } else if (item.getItemId() == R.id.action_InsertContact) {
+            if (SINGLE_CHECK) {
+                for (Contact _obj : LIST_CONTACTS) {
+                    if (_obj.isSelected()) {
+                        UTILS.setPreference("EMERGENCY_CONTACT_NAME", _obj.getContactName());
+                        UTILS.setPreference("EMERGENCY_CONTACT_NO", _obj.getPhoneNo());
+                    }
+                }
+                AddContactFromPhoneActivity.this.finish();
+                return true;
+            }
             Toast.makeText(AddContactFromPhoneActivity.this, "Add Contact Pressed", Toast.LENGTH_SHORT).show();
             for (int i = 0; i < LIST_CONTACTS.size(); i++) {
-                if (LIST_CONTACTS.get(i).isSelected()) {
-                    getContactInfoFromID(LIST_CONTACTS.get(i).getContactID());
+                if (LIST_CONTACTS.get(i).isSelected() && !LIST_CONTACTS.get(i).isOriginalSelection()) {
+                    PB_SAVECONTACT.setVisibility(View.VISIBLE);
+                    NO_COUNT = NO_COUNT + 1;
+                    getContactInfoFromID(LIST_CONTACTS.get(i).getContactID(), LIST_CONTACTS.get(i).getPhoneNo());
+
+                } else if (!LIST_CONTACTS.get(i).isSelected() && LIST_CONTACTS.get(i).isOriginalSelection()) {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("sid", Constant.SID);
+                    params.put("sname", Constant.SNAME);
+                    params.put(Constant.ID, LIST_CONTACTS.get(i).getWEB_ID());
+                    PB_SAVECONTACT.setVisibility(View.VISIBLE);
+                    NO_COUNT = NO_COUNT + 1;
+                    try {
+                        new General().getJSONContentFromInternetService(AddContactFromPhoneActivity.this,
+                                General.PHPServices.DELETE_CONTACT, params, false, false, true, new VolleyResponseListener() {
+                                    @Override
+                                    public void onError(VolleyError message) {
+
+                                    }
+
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        Log.d("::::::::::::: ", response.toString());
+                                        SAVED_NO_COUNT = SAVED_NO_COUNT + 1;
+                                        if (NO_COUNT == SAVED_NO_COUNT) {
+                                            PB_SAVECONTACT.setVisibility(View.GONE);
+                                            Toast.makeText(AddContactFromPhoneActivity.this,
+                                                    getResources().getString(R.string.contactsaved), Toast.LENGTH_SHORT).show();
+                                            AddContactFromPhoneActivity.this.finish();
+                                            fragmentContacts.GET_CONTACTS = true;
+                                        }
+                                    }
+                                });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             return true;
@@ -131,7 +198,8 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         return false;
     }
 
-    private void getContactInfoFromID(String _contactID) {
+    private void getContactInfoFromID(String _contactID, String _phoneno) {
+        String _fname = "", _lname = "", _email = "", _note = "";
         ContentResolver cr = getContentResolver();
 
         String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
@@ -148,12 +216,12 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         while (emailCur.moveToNext()) {
             // This would allow you get several email addresses
             // if the email addresses were stored in an array
-            String email = emailCur.getString(
+            _email = emailCur.getString(
                     emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
             String emailType = emailCur.getString(
                     emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
 
-            System.out.println("Email " + email + " Email Type : " + emailType);
+            System.out.println("Email " + _email + " Email Type : " + emailType);
         }
         emailCur.close();
 
@@ -163,8 +231,8 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                 ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE};
         Cursor noteCur = cr.query(ContactsContract.Data.CONTENT_URI, null, noteWhere, noteWhereParams, null);
         if (noteCur.moveToFirst()) {
-            String note = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
-            System.out.println("Note " + note);
+            _note = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
+            System.out.println("Note " + _note);
         }
         noteCur.close();
 
@@ -173,37 +241,193 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         String[] whereNameParams = new String[]{ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE, _contactID};
         Cursor nameCur = cr.query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams, ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
         while (nameCur.moveToNext()) {
-            String given = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
-            String family = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
+            _fname = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
+            _lname = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
             String display = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME));
-            System.out.println("Given " + given);
-            System.out.println("family " + family);
+            if (_lname == null || _lname.equals("null")) {
+                _lname = "";
+            }
+            System.out.println("Given " + _fname);
+            System.out.println("family " + _lname);
             System.out.println("Display " + display);
         }
         nameCur.close();
 
-    }
+//        try {
+//            Cursor curPhoto = getContentResolver().query(
+//                    ContactsContract.Data.CONTENT_URI,
+//                    null,
+//                    ContactsContract.Data.CONTACT_ID + "=" + _contactID + " AND "
+//                            + ContactsContract.Data.MIMETYPE + "='"
+//                            + ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE + "'", null,
+//                    null);
+//            if (curPhoto != null) {
+//                if (!curPhoto.moveToFirst()) {
+//                    //return null; // no photo
+//                }
+//            } else {
+//                //return null; // error in cursor process
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            //return null;
+//        }
+//        Uri person = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long
+//                .parseLong(_contactID));
+//        Uri _imageURI = Uri.withAppendedPath(person, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+//
+//        File _file = new File(_imageURI.getPath());
 
-    public ArrayList<String> getContactIDFromNumber(String _id) {
-        ContentResolver cr = getContentResolver();
-//        String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
-//                ContactsContract.CommonDataKinds.Phone._ID};
-//        Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
+        Bitmap photo = null;
+        File _file = null;
+        try {
+            InputStream inputStream = ContactsContract.Contacts.openContactPhotoInputStream(getContentResolver(),
+                    ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, new Long(_contactID)));
 
-        ArrayList<String> phones = new ArrayList<String>();
+            if (inputStream != null) {
+                photo = BitmapFactory.decodeStream(inputStream);
+                _file = new File(getCacheDir(), "_temp.png");
+                _file.createNewFile();
 
-        Cursor cursor = cr.query(
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                null,
-                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
-                new String[]{_id}, null);
+//Convert bitmap to byte array
+                Bitmap bitmap = photo;
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+                byte[] bitmapdata = bos.toByteArray();
 
-        while (cursor.moveToNext()) {
-            phones.add(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
+//write the bytes in file
+                FileOutputStream fos = new FileOutputStream(_file);
+                fos.write(bitmapdata);
+                fos.flush();
+                fos.close();
+            }
+
+            if (inputStream != null)
+                inputStream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        cursor.close();
-        return (phones);
+        new UploadFileToServer(_fname, _lname, _email, _note, _phoneno, ADD_TO_HELP_LIST, _file).execute();
+    }
+
+    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
+        private String FNAME, LNAME, EMAIL, NOTE, PHONENO, HELPLIST;
+        private File IMG_FILE;
+
+        public UploadFileToServer(String fname, String lname, String email, String note, String phoneno, String helplist,
+                                  File image) {
+            this.FNAME = fname;
+            this.LNAME = lname;
+            this.EMAIL = email;
+            this.NOTE = note;
+            this.PHONENO = phoneno;
+            this.HELPLIST = helplist;
+            this.IMG_FILE = image;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            // setting progress bar to zero
+            super.onPreExecute();
+        }
+
+
+        @Override
+        protected String doInBackground(Void... params) {
+            return uploadFile();
+        }
+
+        @SuppressWarnings("deprecation")
+        private String uploadFile() {
+            String responseString = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveContact");
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+//                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+//                if (!FILE_PATH.equals("")) {
+//                    File sourceFile = new File(FILE_PATH);
+
+                // Adding file data to http body
+                if (IMG_FILE != null)
+                    entity.addPart(Constant.CON_IMAGE, new FileBody(IMG_FILE));
+//                }
+                // Extra parameters if you want to pass to server
+                try {
+
+                    entity.addPart("sid", new StringBody(Constant.SID));
+                    entity.addPart("sname", new StringBody(Constant.SNAME));
+                    entity.addPart(Constant.ID, new StringBody(""));
+                    entity.addPart(Constant.FIRST_NAME, new StringBody(this.FNAME));
+                    entity.addPart(Constant.LAST_NAME, new StringBody(this.LNAME));
+                    entity.addPart(Constant.PHONE, new StringBody(this.PHONENO));
+                    entity.addPart(Constant.SKYPE, new StringBody(""));
+                    entity.addPart(Constant.EMAIL, new StringBody(this.EMAIL));
+                    entity.addPart(Constant.HELPLIST, new StringBody(this.HELPLIST));
+                    entity.addPart(Constant.NOTE, new StringBody(this.NOTE));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+
+//                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                // Making server call
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    // Server response
+                    responseString = EntityUtils.toString(r_entity);
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
+
+            return responseString;
+
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            super.onPostExecute(result);
+            try {
+                JSONObject _object = new JSONObject(result);
+                JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
+                SAVED_NO_COUNT = SAVED_NO_COUNT + 1;
+                if (NO_COUNT == SAVED_NO_COUNT) {
+                    PB_SAVECONTACT.setVisibility(View.GONE);
+                    Toast.makeText(AddContactFromPhoneActivity.this,
+                            getResources().getString(R.string.contactsaved), Toast.LENGTH_SHORT).show();
+                    AddContactFromPhoneActivity.this.finish();
+                    fragmentContacts.GET_CONTACTS = true;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+
     }
 
     private void readContacts() {
@@ -222,7 +446,6 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
 
                 String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                         ContactsContract.CommonDataKinds.Phone.NUMBER,
-                        ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
                         ContactsContract.CommonDataKinds.Phone.CONTACT_ID,};
                 Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
                 if (cur.moveToFirst()) {
@@ -233,14 +456,36 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                                 ContactsContract.CommonDataKinds.Phone.NUMBER));
                         String _contactID = cur.getString(cur.getColumnIndex(
                                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
-                        String _EMAIL = cur.getString(cur.getColumnIndex(
-                                ContactsContract.CommonDataKinds.Email.DATA));
-                        String _photouri = cur.getString(cur.getColumnIndex(
-                                ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
-
 
                         Log.d(":::::::::::: ", _contactID);
-                        LIST_CONTACTS.add(new Contact(name, phoneNo, _contactID, false));
+                        Boolean _hasContact = false;
+                        String _WEB_ID = "";
+                        // Get firstname and all names
+                        String whereName = ContactsContract.Data.MIMETYPE + " = ? AND " + ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID + " = ?";
+                        String[] whereNameParams = new String[]{ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE, _contactID};
+                        Cursor nameCur = cr.query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams, ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+                        while (nameCur.moveToNext()) {
+                            String _fname = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
+
+                            if(!SINGLE_CHECK) {
+                                if (ADD_TO_HELP_LIST.equals("1")) {
+                                    ArrayList<String> lst = new ArrayList<String>(fragmentContacts.HELP_CONTACT_NAME.values());
+                                    if (lst.contains(_fname)) {
+                                        _hasContact = true;
+                                        _WEB_ID = getKey(fragmentContacts.HELP_CONTACT_NAME, _fname);
+                                    }
+                                } else {
+                                    ArrayList<String> lst = new ArrayList<String>(fragmentContacts.CONTACT_NAME.values());
+                                    if (lst.contains(_fname)) {
+                                        _hasContact = true;
+                                        _WEB_ID = getKey(fragmentContacts.CONTACT_NAME, _fname);
+                                    }
+                                }
+                            }
+                        }
+                        nameCur.close();
+
+                        LIST_CONTACTS.add(new Contact(name, phoneNo, _contactID, _hasContact, _hasContact, _WEB_ID));
                     } while (cur.moveToNext());
                 }
                 return null;
@@ -255,6 +500,17 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         }.execute();
 
 
+    }
+
+    String getKey(HashMap<String, String> map, String value) {
+        String key = "";
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            if ((value == null && entry.getValue() == null) || (value != null && value.equals(entry.getValue()))) {
+                key = entry.getKey();
+                break;
+            }
+        }
+        return key;
     }
 
 

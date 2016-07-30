@@ -10,12 +10,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import percept.myplan.Global.Utils;
 import percept.myplan.R;
 
 public class EmergencyContactActivity extends AppCompatActivity {
 
 
-    private TextView TV_ADDEMERGENCYCONTACT;
+    private TextView TV_ADDEMERGENCYCONTACT, TV_EMERGENCYCONTACT;
+    private Utils UTILS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +32,9 @@ public class EmergencyContactActivity extends AppCompatActivity {
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.title_activity_emergency_contact));
 
+        UTILS = new Utils(EmergencyContactActivity.this);
         TV_ADDEMERGENCYCONTACT = (TextView) findViewById(R.id.tvAddNewContactEmergency);
+        TV_EMERGENCYCONTACT = (TextView) findViewById(R.id.tvEmergencyContact);
         TV_ADDEMERGENCYCONTACT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -42,8 +46,20 @@ public class EmergencyContactActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (!UTILS.getPreference("EMERGENCY_CONTACT_NAME").equals("")) {
+            TV_EMERGENCYCONTACT.setText(UTILS.getPreference("EMERGENCY_CONTACT_NAME"));
+        } else {
+            TV_EMERGENCYCONTACT.setText("112");
+        }
+
+
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             EmergencyContactActivity.this.finish();
             return true;
         }

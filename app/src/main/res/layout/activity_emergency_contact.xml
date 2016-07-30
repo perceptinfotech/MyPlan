@@ -31,6 +31,7 @@
             android:paddingRight="10dp"
             android:paddingTop="10dp"
             android:text="112"
+            android:id="@+id/tvEmergencyContact"
             android:textColor="@android:color/black" />
 
         <View

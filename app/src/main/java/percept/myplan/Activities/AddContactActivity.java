@@ -34,14 +34,18 @@ public class AddContactActivity extends AppCompatActivity {
         TV_NEWCONTACT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                
+
             }
         });
 
         TV_PHONELIST.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(AddContactActivity.this, AddContactFromPhoneActivity.class));
+                Intent _intent = new Intent(AddContactActivity.this, AddContactFromPhoneActivity.class);
+                if (getIntent().hasExtra("ADD_TO_HELP")) {
+                    _intent.putExtra("ADD_TO_HELP", "true");
+                }
+                startActivity(_intent);
                 AddContactActivity.this.finish();
             }
         });

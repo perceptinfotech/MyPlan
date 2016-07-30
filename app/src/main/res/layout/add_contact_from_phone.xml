@@ -54,4 +54,12 @@
         android:listSelector="@android:color/transparent"
         android:overScrollMode="never"
         android:scrollbarStyle="outsideOverlay" />
+
+    <ProgressBar
+        android:id="@+id/pbSaveContact"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
 </RelativeLayout>
