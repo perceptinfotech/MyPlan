@@ -147,8 +147,16 @@
             android:name=".Activities.AddStrategyActivity"
             android:label="@string/addastrategy"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Activities.CreateContactActivity"
+        <activity
+            android:name=".Activities.CreateContactActivity"
             android:label="@string/addcontact"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.InspirationCategoryActivity"
+            android:label="@string/inspiration"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Activities.CategoryStrategyActivity"
+            android:label="@string/inspiration"
             android:theme="@style/AppTheme.NoActionBar" ></activity>
     </application>
 
