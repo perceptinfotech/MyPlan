@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.android.volley.Cache;
@@ -13,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -21,6 +23,7 @@ import java.util.Map;
 import percept.myplan.Activities.LoginActivity_1;
 import percept.myplan.AppController;
 import percept.myplan.Interfaces.VolleyResponseListener;
+import percept.myplan.POJO.Contact;
 import percept.myplan.R;
 
 /**
@@ -40,10 +43,6 @@ public class General {
             return ".getsymptom";
         } else if (serviceName == PHPServices.GET_STRATEGIES) {
             return ".getStrategies";
-        } else if (serviceName == PHPServices.GET_INSPIRATIONS) {
-            return ".getInspirations";
-        } else if (serviceName == PHPServices.GET_INSPIRATION) {
-            return ".getInspiration";
         } else if (serviceName == PHPServices.GET_CONTACTS) {
             return ".getContacts";
         } else if (serviceName == PHPServices.GET_CONTACT) {
@@ -62,7 +61,17 @@ public class General {
             return ".saveSymptom";
         } else if (serviceName == PHPServices.DELETE_CONTACT) {
             return ".deleteContact";
+        } else if (serviceName == PHPServices.GET_CATEGORIES) {
+            return ".getCategories";
+        } else if (serviceName == PHPServices.GET_CATEGORY_INSPIRATIONS) {
+            return ".getCategoryInspirations";
+        } else if (serviceName == PHPServices.GET_STRATEGY) {
+            return ".getStrategy";
+        }else if(serviceName== PHPServices.ADD_MYSTRATEGY){
+            return ".addMystrategy";
         }
+
+
         return "";
     }
 
@@ -90,10 +99,30 @@ public class General {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(":::::::::::: ", response.toString());
-                        //Uncomment call for Session code.
-//                        Intent intent = new Intent(context.getApplicationContext(), LoginActivity_1.class);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                        context.startActivity(intent);
+
+                        try {
+                            if (response.getJSONObject("data").has("message")) {
+                                if (response.getJSONObject("data").get("message").equals("Your session is expired.")) {
+                                    //Uncomment call for Session code.
+                                    Intent intent = new Intent(context.getApplicationContext(), LoginActivity_1.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    context.startActivity(intent);
+                                    Constant.CURRENT_FRAGMENT = 0;
+                                    Utils _utils = new Utils(context);
+                                    _utils.setPreference(Constant.PREF_LOGGEDIN, "false");
+                                    _utils.setPreference(Constant.PREF_SID, "");
+                                    _utils.setPreference(Constant.PREF_SNAME, "");
+                                    _utils.setPreference(Constant.PREF_PROFILE_IMG_LINK, "");
+                                    _utils.setPreference(Constant.PREF_PROFILE_USER_NAME, "");
+                                    _utils.setPreference(Constant.PREF_PROFILE_EMAIL, "");
+                                    _utils.setPreference(Constant.PREF_PROFILE_NAME, "");
+                                    ((AppCompatActivity) context).finish();
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
 
                         volleyResponseListener.onResponse(response);
                     }
@@ -156,8 +185,6 @@ public class General {
         GET_SYMPTOMS,
         GET_SYMPTOM,
         GET_STRATEGIES,
-        GET_INSPIRATIONS,
-        GET_INSPIRATION,
         GET_CONTACTS,
         GET_CONTACT,
         GET_SIDASTEST,
@@ -166,6 +193,10 @@ public class General {
         GET_HOPEBOXES,
         GET_HOPEBOX,
         SAVE_SYMPTOM,
-        DELETE_CONTACT
+        DELETE_CONTACT,
+        GET_CATEGORIES,
+        GET_CATEGORY_INSPIRATIONS,
+        GET_STRATEGY,
+        ADD_MYSTRATEGY
     }
 }

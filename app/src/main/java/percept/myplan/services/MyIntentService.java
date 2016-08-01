@@ -1,5 +1,6 @@
 package percept.myplan.services;
 
+import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -39,7 +40,12 @@ public class MyIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
+            Bundle _bundle = intent.getExtras();
+            String _URI = _bundle .getString("ALARM_SOUND");
+            Uri _uri = Uri.parse(_URI);
+
             Context context = this.getApplicationContext();
+
             NOTI_MANAGER = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             Intent mIntent = new Intent(this, HomeActivity.class);
             Bundle bundle = new Bundle();
@@ -57,11 +63,11 @@ public class MyIntentService extends IntentService {
                     .setTicker("ticker value")
                     .setAutoCancel(true)
                     .setPriority(8)
-                    .setSound(soundUri)
+                    .setSound(_uri)
                     .setContentTitle("Reminder")
                     .setContentText("Remember Your MoodRating For Today.").build();
             NOTI.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
-            NOTI.defaults |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+//            NOTI.defaults |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
             NOTI.ledARGB = 0xFFFFA500;
             NOTI.ledOnMS = 800;
             NOTI.ledOffMS = 1000;

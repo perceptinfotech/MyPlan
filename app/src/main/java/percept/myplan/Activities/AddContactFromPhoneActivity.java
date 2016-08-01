@@ -412,6 +412,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
 
             super.onPostExecute(result);
             try {
+                Log.d(":::::: ", result);
                 JSONObject _object = new JSONObject(result);
                 JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
                 SAVED_NO_COUNT = SAVED_NO_COUNT + 1;
@@ -467,7 +468,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                         while (nameCur.moveToNext()) {
                             String _fname = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
 
-                            if(!SINGLE_CHECK) {
+                            if (!SINGLE_CHECK) {
                                 if (ADD_TO_HELP_LIST.equals("1")) {
                                     ArrayList<String> lst = new ArrayList<String>(fragmentContacts.HELP_CONTACT_NAME.values());
                                     if (lst.contains(_fname)) {

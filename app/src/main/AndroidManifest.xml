@@ -155,7 +155,14 @@
             android:name=".Activities.InspirationCategoryActivity"
             android:label="@string/inspiration"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Activities.CategoryStrategyActivity"
+        <activity
+            android:name=".Activities.CategoryStrategyActivity"
+            android:label="@string/inspiration"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Activities.AlarmListActivity"
+            android:label="@string/inspiration"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Activities.AddAlarmActivity"
             android:label="@string/inspiration"
             android:theme="@style/AppTheme.NoActionBar" ></activity>
     </application>

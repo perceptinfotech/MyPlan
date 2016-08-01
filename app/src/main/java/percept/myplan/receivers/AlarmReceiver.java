@@ -17,7 +17,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         // an Intent broadcast.
         Log.d(":::::::::::::::: ", "BroadCast received.");
 
-//        Intent _service=new Intent(context, MyIntentService.class);
-//        context.startService(_service);
+        Intent _service = new Intent(context, MyIntentService.class);
+        _service.putExtra("ALARM_SOUND", intent.getExtras().getString("ALARM_SOUND"));
+        context.startService(_service);
     }
 }

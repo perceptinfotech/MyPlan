@@ -1,12 +1,16 @@
 package percept.myplan.POJO;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by percept on 20/7/16.
  */
 
 public class InspirationCategory {
 
+    @SerializedName("id")
     private String CategoryId;
+    @SerializedName("title")
     private String CategoryName;
 
 

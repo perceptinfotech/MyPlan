@@ -105,6 +105,7 @@ public class HomeActivity extends AppCompatActivity {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             if (doubleBackToExitPressedOnce) {
+                Constant.CURRENT_FRAGMENT = 0;
                 super.onBackPressed();
                 return;
             }

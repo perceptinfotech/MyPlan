@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -42,7 +43,7 @@ public class AddStrategyActivity extends AppCompatActivity {
         TV_ALARM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(AddStrategyActivity.this, AlarmListActivity.class));
             }
         });
 

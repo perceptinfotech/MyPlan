@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import percept.myplan.Activities.AddStrategyActivity;
+import percept.myplan.Activities.InspirationCategoryActivity;
 import percept.myplan.Activities.StrategyDetailsOwnActivity;
 import percept.myplan.POJO.Strategy;
 import percept.myplan.Global.Constant;
@@ -53,7 +54,8 @@ public class fragmentStrategies extends Fragment {
     private StrategyAdapter ADAPTER;
     private Button BTN_INSPIRATION;
     private TextView TV_ADDNEWSTRATEGY;
-
+    public static boolean ADDED_STRATEGIES = false;
+    Map<String, String> params;
     public fragmentStrategies() {
         // Required empty public constructor
     }
@@ -71,7 +73,7 @@ public class fragmentStrategies extends Fragment {
         TV_ADDNEWSTRATEGY = (TextView) _View.findViewById(R.id.tvAddNewStrategy);
         setHasOptionsMenu(true);
         LIST_STRATEGY = new ArrayList<>();
-        Map<String, String> params = new HashMap<String, String>();
+        params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
 
@@ -117,7 +119,7 @@ public class fragmentStrategies extends Fragment {
             public void onClick(View view, int position) {
                 LIST_STRATEGY.get(position);
                 Intent _intent = new Intent(getActivity(), StrategyDetailsOwnActivity.class);
-                _intent.putExtra("STRATEGY_ID", LIST_STRATEGY.get(position).getId());
+                _intent.putExtra("STRATEGY_ID", LIST_STRATEGY.get(position).getID());
                 startActivity(_intent);
             }
 
@@ -130,24 +132,9 @@ public class fragmentStrategies extends Fragment {
         BTN_INSPIRATION.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("sid", Constant.SID);
-                params.put("sname", Constant.SNAME);
-                try {
-                    new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_INSPIRATIONS, params, false, false, false, new VolleyResponseListener() {
-                        @Override
-                        public void onError(VolleyError message) {
-                            Log.d("::::::::::: ", ":::");
-                        }
 
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Log.d("::::::::::: ", response.toString());
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                Intent _intent = new Intent(getActivity(), InspirationCategoryActivity.class);
+                startActivity(_intent);
             }
         });
         return _View;
@@ -157,6 +144,39 @@ public class fragmentStrategies extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.strategy, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (ADDED_STRATEGIES) {
+            try {
+                new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_STRATEGIES, params, false, false, false, new VolleyResponseListener() {
+                    @Override
+                    public void onError(VolleyError message) {
+
+                    }
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(":::: ", response.toString());
+                        Gson gson = new Gson();
+                        try {
+                            LIST_STRATEGY = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                    .toString(), new TypeToken<List<Strategy>>() {
+                            }.getType());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        ADAPTER = new StrategyAdapter(LIST_STRATEGY);
+                        LST_STRATEGY.setAdapter(ADAPTER);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            ADDED_STRATEGIES = false;
+        }
     }
 
     @Override

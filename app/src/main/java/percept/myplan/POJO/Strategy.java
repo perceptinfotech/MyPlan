@@ -1,117 +1,208 @@
 package percept.myplan.POJO;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by percept on 26/7/16.
  */
 
 public class Strategy {
 
-    private String created_by;
-    private String music;
-    private String id;
-    private String title;
-    private String contact_id;
-    private String description;
-    private String link;
-    private String state;
-    private String ordering;
-    private String image;
-    private boolean isSelected = false;
+    @SerializedName("created_by")
+    private String CreatedBy;
 
-    public Strategy(String created_by, String music, String id, String title, String contact_id, String description, String link, String state, String ordering, String image, boolean isSelected) {
-        this.created_by = created_by;
-        this.music = music;
-        this.id = id;
-        this.title = title;
-        this.contact_id = contact_id;
-        this.description = description;
-        this.link = link;
-        this.state = state;
-        this.ordering = ordering;
-        this.image = image;
-        this.isSelected = isSelected;
+    @SerializedName("link")
+    private String Link;
+
+    @SerializedName("videos")
+    private String Videos;
+
+    @SerializedName("state")
+    private String State;
+
+    @SerializedName("modified_by_name")
+    private String ModifyByName;
+
+    @SerializedName("image")
+    private String Image;
+
+    @SerializedName("checked_out_time")
+    private String CheckedOutTime;
+
+    @SerializedName("created_by_name")
+    private String CreatedByName;
+
+    @SerializedName("contacts")
+    private String Contacts;
+
+    @SerializedName("cat_id")
+    private String CategoryId;
+
+    @SerializedName("id")
+    private String ID;
+
+    @SerializedName("title")
+    private String Title;
+
+    @SerializedName("modified_by")
+    private String ModifiedBy;
+
+    @SerializedName("checked_out")
+    private String CheckedOut;
+
+    @SerializedName("description")
+    private String Description;
+
+    @SerializedName("ordering")
+    private String Ordering;
+
+    @SerializedName("user_id")
+    private String User_Id;
+
+    public String getCreatedBy() {
+        return CreatedBy;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getCreated_by() {
-        return created_by;
-    }
-
-    public void setCreated_by(String created_by) {
-        this.created_by = created_by;
-    }
-
-    public String getMusic() {
-        return music;
-    }
-
-    public void setMusic(String music) {
-        this.music = music;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContact_id() {
-        return contact_id;
-    }
-
-    public void setContact_id(String contact_id) {
-        this.contact_id = contact_id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCreatedBy(String createdBy) {
+        CreatedBy = createdBy;
     }
 
     public String getLink() {
-        return link;
+        return Link;
     }
 
     public void setLink(String link) {
-        this.link = link;
+        Link = link;
     }
 
     public String getState() {
-        return state;
+        return State;
     }
 
     public void setState(String state) {
-        this.state = state;
+        State = state;
+    }
+
+    public String getImage() {
+        return Image;
+    }
+
+    public void setImage(String image) {
+        Image = image;
+    }
+
+    public String getTitle() {
+        return Title;
+    }
+
+    public void setTitle(String title) {
+        Title = title;
+    }
+
+    public String getDescription() {
+        return Description;
+    }
+
+    public void setDescription(String description) {
+        Description = description;
     }
 
     public String getOrdering() {
-        return ordering;
+        return Ordering;
     }
 
     public void setOrdering(String ordering) {
-        this.ordering = ordering;
+        Ordering = ordering;
     }
 
+
+    public String getUser_Id() {
+        return User_Id;
+    }
+
+    public void setUser_Id(String user_Id) {
+        User_Id = user_Id;
+    }
+
+    public String getVideos() {
+        return Videos;
+    }
+
+    public void setVideos(String videos) {
+        Videos = videos;
+    }
+
+    public String getModifyByName() {
+        return ModifyByName;
+    }
+
+    public void setModifyByName(String modifyByName) {
+        ModifyByName = modifyByName;
+    }
+
+    public String getCheckedOutTime() {
+        return CheckedOutTime;
+    }
+
+    public void setCheckedOutTime(String checkedOutTime) {
+        CheckedOutTime = checkedOutTime;
+    }
+
+    public String getCreatedByName() {
+        return CreatedByName;
+    }
+
+    public void setCreatedByName(String createdByName) {
+        CreatedByName = createdByName;
+    }
+
+    public String getContacts() {
+        return Contacts;
+    }
+
+    public void setContacts(String contacts) {
+        Contacts = contacts;
+    }
+
+    public String getCategoryId() {
+        return CategoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        CategoryId = categoryId;
+    }
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    public String getModifiedBy() {
+        return ModifiedBy;
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        ModifiedBy = modifiedBy;
+    }
+
+    public String getCheckedOut() {
+        return CheckedOut;
+    }
+
+    public void setCheckedOut(String checkedOut) {
+        CheckedOut = checkedOut;
+    }
+
+
+    private boolean isSelected = false;
+
+    public Strategy(String created_by, String music, String id, String title, String contact_id, String description, String link, String state, String ordering, String image, boolean isSelected) {
+
+        this.isSelected = isSelected;
+    }
 
     public boolean isSelected() {
         return isSelected;

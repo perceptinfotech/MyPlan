@@ -118,7 +118,7 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
 
                     if (LIST_SELECTEDID.size() > 0) {
                         for (int i = 0; i < LIST_STRATEGY.size(); i++) {
-                            if (LIST_SELECTEDID.contains(LIST_STRATEGY.get(i).getId())) {
+                            if (LIST_SELECTEDID.contains(LIST_STRATEGY.get(i).getID())) {
                                 LIST_STRATEGY.get(i).setSelected(true);
                             }
                         }
@@ -153,7 +153,7 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
                 params.put("sid", Constant.SID);
                 params.put("sname", Constant.SNAME);
                 try {
-                    new General().getJSONContentFromInternetService(AddStrategyToSymptomActivity.this, General.PHPServices.GET_INSPIRATIONS, params, false, false, false, new VolleyResponseListener() {
+                    new General().getJSONContentFromInternetService(AddStrategyToSymptomActivity.this, General.PHPServices.GET_CATEGORIES, params, false, false, false, new VolleyResponseListener() {
                         @Override
                         public void onError(VolleyError message) {
                             Log.d("::::::::::: ", ":::");
@@ -185,15 +185,15 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
             for (int i = 0; i < LIST_STRATEGY.size(); i++) {
                 if (LIST_STRATEGY.get(i).isSelected()) {
                     if (_str.equals(""))
-                        _str += LIST_STRATEGY.get(i).getId();
+                        _str += LIST_STRATEGY.get(i).getID();
                     else
-                        _str += "," + LIST_STRATEGY.get(i).getId();
+                        _str += "," + LIST_STRATEGY.get(i).getID();
 
                     if (getIntent().hasExtra("ADDED_STRATEGY")) {
-                        LIST_SYMPTOMSTRATEGY.add(new SymptomStrategy(LIST_STRATEGY.get(i).getId(),
+                        LIST_SYMPTOMSTRATEGY.add(new SymptomStrategy(LIST_STRATEGY.get(i).getID(),
                                 LIST_STRATEGY.get(i).getTitle()));
                     } else {
-                        LIST_ADDSYMPTOMSTRATEGY.add(new SymptomStrategy(LIST_STRATEGY.get(i).getId(),
+                        LIST_ADDSYMPTOMSTRATEGY.add(new SymptomStrategy(LIST_STRATEGY.get(i).getID(),
                                 LIST_STRATEGY.get(i).getTitle()));
                     }
 

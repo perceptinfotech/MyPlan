@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/edt_register_border"
+            android:gravity="right"
             android:padding="5dp"
             android:textColor="@color/appBackColor" />
     </LinearLayout>
@@ -64,8 +65,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/edt_register_border"
             android:lines="3"
-            android:padding="5dp"
-            android:textColor="@color/appBackColor" />
+            android:padding="5dp" />
     </LinearLayout>
 
     <View

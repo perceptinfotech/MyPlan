@@ -136,5 +136,17 @@
     <string name="addcontact">Add Contact</string>
     <string name="search">Search</string>
     <string name="contactsaved">Contact saved successfully</string>
+    <string name="used_by">Used by</string>
+    <string name="subby">Submitted by</string>
+    <string name="category">Category</string>
+    <string name="description">Description</string>
+    <string name="addtomystrategies">Add to my strategies</string>
+    <string name="alert">Alert</string>
+    <string name="alertStrategymsg">Would you like to add this inspiration to your strategies ?</string>
+    <string name="repeat">Repeat</string>
+    <string name="once">Once</string>
+    <string name="sound">Sound</string>
+    <string name="snooze">Snooze</string>
+    <string name="label">Label</string>
 
 </resources>

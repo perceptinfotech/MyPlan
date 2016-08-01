@@ -8,21 +8,45 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.GestureDetector;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.android.volley.VolleyError;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
+import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.InspirationCategory;
+import percept.myplan.POJO.InspirationWiseStrategy;
 import percept.myplan.R;
+import percept.myplan.adapters.InspirationCategoryAdapter;
+import percept.myplan.adapters.InspirationWiseStrategyAdapter;
+
+import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
+
 
 public class CategoryStrategyActivity extends AppCompatActivity {
 
     private RecyclerView LST_CATEGORY_STRATEGY;
-    private List<InspirationCategory> LIST_CATEGORY_STRATEGY;
+    private List<InspirationWiseStrategy> LIST_STRATEGY_INSPIRATION;
+    private String CATEGORYID;
+    private InspirationWiseStrategyAdapter ADAPTER;
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +60,13 @@ public class CategoryStrategyActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
 
-        if (getIntent().hasExtra("CATEGORY_NAME"))
+        if (getIntent().hasExtra("CATEGORY_NAME")) {
             mTitle.setText(getIntent().getExtras().getString("CATEGORY_NAME"));
+            CATEGORYID = getIntent().getExtras().getString("CATEGORY_ID");
+        }
         LST_CATEGORY_STRATEGY = (RecyclerView) findViewById(R.id.lstCategoryStrategy);
-        LIST_CATEGORY_STRATEGY = new ArrayList<>();
+        PB = (ProgressBar) findViewById(R.id.pbStrCate);
+        LIST_STRATEGY_INSPIRATION = new ArrayList<>();
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(CategoryStrategyActivity.this);
         LST_CATEGORY_STRATEGY.setLayoutManager(mLayoutManager);
@@ -47,9 +74,11 @@ public class CategoryStrategyActivity extends AppCompatActivity {
         LST_CATEGORY_STRATEGY.addOnItemTouchListener(new RecyclerTouchListener(CategoryStrategyActivity.this, LST_CATEGORY_STRATEGY, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                LIST_CATEGORY_STRATEGY.get(position);
-                Intent _intent = new Intent(CategoryStrategyActivity.this, SymptomDetailsActivity.class);
-                _intent.putExtra("SYMPTOM_ID", LIST_CATEGORY_STRATEGY.get(position).getCategoryId());
+                LIST_STRATEGY_INSPIRATION.get(position);
+                Intent _intent = new Intent(CategoryStrategyActivity.this, StrategyDetailsOtherActivity.class);
+                _intent.putExtra("STRATEGY_ID", LIST_STRATEGY_INSPIRATION.get(position).getStrategyId());
+                _intent.putExtra("STRATEGY_NAME", LIST_STRATEGY_INSPIRATION.get(position).getStrategyName());
+                _intent.putExtra("CATEGORY_NAME", getIntent().getExtras().getString("CATEGORY_NAME"));
                 startActivity(_intent);
             }
 
@@ -58,8 +87,57 @@ public class CategoryStrategyActivity extends AppCompatActivity {
 
             }
         }));
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put("catid", CATEGORYID);
+        try {
+            PB.setVisibility(View.VISIBLE);
+            new General().getJSONContentFromInternetService(CategoryStrategyActivity.this, General.PHPServices.GET_CATEGORY_INSPIRATIONS, params, false, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    PB.setVisibility(View.GONE);
+                    Log.d(":::: ", response.toString());
+                    Gson gson = new Gson();
+                    try {
+                        LIST_STRATEGY_INSPIRATION = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                .toString(), new TypeToken<List<InspirationWiseStrategy>>() {
+                        }.getType());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    ADAPTER = new InspirationWiseStrategyAdapter(LIST_STRATEGY_INSPIRATION);
+                    LST_CATEGORY_STRATEGY.setAdapter(ADAPTER);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            CategoryStrategyActivity.this.finish();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (ADDED_STRATEGIES) {
+            CategoryStrategyActivity.this.finish();
+
+        }
+    }
 
     public interface ClickListener {
         void onClick(View view, int position);
