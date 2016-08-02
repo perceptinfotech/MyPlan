@@ -53,4 +53,8 @@ public class Constant {
     public final static String SKYPE="skype";
     public final static String HELPLIST="helplist";
     public final static String NOTE="note";
+
+    //add Strategy
+    public final static String CONTACTID="contact_id";
+    public final static String LINK="link";
 }

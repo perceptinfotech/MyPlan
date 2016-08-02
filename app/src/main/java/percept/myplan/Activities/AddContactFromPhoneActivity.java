@@ -53,7 +53,7 @@ import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.Contact;
 import percept.myplan.R;
-import percept.myplan.adapters.TestBaseAdapter;
+import percept.myplan.adapters.ContactFromPhoneAdapter;
 import percept.myplan.fragments.fragmentContacts;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
@@ -63,10 +63,10 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
     //    private RecyclerView LST_CONTACT;
     private List<Contact> LIST_CONTACTS;
     //    private ContactAdapter ADAPTER;
-    private TestBaseAdapter ADAPTER;
+    private ContactFromPhoneAdapter ADAPTER;
     private String FROM_PAGE = "";
     private boolean SINGLE_CHECK = false;
-    private StickyListHeadersListView stickyList;
+    private StickyListHeadersListView LST_CONTACT;
     private EditText EDT_SEARCHTEXT;
     private int NO_COUNT = 0;
     private int SAVED_NO_COUNT = 0;
@@ -106,11 +106,11 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
 //        LST_CONTACT = (RecyclerView) findViewById(R.id.lstContact);
         LIST_CONTACTS = new ArrayList<>();
 
-        stickyList = (StickyListHeadersListView) findViewById(R.id.list);
-        stickyList.setOnStickyHeaderChangedListener(this);
-        stickyList.setOnStickyHeaderOffsetChangedListener(this);
-        stickyList.setDrawingListUnderStickyHeader(true);
-        stickyList.setAreHeadersSticky(true);
+        LST_CONTACT = (StickyListHeadersListView) findViewById(R.id.list);
+        LST_CONTACT.setOnStickyHeaderChangedListener(this);
+        LST_CONTACT.setOnStickyHeaderOffsetChangedListener(this);
+        LST_CONTACT.setDrawingListUnderStickyHeader(true);
+        LST_CONTACT.setAreHeadersSticky(true);
 
         readContacts();
         EDT_SEARCHTEXT.addTextChangedListener(new TextWatcher() {
@@ -495,8 +495,8 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                ADAPTER = new TestBaseAdapter(AddContactFromPhoneActivity.this, LIST_CONTACTS, SINGLE_CHECK);
-                stickyList.setAdapter(ADAPTER);
+                ADAPTER = new ContactFromPhoneAdapter(AddContactFromPhoneActivity.this, LIST_CONTACTS, SINGLE_CHECK);
+                LST_CONTACT.setAdapter(ADAPTER);
             }
         }.execute();
 

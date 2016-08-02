@@ -18,6 +18,7 @@ public class ContactDisplay {
     private String note;
     private String con_image;
     private String skype;
+    private boolean isSelected;
 
     public ContactDisplay(String created_by, String id, String first_name, String phone, String email,
                           String helplist, String state, String last_name, String ordering,
@@ -34,6 +35,15 @@ public class ContactDisplay {
         this.note = note;
         this.con_image = con_image;
         this.skype = skype;
+    }
+
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     public String getSkype() {

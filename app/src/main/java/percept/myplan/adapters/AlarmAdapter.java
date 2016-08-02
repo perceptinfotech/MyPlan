@@ -2,15 +2,18 @@ package percept.myplan.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
+import java.util.Date;
 import java.util.List;
 
 import percept.myplan.AppController;
@@ -26,15 +29,24 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.MyViewHolder
     private Context CONTEXT;
     private List<Alarm> LST_HOPE;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView TV_TITLE;
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public TextView TV_ALARMTITLE, TV_ALARMEDIT, TV_ALARMTIME;
+        public Switch SWITCH_STATUS;
 
 
         public MyViewHolder(View view) {
             super(view);
-            TV_TITLE = (TextView) view.findViewById(R.id.title);
 
+            TV_ALARMTITLE = (TextView) view.findViewById(R.id.tvAlarmTitle);
+            TV_ALARMEDIT = (TextView) view.findViewById(R.id.tvAlarmEdit);
+            TV_ALARMTIME = (TextView) view.findViewById(R.id.tvAlarmTime);
+            TV_ALARMEDIT.setOnClickListener(this);
+        }
 
+        @Override
+        public void onClick(View view) {
+            int i = (int) view.getTag();
+            Log.d(":::: Pressed on ", String.valueOf(i));
         }
     }
 
@@ -56,13 +68,15 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.MyViewHolder
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         Alarm album = LST_HOPE.get(position);
+        holder.TV_ALARMTITLE.setText(album.getAlarmName());
+//                TV_ALARMTIME
 
-        if (position == LST_HOPE.size() - 1) {
-            holder.TV_TITLE.setText(CONTEXT.getResources().getString(R.string.addnewbox));
+        Date date = new Date(Long.valueOf(album.getAlarmTime()));
+        int _hour = date.getHours();
+        int _min = date.getMinutes();
+        holder.TV_ALARMTIME.setText(_hour + ":" + _min);
+        holder.TV_ALARMEDIT.setTag(position);
 
-        } else {
-            holder.TV_TITLE.setText(album.getAlarmName());
-        }
     }
 
     @Override

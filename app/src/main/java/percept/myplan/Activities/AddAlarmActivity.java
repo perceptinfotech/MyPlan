@@ -102,11 +102,10 @@ public class AddAlarmActivity extends AppCompatActivity {
 
             Intent returnIntent = new Intent();
             String _str = "";
-            returnIntent.putExtra("ALARM_URI", _str);
-            returnIntent.putExtra("ALARM_SOUND_NAME", _str);
-            returnIntent.putExtra("ALARM_NAME", _str);
+            returnIntent.putExtra("ALARM_URI", ALARM_SOUND);
+            returnIntent.putExtra("ALARM_SOUND_NAME", ALARM_SOUND_NAME);
+            returnIntent.putExtra("ALARM_NAME", EDT_ALARMLABLE.getText().toString());
             returnIntent.putExtra("ALARM_REPEAT", "Once");
-            returnIntent.putExtra("ALARM_URI", _str);
             returnIntent.putExtra("ALARM_TIME", String.valueOf(_Alarmtime));
             setResult(Activity.RESULT_OK, returnIntent);
             AddAlarmActivity.this.finish();

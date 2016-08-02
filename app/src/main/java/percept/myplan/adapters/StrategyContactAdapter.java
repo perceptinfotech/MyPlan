@@ -15,37 +15,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 import percept.myplan.POJO.Contact;
+import percept.myplan.POJO.ContactDisplay;
 import percept.myplan.R;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
-public class TestBaseAdapter extends BaseAdapter implements
-        StickyListHeadersAdapter, SectionIndexer, Filterable {
+public class StrategyContactAdapter extends BaseAdapter implements
+        StickyListHeadersAdapter, SectionIndexer {
 
     private final Context mContext;
-    private List<Contact> LIST_CONTACT;
-    private List<Contact> LIST_FIX_CONTACT;
+    private List<ContactDisplay> LIST_CONTACT;
     private int[] mSectionIndices;
     private Character[] mSectionLetters;
     private LayoutInflater mInflater;
     private boolean SINGLE_CHECK;
 
-    public TestBaseAdapter(Context context, List<Contact> lstContact, boolean SINGLE_CHECK) {
+    public StrategyContactAdapter(Context context, List<ContactDisplay> lstContact, boolean SINGLE_CHECK) {
         mContext = context;
         mInflater = LayoutInflater.from(context);
         LIST_CONTACT = lstContact;
         mSectionIndices = getSectionIndices();
         mSectionLetters = getSectionLetters();
         this.SINGLE_CHECK = SINGLE_CHECK;
-        LIST_FIX_CONTACT = new ArrayList<>(lstContact);
     }
 
     private int[] getSectionIndices() {
         ArrayList<Integer> sectionIndices = new ArrayList<Integer>();
-        char lastFirstChar = LIST_CONTACT.get(0).getContactName().charAt(0);
+        char lastFirstChar = LIST_CONTACT.get(0).getFirst_name().charAt(0);
         sectionIndices.add(0);
         for (int i = 1; i < LIST_CONTACT.size(); i++) {
-            if (LIST_CONTACT.get(i).getContactName().charAt(0) != lastFirstChar) {
-                lastFirstChar = LIST_CONTACT.get(i).getContactName().charAt(0);
+            if (LIST_CONTACT.get(i).getFirst_name().charAt(0) != lastFirstChar) {
+                lastFirstChar = LIST_CONTACT.get(i).getFirst_name().charAt(0);
                 sectionIndices.add(i);
             }
         }
@@ -59,7 +58,7 @@ public class TestBaseAdapter extends BaseAdapter implements
     private Character[] getSectionLetters() {
         Character[] letters = new Character[mSectionIndices.length];
         for (int i = 0; i < mSectionIndices.length; i++) {
-            letters[i] = LIST_CONTACT.get(mSectionIndices[i]).getContactName().charAt(0);
+            letters[i] = LIST_CONTACT.get(mSectionIndices[i]).getFirst_name().charAt(0);
         }
         return letters;
     }
@@ -107,7 +106,7 @@ public class TestBaseAdapter extends BaseAdapter implements
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.TV_CONTACTNAME.setText(LIST_CONTACT.get(position).getContactName());
+        holder.TV_CONTACTNAME.setText(LIST_CONTACT.get(position).getFirst_name());
 
         if (LIST_CONTACT.get(position).isSelected()) {
             holder.IMG_CHK.setImageResource(R.drawable.tick);
@@ -132,7 +131,7 @@ public class TestBaseAdapter extends BaseAdapter implements
         }
 
         // set header text as first char in name
-        CharSequence headerChar = LIST_CONTACT.get(position).getContactName().subSequence(0, 1);
+        CharSequence headerChar = LIST_CONTACT.get(position).getFirst_name().subSequence(0, 1);
         holder.text.setText(headerChar);
 
         return convertView;
@@ -146,7 +145,7 @@ public class TestBaseAdapter extends BaseAdapter implements
     public long getHeaderId(int position) {
         // return the first character of the country as ID because this is what
         // headers are based upon
-        return LIST_CONTACT.get(position).getContactName().subSequence(0, 1).charAt(0);
+        return LIST_CONTACT.get(position).getFirst_name().subSequence(0, 1).charAt(0);
     }
 
     @Override
@@ -178,56 +177,6 @@ public class TestBaseAdapter extends BaseAdapter implements
         return mSectionLetters;
     }
 
-    @Override
-    public Filter getFilter() {
-        LocFilter locFilter = null;
-        if (locFilter == null) {
-            locFilter = new LocFilter();
-        }
-        return locFilter;
-    }
-
-    private class LocFilter extends Filter {
-
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-
-            FilterResults results = new FilterResults();
-            // We implement here the filter logic
-            if (constraint == null || constraint.length() == 0) {
-                // No filter implemented we return all the list
-                results.values = LIST_FIX_CONTACT;
-                results.count = LIST_FIX_CONTACT.size();
-            } else {
-                // We perform filtering operation
-                List<Contact> nPlanetList = new ArrayList<Contact>();
-
-                for (Contact p : LIST_FIX_CONTACT) {
-                    if (p.getContactName().toString().trim().toUpperCase()
-                            .contains(constraint.toString().toUpperCase())) {
-
-                        nPlanetList.add(p);
-                    }
-                }
-                if (nPlanetList.size() == 0) {
-                    nPlanetList.clear();
-                }
-                results.values = nPlanetList;
-                results.count = nPlanetList.size();
-            }
-
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence charSequence,
-                                      FilterResults results) {
-            // Now we have to inform the adapter about the new list filtered
-            LIST_CONTACT = (List<Contact>) results.values;
-            notifyDataSetChanged();
-
-        }
-    }
 
     class HeaderViewHolder {
         TextView text;

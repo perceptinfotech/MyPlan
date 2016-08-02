@@ -4,10 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,14 +13,17 @@ import java.util.ArrayList;
 import me.crosswall.photo.pick.PickConfig;
 import percept.myplan.R;
 
-public class AddHopeBoxActivity extends AppCompatActivity {
+import static percept.myplan.Activities.AddStrategyActivity.LIST_IMG;
 
-    private Button BTN_ADDFOLDERIMG;
+public class AddStrategyImageActivity extends AppCompatActivity {
+
+    private TextView TV_CHOOSEEXISTING, TV_TAKENEW;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_hope_box);
+        setContentView(R.layout.activity_add_strategy_image);
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -31,14 +31,16 @@ public class AddHopeBoxActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText(getResources().getString(R.string.title_activity_addhopebox));
+        mTitle.setText(getResources().getString(R.string.addimage));
 
-        BTN_ADDFOLDERIMG = (Button) findViewById(R.id.btnAddFolderImage);
 
-        BTN_ADDFOLDERIMG.setOnClickListener(new View.OnClickListener() {
+        TV_CHOOSEEXISTING = (TextView) findViewById(R.id.tvChooseExisting);
+        TV_TAKENEW = (TextView) findViewById(R.id.tvTakeNew);
+
+        TV_CHOOSEEXISTING.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new PickConfig.Builder(AddHopeBoxActivity.this)
+                new PickConfig.Builder(AddStrategyImageActivity.this)
                         .pickMode(PickConfig.MODE_MULTIP_PICK)
                         .maxPickSize(10)
                         .spanCount(3)
@@ -49,22 +51,13 @@ public class AddHopeBoxActivity extends AppCompatActivity {
                         .build();
             }
         });
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.add_hopebox, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
+        TV_TAKENEW.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            AddHopeBoxActivity.this.finish();
-        } else if (item.getItemId() == R.id.action_addHopeBox) {
-            Toast.makeText(AddHopeBoxActivity.this, "Saved Called", Toast.LENGTH_SHORT).show();
-        }
-        return false;
+            }
+        });
     }
 
     @Override
@@ -75,10 +68,9 @@ public class AddHopeBoxActivity extends AppCompatActivity {
         }
 
         if (requestCode == PickConfig.PICK_REQUEST_CODE) {
-            ArrayList<String> pick = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
-            Toast.makeText(this, "pick size:" + pick.size(), Toast.LENGTH_SHORT).show();
-
-//            imageAdapter.addData(pick);
+            LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
+            Toast.makeText(AddStrategyImageActivity.this, "pick size: " + LIST_IMG.size(), Toast.LENGTH_SHORT).show();
+            AddStrategyImageActivity.this.finish();
         }
     }
 }

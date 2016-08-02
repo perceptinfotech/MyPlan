@@ -1,25 +1,37 @@
 package percept.myplan.POJO;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by percept on 1/8/16.
  */
 
 public class Alarm {
 
+    @SerializedName("alarmname")
     private String AlarmName;
+    @SerializedName("alarmtime")
     private String AlarmTime;
+    @SerializedName("status")
     private boolean Status;
+    @SerializedName("alarmtune")
     private String AlarmTune;
+    @SerializedName("alarmtunename")
+    private String AlarmTuneName;
+    @SerializedName("alarmrepeat")
     private String AlarmRepeat;
+    @SerializedName("snooze")
     private String Snooze;
 
-    public Alarm(String alarmName, String alarmTime, boolean status, String alarmTune, String alarmRepeat, String snooze) {
+    public Alarm(String alarmName, String alarmTime, boolean status, String alarmTune, String alarmRepeat, String snooze,
+                 String alarmTuneName) {
         AlarmName = alarmName;
         AlarmTime = alarmTime;
         Status = status;
         AlarmTune = alarmTune;
         AlarmRepeat = alarmRepeat;
         Snooze = snooze;
+        AlarmTuneName = alarmTuneName;
     }
 
     public String getSnooze() {
@@ -71,4 +83,12 @@ public class Alarm {
         AlarmName = alarmName;
     }
 
+
+    public String getAlarmTuneName() {
+        return AlarmTuneName;
+    }
+
+    public void setAlarmTuneName(String alarmTuneName) {
+        AlarmTuneName = alarmTuneName;
+    }
 }

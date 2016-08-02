@@ -148,5 +148,18 @@
     <string name="sound">Sound</string>
     <string name="snooze">Snooze</string>
     <string name="label">Label</string>
+    <string name="allcontact">All Contacts</string>
+    <string name="addimage">Add Image</string>
+    <string name="chooseexistingimage">Choose existing image</string>
+    <string name="takenewimage">Take a new image</string>
+    <string name="choosefromphone">Choose from phone</string>
+    <string name="choosefromlink">Choose from link</string>
+    <string name="addmusic">Add music</string>
+    <string name="musiclist">Music List</string>
+    <string name="addlink">Add Link</string>
+    <string name="url">URL</string>
+    <string name="addlinktext">How to add a link - if you want to link to a page or another website ,select the web address</string>
+    <string name="insertlink">Insert Link</string>
+    <string name="strategyadded">Strategy Added Successfully.</string>
 
 </resources>
