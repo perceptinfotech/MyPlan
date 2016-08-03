@@ -32,6 +32,8 @@ import com.android.volley.toolbox.ImageLoader;
 
 import java.util.Calendar;
 
+import percept.myplan.Activities.HelpListActivity;
+import percept.myplan.Activities.HelpListEditActivity;
 import percept.myplan.AppController;
 import percept.myplan.Dialogs.fragmentAddNote;
 import percept.myplan.Dialogs.fragmentMoodSummary;
@@ -115,6 +117,8 @@ public class fragmentHome extends Fragment {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getActivity(), "Home Called", Toast.LENGTH_SHORT).show();
+                Intent _intent = new Intent(getActivity(), HelpListActivity.class);
+                startActivity(_intent);
             }
         });
 

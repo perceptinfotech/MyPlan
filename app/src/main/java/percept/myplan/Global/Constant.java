@@ -1,5 +1,12 @@
 package percept.myplan.Global;
 
+import android.os.Environment;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * Created by percept on 12/7/16.
  */
@@ -48,13 +55,22 @@ public class Constant {
 
 
     //Contact Add
-    public final static String ID="id";
-    public final static String CON_IMAGE="con_image";
-    public final static String SKYPE="skype";
-    public final static String HELPLIST="helplist";
-    public final static String NOTE="note";
+    public final static String ID = "id";
+    public final static String CON_IMAGE = "con_image";
+    public final static String SKYPE = "skype";
+    public final static String HELPLIST = "helplist";
+    public final static String NOTE = "note";
 
     //add Strategy
-    public final static String CONTACTID="contact_id";
-    public final static String LINK="link";
+    public final static String CONTACTID = "contact_id";
+    public final static String LINK = "link";
+
+
+    //Hope Element
+    public final static String HOPE_ID="hope_id";
+    public final static String HOPE_TITLE="media_title";
+    public final static String HOPE_TYPE="type";
+
+    public static final String APP_MEDIA_PATH = Environment.getExternalStorageDirectory()
+            + File.separator + "MyPlan";
 }

@@ -34,17 +34,14 @@ import java.util.Map;
 
 import percept.myplan.Activities.AddContactActivity;
 import percept.myplan.Activities.EmergencyContactActivity;
-import percept.myplan.Activities.HelpListActivity;
+import percept.myplan.Activities.HelpListEditActivity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.VolleyResponseListener;
-import percept.myplan.POJO.Contact;
 import percept.myplan.POJO.ContactDisplay;
-import percept.myplan.POJO.Symptom;
 import percept.myplan.R;
 import percept.myplan.adapters.ContactHelpListAdapter;
-import percept.myplan.adapters.SymptomAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -172,7 +169,7 @@ public class fragmentContacts extends Fragment {
         TV_EDIT_HELPLIST.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent _intent = new Intent(getActivity(), HelpListActivity.class);
+                Intent _intent = new Intent(getActivity(), HelpListEditActivity.class);
                 startActivity(_intent);
             }
         });

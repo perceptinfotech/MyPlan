@@ -1,24 +1,62 @@
 package percept.myplan.Activities;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 
 import me.crosswall.photo.pick.PickConfig;
+import me.crosswall.photo.pick.util.UriUtil;
+import percept.myplan.AppController;
+import percept.myplan.Global.AndroidMultiPartEntity;
+import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
 import percept.myplan.R;
+
+import static percept.myplan.fragments.fragmentHopeBox.ADDED_HOPEBOX;
 
 public class AddHopeBoxActivity extends AppCompatActivity {
 
     private Button BTN_ADDFOLDERIMG;
+    private String FOLDER_IMG_PATH = "";
+    private EditText EDT_FOLDERNAME;
+    private ImageView IMG_HOPE;
+    private RelativeLayout LAY_SELECTIMG, LAY_SELECTEDIMG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +71,32 @@ public class AddHopeBoxActivity extends AppCompatActivity {
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.title_activity_addhopebox));
 
-        BTN_ADDFOLDERIMG = (Button) findViewById(R.id.btnAddFolderImage);
+        LAY_SELECTIMG = (RelativeLayout) findViewById(R.id.relSelectImg);
+        LAY_SELECTEDIMG = (RelativeLayout) findViewById(R.id.relSelectedImg);
+        LAY_SELECTEDIMG.setVisibility(View.GONE);
 
+        BTN_ADDFOLDERIMG = (Button) findViewById(R.id.btnAddFolderImage);
+        EDT_FOLDERNAME = (EditText) findViewById(R.id.edtFolderName);
+        IMG_HOPE = (ImageView) findViewById(R.id.imgHopeFolder);
         BTN_ADDFOLDERIMG.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new PickConfig.Builder(AddHopeBoxActivity.this)
-                        .pickMode(PickConfig.MODE_MULTIP_PICK)
-                        .maxPickSize(10)
+                        .pickMode(PickConfig.MODE_SINGLE_PICK)
+                        .spanCount(3)
+                        //.showGif(true)
+                        .checkImage(false) //default false
+                        .useCursorLoader(false) //default true
+                        .toolbarColor(R.color.colorPrimary)
+                        .build();
+            }
+        });
+
+        LAY_SELECTEDIMG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new PickConfig.Builder(AddHopeBoxActivity.this)
+                        .pickMode(PickConfig.MODE_SINGLE_PICK)
                         .spanCount(3)
                         //.showGif(true)
                         .checkImage(false) //default false
@@ -63,6 +119,8 @@ public class AddHopeBoxActivity extends AppCompatActivity {
             AddHopeBoxActivity.this.finish();
         } else if (item.getItemId() == R.id.action_addHopeBox) {
             Toast.makeText(AddHopeBoxActivity.this, "Saved Called", Toast.LENGTH_SHORT).show();
+
+            new AddHopeBox(EDT_FOLDERNAME.getText().toString(), FOLDER_IMG_PATH).execute();
         }
         return false;
     }
@@ -75,10 +133,112 @@ public class AddHopeBoxActivity extends AppCompatActivity {
         }
 
         if (requestCode == PickConfig.PICK_REQUEST_CODE) {
+            LAY_SELECTIMG.setVisibility(View.GONE);
+            LAY_SELECTEDIMG.setVisibility(View.VISIBLE);
             ArrayList<String> pick = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
-            Toast.makeText(this, "pick size:" + pick.size(), Toast.LENGTH_SHORT).show();
+            FOLDER_IMG_PATH = pick.get(0).toString();
+            Uri uri = UriUtil.generatorUri(FOLDER_IMG_PATH, UriUtil.LOCAL_FILE_SCHEME);
+            Picasso.with(AddHopeBoxActivity.this).load(uri).into(IMG_HOPE);
 
-//            imageAdapter.addData(pick);
         }
+    }
+
+    private class AddHopeBox extends AsyncTask<Void, Integer, String> {
+
+        private String TITLE, IMG_PATH;
+
+        public AddHopeBox(String title, String folderImg) {
+            this.TITLE = title;
+            this.IMG_PATH = folderImg;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            // setting progress bar to zero
+            super.onPreExecute();
+        }
+
+
+        @Override
+        protected String doInBackground(Void... params) {
+            return uploadFile();
+        }
+
+        @SuppressWarnings("deprecation")
+        private String uploadFile() {
+            String responseString = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveHopebox");
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+//                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+                if (!IMG_PATH.equals("")) {
+                    File sourceFile = new File(IMG_PATH);
+                    entity.addPart("cover", new FileBody(sourceFile));
+                }
+                try {
+
+                    entity.addPart("sid", new StringBody(Constant.SID));
+                    entity.addPart("sname", new StringBody(Constant.SNAME));
+                    entity.addPart(Constant.ID, new StringBody(""));
+                    entity.addPart(Constant.TITLE, new StringBody(TITLE));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+
+//                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+                long totalLength = entity.getContentLength();
+                System.out.println("TotalLength : " + totalLength);
+
+                // Making server call
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    // Server response
+                    responseString = EntityUtils.toString(r_entity);
+
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
+
+            return responseString;
+
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            super.onPostExecute(result);
+
+            Log.d(":::::: ", result);
+            Toast.makeText(AddHopeBoxActivity.this,
+                    getResources().getString(R.string.hopeboxadded), Toast.LENGTH_SHORT).show();
+            AddHopeBoxActivity.this.finish();
+            ADDED_HOPEBOX = true;
+
+
+        }
+
     }
 }

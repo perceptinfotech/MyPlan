@@ -21,7 +21,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -30,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import percept.myplan.Activities.AddHopeBoxActivity;
+import percept.myplan.Activities.HopeDetailsActivity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
@@ -47,6 +51,8 @@ public class fragmentHopeBox extends Fragment {
     private RecyclerView LST_HOPE;
     private HopeAdapter ADAPTER;
     private List<Hope> LIST_HOPE;
+    public static boolean ADDED_HOPEBOX = false;
+    Map<String, String> params;
 
     public fragmentHopeBox() {
         // Required empty public constructor
@@ -61,14 +67,13 @@ public class fragmentHopeBox extends Fragment {
         View _View = inflater.inflate(R.layout.fragment_hope_box, container, false);
         LST_HOPE = (RecyclerView) _View.findViewById(R.id.recycler_hope);
         LIST_HOPE = new ArrayList<>();
-        ADAPTER = new HopeAdapter(getActivity(), LIST_HOPE);
+
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 2);
         LST_HOPE.setLayoutManager(mLayoutManager);
         LST_HOPE.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         LST_HOPE.setItemAnimator(new DefaultItemAnimator());
-        LST_HOPE.setAdapter(ADAPTER);
-        prepareAlbums();
+
 
         LST_HOPE.addOnItemTouchListener(new fragmentHopeBox.RecyclerTouchListener(getActivity(), LST_HOPE, new fragmentHopeBox.ClickListener() {
             @Override
@@ -76,7 +81,13 @@ public class fragmentHopeBox extends Fragment {
                 LIST_HOPE.get(position);
                 if (position == LIST_HOPE.size() - 1) {
                     Toast.makeText(getActivity(), LIST_HOPE.get(position).getTITLE(), Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(getActivity(), AddHopeBoxActivity.class));
+                    Intent _intent = new Intent(getActivity(), AddHopeBoxActivity.class);
+                    startActivity(_intent);
+                } else {
+                    Intent _intent = new Intent(getActivity(), HopeDetailsActivity.class);
+                    _intent.putExtra("HOPE_TITLE", LIST_HOPE.get(position).getTITLE());
+                    _intent.putExtra("HOPE_ID", LIST_HOPE.get(position).getID());
+                    startActivity(_intent);
                 }
             }
 
@@ -87,10 +98,11 @@ public class fragmentHopeBox extends Fragment {
         }));
 
 
-        Map<String, String> params = new HashMap<String, String>();
+        params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         try {
+            LIST_HOPE.clear();
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_HOPEBOXES, params, false, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
@@ -100,6 +112,17 @@ public class fragmentHopeBox extends Fragment {
                 @Override
                 public void onResponse(JSONObject response) {
                     Log.d(":::::::::::::::: ", response.toString());
+                    Gson gson = new Gson();
+                    try {
+                        LIST_HOPE = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                .toString(), new TypeToken<List<Hope>>() {
+                        }.getType());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    LIST_HOPE.add(new Hope("", "", "", "", "", "Add New Box"));
+                    ADAPTER = new HopeAdapter(getActivity(), LIST_HOPE);
+                    LST_HOPE.setAdapter(ADAPTER);
                 }
             });
         } catch (Exception e) {
@@ -108,22 +131,39 @@ public class fragmentHopeBox extends Fragment {
         return _View;
     }
 
-    private void prepareAlbums() {
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (ADDED_HOPEBOX) {
+            try {
+                LIST_HOPE.clear();
+                new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_HOPEBOXES, params, false, false, false, new VolleyResponseListener() {
+                    @Override
+                    public void onError(VolleyError message) {
+                        Log.d(":::::::::::::::: ", message.toString());
+                    }
 
-
-        Hope a = new Hope("1", "http://www.lgrc.us/wp-content/uploads/2014/04/family-silhouette1.png", "Family");
-        LIST_HOPE.add(a);
-
-        a = new Hope("2", "http://kingofwallpapers.com/friend/friend-005.jpg", "Friends");
-        LIST_HOPE.add(a);
-
-        a = new Hope("3", "http://www.partnersforhealthypets.org/healthypetcheckup/assets/pets-fcb53b73523cd42be71be807ca0d6aaf.jpg", "Pets");
-        LIST_HOPE.add(a);
-
-        a = new Hope("4", "", "Add New Box");
-        LIST_HOPE.add(a);
-
-        ADAPTER.notifyDataSetChanged();
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(":::::::::::::::: ", response.toString());
+                        Gson gson = new Gson();
+                        try {
+                            LIST_HOPE = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                    .toString(), new TypeToken<List<Hope>>() {
+                            }.getType());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        LIST_HOPE.add(new Hope("", "", "", "", "", "Add New Box"));
+                        ADAPTER = new HopeAdapter(getActivity(), LIST_HOPE);
+                        LST_HOPE.setAdapter(ADAPTER);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            ADDED_HOPEBOX = false;
+        }
     }
 
     /**

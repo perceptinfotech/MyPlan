@@ -161,5 +161,12 @@
     <string name="addlinktext">How to add a link - if you want to link to a page or another website ,select the web address</string>
     <string name="insertlink">Insert Link</string>
     <string name="strategyadded">Strategy Added Successfully.</string>
+    <string name="hopeboxadded">Hope box added</string>
+    <string name="newelement">New Element</string>
+    <string name="chooseimage">Choose Image</string>
+    <string name="choosemusic">Choose music</string>
+    <string name="choosevideo">Choose video</string>
+    <string name="leaveanote">Leave a note</string>
+    <string name="linktoweb">Link to web</string>
 
 </resources>

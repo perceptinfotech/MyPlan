@@ -67,8 +67,10 @@ public class General {
             return ".getCategoryInspirations";
         } else if (serviceName == PHPServices.GET_STRATEGY) {
             return ".getStrategy";
-        }else if(serviceName== PHPServices.ADD_MYSTRATEGY){
+        } else if (serviceName == PHPServices.ADD_MYSTRATEGY) {
             return ".addMystrategy";
+        } else if (serviceName == PHPServices.ADD_HOPEBOX) {
+            return ".saveHopebox";
         }
 
 
@@ -197,6 +199,7 @@ public class General {
         GET_CATEGORIES,
         GET_CATEGORY_INSPIRATIONS,
         GET_STRATEGY,
-        ADD_MYSTRATEGY
+        ADD_MYSTRATEGY,
+        ADD_HOPEBOX
     }
 }

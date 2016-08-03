@@ -40,6 +40,7 @@ import java.util.List;
 
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.Utils;
 import percept.myplan.POJO.Alarm;
 import percept.myplan.R;
 import percept.myplan.adapters.AlarmAdapter;
@@ -61,6 +62,8 @@ public class AddStrategyActivity extends AppCompatActivity {
     private final int SET_MUSIC = 24;
     private final int SET_LINK = 25;
     private String STR_LINK = "", STR_CONTACTID = "";
+    private HashMap<String, List<Alarm>> MAP_ALARM;
+    private Utils UTILS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +91,25 @@ public class AddStrategyActivity extends AppCompatActivity {
         LIST_ALARM = new ArrayList<>();
         LIST_IMG = new ArrayList<>();
         LIST_MUSIC = new ArrayList<>();
+        MAP_ALARM = new HashMap<>();
+        UTILS = new Utils(AddStrategyActivity.this);
+        String _strAlarm = UTILS.getPreference("ALARMLIST");
+        try {
+            if (!_strAlarm.equals("") && !_strAlarm.equals("null")) {
+                Type listType = new TypeToken<HashMap<String, List<Alarm>>>() {
+
+                }.getType();
+                try {
+                    MAP_ALARM = new Gson().fromJson(_strAlarm, listType);
+                } catch (JsonSyntaxException ex) {
+                    MAP_ALARM = new HashMap<>();
+                }
+            } else {
+                MAP_ALARM = new HashMap<>();
+            }
+        } catch (Exception ex) {
+
+        }
 
         TV_ALARM.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -224,6 +246,8 @@ public class AddStrategyActivity extends AppCompatActivity {
 
 //                totalSize = entity.getContentLength();
                 httppost.setEntity(entity);
+                long totalLength = entity.getContentLength();
+                System.out.println("TotalLength : " + totalLength);
 
                 // Making server call
                 HttpResponse response = httpclient.execute(httppost);
@@ -233,6 +257,7 @@ public class AddStrategyActivity extends AppCompatActivity {
                 if (statusCode == 200) {
                     // Server response
                     responseString = EntityUtils.toString(r_entity);
+
                 } else {
                     responseString = "Error occurred! Http Status Code: "
                             + statusCode;
@@ -254,9 +279,14 @@ public class AddStrategyActivity extends AppCompatActivity {
             super.onPostExecute(result);
             try {
                 Log.d(":::::: ", result);
+                String _id = "";
                 JSONObject _object = new JSONObject(result);
                 JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
-
+                _id = _ObjData.getString(Constant.ID);
+                MAP_ALARM.put(_id, LIST_ALARM);
+                Gson gson = new Gson();
+                String _alarmList = gson.toJson(MAP_ALARM);
+                UTILS.setPreference("ALARMLIST", _alarmList);
                 Toast.makeText(AddStrategyActivity.this,
                         getResources().getString(R.string.strategyadded), Toast.LENGTH_SHORT).show();
 //                AddStrategyActivity.this.finish();

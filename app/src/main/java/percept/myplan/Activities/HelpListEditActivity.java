@@ -7,7 +7,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,22 +32,16 @@ import percept.myplan.R;
 import percept.myplan.adapters.ContactHelpListAdapter;
 import percept.myplan.fragments.fragmentContacts;
 
-import static percept.myplan.fragments.fragmentContacts.CONTACT_NAME;
-import static percept.myplan.fragments.fragmentContacts.HELP_CONTACT_NAME;
-import static percept.myplan.fragments.fragmentContacts.LIST_CONTACTS;
-import static percept.myplan.fragments.fragmentContacts.LIST_HELPCONTACTS;
+public class HelpListEditActivity extends AppCompatActivity {
 
-public class HelpListActivity extends AppCompatActivity {
-
-    private TextView TV_ADDHELPLIST, TV_EDITHELPLIST;
+    private TextView TV_ADDHELPLIST;
     private RecyclerView LST_HELP;
     private ContactHelpListAdapter ADPT_CONTACTHELPLIST;
-    private List<ContactDisplay> LIST_ALLCONTACTS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_help_list);
+        setContentView(R.layout.activity_help_list_edit);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -56,16 +49,15 @@ public class HelpListActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText(getResources().getString(R.string.help_list));
+        mTitle.setText(getResources().getString(R.string.title_activity_help_list));
 
         TV_ADDHELPLIST = (TextView) findViewById(R.id.tvAddHelpContact);
-        TV_EDITHELPLIST = (TextView) findViewById(R.id.tvEditHelpList);
         LST_HELP = (RecyclerView) findViewById(R.id.lstHelpList);
-        LIST_ALLCONTACTS = new ArrayList<>();
-        HELP_CONTACT_NAME = new HashMap<>();
-        LIST_HELPCONTACTS = new ArrayList<>();
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(HelpListActivity.this);
+
+        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(fragmentContacts.LIST_HELPCONTACTS);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(HelpListEditActivity.this);
         LST_HELP.setLayoutManager(mLayoutManager);
         LST_HELP.setItemAnimator(new DefaultItemAnimator());
         LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
@@ -73,64 +65,14 @@ public class HelpListActivity extends AppCompatActivity {
         TV_ADDHELPLIST.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent _intent = new Intent(HelpListActivity.this, AddContactActivity.class);
+                Intent _intent = new Intent(HelpListEditActivity.this, AddContactActivity.class);
                 _intent.putExtra("ADD_TO_HELP", "true");
                 startActivity(_intent);
+                if (getIntent().hasExtra("FROM_HELP")) {
+                    HelpListEditActivity.this.finish();
+                }
             }
         });
-
-        TV_EDITHELPLIST.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent _intent = new Intent(HelpListActivity.this, HelpListEditActivity.class);
-                _intent.putExtra("FROM_HELP", "true");
-                startActivity(_intent);
-            }
-        });
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("sid", Constant.SID);
-        params.put("sname", Constant.SNAME);
-        try {
-            LIST_HELPCONTACTS.clear();
-            HELP_CONTACT_NAME.clear();
-            new General().getJSONContentFromInternetService(HelpListActivity.this, General.PHPServices.GET_CONTACTS, params, false, false, false, new VolleyResponseListener() {
-                @Override
-                public void onError(VolleyError message) {
-
-                }
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.d(":::::::::::::: ", response.toString());
-
-                    Gson gson = new Gson();
-                    try {
-                        LIST_ALLCONTACTS = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                .toString(), new TypeToken<List<ContactDisplay>>() {
-                        }.getType());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    for (ContactDisplay _obj : LIST_ALLCONTACTS) {
-
-
-                        if (!_obj.getHelplist().equals("0")) {
-                            HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                            LIST_HELPCONTACTS.add(_obj);
-                        }
-                    }
-
-                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS);
-                    LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
-
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     @Override
@@ -141,10 +83,11 @@ public class HelpListActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sid", Constant.SID);
                 params.put("sname", Constant.SNAME);
-
-                LIST_HELPCONTACTS.clear();
-                HELP_CONTACT_NAME.clear();
-                new General().getJSONContentFromInternetService(HelpListActivity.this, General.PHPServices.GET_CONTACTS, params, false, false, true, new VolleyResponseListener() {
+                fragmentContacts.LIST_CONTACTS.clear();
+                fragmentContacts.LIST_HELPCONTACTS.clear();
+                fragmentContacts.CONTACT_NAME.clear();
+                fragmentContacts.HELP_CONTACT_NAME.clear();
+                new General().getJSONContentFromInternetService(HelpListEditActivity.this, General.PHPServices.GET_CONTACTS, params, false, false, true, new VolleyResponseListener() {
                     @Override
                     public void onError(VolleyError message) {
 
@@ -163,20 +106,23 @@ public class HelpListActivity extends AppCompatActivity {
                         }
 
                         for (ContactDisplay _obj : _LSTALL) {
-                            if (!_obj.getHelplist().equals("0")) {
-                                HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                                LIST_HELPCONTACTS.add(_obj);
+                            if (_obj.getHelplist().equals("0")) {
+                                fragmentContacts.CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
+                                fragmentContacts.LIST_CONTACTS.add(_obj);
+                            } else {
+                                fragmentContacts.HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
+                                fragmentContacts.LIST_HELPCONTACTS.add(_obj);
                             }
                         }
 
-                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS);
+
+                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(fragmentContacts.LIST_HELPCONTACTS);
                         LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
                     }
                 });
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            fragmentContacts.GET_CONTACTS = false;
         }
     }
 
@@ -189,10 +135,10 @@ public class HelpListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            HelpListActivity.this.finish();
+            HelpListEditActivity.this.finish();
             return true;
         } else if (item.getItemId() == R.id.action_add_editHelpList) {
-            Intent _intent = new Intent(HelpListActivity.this, AddContactActivity.class);
+            Intent _intent = new Intent(HelpListEditActivity.this, AddContactActivity.class);
             _intent.putExtra("ADD_TO_HELP", "true");
             startActivity(_intent);
         }
