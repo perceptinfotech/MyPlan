@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,17 +17,30 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import percept.myplan.Global.AndroidMultiPartEntity;
+import percept.myplan.Global.Constant;
 import percept.myplan.R;
 
-import static percept.myplan.Activities.AddStrategyActivity.LIST_MUSIC;
-import static percept.myplan.Activities.AddStrategyMusicActivity.GO_STRATEGY;
+import static percept.myplan.Activities.AddStrategyMusicActivity.CLOSE_PAGE;
 
 public class MusicListActivity extends AppCompatActivity {
     private int count;
@@ -35,6 +49,12 @@ public class MusicListActivity extends AppCompatActivity {
     private String[] arrPath;
     private String[] nameFile;
     private ImageAdapter imageAdapter;
+
+    private String FROM = "";
+    private String HOPE_TITLE = "";
+    private String HOPE_ID = "";
+    private boolean FROM_EDIT = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +68,16 @@ public class MusicListActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.musiclist));
+
+        if (getIntent().hasExtra("FROM_HOPE")) {
+            FROM = getIntent().getExtras().getString("FROM_HOPE");
+            HOPE_TITLE = getIntent().getExtras().getString("HOPE_TITLE");
+            HOPE_ID = getIntent().getExtras().getString("HOPE_ID");
+        }
+
+        if (getIntent().hasExtra("FROM_EDIT")) {
+            FROM_EDIT = true;
+        }
 
         final String[] columns = {MediaStore.Images.Media.DATA, MediaStore.Audio.Media._ID};
         final String orderBy = MediaStore.Images.Media._ID;
@@ -126,17 +156,137 @@ public class MusicListActivity extends AppCompatActivity {
             final int len = thumbnailsselection.length;
 
             String selectImages = "";
-            for (int i = 0; i < len; i++) {
-                if (thumbnailsselection[i]) {
-                    selectImages = selectImages + arrPath[i] + "|";
-                    LIST_MUSIC.add(arrPath[i]);
+            if (FROM.equals("") || FROM_EDIT) {
+                if (FROM_EDIT) {
+                    for (int i = 0; i < len; i++) {
+                        if (thumbnailsselection[i]) {
+                            selectImages = selectImages + arrPath[i] + "|";
+                            StrategyEditActivity.LIST_MUSIC.add(arrPath[i]);
+                        }
+                    }
+                    CLOSE_PAGE = true;
+                    MusicListActivity.this.finish();
+                } else {
+                    for (int i = 0; i < len; i++) {
+                        if (thumbnailsselection[i]) {
+                            selectImages = selectImages + arrPath[i] + "|";
+                            AddStrategyActivity.LIST_MUSIC.add(arrPath[i]);
+                        }
+                    }
+                    CLOSE_PAGE = true;
+                    MusicListActivity.this.finish();
+                }
+            } else {
+                for (int i = 0; i < len; i++) {
+                    if (thumbnailsselection[i]) {
+                        new AddHopeBoxMusicElement(HOPE_TITLE, HOPE_ID, arrPath[i], "music").execute();
+                        break;
+                    }
                 }
             }
-            GO_STRATEGY = true;
-            MusicListActivity.this.finish();
+
             return true;
         }
         return false;
+    }
+
+    private class AddHopeBoxMusicElement extends AsyncTask<Void, Integer, String> {
+
+        private String HOPE_TITLE, MUSIC_PATH, HOPE_ID, TYPE;
+
+        public AddHopeBoxMusicElement(String title, String hopeId, String musicpath, String type) {
+            this.HOPE_TITLE = title;
+            this.MUSIC_PATH = musicpath;
+            this.HOPE_ID = hopeId;
+            this.TYPE = type;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            // setting progress bar to zero
+            super.onPreExecute();
+        }
+
+
+        @Override
+        protected String doInBackground(Void... params) {
+            return uploadFile();
+        }
+
+        @SuppressWarnings("deprecation")
+        private String uploadFile() {
+            String responseString = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveHopemedia");
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+//                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+                if (!MUSIC_PATH.equals("")) {
+                    File sourceFile = new File(MUSIC_PATH);
+                    entity.addPart("media", new FileBody(sourceFile));
+                }
+                try {
+
+                    entity.addPart("sid", new StringBody(Constant.SID));
+                    entity.addPart("sname", new StringBody(Constant.SNAME));
+                    entity.addPart(Constant.ID, new StringBody(""));
+                    entity.addPart(Constant.HOPE_ID, new StringBody(HOPE_ID));
+                    entity.addPart(Constant.HOPE_TITLE, new StringBody(HOPE_TITLE));
+                    entity.addPart(Constant.HOPE_TYPE, new StringBody(TYPE));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+
+//                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+                long totalLength = entity.getContentLength();
+                System.out.println("TotalLength : " + totalLength);
+
+                // Making server call
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    // Server response
+                    responseString = EntityUtils.toString(r_entity);
+
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
+
+            return responseString;
+
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            super.onPostExecute(result);
+
+            Log.d(":::::: ", result);
+            CLOSE_PAGE = true;
+            MusicListActivity.this.finish();
+        }
+
     }
 
     public class ImageAdapter extends BaseAdapter {
@@ -179,6 +329,11 @@ public class MusicListActivity extends AppCompatActivity {
                     // TODO Auto-generated method stub
                     CheckBox cb = (CheckBox) v;
                     int id = cb.getId();
+                    if (!FROM.equals("")) {
+                        for (int i = 0; i < count; i++) {
+                            thumbnailsselection[i] = false;
+                        }
+                    }
                     if (thumbnailsselection[id]) {
                         cb.setChecked(false);
                         thumbnailsselection[id] = false;

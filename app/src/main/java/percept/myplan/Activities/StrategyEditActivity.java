@@ -3,13 +3,14 @@ package percept.myplan.Activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -43,14 +44,14 @@ import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.Utils;
 import percept.myplan.POJO.Alarm;
+import percept.myplan.POJO.ContactDisplay;
+import percept.myplan.POJO.StrategyContact;
 import percept.myplan.R;
-import percept.myplan.adapters.AlarmAdapter;
-import percept.myplan.fragments.fragmentContacts;
 
-import static percept.myplan.Activities.AddStrategyToSymptomActivity.GET_STRATEGIES;
+import static percept.myplan.Activities.StrategyDetailsOwnActivity.LIST_STRATEGYCONTACT;
 import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
 
-public class AddStrategyActivity extends AppCompatActivity {
+public class StrategyEditActivity extends AppCompatActivity {
 
     private EditText EDT_TITLE, EDT_TEXT;
     private TextView TV_ALARM, TV_IMAGES, TV_LINKS, TV_NETWORK, TV_MUSIC;
@@ -66,13 +67,15 @@ public class AddStrategyActivity extends AppCompatActivity {
     private String STR_LINK = "", STR_CONTACTID = "";
     private HashMap<String, List<Alarm>> MAP_ALARM;
     private Utils UTILS;
+    private String STRATEGY_ID;
     private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_strategy);
+        setContentView(R.layout.activity_edit_strategy);
 
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -80,12 +83,15 @@ public class AddStrategyActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText(getResources().getString(R.string.addastrategy));
+        mTitle.setText(getResources().getString(R.string.strategy));
 
+        STRATEGY_ID = getIntent().getExtras().getString("STRATEGY_ID");
+        PB = (ProgressBar) findViewById(R.id.pbEditStrategy);
         EDT_TITLE = (EditText) findViewById(R.id.edtTitle);
         EDT_TEXT = (EditText) findViewById(R.id.edtText);
 
-        PB = (ProgressBar) findViewById(R.id.pbAddStrategy);
+        EDT_TITLE.setText(getIntent().getExtras().getString("STRATEGY_TITLE"));
+        EDT_TEXT.setText(getIntent().getExtras().getString("STRATEGY_DESC"));
 
         TV_ALARM = (TextView) findViewById(R.id.tvAlarm);
         TV_IMAGES = (TextView) findViewById(R.id.tvImages);
@@ -97,7 +103,7 @@ public class AddStrategyActivity extends AppCompatActivity {
         LIST_IMG = new ArrayList<>();
         LIST_MUSIC = new ArrayList<>();
         MAP_ALARM = new HashMap<>();
-        UTILS = new Utils(AddStrategyActivity.this);
+        UTILS = new Utils(StrategyEditActivity.this);
         String _strAlarm = UTILS.getPreference("ALARMLIST");
         try {
             if (!_strAlarm.equals("") && !_strAlarm.equals("null")) {
@@ -115,39 +121,60 @@ public class AddStrategyActivity extends AppCompatActivity {
         } catch (Exception ex) {
 
         }
+        if (MAP_ALARM.containsKey(STRATEGY_ID))
+            LIST_ALARM = MAP_ALARM.get(STRATEGY_ID);
 
+        for (StrategyContact _obj : LIST_STRATEGYCONTACT) {
+            if (STR_CONTACTID.equals("")) {
+                STR_CONTACTID += _obj.getID();
+            } else {
+                STR_CONTACTID += "," + _obj.getID();
+            }
+        }
+
+        STR_LINK = getIntent().getExtras().getString("STR_LINK");
         TV_ALARM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(AddStrategyActivity.this, AlarmListActivity.class), SET_ALARM);
+                Intent _intent = new Intent(StrategyEditActivity.this, AlarmListActivity.class);
+                _intent.putExtra("FROM_EDIT", "TRUE");
+                startActivityForResult(_intent, SET_ALARM);
             }
         });
 
         TV_IMAGES.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(AddStrategyActivity.this, AddStrategyImageActivity.class), SET_IMAGE);
+                Intent _intent = new Intent(StrategyEditActivity.this, AddStrategyImageActivity.class);
+                _intent.putExtra("FROM_EDIT", "TRUE");
+                startActivityForResult(_intent, SET_IMAGE);
             }
         });
 
         TV_LINKS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(AddStrategyActivity.this, AddStrategyLinksActivity.class), SET_LINK);
+                Intent _intent = new Intent(StrategyEditActivity.this, AddStrategyLinksActivity.class);
+                _intent.putExtra("FROM_EDIT", "TRUE");
+                startActivityForResult(_intent, SET_LINK);
             }
         });
 
         TV_NETWORK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(AddStrategyActivity.this, AddStrategyContactActivity.class), SET_CONTACT);
+                Intent _intent = new Intent(StrategyEditActivity.this, AddStrategyContactActivity.class);
+                _intent.putExtra("FROM_EDIT", "TRUE");
+                startActivityForResult(_intent, SET_CONTACT);
             }
         });
 
         TV_MUSIC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(AddStrategyActivity.this, AddStrategyMusicActivity.class), SET_MUSIC);
+                Intent _intent = new Intent(StrategyEditActivity.this, AddStrategyMusicActivity.class);
+                _intent.putExtra("FROM_EDIT", "TRUE");
+                startActivityForResult(_intent, SET_MUSIC);
             }
         });
     }
@@ -161,7 +188,7 @@ public class AddStrategyActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            AddStrategyActivity.this.finish();
+            StrategyEditActivity.this.finish();
             return true;
         } else if (item.getItemId() == R.id.action_saveStrategy) {
             PB.setVisibility(View.VISIBLE);
@@ -239,7 +266,7 @@ public class AddStrategyActivity extends AppCompatActivity {
                     entity.addPart("sname", new StringBody(Constant.SNAME));
                     entity.addPart("image_count", new StringBody(String.valueOf(LST_IMG.size())));
                     entity.addPart("music_count", new StringBody(String.valueOf(LST_MUSIC.size())));
-                    entity.addPart(Constant.ID, new StringBody(""));
+                    entity.addPart(Constant.ID, new StringBody(STRATEGY_ID));
                     entity.addPart(Constant.TITLE, new StringBody(this.TITLE));
                     entity.addPart(Constant.DESC, new StringBody(this.TEXT));
                     entity.addPart(Constant.CONTACTID, new StringBody(this.CONTACT_ID));
@@ -293,16 +320,11 @@ public class AddStrategyActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 String _alarmList = gson.toJson(MAP_ALARM);
                 UTILS.setPreference("ALARMLIST", _alarmList);
-                Toast.makeText(AddStrategyActivity.this,
-                        getResources().getString(R.string.strategyadded), Toast.LENGTH_SHORT).show();
+                Toast.makeText(StrategyEditActivity.this,
+                        getResources().getString(R.string.strategyedit), Toast.LENGTH_SHORT).show();
+                StrategyEditActivity.this.finish();
+                ADDED_STRATEGIES = true;
 
-
-                if (getIntent().hasExtra("FROM_SYMPTOM")) {
-                    GET_STRATEGIES = true;
-                } else {
-                    ADDED_STRATEGIES = true;
-                }
-                AddStrategyActivity.this.finish();
             } catch (JSONException e) {
                 e.printStackTrace();
             }

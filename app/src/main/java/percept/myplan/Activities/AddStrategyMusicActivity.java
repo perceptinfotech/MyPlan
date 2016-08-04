@@ -7,17 +7,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import me.crosswall.photo.pick.PickConfig;
 import percept.myplan.R;
-
-import static percept.myplan.Activities.AddStrategyActivity.LIST_IMG;
 
 public class AddStrategyMusicActivity extends AppCompatActivity {
 
     private TextView TV_CHOOSEFROMPHONE, TV_CHOOSEFROMLINK;
-    public static boolean GO_STRATEGY = false;
+    public static boolean CLOSE_PAGE = false;
+    private String FROM = "";
+    private String HOPE_TITLE = "";
+    private String HOPE_ID = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +33,11 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.addmusic));
 
+        if (getIntent().hasExtra("FROM_HOPE")) {
+            FROM = getIntent().getExtras().getString("FROM_HOPE");
+            HOPE_TITLE = getIntent().getExtras().getString("HOPE_TITLE");
+            HOPE_ID = getIntent().getExtras().getString("HOPE_ID");
+        }
 
         TV_CHOOSEFROMPHONE = (TextView) findViewById(R.id.tvChooseFromPhone);
         TV_CHOOSEFROMLINK = (TextView) findViewById(R.id.tvChooseFromLink);
@@ -48,7 +53,20 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
 //                chooseFile.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 //                startActivityForResult(Intent.createChooser(chooseFile, "Choose a file") , 2);
 
-                startActivity(new Intent(AddStrategyMusicActivity.this, MusicListActivity.class));
+                Intent _intent = new Intent(AddStrategyMusicActivity.this, MusicListActivity.class);
+
+                if (getIntent().hasExtra("FROM_HOPE")) {
+                    _intent.putExtra("HOPE_TITLE", HOPE_TITLE);
+                    _intent.putExtra("FROM_HOPE", "FROM_HOPE");
+                    _intent.putExtra("HOPE_ID", HOPE_ID);
+
+                }
+
+                if (getIntent().hasExtra("FROM_EDIT")) {
+                    _intent.putExtra("FROM_EDIT", "TRUE");
+                }
+
+                startActivity(_intent);
             }
         });
 
@@ -64,9 +82,9 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (GO_STRATEGY) {
+        if (CLOSE_PAGE) {
             AddStrategyMusicActivity.this.finish();
-            GO_STRATEGY = false;
+            CLOSE_PAGE = false;
         }
     }
 

@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/edt_register_border_white"
         android:gravity="center_vertical"
-        android:lines="3"
+        android:minLines="3"
         android:padding="10dp"
         android:textSize="16sp" />
 

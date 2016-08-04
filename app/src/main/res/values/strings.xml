@@ -168,5 +168,8 @@
     <string name="choosevideo">Choose video</string>
     <string name="leaveanote">Leave a note</string>
     <string name="linktoweb">Link to web</string>
+    <string name="strategy">Strategy</string>
+    <string name="strategyedit">Strategy editted successfully</string>
+    <string name="edit">Edit</string>
 
 </resources>

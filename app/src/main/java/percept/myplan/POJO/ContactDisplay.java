@@ -18,7 +18,7 @@ public class ContactDisplay {
     private String note;
     private String con_image;
     private String skype;
-    private boolean isSelected;
+    private boolean isSelected = false;
 
     public ContactDisplay(String created_by, String id, String first_name, String phone, String email,
                           String helplist, String state, String last_name, String ordering,

@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -55,7 +56,9 @@ public class fragmentStrategies extends Fragment {
     private Button BTN_INSPIRATION;
     private TextView TV_ADDNEWSTRATEGY;
     public static boolean ADDED_STRATEGIES = false;
+    private ProgressBar PB;
     Map<String, String> params;
+
     public fragmentStrategies() {
         // Required empty public constructor
     }
@@ -71,6 +74,7 @@ public class fragmentStrategies extends Fragment {
         LST_STRATEGY = (RecyclerView) _View.findViewById(R.id.lstStrategy);
         BTN_INSPIRATION = (Button) _View.findViewById(R.id.btnInspiration);
         TV_ADDNEWSTRATEGY = (TextView) _View.findViewById(R.id.tvAddNewStrategy);
+        PB = (ProgressBar) _View.findViewById(R.id.pbGetStrategies);
         setHasOptionsMenu(true);
         LIST_STRATEGY = new ArrayList<>();
         params = new HashMap<String, String>();
@@ -89,14 +93,16 @@ public class fragmentStrategies extends Fragment {
         });
 
         try {
+            PB.setVisibility(View.VISIBLE);
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_STRATEGIES, params, false, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
+                    PB.setVisibility(View.GONE);
                     Log.d(":::: ", response.toString());
                     Gson gson = new Gson();
                     try {
@@ -111,6 +117,7 @@ public class fragmentStrategies extends Fragment {
                 }
             });
         } catch (Exception e) {
+            PB.setVisibility(View.GONE);
             e.printStackTrace();
         }
 
@@ -120,6 +127,7 @@ public class fragmentStrategies extends Fragment {
                 LIST_STRATEGY.get(position);
                 Intent _intent = new Intent(getActivity(), StrategyDetailsOwnActivity.class);
                 _intent.putExtra("STRATEGY_ID", LIST_STRATEGY.get(position).getID());
+                _intent.putExtra("STRATEGY_NAME", LIST_STRATEGY.get(position).getTitle());
                 startActivity(_intent);
             }
 
@@ -151,14 +159,17 @@ public class fragmentStrategies extends Fragment {
         super.onResume();
         if (ADDED_STRATEGIES) {
             try {
-                new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_STRATEGIES, params, false, false, false, new VolleyResponseListener() {
+                PB.setVisibility(View.VISIBLE);
+                new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_STRATEGIES, params, false, false, true, new VolleyResponseListener() {
                     @Override
                     public void onError(VolleyError message) {
-
+                        PB.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void onResponse(JSONObject response) {
+                        PB.setVisibility(View.GONE);
+                        LIST_STRATEGY.clear();
                         Log.d(":::: ", response.toString());
                         Gson gson = new Gson();
                         try {
@@ -173,6 +184,7 @@ public class fragmentStrategies extends Fragment {
                     }
                 });
             } catch (Exception e) {
+                PB.setVisibility(View.GONE);
                 e.printStackTrace();
             }
             ADDED_STRATEGIES = false;

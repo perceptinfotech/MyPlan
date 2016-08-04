@@ -1,12 +1,23 @@
 package percept.myplan.POJO;
 
+/**
+ * Created by percept on 4/8/16.
+ */
+
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
+
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 /**
  * Created by percept on 26/7/16.
  */
 
-public class Strategy {
+public class StrategyDetails {
 
     @SerializedName("created_by")
     private String CreatedBy;
@@ -35,6 +46,9 @@ public class Strategy {
     @SerializedName("contacts")
     private String Contacts;
 
+    @SerializedName("contact")
+    private List<StrategyContact> Contact;
+
     @SerializedName("cat_id")
     private String CategoryId;
 
@@ -58,17 +72,6 @@ public class Strategy {
 
     @SerializedName("user_id")
     private String User_Id;
-
-    @SerializedName("cat_name")
-    private String CategoryName;
-
-    public String getCategoryName() {
-        return CategoryName;
-    }
-
-    public void setCategoryName(String categoryName) {
-        CategoryName = categoryName;
-    }
 
     public String getCreatedBy() {
         return CreatedBy;
@@ -126,6 +129,22 @@ public class Strategy {
         Ordering = ordering;
     }
 
+    public List<StrategyContact> getContact() {
+        return Contact;
+    }
+
+    public void setContact(List<StrategyContact> contacts) {
+        Contact = contacts;
+    }
+
+    public String getContacts() {
+        return Contacts;
+    }
+
+    public void setContacts(String contacts) {
+        Contacts = contacts;
+    }
+
 
     public String getUser_Id() {
         return User_Id;
@@ -167,13 +186,6 @@ public class Strategy {
         CreatedByName = createdByName;
     }
 
-    public String getContacts() {
-        return Contacts;
-    }
-
-    public void setContacts(String contacts) {
-        Contacts = contacts;
-    }
 
     public String getCategoryId() {
         return CategoryId;
@@ -210,7 +222,7 @@ public class Strategy {
 
     private boolean isSelected = false;
 
-    public Strategy(String created_by, String music, String id, String title, String contact_id, String description, String link, String state, String ordering, String image, boolean isSelected) {
+    public StrategyDetails(String created_by, String music, String id, String title, String contact_id, String description, String link, String state, String ordering, String image, boolean isSelected) {
 
         this.isSelected = isSelected;
     }

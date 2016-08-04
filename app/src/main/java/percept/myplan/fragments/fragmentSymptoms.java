@@ -18,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -55,6 +56,8 @@ public class fragmentSymptoms extends Fragment {
     private TextView TV_ADDNEW_SYMPTOM;
     public static Boolean GET_STRATEGY = false;
 
+    private ProgressBar PB;
+
     public fragmentSymptoms() {
         // Required empty public constructor
     }
@@ -68,7 +71,7 @@ public class fragmentSymptoms extends Fragment {
         View _View = inflater.inflate(R.layout.fragment_symptoms, container, false);
         LST_SYMPTOM = (RecyclerView) _View.findViewById(R.id.lstSymptom);
         BTN_DANGERSIGNAL = (Button) _View.findViewById(R.id.btnDangerSignal);
-
+        PB = (ProgressBar) _View.findViewById(R.id.pbGetSymptoms);
         LIST_SYMPTOM = new ArrayList<>();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
@@ -87,15 +90,16 @@ public class fragmentSymptoms extends Fragment {
         });
 
         try {
+            PB.setVisibility(View.VISIBLE);
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_SYMPTOMS, params, false, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
-
+                    PB.setVisibility(View.GONE);
                     Log.d(":::: ", response.toString());
                     Gson gson = new Gson();
                     try {
@@ -110,6 +114,7 @@ public class fragmentSymptoms extends Fragment {
                 }
             });
         } catch (Exception e) {
+            PB.setVisibility(View.GONE);
             e.printStackTrace();
         }
 
@@ -141,18 +146,19 @@ public class fragmentSymptoms extends Fragment {
         super.onResume();
         if (fragmentSymptoms.GET_STRATEGY) {
             try {
+                PB.setVisibility(View.VISIBLE);
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sid", Constant.SID);
                 params.put("sname", Constant.SNAME);
                 new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_SYMPTOMS, params, false, false, true, new VolleyResponseListener() {
                     @Override
                     public void onError(VolleyError message) {
-
+                        PB.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void onResponse(JSONObject response) {
-
+                        PB.setVisibility(View.GONE);
                         Log.d(":::: ", response.toString());
                         Gson gson = new Gson();
                         try {
@@ -167,6 +173,7 @@ public class fragmentSymptoms extends Fragment {
                     }
                 });
             } catch (Exception e) {
+                PB.setVisibility(View.GONE);
                 e.printStackTrace();
             }
             fragmentSymptoms.GET_STRATEGY = false;

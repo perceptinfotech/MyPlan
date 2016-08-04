@@ -51,6 +51,8 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
     private StrategySelectionAdapter ADAPTER;
     private Button BTN_INSPIRATION;
     private List<String> LIST_SELECTEDID;
+    public static boolean GET_STRATEGIES = false;
+    Map<String, String> params;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +82,9 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
         TV_ADDSTRATEGY.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(AddStrategyToSymptomActivity.this, AddStrategyActivity.class));
+                Intent _intent = new Intent(AddStrategyToSymptomActivity.this, AddStrategyActivity.class);
+                _intent.putExtra("FROM_SYMPTOM", "TRUE");
+                startActivity(_intent);
             }
         });
 
@@ -88,7 +92,7 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
         BTN_INSPIRATION = (Button) findViewById(R.id.btnInspiration);
 
         LIST_STRATEGY = new ArrayList<>();
-        Map<String, String> params = new HashMap<String, String>();
+        params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
 
@@ -149,28 +153,54 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
         BTN_INSPIRATION.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("sid", Constant.SID);
-                params.put("sname", Constant.SNAME);
-                try {
-                    new General().getJSONContentFromInternetService(AddStrategyToSymptomActivity.this, General.PHPServices.GET_CATEGORIES, params, false, false, false, new VolleyResponseListener() {
-                        @Override
-                        public void onError(VolleyError message) {
-                            Log.d("::::::::::: ", ":::");
-                        }
-
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Log.d("::::::::::: ", response.toString());
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                Intent _intent = new Intent(AddStrategyToSymptomActivity.this, InspirationCategoryActivity.class);
+                _intent.putExtra("FROM_SYMPTOM_INSPI","FROM_SYMPTOM_INSPI");
+                startActivity(_intent);
             }
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (GET_STRATEGIES) {
+            try {
+                new General().getJSONContentFromInternetService(AddStrategyToSymptomActivity.this, General.PHPServices.GET_STRATEGIES, params, false, false, false, new VolleyResponseListener() {
+                    @Override
+                    public void onError(VolleyError message) {
+
+                    }
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(":::: ", response.toString());
+                        LIST_STRATEGY.clear();
+                        Gson gson = new Gson();
+                        try {
+                            LIST_STRATEGY = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                    .toString(), new TypeToken<List<Strategy>>() {
+                            }.getType());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (LIST_SELECTEDID.size() > 0) {
+                            for (int i = 0; i < LIST_STRATEGY.size(); i++) {
+                                if (LIST_SELECTEDID.contains(LIST_STRATEGY.get(i).getID())) {
+                                    LIST_STRATEGY.get(i).setSelected(true);
+                                }
+                            }
+                        }
+                        ADAPTER = new StrategySelectionAdapter(LIST_STRATEGY);
+                        LST_STRATEGY.setAdapter(ADAPTER);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            GET_STRATEGIES = false;
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

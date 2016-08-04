@@ -27,12 +27,26 @@
 
             <TextView
                 android:id="@+id/tvCardImage"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
                 android:layout_below="@id/imgCardImage"
-                android:gravity="center"
+                android:gravity="left"
                 android:padding="@dimen/album_title_padding"
-                android:textColor="@color/album_title"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/album_title" />
+
+            <TextView
+                android:id="@+id/tvCardImageEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/imgCardImage"
+                android:gravity="right"
+                android:padding="@dimen/album_title_padding"
+                android:paddingRight="10dp"
+                android:text="@string/edit"
+                android:textColor="@color/appBackColor"
                 android:textSize="@dimen/album_title" />
         </RelativeLayout>
 
@@ -61,15 +75,27 @@
 
             <TextView
                 android:id="@+id/tvCardVideo"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
                 android:layout_below="@id/videoViewCardVideo"
-                android:gravity="center"
+                android:gravity="left"
                 android:padding="@dimen/album_title_padding"
-                android:textColor="@color/album_title"
+                android:textColor="@android:color/black"
                 android:textSize="@dimen/album_title" />
 
-
+            <TextView
+                android:id="@+id/tvCardVideoEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/videoViewCardVideo"
+                android:gravity="right"
+                android:padding="@dimen/album_title_padding"
+                android:paddingRight="10dp"
+                android:text="@string/edit"
+                android:textColor="@color/appBackColor"
+                android:textSize="@dimen/album_title" />
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

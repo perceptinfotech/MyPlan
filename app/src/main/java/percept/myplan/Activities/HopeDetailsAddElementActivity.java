@@ -51,6 +51,7 @@ public class HopeDetailsAddElementActivity extends AppCompatActivity {
                 _intent.putExtra("FROM_HOPE", "FROM_HOPE");
                 _intent.putExtra("HOPE_ID", getIntent().getExtras().getString("HOPE_ID"));
                 startActivity(_intent);
+                HopeDetailsAddElementActivity.this.finish();
             }
         });
 

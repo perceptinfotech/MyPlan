@@ -194,6 +194,9 @@
         <activity
             android:name=".Activities.HopeDetailsAddElementActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".Activities.StrategyEditActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

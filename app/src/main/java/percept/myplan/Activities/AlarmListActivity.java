@@ -2,8 +2,8 @@ package percept.myplan.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,15 +14,10 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import percept.myplan.POJO.Alarm;
 import percept.myplan.R;
 import percept.myplan.adapters.AlarmAdapter;
-import percept.myplan.adapters.SymptomStrategyAdapter;
 
-import static percept.myplan.Activities.AddStrategyActivity.LIST_ALARM;
 
 public class AlarmListActivity extends AppCompatActivity {
 
@@ -31,6 +26,7 @@ public class AlarmListActivity extends AppCompatActivity {
 
     private static final int ADDALARM = 9;
     private String STR_ALARM;
+    private boolean FROM_EDIT = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +41,21 @@ public class AlarmListActivity extends AppCompatActivity {
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText("Alarms");
 
+        if (getIntent().hasExtra("FROM_EDIT")) {
+            FROM_EDIT = true;
+        }
+
         LST_STRATEGYALARM = (RecyclerView) findViewById(R.id.lstStrategyAlarm);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(AlarmListActivity.this);
         LST_STRATEGYALARM.setLayoutManager(mLayoutManager);
         LST_STRATEGYALARM.setItemAnimator(new DefaultItemAnimator());
-
-        ADAPTER = new AlarmAdapter(AlarmListActivity.this, LIST_ALARM);
-        LST_STRATEGYALARM.setAdapter(ADAPTER);
+        if (FROM_EDIT) {
+            ADAPTER = new AlarmAdapter(AlarmListActivity.this, StrategyEditActivity.LIST_ALARM);
+            LST_STRATEGYALARM.setAdapter(ADAPTER);
+        } else {
+            ADAPTER = new AlarmAdapter(AlarmListActivity.this, AddStrategyActivity.LIST_ALARM);
+            LST_STRATEGYALARM.setAdapter(ADAPTER);
+        }
 //        ADAPTER = new AlarmAdapter(AlarmListActivity.this,)
 
     }
@@ -93,13 +97,18 @@ public class AlarmListActivity extends AppCompatActivity {
                         true, data.getStringExtra("ALARM_URI"), data.getStringExtra("ALARM_REPEAT"), "Snooze",
                         data.getStringExtra("ALARM_SOUND_NAME"));
 
-                LIST_ALARM.add(_obj);
-
-                ADAPTER = new AlarmAdapter(AlarmListActivity.this, LIST_ALARM);
+                if (FROM_EDIT) {
+                    StrategyEditActivity.LIST_ALARM.add(_obj);
+                    ADAPTER = new AlarmAdapter(AlarmListActivity.this, StrategyEditActivity.LIST_ALARM);
+                } else {
+                    AddStrategyActivity.LIST_ALARM.add(_obj);
+                    ADAPTER = new AlarmAdapter(AlarmListActivity.this, AddStrategyActivity.LIST_ALARM);
+                }
                 LST_STRATEGYALARM.setAdapter(ADAPTER);
 
-                Gson gson = new Gson();
-                STR_ALARM = gson.toJson(LIST_ALARM);
+
+//                Gson gson = new Gson();
+//                STR_ALARM = gson.toJson(AddStrategyActivity.LIST_ALARM);
 //               UTILS.setPreference("LOCAL_DATA", _str);
             }
             if (resultCode == Activity.RESULT_CANCELED) {

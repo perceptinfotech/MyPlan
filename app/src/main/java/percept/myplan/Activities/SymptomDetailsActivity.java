@@ -1,6 +1,7 @@
 package percept.myplan.Activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,8 +10,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -89,6 +92,24 @@ public class SymptomDetailsActivity extends AppCompatActivity {
                 startActivityForResult(_intent, ADDSTRATEGY);
             }
         });
+
+        LST_SYMPTOMSTRATEGY.addOnItemTouchListener(new RecyclerTouchListener(SymptomDetailsActivity.this, LST_SYMPTOMSTRATEGY, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                LIST_SYMPTOMSTRATEGY.get(position);
+
+                Intent _intent = new Intent(SymptomDetailsActivity.this, StrategyDetailsOtherActivity.class);
+                _intent.putExtra("STRATEGY_ID", LIST_SYMPTOMSTRATEGY.get(position).getId());
+                _intent.putExtra("STRATEGY_NAME", LIST_SYMPTOMSTRATEGY.get(position).getTitle());
+                _intent.putExtra("FROM_SYMPTOM", "FROM_SYMPTOM");
+                startActivity(_intent);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
     }
 
     @Override
@@ -215,6 +236,55 @@ public class SymptomDetailsActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public interface ClickListener {
+        void onClick(View view, int position);
+
+        void onLongClick(View view, int position);
+    }
+
+    public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+
+        private GestureDetector gestureDetector;
+        private ClickListener clickListener;
+
+        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ClickListener clickListener) {
+            this.clickListener = clickListener;
+            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                    if (child != null && clickListener != null) {
+                        clickListener.onLongClick(child, recyclerView.getChildPosition(child));
+                    }
+                }
+            });
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            View child = rv.findChildViewUnder(e.getX(), e.getY());
+            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
+                clickListener.onClick(child, rv.getChildPosition(child));
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
         }
     }
 }

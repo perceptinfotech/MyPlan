@@ -43,8 +43,6 @@ import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
 import percept.myplan.R;
 
-import static percept.myplan.Activities.AddStrategyActivity.LIST_IMG;
-import static percept.myplan.fragments.fragmentHopeBox.ADDED_HOPEBOX;
 
 public class AddStrategyImageActivity extends AppCompatActivity {
 
@@ -54,6 +52,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
+    private boolean FROM_EDIT = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,13 +74,17 @@ public class AddStrategyImageActivity extends AppCompatActivity {
             HOPE_ID = getIntent().getExtras().getString("HOPE_ID");
         }
 
+        if (getIntent().hasExtra("FROM_EDIT")) {
+            FROM_EDIT = true;
+        }
+
         TV_CHOOSEEXISTING = (TextView) findViewById(R.id.tvChooseExisting);
         TV_TAKENEW = (TextView) findViewById(R.id.tvTakeNew);
 
         TV_CHOOSEEXISTING.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (FROM.equals("")) {
+                if (FROM.equals("") || FROM_EDIT) {
                     new PickConfig.Builder(AddStrategyImageActivity.this)
                             .pickMode(PickConfig.MODE_MULTIP_PICK)
                             .maxPickSize(10)
@@ -134,9 +137,15 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         }
 
         if (requestCode == PickConfig.PICK_REQUEST_CODE) {
-            if (FROM.equals("")) {
-                LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
-                AddStrategyImageActivity.this.finish();
+            if (FROM.equals("") || FROM_EDIT) {
+                if (FROM_EDIT) {
+                    StrategyEditActivity.LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
+                    AddStrategyImageActivity.this.finish();
+                } else {
+                    AddStrategyActivity.LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
+                    AddStrategyImageActivity.this.finish();
+                }
+
             } else {
                 List<String> _LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
                 new AddHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _LIST_IMG.get(0), "image").execute();
@@ -156,6 +165,15 @@ public class AddStrategyImageActivity extends AppCompatActivity {
 
                 String _imgPath = IMG_URI.getPath();
 
+                File mediaStorageDir = new File(Constant.APP_MEDIA_PATH + File.separator + "IMAGES");
+
+                // Create the storage directory if it does not exist
+                if (!mediaStorageDir.exists()) {
+                    if (!mediaStorageDir.mkdirs()) {
+
+                    }
+                }
+
                 copyFile(_imgPath, Constant.APP_MEDIA_PATH + File.separator + "IMAGES", name);
 
                 File file = new File(_imgPath);
@@ -165,9 +183,15 @@ public class AddStrategyImageActivity extends AppCompatActivity {
                 String _Path = Constant.APP_MEDIA_PATH + File.separator + "IMAGES" + File.separator + name;
 
                 Log.d("::::::: ", _Path);
-                if (FROM.equals("")) {
-                    LIST_IMG.add(_Path);
-                    AddStrategyImageActivity.this.finish();
+                if (FROM.equals("") || FROM_EDIT) {
+                    if (FROM_EDIT) {
+                        StrategyEditActivity.LIST_IMG.add(_Path);
+                        AddStrategyImageActivity.this.finish();
+                    } else {
+                        AddStrategyActivity.LIST_IMG.add(_Path);
+                        AddStrategyImageActivity.this.finish();
+                    }
+
                 } else {
                     new AddHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _Path, "image").execute();
                 }

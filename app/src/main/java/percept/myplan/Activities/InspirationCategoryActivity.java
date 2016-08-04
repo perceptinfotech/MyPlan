@@ -37,6 +37,7 @@ import percept.myplan.R;
 import percept.myplan.adapters.InspirationCategoryAdapter;
 import percept.myplan.adapters.StrategyAdapter;
 
+import static percept.myplan.Activities.AddStrategyToSymptomActivity.GET_STRATEGIES;
 import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
 
 public class InspirationCategoryActivity extends AppCompatActivity {
@@ -75,6 +76,7 @@ public class InspirationCategoryActivity extends AppCompatActivity {
                 Intent _intent = new Intent(InspirationCategoryActivity.this, CategoryStrategyActivity.class);
                 _intent.putExtra("CATEGORY_NAME", LIST_CATEGORY.get(position).getCategoryName());
                 _intent.putExtra("CATEGORY_ID", LIST_CATEGORY.get(position).getCategoryId());
+                _intent.putExtra("FROM_SYMPTOM_INSPI",getIntent().getExtras().getString("FROM_SYMPTOM_INSPI"));
                 startActivity(_intent);
             }
 
@@ -122,6 +124,9 @@ public class InspirationCategoryActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (ADDED_STRATEGIES) {
+            InspirationCategoryActivity.this.finish();
+        }
+        if (GET_STRATEGIES) {
             InspirationCategoryActivity.this.finish();
         }
     }

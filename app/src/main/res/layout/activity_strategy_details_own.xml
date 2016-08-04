@@ -38,11 +38,12 @@
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
-                <TextView
-                    android:id="@+id/tvTitle"
+                <EditText
+                    android:id="@+id/edtStrategyTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="@drawable/edt_register_border_white"
                     android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
                     android:gravity="end|center_vertical"
                     android:padding="5dp"
@@ -67,7 +68,8 @@
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
-            <TextView
+            <EditText
+                android:id="@+id/edtStrategyDesc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/white"
@@ -144,23 +146,12 @@
                 android:layout_height="1dp"
                 android:background="@color/sidemenu_seperator" />
 
-            <TextView
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/lstStrategyContacts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
-                android:gravity="center_vertical"
-                android:paddingBottom="10dp"
-                android:paddingLeft="15dp"
-                android:paddingTop="10dp"
-                android:text="@string/text"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
+                android:background="@android:color/white" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/sidemenu_seperator" />
 
             <TextView
                 android:layout_width="match_parent"

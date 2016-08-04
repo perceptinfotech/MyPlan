@@ -31,6 +31,7 @@ import percept.myplan.POJO.Strategy;
 import percept.myplan.R;
 import percept.myplan.adapters.InspirationWiseStrategyAdapter;
 
+import static percept.myplan.Activities.AddStrategyToSymptomActivity.GET_STRATEGIES;
 import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
 
 
@@ -63,6 +64,10 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
         TV_CATEGORY = (TextView) findViewById(R.id.tvCategory);
 
         BTN_ADDTOMYSTRATEGIES = (Button) findViewById(R.id.btnAddToMyStrategies);
+
+        if (getIntent().hasExtra("FROM_SYMPTOM")) {
+            BTN_ADDTOMYSTRATEGIES.setVisibility(View.GONE);
+        }
 
         if (getIntent().hasExtra("STRATEGY_ID")) {
             STRATEGY_ID = getIntent().getExtras().getString("STRATEGY_ID");
@@ -99,7 +104,11 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
                             TV_DESCRIPTION.setText(clsStrategy.getDescription());
                             TV_USEDBY.setText("1234");
                             TV_SUBMITTEDBY.setText("ID " + clsStrategy.getCreatedBy());
-                            TV_CATEGORY.setText(getIntent().getExtras().getString("CATEGORY_NAME"));
+
+                            if (getIntent().hasExtra("CATEGORY_NAME"))
+                                TV_CATEGORY.setText(getIntent().getExtras().getString("CATEGORY_NAME"));
+                            else
+                                TV_CATEGORY.setText(clsStrategy.getCategoryName());
                         }
                     });
         } catch (Exception e) {
@@ -132,7 +141,14 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
                                                 PB.setVisibility(View.GONE);
                                                 Log.d("::::::: ", response.toString());
                                                 ADDED_STRATEGIES = true;
+                                                if (getIntent().hasExtra("FROM_SYMPTOM")) {
+                                                    GET_STRATEGIES = true;
+                                                }
+                                                if (getIntent().hasExtra("FROM_SYMPTOM_INSPI")) {
+                                                    GET_STRATEGIES = true;
+                                                }
                                                 StrategyDetailsOtherActivity.this.finish();
+
                                             }
                                         });
                             } catch (Exception e) {

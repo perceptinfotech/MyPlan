@@ -26,11 +26,14 @@ import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.ContactDisplay;
+import percept.myplan.POJO.StrategyContact;
 import percept.myplan.R;
 import percept.myplan.adapters.ContactHelpListAdapter;
 import percept.myplan.adapters.ContactFromPhoneAdapter;
 import percept.myplan.adapters.StrategyContactAdapter;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
+
+import static percept.myplan.Activities.StrategyDetailsOwnActivity.LIST_STRATEGYCONTACT;
 
 public class AddStrategyContactActivity extends AppCompatActivity implements StickyListHeadersListView.OnStickyHeaderOffsetChangedListener,
         StickyListHeadersListView.OnStickyHeaderChangedListener {
@@ -82,6 +85,16 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
                         e.printStackTrace();
                     }
 
+                    if (getIntent().hasExtra("FROM_EDIT")) {
+                        for (int i = 0; i < LIST_ALLCONTACTS.size(); i++) {
+                            for (StrategyContact _obj : LIST_STRATEGYCONTACT) {
+                                if (LIST_ALLCONTACTS.get(i).getId().equals(_obj.getID())) {
+                                    LIST_ALLCONTACTS.get(i).setSelected(true);
+                                    break;
+                                }
+                            }
+                        }
+                    }
                     ADAPTER = new StrategyContactAdapter(AddStrategyContactActivity.this, LIST_ALLCONTACTS, false);
                     LST_CONTACTS.setAdapter(ADAPTER);
                 }

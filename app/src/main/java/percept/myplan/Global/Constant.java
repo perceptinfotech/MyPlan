@@ -62,7 +62,7 @@ public class Constant {
     public final static String NOTE = "note";
 
     //add Strategy
-    public final static String CONTACTID = "contact_id";
+    public final static String CONTACTID = "contacts";
     public final static String LINK = "link";
 
 
