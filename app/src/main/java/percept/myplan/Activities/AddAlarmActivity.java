@@ -55,13 +55,28 @@ public class AddAlarmActivity extends AppCompatActivity {
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText("Add Alarm");
 
+
         TV_ALARMREPEAT = (TextView) findViewById(R.id.tvAlarmRepeat);
         TV_ALARMSOUND = (TextView) findViewById(R.id.tvAlarmSound);
         SWITCH_ALARMSNOOZE = (Switch) findViewById(R.id.switchAlarmSnooze);
         EDT_ALARMLABLE = (EditText) findViewById(R.id.edtAlarmLable);
-
         DATE_PICKER = (DatePicker) findViewById(R.id.datePicker);
         TIME_PICKER = (TimePicker) findViewById(R.id.timePicker);
+
+        if (getIntent().hasExtra("EDIT_ALARM")) {
+            EDT_ALARMLABLE.setText(getIntent().getExtras().getString("ALARM_NAME"));
+            TV_ALARMREPEAT.setText(getIntent().getExtras().getString("ALARM_REPEAT"));
+            TV_ALARMSOUND.setText(getIntent().getExtras().getString("ALARM_TUNE"));
+            EDT_ALARMLABLE.setActivated(Boolean.parseBoolean(getIntent().getExtras().getString("ALARM_STATUS")));
+
+
+            Calendar calendar2 = Calendar.getInstance();
+            calendar2.setTimeInMillis(Long.valueOf(getIntent().getExtras().getString("ALARM_TIME")));
+            TIME_PICKER.setCurrentHour(calendar2.get(Calendar.HOUR_OF_DAY)); // or Calendar.HOUR for 12 hour format
+            TIME_PICKER.setCurrentMinute(calendar2.get(Calendar.MINUTE));
+            DATE_PICKER.updateDate(calendar2.get(Calendar.YEAR), calendar2.get(Calendar.MONTH), calendar2.get(Calendar.DAY_OF_MONTH));
+        }
+
 
         TV_ALARMSOUND.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +122,9 @@ public class AddAlarmActivity extends AppCompatActivity {
             returnIntent.putExtra("ALARM_NAME", EDT_ALARMLABLE.getText().toString());
             returnIntent.putExtra("ALARM_REPEAT", "Once");
             returnIntent.putExtra("ALARM_TIME", String.valueOf(_Alarmtime));
+            if (getIntent().hasExtra("EDIT_ALARM")) {
+                returnIntent.putExtra("EDIT_ALARM", "EDIT_ALARM");
+            }
             setResult(Activity.RESULT_OK, returnIntent);
             AddAlarmActivity.this.finish();
         }

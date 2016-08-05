@@ -6,6 +6,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -38,7 +39,7 @@ public class HopeDetailsAdapter extends RecyclerView.Adapter<HopeDetailsAdapter.
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public CardView CARD_IMAGE, CARD_VIDEO;
         public ImageView IMG_HOPEDETAILS;
-        public VideoView VID_HOPEDETAILS;
+        public TextureView VID_HOPEDETAILS;
         public TextView TV_CARDIMG_TITLE, TV_CARDVID_TITLE;
 
 
@@ -49,7 +50,7 @@ public class HopeDetailsAdapter extends RecyclerView.Adapter<HopeDetailsAdapter.
             CARD_VIDEO = (CardView) view.findViewById(R.id.cardVideo);
 
             IMG_HOPEDETAILS = (ImageView) view.findViewById(R.id.imgCardImage);
-            VID_HOPEDETAILS = (VideoView) view.findViewById(R.id.videoViewCardVideo);
+            VID_HOPEDETAILS = (TextureView) view.findViewById(R.id.video);
 
             TV_CARDIMG_TITLE = (TextView) view.findViewById(R.id.tvCardImage);
             TV_CARDVID_TITLE = (TextView) view.findViewById(R.id.tvCardVideo);
@@ -109,15 +110,15 @@ public class HopeDetailsAdapter extends RecyclerView.Adapter<HopeDetailsAdapter.
                 holder.CARD_IMAGE.setVisibility(View.GONE);
                 holder.CARD_VIDEO.setVisibility(View.VISIBLE);
                 holder.TV_CARDVID_TITLE.setText(album.getMEDIA_TITLE());
-                holder.VID_HOPEDETAILS.setVideoURI(Uri.parse(album.getMEDIA()));
-                holder.VID_HOPEDETAILS.setTag(position);
-                MediaController mc = new MediaController(CONTEXT);
-                mc.setAnchorView(holder.VID_HOPEDETAILS);
-                mc.setMediaPlayer(holder.VID_HOPEDETAILS);
-                Uri video = Uri.parse(album.getMEDIA());
-                holder.VID_HOPEDETAILS.setMediaController(mc);
-                holder.VID_HOPEDETAILS.setVideoURI(video);
-                holder.VID_HOPEDETAILS.start();
+//                holder.VID_HOPEDETAILS.setVideoURI(Uri.parse(album.getMEDIA()));
+//                holder.VID_HOPEDETAILS.setTag(position);
+//                MediaController mc = new MediaController(CONTEXT);
+//                mc.setAnchorView(holder.VID_HOPEDETAILS);
+//                mc.setMediaPlayer(holder.VID_HOPEDETAILS);
+//                Uri video = Uri.parse(album.getMEDIA());
+//                holder.VID_HOPEDETAILS.setMediaController(mc);
+//                holder.VID_HOPEDETAILS.setVideoURI(video);
+//                holder.VID_HOPEDETAILS.start();
                 break;
             default:
                 holder.CARD_IMAGE.setVisibility(View.GONE);

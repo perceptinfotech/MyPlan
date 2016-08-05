@@ -57,7 +57,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
 //        Picasso.with(CONTEXT).load(LST_IMG.get(position)).into(holder.IMG_COVER);
 
 
-        imageLoader.get(Constant.PROFILE_IMG_LINK, new ImageLoader.ImageListener() {
+        imageLoader.get(LST_IMG.get(position), new ImageLoader.ImageListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {

@@ -46,6 +46,20 @@ public class HopeDetail {
         this.TYPE = type;
     }
 
+    public HopeDetail(HopeDetail hopeDetail) {
+        this.MUSIC = hopeDetail.getMUSIC();
+        this.ID = hopeDetail.getID();
+        this.HOPE_ID = hopeDetail.getHOPE_ID();
+        this.LINK = hopeDetail.getLINK();
+        this.STATE = hopeDetail.getSTATE();
+        this.ORDERING = hopeDetail.getORDERING();
+        this.MEDIA = hopeDetail.getMEDIA();
+        this.NOTE = hopeDetail.getNOTE();
+        this.VIDEO = hopeDetail.getVIDEO();
+        this.MEDIA_TITLE = hopeDetail.getMEDIA_TITLE();
+        this.TYPE = hopeDetail.getTYPE();
+    }
+
     public String getTYPE() {
         return TYPE;
     }

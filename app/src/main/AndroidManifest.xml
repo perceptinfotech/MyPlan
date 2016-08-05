@@ -193,10 +193,13 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.HopeDetailsAddElementActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.StrategyEditActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.DangerSignalsActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

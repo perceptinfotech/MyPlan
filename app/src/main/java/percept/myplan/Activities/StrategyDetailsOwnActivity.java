@@ -118,12 +118,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
 
         LIST_IMAGE = new ArrayList<>();
-//        LIST_IMAGE.add("dsada");
-//        LIST_IMAGE.add("dsada");
 
-
-        ADAPTER_IMG = new ImageAdapter(StrategyDetailsOwnActivity.this, LIST_IMAGE);
-        LST_OWNSTRATEGYIMG.setAdapter(ADAPTER_IMG);
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -155,6 +150,14 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
                     EDT_STRATEGYDESC.setText(clsStrategy.getDescription());
                     MAP_ALARM.get(STRATEGY_ID);
+
+                    String _images = clsStrategy.getImage();
+                    String[] _arrImg = _images.split(",");
+                    for (int i = 0; i < _arrImg.length; i++) {
+                        LIST_IMAGE.add(_arrImg[i]);
+                    }
+                    ADAPTER_IMG = new ImageAdapter(StrategyDetailsOwnActivity.this, LIST_IMAGE);
+                    LST_OWNSTRATEGYIMG.setAdapter(ADAPTER_IMG);
                 }
             });
         } catch (Exception e) {

@@ -9,6 +9,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
 import percept.myplan.Global.LruBitmapCache;
+import percept.myplan.toro.Toro;
 
 /**
  * Created by percept on 25/7/16.
@@ -28,6 +29,8 @@ public class AppController extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+
+        Toro.init(this);
     }
 
     public static synchronized AppController getInstance() {

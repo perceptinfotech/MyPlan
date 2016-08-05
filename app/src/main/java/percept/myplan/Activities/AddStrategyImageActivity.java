@@ -43,6 +43,8 @@ import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
 import percept.myplan.R;
 
+import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
+
 
 public class AddStrategyImageActivity extends AppCompatActivity {
 
@@ -291,10 +293,11 @@ public class AddStrategyImageActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-
             super.onPostExecute(result);
-
             Log.d(":::::: ", result);
+            if (getIntent().hasExtra("FROM_HOPE")) {
+                GET_HOPE_DETAILS = true;
+            }
             AddStrategyImageActivity.this.finish();
         }
 

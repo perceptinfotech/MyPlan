@@ -41,6 +41,7 @@ import percept.myplan.Global.Constant;
 import percept.myplan.R;
 
 import static percept.myplan.Activities.AddStrategyMusicActivity.CLOSE_PAGE;
+import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
 
 public class MusicListActivity extends AppCompatActivity {
     private int count;
@@ -281,7 +282,9 @@ public class MusicListActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
 
             super.onPostExecute(result);
-
+            if (getIntent().hasExtra("FROM_HOPE")) {
+                GET_HOPE_DETAILS=true;
+            }
             Log.d(":::::: ", result);
             CLOSE_PAGE = true;
             MusicListActivity.this.finish();

@@ -171,5 +171,10 @@
     <string name="strategy">Strategy</string>
     <string name="strategyedit">Strategy editted successfully</string>
     <string name="edit">Edit</string>
+    <string name="dangersignaltxt">One or two of these symptoms alone can\'t predict a mental illness. But if a person is experiencing several at one time and the symptom are causing serious problem in ability to study,work or relate to other,he/she should be seen by a mental health prefessional.People with suicidal thought or intent,or thought of harming other need immediate attention.</string>
+    <string name="socialwithdraw">Social withdrawal</string>
+    <string name="increateusedrugs">Increase use of drugs</string>
+    <string name="mentaldisorder">Mental disorder symptoms</string>
+    <string name="previousattempt">Previous suicide attempt</string>
 
 </resources>

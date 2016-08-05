@@ -58,7 +58,12 @@ public class HopeDetailsAddElementActivity extends AppCompatActivity {
         TV_ADDMUSIC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent _intent = new Intent(HopeDetailsAddElementActivity.this, AddStrategyMusicActivity.class);
+                _intent.putExtra("HOPE_TITLE", EDT_TITLE.getText().toString().trim());
+                _intent.putExtra("FROM_HOPE", "FROM_HOPE");
+                _intent.putExtra("HOPE_ID", getIntent().getExtras().getString("HOPE_ID"));
+                startActivity(_intent);
+                HopeDetailsAddElementActivity.this.finish();
             }
         });
 
@@ -79,7 +84,12 @@ public class HopeDetailsAddElementActivity extends AppCompatActivity {
         TV_ADDLINK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent _intent = new Intent(HopeDetailsAddElementActivity.this, AddStrategyLinksActivity.class);
+                _intent.putExtra("HOPE_TITLE", EDT_TITLE.getText().toString().trim());
+                _intent.putExtra("FROM_HOPE", "FROM_HOPE");
+                _intent.putExtra("HOPE_ID", getIntent().getExtras().getString("HOPE_ID"));
+                startActivity(_intent);
+                HopeDetailsAddElementActivity.this.finish();
             }
         });
 
