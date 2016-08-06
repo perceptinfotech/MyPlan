@@ -43,7 +43,7 @@ android:descendantFocusability="blocksDescendants" is added to pass click event 
             <percept.myplan.player.widget.ToroVideoView
                 android:id="@+id/video"
                 android:layout_width="match_parent"
-                android:layout_height="192dp" />
+                android:layout_height="192dp"/>
 
             <TextView
                 android:id="@+id/text"

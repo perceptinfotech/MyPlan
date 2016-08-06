@@ -70,14 +70,24 @@ public class HopeDetailsAddElementActivity extends AppCompatActivity {
         TV_ADDVIDEO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent _intent = new Intent(HopeDetailsAddElementActivity.this, AddVideoActivity.class);
+                _intent.putExtra("HOPE_TITLE", EDT_TITLE.getText().toString().trim());
+                _intent.putExtra("FROM_HOPE", "FROM_HOPE");
+                _intent.putExtra("HOPE_ID", getIntent().getExtras().getString("HOPE_ID"));
+                startActivity(_intent);
+                HopeDetailsAddElementActivity.this.finish();
             }
         });
 
         TV_ADDNOTE.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent _intent = new Intent(HopeDetailsAddElementActivity.this, AddNoteActivity.class);
+                _intent.putExtra("HOPE_TITLE", EDT_TITLE.getText().toString().trim());
+                _intent.putExtra("FROM_HOPE", "FROM_HOPE");
+                _intent.putExtra("HOPE_ID", getIntent().getExtras().getString("HOPE_ID"));
+                startActivity(_intent);
+                HopeDetailsAddElementActivity.this.finish();
             }
         });
 

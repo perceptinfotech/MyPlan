@@ -121,7 +121,7 @@ public class fragmentStrategies extends Fragment {
             e.printStackTrace();
         }
 
-        LST_STRATEGY.addOnItemTouchListener(new fragmentStrategies.RecyclerTouchListener(getActivity(), LST_STRATEGY, new fragmentStrategies.ClickListener() {
+        LST_STRATEGY.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), LST_STRATEGY, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 LIST_STRATEGY.get(position);
@@ -211,9 +211,9 @@ public class fragmentStrategies extends Fragment {
     public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
         private GestureDetector gestureDetector;
-        private fragmentStrategies.ClickListener clickListener;
+        private ClickListener clickListener;
 
-        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final fragmentStrategies.ClickListener clickListener) {
+        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ClickListener clickListener) {
             this.clickListener = clickListener;
             gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
                 @Override

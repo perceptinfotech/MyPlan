@@ -267,7 +267,7 @@ public class ToroVideoView extends TextureView implements Cineer.VideoPlayer {
       }
     }
 
-    setMeasuredDimension(width, height);
+//    setMeasuredDimension(width, height);
   }
 
   /**

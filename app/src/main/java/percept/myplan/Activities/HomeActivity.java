@@ -22,11 +22,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
 import percept.myplan.Global.Utils;
+import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
 import percept.myplan.adapters.NavigationDrawerAdapter;
 import percept.myplan.fragments.fragmentContacts;
@@ -93,7 +101,25 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        try {
+            new General().getJSONContentFromInternetService(HomeActivity.this, General.PHPServices.CHECK_LOGIN,
+                    params, false, false, true, new VolleyResponseListener() {
+                        @Override
+                        public void onError(VolleyError message) {
 
+                        }
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     boolean doubleBackToExitPressedOnce = false;

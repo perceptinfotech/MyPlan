@@ -23,14 +23,15 @@ public class Basic3ImageViewHolder extends Basic3ViewHolder {
     public static final int LAYOUT_RES = R.layout.vh_image_view;
 
     private HopeDetail DETAILS;
-    private ImageView imgCardImage;
-    private TextView tvCardImage;
+    final ImageView imgCardImage;
+    final TextView tvCardImage,tvCardImageEdit;
     ImageLoader imageLoader;
 
     public Basic3ImageViewHolder(View itemView) {
         super(itemView);
         imgCardImage = (ImageView) itemView.findViewById(R.id.imgCardImage);
         tvCardImage = (TextView) itemView.findViewById(R.id.tvCardImage);
+        tvCardImageEdit=(TextView) itemView.findViewById(R.id.tvCardImageEdit);
         imageLoader = AppController.getInstance().getImageLoader();
     }
 
@@ -54,5 +55,11 @@ public class Basic3ImageViewHolder extends Basic3ViewHolder {
                 }
             }
         });
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener listener) {
+        super.setOnItemClickListener(listener);
+        tvCardImageEdit.setOnClickListener(listener);
     }
 }

@@ -26,13 +26,16 @@ public class Basic3VideoViewHolder extends Basic3BaseVideoViewHolder {
 
     private HopeDetail video;
     private final Cineer.Player videoPlayer;
-    /* package */ final View videoView; // package private so Adapter can judge the clicked View.
-    final TextView dummyView;
+    /* package */
+    final View videoView; // package private so Adapter can judge the clicked View.
+    final TextView dummyView,tvCardVideoEdit;
+
 
     public Basic3VideoViewHolder(View itemView) {
         super(itemView);
         dummyView = (TextView) itemView.findViewById(R.id.text);
         videoView = itemView.findViewById(R.id.video);
+        tvCardVideoEdit= (TextView) itemView.findViewById(R.id.tvCardVideoEdit);
         if (getPlayerView() instanceof Cineer.Player) {
             videoPlayer = (Cineer.Player) getPlayerView();
         } else {
@@ -50,6 +53,7 @@ public class Basic3VideoViewHolder extends Basic3BaseVideoViewHolder {
 
         this.video = (HopeDetail) item;
         this.videoPlayer.setMedia(new ExoVideo(Uri.parse(this.video.getMEDIA()), this.video.getMEDIA_TITLE()));
+        this.dummyView.setText(this.video.getMEDIA_TITLE());
 
     }
 
@@ -124,7 +128,8 @@ public class Basic3VideoViewHolder extends Basic3BaseVideoViewHolder {
         super.setOnItemClickListener(listener);
         videoView.setOnClickListener(listener);
         // HINT: Un-comment this to enable click event on this TextView.
-        // dummyView.setOnClickListener(listener);
+         dummyView.setOnClickListener(listener);
+        tvCardVideoEdit.setOnClickListener(listener);
     }
 
     @Override

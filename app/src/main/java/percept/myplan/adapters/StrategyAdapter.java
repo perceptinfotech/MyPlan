@@ -4,7 +4,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -28,17 +30,32 @@ public class StrategyAdapter extends RecyclerView.Adapter<StrategyAdapter.Sympto
             super(itemView);
             TV_STRATEGY = (TextView) itemView.findViewById(R.id.tvStrategy);
         }
+
+//        public void setOnItemClickListener(View.OnClickListener listener) {
+//            this.itemView.setOnClickListener(listener);
+//            TV_STRATEGY.setOnClickListener(listener);
+//        }
     }
 
     public StrategyAdapter(List<Strategy> quickMessageList) {
-        this.LIST_STRATEGY= quickMessageList;
+        this.LIST_STRATEGY = quickMessageList;
     }
 
+
     @Override
-    public SymptomHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SymptomHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.strategy_list_item, parent, false);
 
-        return new SymptomHolder(itemView);
+        final SymptomHolder _holder = new SymptomHolder(itemView);
+//        _holder.setOnItemClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (view == _holder.TV_STRATEGY) {
+//                    Toast.makeText(parent.getContext(), "CLICKED", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+        return _holder;
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -27,6 +28,11 @@ public class SymptomAdapter extends RecyclerView.Adapter<SymptomAdapter.SymptomH
             super(itemView);
             TV_SYMPTOM = (TextView) itemView.findViewById(R.id.tvSymptom);
         }
+
+//        public void setOnItemClickListener(View.OnClickListener listener) {
+//            this.itemView.setOnClickListener(listener);
+//            TV_SYMPTOM.setOnClickListener(listener);
+//        }
     }
 
     public SymptomAdapter(List<Symptom> quickMessageList) {
@@ -34,10 +40,18 @@ public class SymptomAdapter extends RecyclerView.Adapter<SymptomAdapter.SymptomH
     }
 
     @Override
-    public SymptomHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SymptomHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.symptom_list_item, parent, false);
-
-        return new SymptomHolder(itemView);
+        final SymptomHolder _holder = new SymptomHolder(itemView);
+//        _holder.setOnItemClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (view == _holder.TV_SYMPTOM) {
+//                    Toast.makeText(parent.getContext(), "CLICKED", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+        return _holder;
     }
 
     @Override

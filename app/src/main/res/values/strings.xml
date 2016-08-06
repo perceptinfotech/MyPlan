@@ -176,5 +176,9 @@
     <string name="increateusedrugs">Increase use of drugs</string>
     <string name="mentaldisorder">Mental disorder symptoms</string>
     <string name="previousattempt">Previous suicide attempt</string>
+    <string name="chooseexistingvideo">Choose existing video</string>
+    <string name="recordvideo">Record new video</string>
+    <string name="leavenote">Leave a note</string>
+    <string name="pleaseaddnote">Please add note</string>
 
 </resources>

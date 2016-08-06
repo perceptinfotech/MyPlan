@@ -66,22 +66,62 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
                 public void onClick(View view) {
                     // Do this for for videoView only.
                     if (view == ((Basic3VideoViewHolder) viewHolder).videoView) {
-                        // 1. Temporary disable the playback.
-                        Toro.rest(true);
-                        new AlertDialog.Builder(parent.getContext()).setTitle(R.string.app_name)
-                                .setMessage("Sample")
-                                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                                    @Override
-                                    public void onDismiss(DialogInterface dialogInterface) {
-                                        // 2. Resume the playback.
-                                        Toro.rest(false);
-                                    }
-                                })
-                                .create()
-                                .show();
+//                        // 1. Temporary disable the playback.
+//                        Toro.rest(true);
+//                        new AlertDialog.Builder(parent.getContext()).setTitle(R.string.app_name)
+//                                .setMessage("Sample")
+//                                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                                    @Override
+//                                    public void onDismiss(DialogInterface dialogInterface) {
+//                                        // 2. Resume the playback.
+//                                        Toro.rest(false);
+//                                    }
+//                                })
+//                                .create()
+//                                .show();
                         Snackbar.make(parent, "Clicked to VIDEO", Snackbar.LENGTH_LONG).show();
                     } else if (view == ((Basic3VideoViewHolder) viewHolder).dummyView) {
                         Snackbar.make(parent, "Clicked to TEXT", Snackbar.LENGTH_LONG).show();
+                    } else if (view == ((Basic3VideoViewHolder) viewHolder).tvCardVideoEdit) {
+                        Snackbar.make(parent, "Clicked to Edit", Snackbar.LENGTH_LONG).show();
+                    }
+
+                }
+            });
+
+            viewHolder.setOnItemLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    Snackbar.make(parent, "Long pressed to VIDEO", Snackbar.LENGTH_LONG).show();
+                    return true;
+                }
+            });
+        }
+
+        if (viewHolder instanceof Basic3ImageViewHolder) {
+            viewHolder.setOnItemClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Do this for for videoView only.
+                    if (view == ((Basic3ImageViewHolder) viewHolder).imgCardImage) {
+//                        // 1. Temporary disable the playback.
+//                        Toro.rest(true);
+//                        new AlertDialog.Builder(parent.getContext()).setTitle(R.string.app_name)
+//                                .setMessage("Sample")
+//                                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                                    @Override
+//                                    public void onDismiss(DialogInterface dialogInterface) {
+//                                        // 2. Resume the playback.
+//                                        Toro.rest(false);
+//                                    }
+//                                })
+//                                .create()
+//                                .show();
+                        Snackbar.make(parent, "Clicked to VIDEO", Snackbar.LENGTH_LONG).show();
+                    } else if (view == ((Basic3ImageViewHolder) viewHolder).tvCardImage) {
+                        Snackbar.make(parent, "Clicked to TEXT", Snackbar.LENGTH_LONG).show();
+                    } else if (view == ((Basic3ImageViewHolder) viewHolder).tvCardImageEdit) {
+                        Snackbar.make(parent, "Clicked to Edit", Snackbar.LENGTH_LONG).show();
                     }
                 }
             });

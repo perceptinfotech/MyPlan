@@ -38,7 +38,7 @@ import percept.myplan.adapters.HopeDetailsAdapter;
 import percept.myplan.toro.Toro;
 import percept.myplan.widget.DividerItemDecoration;
 
-public class HopeDetailsActivity extends AppCompatActivity{
+public class HopeDetailsActivity extends AppCompatActivity {
     Map<String, String> params;
     private List<HopeDetail> LIST_HOPEDETAILS;
     private RecyclerView LST_HOPEDETAILS;
@@ -53,7 +53,9 @@ public class HopeDetailsActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hope_details);
         Toro.attach(this);
-        Toro.setStrategy(Toro.Strategies.FIRST_PLAYABLE_TOP_DOWN);
+
+        Toro.setStrategy(Toro.Strategies.MOST_VISIBLE_TOP_DOWN);
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -74,13 +76,12 @@ public class HopeDetailsActivity extends AppCompatActivity{
 
         mRecyclerView = (RecyclerView) findViewById(R.id.lstHopeDetails);
         Toro.register(mRecyclerView);
-        RecyclerView.LayoutManager layoutManager =new LinearLayoutManager(HopeDetailsActivity.this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(HopeDetailsActivity.this);
         mRecyclerView.setLayoutManager(layoutManager);
         if (layoutManager instanceof LinearLayoutManager) {
             mRecyclerView.addItemDecoration(new DividerItemDecoration(HopeDetailsActivity.this,
                     ((LinearLayoutManager) layoutManager).getOrientation()));
         }
-
 
 
         params = new HashMap<String, String>();
@@ -108,7 +109,7 @@ public class HopeDetailsActivity extends AppCompatActivity{
                     Log.d("::::::  ", String.valueOf(LIST_HOPEDETAILS.size()));
 //                    ADAPTER = new HopeDetailsAdapter(HopeDetailsActivity.this, LIST_HOPEDETAILS);
 //                    LST_HOPEDETAILS.setAdapter(ADAPTER);
-                    mAdapter = new Basic3Adapter(HopeDetailsActivity.this,LIST_HOPEDETAILS);
+                    mAdapter = new Basic3Adapter(HopeDetailsActivity.this, LIST_HOPEDETAILS);
                     mRecyclerView.setHasFixedSize(false);
                     mRecyclerView.setAdapter(mAdapter);
                 }
@@ -117,44 +118,57 @@ public class HopeDetailsActivity extends AppCompatActivity{
             e.printStackTrace();
         }
     }
-    @Override protected void onDestroy() {
+
+    @Override
+    protected void onDestroy() {
         Toro.detach(this);
         Toro.unregister(mRecyclerView);
         super.onDestroy();
     }
 
     @Override
+    protected void onPause() {
+        Toro.detach(this);
+        Toro.unregister(mRecyclerView);
+        super.onPause();
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-//        if (GET_HOPE_DETAILS) {
-//            try {
-//                new General().getJSONContentFromInternetService(HopeDetailsActivity.this, General.PHPServices.GET_HOPEBOX, params, false, false, true, new VolleyResponseListener() {
-//                    @Override
-//                    public void onError(VolleyError message) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        LIST_HOPEDETAILS.clear();
-//                        Gson gson = new Gson();
-//                        try {
-//                            LIST_HOPEDETAILS = gson.fromJson(response.getJSONArray(Constant.DATA)
-//                                    .toString(), new TypeToken<List<HopeDetail>>() {
-//                            }.getType());
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//
+        if (GET_HOPE_DETAILS) {
+            try {
+                new General().getJSONContentFromInternetService(HopeDetailsActivity.this, General.PHPServices.GET_HOPEBOX, params, false, false, true, new VolleyResponseListener() {
+                    @Override
+                    public void onError(VolleyError message) {
+
+                    }
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        LIST_HOPEDETAILS.clear();
+                        Gson gson = new Gson();
+                        try {
+                            LIST_HOPEDETAILS = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                    .toString(), new TypeToken<List<HopeDetail>>() {
+                            }.getType());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
 //                        Log.d("::::::  ", String.valueOf(LIST_HOPEDETAILS.size()));
 //                        ADAPTER = new HopeDetailsAdapter(HopeDetailsActivity.this, LIST_HOPEDETAILS);
 //                        LST_HOPEDETAILS.setAdapter(ADAPTER);
-//                    }
-//                });
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
+                        mAdapter = new Basic3Adapter(HopeDetailsActivity.this, LIST_HOPEDETAILS);
+                        mRecyclerView.setHasFixedSize(false);
+                        mRecyclerView.setAdapter(mAdapter);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

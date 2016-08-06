@@ -3,6 +3,10 @@ package percept.myplan.Global;
 import android.os.Environment;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -73,4 +77,56 @@ public class Constant {
 
     public static final String APP_MEDIA_PATH = Environment.getExternalStorageDirectory()
             + File.separator + "MyPlan";
+
+    public static File getOutputMediaFile() {
+        // External sdcard location
+        File mediaStorageDir = new File(Environment
+                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                "MyPlan");
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+                Locale.getDefault()).format(new Date());
+        File mediaFile;
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + timeStamp + "IMG.jpg");
+        return mediaFile;
+    }
+
+    public static boolean copyFile(String from, String to, String name) {
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            if (sd.canWrite()) {
+                int end = from.toString().lastIndexOf("/");
+                String str1 = from.toString().substring(0, end);
+                String str2 = from.toString().substring(end + 1, from.length());
+                File source = new File(str1, str2);
+                File destination = new File(to, name);
+                if (!destination.exists())
+                    destination.createNewFile();
+
+                if (source.exists()) {
+                    InputStream in = new FileInputStream(source);
+                    OutputStream out = new FileOutputStream(destination);
+
+                    // Copy the bits from instream to outstream
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+                    in.close();
+                    out.close();
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

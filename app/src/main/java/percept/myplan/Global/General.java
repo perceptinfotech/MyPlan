@@ -71,6 +71,8 @@ public class General {
             return ".addMystrategy";
         } else if (serviceName == PHPServices.ADD_HOPEBOX) {
             return ".saveHopebox";
+        } else if(serviceName==PHPServices.CHECK_LOGIN){
+            return ".checkLoginSession";
         }
 
 
@@ -200,6 +202,7 @@ public class General {
         GET_CATEGORY_INSPIRATIONS,
         GET_STRATEGY,
         ADD_MYSTRATEGY,
-        ADD_HOPEBOX
+        ADD_HOPEBOX,
+        CHECK_LOGIN
     }
 }

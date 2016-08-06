@@ -114,7 +114,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                IMG_URI = Uri.fromFile(getOutputMediaFile());
+                IMG_URI = Uri.fromFile(Constant.getOutputMediaFile());
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, IMG_URI);
                 // start the image capture Intent
                 startActivityForResult(intent, REQ_TAKE_PICTURE);
@@ -176,7 +176,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
                     }
                 }
 
-                copyFile(_imgPath, Constant.APP_MEDIA_PATH + File.separator + "IMAGES", name);
+                Constant.copyFile(_imgPath, Constant.APP_MEDIA_PATH + File.separator + "IMAGES", name);
 
                 File file = new File(_imgPath);
                 if (file.exists()) {
@@ -303,55 +303,5 @@ public class AddStrategyImageActivity extends AppCompatActivity {
 
     }
 
-    public static File getOutputMediaFile() {
-        // External sdcard location
-        File mediaStorageDir = new File(Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                "MyPlan");
 
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                return null;
-            }
-        }
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
-                Locale.getDefault()).format(new Date());
-        File mediaFile;
-        mediaFile = new File(mediaStorageDir.getPath() + File.separator + timeStamp + "IMG.jpg");
-        return mediaFile;
-    }
-
-    public static boolean copyFile(String from, String to, String name) {
-        try {
-            File sd = Environment.getExternalStorageDirectory();
-            if (sd.canWrite()) {
-                int end = from.toString().lastIndexOf("/");
-                String str1 = from.toString().substring(0, end);
-                String str2 = from.toString().substring(end + 1, from.length());
-                File source = new File(str1, str2);
-                File destination = new File(to, name);
-                if (!destination.exists())
-                    destination.createNewFile();
-
-                if (source.exists()) {
-                    InputStream in = new FileInputStream(source);
-                    OutputStream out = new FileOutputStream(destination);
-
-                    // Copy the bits from instream to outstream
-                    byte[] buf = new byte[1024];
-                    int len;
-                    while ((len = in.read(buf)) > 0) {
-                        out.write(buf, 0, len);
-                    }
-                    in.close();
-                    out.close();
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
 }

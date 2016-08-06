@@ -1,13 +1,17 @@
 package percept.myplan.Activities;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -74,6 +78,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
 
     private String ADD_TO_HELP_LIST = "0";
     private Utils UTILS;
+    private final static int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 13;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +96,36 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         }
 
         setContentView(R.layout.add_contact_from_phone);
+
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(AddContactFromPhoneActivity.this,
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(AddContactFromPhoneActivity.this,
+                    Manifest.permission.READ_CONTACTS)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(AddContactFromPhoneActivity.this,
+                        new String[]{Manifest.permission.READ_CONTACTS},
+                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }else{
+            readContacts();
+        }
+
         UTILS = new Utils(AddContactFromPhoneActivity.this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -112,7 +147,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         LST_CONTACT.setDrawingListUnderStickyHeader(true);
         LST_CONTACT.setAreHeadersSticky(true);
 
-        readContacts();
+
         EDT_SEARCHTEXT.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int i, int i2, int i3) {
@@ -129,6 +164,31 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             }
         });
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    readContacts();
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     @Override
