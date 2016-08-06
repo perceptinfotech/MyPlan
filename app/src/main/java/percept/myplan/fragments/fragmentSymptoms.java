@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import percept.myplan.Activities.AddNewSymptomActivity;
+import percept.myplan.Activities.DangerSignalsActivity;
 import percept.myplan.Activities.SymptomDetailsActivity;
 import percept.myplan.POJO.Symptom;
 import percept.myplan.Global.Constant;
@@ -132,6 +133,13 @@ public class fragmentSymptoms extends Fragment {
 
             }
         }));
+
+        BTN_DANGERSIGNAL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), DangerSignalsActivity.class));
+            }
+        });
         return _View;
     }
 

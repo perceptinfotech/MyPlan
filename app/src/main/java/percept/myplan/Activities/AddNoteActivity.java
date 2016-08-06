@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,6 +71,10 @@ public class AddNoteActivity extends AppCompatActivity {
             AddNoteActivity.this.finish();
             return true;
         } else if (item.getItemId() == R.id.action_saveNote) {
+            InputMethodManager inputManager = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
             if (!ED_NOTE.getText().toString().trim().equals("")) {
                 new AddHopeBoxNoteElement(HOPE_TITLE, HOPE_ID, ED_NOTE.getText().toString().trim(), "note").execute();
             } else {

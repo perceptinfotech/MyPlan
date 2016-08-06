@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -154,6 +155,11 @@ public class SymptomDetailsActivity extends AppCompatActivity {
             isEDIT = true;
             invalidateOptionsMenu();
         } else if (item.getItemId() == R.id.action_saveSymptoms) {
+
+            InputMethodManager inputManager = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
             LAY_ADDSTRATEGY.setVisibility(View.GONE);
             isEDIT = false;
             invalidateOptionsMenu();

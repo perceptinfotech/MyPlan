@@ -1,10 +1,12 @@
 package percept.myplan.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -57,6 +59,10 @@ public class LoginActivity_1 extends AppCompatActivity {
 //                        LoginActivity_1.this.finish();
 
                     try {
+                        InputMethodManager inputManager = (InputMethodManager)
+                                getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                        
                         Map<String, String> params = new HashMap<String, String>();
                         params.put(Constant.USER_NAME, EDT_EMAIL.getText().toString().trim());
                         params.put(Constant.PASSWORD, str.toString().trim());
