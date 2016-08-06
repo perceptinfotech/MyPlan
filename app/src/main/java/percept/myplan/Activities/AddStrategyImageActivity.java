@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +56,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
     private boolean FROM_EDIT = false;
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +84,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
 
         TV_CHOOSEEXISTING = (TextView) findViewById(R.id.tvChooseExisting);
         TV_TAKENEW = (TextView) findViewById(R.id.tvTakeNew);
-
+        PB = (ProgressBar) findViewById(R.id.pbAddImage);
         TV_CHOOSEEXISTING.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -150,7 +152,10 @@ public class AddStrategyImageActivity extends AppCompatActivity {
 
             } else {
                 List<String> _LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
-                new AddHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _LIST_IMG.get(0), "image").execute();
+                if(_LIST_IMG.size()>0) {
+                    PB.setVisibility(View.VISIBLE);
+                    new AddHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _LIST_IMG.get(0), "image").execute();
+                }
             }
         }
         if (requestCode == REQ_TAKE_PICTURE) {
@@ -293,6 +298,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            PB.setVisibility(View.GONE);
             super.onPostExecute(result);
             Log.d(":::::: ", result);
             if (getIntent().hasExtra("FROM_HOPE")) {

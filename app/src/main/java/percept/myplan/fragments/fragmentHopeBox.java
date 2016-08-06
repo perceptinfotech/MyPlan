@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -53,6 +54,7 @@ public class fragmentHopeBox extends Fragment {
     private List<Hope> LIST_HOPE;
     public static boolean ADDED_HOPEBOX = false;
     Map<String, String> params;
+    private ProgressBar PB;
 
     public fragmentHopeBox() {
         // Required empty public constructor
@@ -68,7 +70,7 @@ public class fragmentHopeBox extends Fragment {
         LST_HOPE = (RecyclerView) _View.findViewById(R.id.recycler_hope);
         LIST_HOPE = new ArrayList<>();
 
-
+        PB = (ProgressBar) _View.findViewById(R.id.pbGetHope);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 2);
         LST_HOPE.setLayoutManager(mLayoutManager);
         LST_HOPE.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
@@ -102,16 +104,17 @@ public class fragmentHopeBox extends Fragment {
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         try {
+            PB.setVisibility(View.VISIBLE);
             LIST_HOPE.clear();
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_HOPEBOXES, params, false, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    Log.d(":::::::::::::::: ", message.toString());
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    Log.d(":::::::::::::::: ", response.toString());
+                    PB.setVisibility(View.GONE);
                     Gson gson = new Gson();
                     try {
                         LIST_HOPE = gson.fromJson(response.getJSONArray(Constant.DATA)
@@ -120,7 +123,7 @@ public class fragmentHopeBox extends Fragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    LIST_HOPE.add(new Hope("", "", "", "", "", "Add New Box"));
+                    LIST_HOPE.add(new Hope("", "", "", "", "", "Add New Box", ""));
                     ADAPTER = new HopeAdapter(getActivity(), LIST_HOPE);
                     LST_HOPE.setAdapter(ADAPTER);
                 }
@@ -136,16 +139,17 @@ public class fragmentHopeBox extends Fragment {
         super.onResume();
         if (ADDED_HOPEBOX) {
             try {
+                PB.setVisibility(View.VISIBLE);
                 LIST_HOPE.clear();
                 new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_HOPEBOXES, params, false, false, false, new VolleyResponseListener() {
                     @Override
                     public void onError(VolleyError message) {
-                        Log.d(":::::::::::::::: ", message.toString());
+                        PB.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(":::::::::::::::: ", response.toString());
+                        PB.setVisibility(View.GONE);
                         Gson gson = new Gson();
                         try {
                             LIST_HOPE = gson.fromJson(response.getJSONArray(Constant.DATA)
@@ -154,7 +158,7 @@ public class fragmentHopeBox extends Fragment {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        LIST_HOPE.add(new Hope("", "", "", "", "", "Add New Box"));
+                        LIST_HOPE.add(new Hope("", "", "", "", "", "Add New Box", ""));
                         ADAPTER = new HopeAdapter(getActivity(), LIST_HOPE);
                         LST_HOPE.setAdapter(ADAPTER);
                     }

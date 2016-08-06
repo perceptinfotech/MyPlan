@@ -180,5 +180,6 @@
     <string name="recordvideo">Record new video</string>
     <string name="leavenote">Leave a note</string>
     <string name="pleaseaddnote">Please add note</string>
+    <string name="pickagainwithlesstime">Please pick video with less then 20 seconds</string>
 
 </resources>

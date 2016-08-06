@@ -1,6 +1,13 @@
 package percept.myplan.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,7 +70,7 @@ public class HopeAdapter extends RecyclerView.Adapter<HopeAdapter.MyViewHolder> 
         } else {
             holder.TV_TITLE.setText(album.getTITLE());
 //            Picasso.with(CONTEXT).load(album.getIMG_COVER()).into(holder.IMG_COVER);
-            imageLoader.get(album.getIMG_COVER(), new ImageLoader.ImageListener() {
+            imageLoader.get(album.getTHUMB_COVER(), new ImageLoader.ImageListener() {
 
                 @Override
                 public void onErrorResponse(VolleyError error) {
@@ -74,7 +81,50 @@ public class HopeAdapter extends RecyclerView.Adapter<HopeAdapter.MyViewHolder> 
                 public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
                     if (response.getBitmap() != null) {
                         // load image into imageview
-                        holder.IMG_COVER.setImageBitmap(response.getBitmap());
+
+                        Bitmap output = Bitmap.createBitmap(response.getBitmap().getWidth(), response.getBitmap().getHeight(), Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(output);
+                        final float densityMultiplier = CONTEXT.getResources().getDisplayMetrics().density;
+
+                        final int color = 0xff424242;
+                        final Paint paint = new Paint();
+                        final Rect rect = new Rect(0, 0, response.getBitmap().getWidth(), response.getBitmap().getHeight());
+                        final RectF rectF = new RectF(rect);
+
+                        //make sure that our rounded corner is scaled appropriately
+                        final float roundPx = 10 * densityMultiplier;
+
+                        paint.setAntiAlias(true);
+                        canvas.drawARGB(0, 0, 0, 0);
+                        paint.setColor(color);
+                        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+                        int h = response.getBitmap().getHeight();
+                        int w = response.getBitmap().getWidth();
+                        boolean squareTL = false;
+                        boolean squareTR = false;
+                        boolean squareBL = false;
+                        boolean squareBR = false;
+                        //draw rectangles over the corners we want to be square
+                        if (squareTL) {
+                            canvas.drawRect(0, h / 2, w / 2, h, paint);
+                        }
+                        if (squareTR) {
+                            canvas.drawRect(w / 2, h / 2, w, h, paint);
+                        }
+                        if (squareBL) {
+                            canvas.drawRect(0, 0, w / 2, h / 2, paint);
+                        }
+                        if (squareBR) {
+                            canvas.drawRect(w / 2, 0, w, h / 2, paint);
+                        }
+
+
+                        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+                        canvas.drawBitmap(response.getBitmap(), 0, 0, paint);
+
+
+                        holder.IMG_COVER.setImageBitmap(output);
                     }
                 }
             });

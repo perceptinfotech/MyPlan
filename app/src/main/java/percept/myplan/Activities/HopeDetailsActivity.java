@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ public class HopeDetailsActivity extends AppCompatActivity {
 
     protected RecyclerView mRecyclerView;
     protected RecyclerView.Adapter mAdapter;
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,12 +77,13 @@ public class HopeDetailsActivity extends AppCompatActivity {
 
 
         mRecyclerView = (RecyclerView) findViewById(R.id.lstHopeDetails);
+        PB = (ProgressBar) findViewById(R.id.pbgetHopeDetail);
         Toro.register(mRecyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(HopeDetailsActivity.this);
         mRecyclerView.setLayoutManager(layoutManager);
         if (layoutManager instanceof LinearLayoutManager) {
-            mRecyclerView.addItemDecoration(new DividerItemDecoration(HopeDetailsActivity.this,
-                    ((LinearLayoutManager) layoutManager).getOrientation()));
+//            mRecyclerView.addItemDecoration(new DividerItemDecoration(HopeDetailsActivity.this,
+//                    ((LinearLayoutManager) layoutManager).getOrientation()));
         }
 
 
@@ -89,14 +92,16 @@ public class HopeDetailsActivity extends AppCompatActivity {
         params.put("sname", Constant.SNAME);
         params.put("id", getIntent().getExtras().getString("HOPE_ID"));
         try {
+            PB.setVisibility(View.VISIBLE);
             new General().getJSONContentFromInternetService(HopeDetailsActivity.this, General.PHPServices.GET_HOPEBOX, params, false, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
+                    PB.setVisibility(View.GONE);
                     Gson gson = new Gson();
                     try {
                         LIST_HOPEDETAILS = gson.fromJson(response.getJSONArray(Constant.DATA)
@@ -139,14 +144,16 @@ public class HopeDetailsActivity extends AppCompatActivity {
         super.onResume();
         if (GET_HOPE_DETAILS) {
             try {
+                PB.setVisibility(View.VISIBLE);
                 new General().getJSONContentFromInternetService(HopeDetailsActivity.this, General.PHPServices.GET_HOPEBOX, params, false, false, true, new VolleyResponseListener() {
                     @Override
                     public void onError(VolleyError message) {
-
+                        PB.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void onResponse(JSONObject response) {
+                        PB.setVisibility(View.GONE);
                         LIST_HOPEDETAILS.clear();
                         Gson gson = new Gson();
                         try {

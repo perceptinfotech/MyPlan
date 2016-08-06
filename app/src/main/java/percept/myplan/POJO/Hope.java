@@ -20,14 +20,17 @@ public class Hope {
     private String IMG_COVER;
     @SerializedName("title")
     private String TITLE;
+    @SerializedName("cover_thumb")
+    private String THUMB_COVER;
 
-    public Hope(String state, String created_By, String ID, String ordering, String IMG_COVER, String TITLE) {
+    public Hope(String state, String created_By, String ID, String ordering, String IMG_COVER, String TITLE,String thumb) {
         State = state;
         Created_By = created_By;
         this.ID = ID;
         Ordering = ordering;
         this.IMG_COVER = IMG_COVER;
         this.TITLE = TITLE;
+        this.THUMB_COVER=thumb;
     }
 
     public String getTITLE() {
@@ -78,5 +81,11 @@ public class Hope {
         this.IMG_COVER = IMG_COVER;
     }
 
+    public String getTHUMB_COVER() {
+        return THUMB_COVER;
+    }
 
+    public void setTHUMB_COVER(String THUMB_COVER) {
+        this.THUMB_COVER = THUMB_COVER;
+    }
 }

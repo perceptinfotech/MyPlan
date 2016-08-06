@@ -2,6 +2,7 @@ package percept.myplan.Activities;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +49,7 @@ public class AddVideoActivity extends AppCompatActivity {
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,7 @@ public class AddVideoActivity extends AppCompatActivity {
         TV_CHOOSEVIDEO = (TextView) findViewById(R.id.tvChooseExistingVideo);
         TV_RECORDVIDEO = (TextView) findViewById(R.id.tvRecordVideo);
         TV_CHOOSEVIDLINK = (TextView) findViewById(R.id.tvChooseFromLink);
+        PB = (ProgressBar) findViewById(R.id.pbVideos);
 
         TV_CHOOSEVIDEO.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,6 +121,22 @@ public class AddVideoActivity extends AppCompatActivity {
             int columnIndex = c.getColumnIndex(videoFilePath[0]);
             String videosPath = c.getString(columnIndex);
             c.close();
+
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(videosPath);
+            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            long _timeInmillisec = Long.parseLong(time);
+            long _duration = _timeInmillisec / 1000;
+            long _hours = _duration / 3600;
+            long _minutes = (_duration - _hours * 3600) / 60;
+            long _seconds = _duration - (_hours * 3600 + _minutes * 60);
+
+            if (_seconds > 20) {
+                Toast.makeText(AddVideoActivity.this, R.string.pickagainwithlesstime, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
             int end = videosPath.toString().lastIndexOf("/");
             String str2 = videosPath.toString().substring(end + 1, videosPath.length());
 
@@ -191,6 +211,7 @@ public class AddVideoActivity extends AppCompatActivity {
         protected void onPreExecute() {
             // setting progress bar to zero
             super.onPreExecute();
+            PB.setVisibility(View.VISIBLE);
         }
 
 
@@ -264,6 +285,7 @@ public class AddVideoActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            PB.setVisibility(View.GONE);
             super.onPostExecute(result);
             Log.d(":::::: ", result);
             if (getIntent().hasExtra("FROM_HOPE")) {
