@@ -10,11 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import percept.myplan.Activities.ExportMyPlanActivity;
-import percept.myplan.Activities.GeoTrackingActivity;
+import percept.myplan.Activities.SettingExportMyPlanActivity;
+import percept.myplan.Activities.SettingGeoTrackingActivity;
 import percept.myplan.Activities.MoodRatingsActivity;
-import percept.myplan.Activities.NotificationActivity;
-import percept.myplan.Activities.ProfileActivity;
+import percept.myplan.Activities.SettingMoodActivity;
+import percept.myplan.Activities.SettingNotificationActivity;
+import percept.myplan.Activities.SettingProfileActivity;
 import percept.myplan.R;
 
 /**
@@ -47,7 +48,7 @@ public class fragmentSettings extends Fragment {
         TV_PROFILE.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), ProfileActivity.class));
+                startActivity(new Intent(getActivity(), SettingProfileActivity.class));
 
             }
         });
@@ -55,28 +56,28 @@ public class fragmentSettings extends Fragment {
         TV_MOODRATINGS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), MoodRatingsActivity.class));
+                startActivity(new Intent(getActivity(), SettingMoodActivity.class));
             }
         });
 
         TV_GEOTRACKING.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), GeoTrackingActivity.class));
+                startActivity(new Intent(getActivity(), SettingGeoTrackingActivity.class));
             }
         });
 
         TV_EXPORTMYPLAN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), ExportMyPlanActivity.class));
+                startActivity(new Intent(getActivity(), SettingExportMyPlanActivity.class));
             }
         });
 
         TV_NOTIFICATIONS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), NotificationActivity.class));
+                startActivity(new Intent(getActivity(), SettingNotificationActivity.class));
             }
         });
 

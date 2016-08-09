@@ -41,6 +41,7 @@
             android:background="@drawable/edt_register_border"
             android:hint="@string/emailadd"
             android:padding="5dp"
+            android:inputType="textEmailAddress"
             android:textColor="@android:color/black"
             android:textSize="14dp" />
 

@@ -79,9 +79,9 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
 //                                })
 //                                .create()
 //                                .show();
-                        Snackbar.make(parent, "Clicked to VIDEO", Snackbar.LENGTH_LONG).show();
+//                        Snackbar.make(parent, "Clicked to VIDEO", Snackbar.LENGTH_LONG).show();
                     } else if (view == ((Basic3VideoViewHolder) viewHolder).dummyView) {
-                        Snackbar.make(parent, "Clicked to TEXT", Snackbar.LENGTH_LONG).show();
+//                        Snackbar.make(parent, "Clicked to TEXT", Snackbar.LENGTH_LONG).show();
                     } else if (view == ((Basic3VideoViewHolder) viewHolder).tvCardVideoEdit) {
                         Snackbar.make(parent, "Clicked to Edit", Snackbar.LENGTH_LONG).show();
                     }
@@ -117,9 +117,9 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
 //                                })
 //                                .create()
 //                                .show();
-                        Snackbar.make(parent, "Clicked to VIDEO", Snackbar.LENGTH_LONG).show();
+//                        Snackbar.make(parent, "Clicked to VIDEO", Snackbar.LENGTH_LONG).show();
                     } else if (view == ((Basic3ImageViewHolder) viewHolder).tvCardImage) {
-                        Snackbar.make(parent, "Clicked to TEXT", Snackbar.LENGTH_LONG).show();
+//                        Snackbar.make(parent, "Clicked to TEXT", Snackbar.LENGTH_LONG).show();
                     } else if (view == ((Basic3ImageViewHolder) viewHolder).tvCardImageEdit) {
                         Snackbar.make(parent, "Clicked to Edit", Snackbar.LENGTH_LONG).show();
                     }

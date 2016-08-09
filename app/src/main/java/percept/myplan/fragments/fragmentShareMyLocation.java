@@ -1,6 +1,8 @@
 package percept.myplan.fragments;
 
 
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +15,7 @@ import percept.myplan.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class fragmentShareMyLocation extends Fragment {
+public class fragmentShareMyLocation extends Fragment{
 
     public static final int INDEX = 9;
     public fragmentShareMyLocation() {
@@ -26,7 +28,7 @@ public class fragmentShareMyLocation extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Share My Location");
-        return inflater.inflate(R.layout.fragment_share_my_location, container, false);
+        View _view=inflater.inflate(R.layout.fragment_share_my_location, container, false);
+        return _view;
     }
-
 }

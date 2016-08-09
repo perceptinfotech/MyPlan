@@ -1,10 +1,15 @@
 package percept.myplan.Activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -57,6 +62,8 @@ public class AddStrategyImageActivity extends AppCompatActivity {
     private String HOPE_ID = "";
     private boolean FROM_EDIT = false;
     private ProgressBar PB;
+
+    private final static int MY_PERMISSIONS_REQUEST= 22;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,11 +122,37 @@ public class AddStrategyImageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                IMG_URI = Uri.fromFile(Constant.getOutputMediaFile());
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, IMG_URI);
-                // start the image capture Intent
-                startActivityForResult(intent, REQ_TAKE_PICTURE);
+                if (ContextCompat.checkSelfPermission(AddStrategyImageActivity.this, Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(AddStrategyImageActivity.this,
+                            Manifest.permission.CAMERA)) {
+
+                        // Show an expanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+
+                    } else {
+
+                        // No explanation needed, we can request the permission.
+
+                        ActivityCompat.requestPermissions(AddStrategyImageActivity.this,
+                                new String[]{Manifest.permission.CAMERA,
+                                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                        Manifest.permission.READ_EXTERNAL_STORAGE},
+                                MY_PERMISSIONS_REQUEST);
+
+                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                        // app-defined int constant. The callback method gets the
+                        // result of the request.
+                    }
+                } else {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    IMG_URI = Uri.fromFile(Constant.getOutputMediaFile());
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, IMG_URI);
+                    // start the image capture Intent
+                    startActivityForResult(intent, REQ_TAKE_PICTURE);
+                }
             }
         });
     }
@@ -131,6 +164,33 @@ public class AddStrategyImageActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    IMG_URI = Uri.fromFile(Constant.getOutputMediaFile());
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, IMG_URI);
+                    // start the image capture Intent
+                    startActivityForResult(intent, REQ_TAKE_PICTURE);
+
+                } else {
+
+                    Toast.makeText(AddStrategyImageActivity.this, R.string.camerapermissiondenied, Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     @Override
@@ -152,7 +212,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
 
             } else {
                 List<String> _LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
-                if(_LIST_IMG.size()>0) {
+                if (_LIST_IMG.size() > 0) {
                     PB.setVisibility(View.VISIBLE);
                     new AddHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _LIST_IMG.get(0), "image").execute();
                 }

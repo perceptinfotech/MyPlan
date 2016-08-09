@@ -30,6 +30,8 @@ public class HopeDetail {
     private String VIDEO;
     @SerializedName("media_title")
     private String MEDIA_TITLE;
+    @SerializedName("media_thumb")
+    private String MEDIA_THUMB = "";
 
     public HopeDetail(String MUSIC, String ID, String HOPE_ID, String LINK, String STATE,
                       String ORDERING, String MEDIA, String NOTE, String VIDEO, String MEDIA_TITLE, String type) {
@@ -58,6 +60,18 @@ public class HopeDetail {
         this.VIDEO = hopeDetail.getVIDEO();
         this.MEDIA_TITLE = hopeDetail.getMEDIA_TITLE();
         this.TYPE = hopeDetail.getTYPE();
+        if (hopeDetail.getMEDIA_THUMB() != null)
+            this.MEDIA_THUMB = hopeDetail.getMEDIA_THUMB();
+        else
+            this.MEDIA_THUMB = "";
+    }
+
+    public String getMEDIA_THUMB() {
+        return MEDIA_THUMB;
+    }
+
+    public void setMEDIA_THUMB(String MEDIA_THUMB) {
+        this.MEDIA_THUMB = MEDIA_THUMB;
     }
 
     public String getTYPE() {

@@ -181,5 +181,8 @@
     <string name="leavenote">Leave a note</string>
     <string name="pleaseaddnote">Please add note</string>
     <string name="pickagainwithlesstime">Please pick video with less then 20 seconds</string>
+    <string name="takefullsidastest">Take full sidas test</string>
+    <string name="camerapermissiondenied">Camera permission denied</string>
+    <string name="readstoragedenied">Read storage permission denied</string>
 
 </resources>

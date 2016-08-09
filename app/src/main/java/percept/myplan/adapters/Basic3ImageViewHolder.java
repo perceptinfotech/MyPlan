@@ -40,7 +40,7 @@ public class Basic3ImageViewHolder extends Basic3ViewHolder {
 
         this.DETAILS = (HopeDetail) item;
         tvCardImage.setText(this.DETAILS.getMEDIA_TITLE());
-        imageLoader.get(DETAILS.getMEDIA(), new ImageLoader.ImageListener() {
+        imageLoader.get(DETAILS.getMEDIA_THUMB(), new ImageLoader.ImageListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {

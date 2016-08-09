@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+import percept.myplan.Activities.LoginActivity;
 import percept.myplan.Activities.LoginActivity_1;
 import percept.myplan.AppController;
 import percept.myplan.Interfaces.VolleyResponseListener;
@@ -73,6 +74,8 @@ public class General {
             return ".saveHopebox";
         } else if(serviceName==PHPServices.CHECK_LOGIN){
             return ".checkLoginSession";
+        }else if(serviceName==PHPServices.SAVE_PROFILE){
+            return ".saveProfile";
         }
 
 
@@ -108,7 +111,7 @@ public class General {
                             if (response.getJSONObject("data").has("message")) {
                                 if (response.getJSONObject("data").get("message").equals("Your session is expired.")) {
                                     //Uncomment call for Session code.
-                                    Intent intent = new Intent(context.getApplicationContext(), LoginActivity_1.class);
+                                    Intent intent = new Intent(context.getApplicationContext(), LoginActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                     context.startActivity(intent);
                                     Constant.CURRENT_FRAGMENT = 0;
@@ -203,6 +206,7 @@ public class General {
         GET_STRATEGY,
         ADD_MYSTRATEGY,
         ADD_HOPEBOX,
-        CHECK_LOGIN
+        CHECK_LOGIN,
+        SAVE_PROFILE
     }
 }
