@@ -27,7 +27,7 @@ public class Basic3NormalViewHolder extends Basic3ViewHolder {
     }
 
     @Override
-    public void bind(RecyclerView.Adapter adapter, Object item) {
+    public void bind(RecyclerView.Adapter adapter, Object item,int posi) {
         this.DETAILS = (HopeDetail) item;
         if (this.DETAILS.getTYPE().equals("link")) {
             this.TV_TEXTVIEW.setText(this.DETAILS.getLINK());

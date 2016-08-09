@@ -24,22 +24,23 @@ public class Basic3ImageViewHolder extends Basic3ViewHolder {
 
     private HopeDetail DETAILS;
     final ImageView imgCardImage;
-    final TextView tvCardImage,tvCardImageEdit;
+    final TextView tvCardImage, tvCardImageEdit;
     ImageLoader imageLoader;
 
     public Basic3ImageViewHolder(View itemView) {
         super(itemView);
         imgCardImage = (ImageView) itemView.findViewById(R.id.imgCardImage);
         tvCardImage = (TextView) itemView.findViewById(R.id.tvCardImage);
-        tvCardImageEdit=(TextView) itemView.findViewById(R.id.tvCardImageEdit);
+        tvCardImageEdit = (TextView) itemView.findViewById(R.id.tvCardImageEdit);
         imageLoader = AppController.getInstance().getImageLoader();
     }
 
     @Override
-    public void bind(RecyclerView.Adapter adapter, Object item) {
+    public void bind(RecyclerView.Adapter adapter, Object item, int posi) {
 
         this.DETAILS = (HopeDetail) item;
         tvCardImage.setText(this.DETAILS.getMEDIA_TITLE());
+        imgCardImage.setTag(posi);
         imageLoader.get(DETAILS.getMEDIA_THUMB(), new ImageLoader.ImageListener() {
 
             @Override
@@ -61,5 +62,6 @@ public class Basic3ImageViewHolder extends Basic3ViewHolder {
     public void setOnItemClickListener(View.OnClickListener listener) {
         super.setOnItemClickListener(listener);
         tvCardImageEdit.setOnClickListener(listener);
+        imgCardImage.setOnClickListener(listener);
     }
 }

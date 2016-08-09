@@ -49,6 +49,7 @@ public class HopeDetailsActivity extends AppCompatActivity {
     protected RecyclerView mRecyclerView;
     protected RecyclerView.Adapter mAdapter;
     private ProgressBar PB;
+    private String HOPE_TITLE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +66,10 @@ public class HopeDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        if (getIntent().hasExtra("HOPE_TITLE"))
+        if (getIntent().hasExtra("HOPE_TITLE")) {
             mTitle.setText(getIntent().getExtras().getString("HOPE_TITLE"));
-        else
+            HOPE_TITLE = getIntent().getExtras().getString("HOPE_TITLE");
+        } else
             mTitle.setText("Hope Box");
 
 //        LST_HOPEDETAILS = (RecyclerView) findViewById(R.id.lstHopeDetails);
@@ -114,7 +116,7 @@ public class HopeDetailsActivity extends AppCompatActivity {
                     Log.d("::::::  ", String.valueOf(LIST_HOPEDETAILS.size()));
 //                    ADAPTER = new HopeDetailsAdapter(HopeDetailsActivity.this, LIST_HOPEDETAILS);
 //                    LST_HOPEDETAILS.setAdapter(ADAPTER);
-                    mAdapter = new Basic3Adapter(HopeDetailsActivity.this, LIST_HOPEDETAILS);
+                    mAdapter = new Basic3Adapter(HopeDetailsActivity.this, LIST_HOPEDETAILS, HOPE_TITLE);
                     mRecyclerView.setHasFixedSize(false);
                     mRecyclerView.setAdapter(mAdapter);
                 }
@@ -167,7 +169,7 @@ public class HopeDetailsActivity extends AppCompatActivity {
 //                        Log.d("::::::  ", String.valueOf(LIST_HOPEDETAILS.size()));
 //                        ADAPTER = new HopeDetailsAdapter(HopeDetailsActivity.this, LIST_HOPEDETAILS);
 //                        LST_HOPEDETAILS.setAdapter(ADAPTER);
-                        mAdapter = new Basic3Adapter(HopeDetailsActivity.this, LIST_HOPEDETAILS);
+                        mAdapter = new Basic3Adapter(HopeDetailsActivity.this, LIST_HOPEDETAILS, HOPE_TITLE);
                         mRecyclerView.setHasFixedSize(false);
                         mRecyclerView.setAdapter(mAdapter);
                     }

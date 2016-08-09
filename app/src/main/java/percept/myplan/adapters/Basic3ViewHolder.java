@@ -21,7 +21,7 @@ public abstract class Basic3ViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
     }
 
-    public abstract void bind(RecyclerView.Adapter adapter, Object item);
+    public abstract void bind(RecyclerView.Adapter adapter, Object item,int position);
 
     /**
      * Setup click listener to current ViewHolder. {@link RecyclerView.ViewHolder#itemView} will

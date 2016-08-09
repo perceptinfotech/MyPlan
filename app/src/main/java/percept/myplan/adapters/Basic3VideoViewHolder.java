@@ -46,7 +46,7 @@ public class Basic3VideoViewHolder extends Basic3BaseVideoViewHolder {
     }
 
     @Override
-    public void bind(RecyclerView.Adapter adapter, Object item) {
+    public void bind(RecyclerView.Adapter adapter, Object item,int posi) {
         if (!(item instanceof HopeDetail)) {
             throw new IllegalArgumentException("Invalid Object: " + item);
         }

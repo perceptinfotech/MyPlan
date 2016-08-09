@@ -2,6 +2,7 @@ package percept.myplan.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import com.android.volley.toolbox.ImageLoader;
 
 import java.util.List;
 
+import percept.myplan.Activities.ImageDetailActivity;
 import percept.myplan.AppController;
 import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
@@ -29,6 +31,7 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
     private static final String TAG = "Basic3Adapter";
 
     private List<HopeDetail> LST_HOPE;
+    private String HOPE_TITLE;
 
 
     public Basic3Adapter() {
@@ -36,10 +39,10 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
         setHasStableIds(true);  // MUST have this.
     }
 
-    public Basic3Adapter(Context mContext, List<HopeDetail> hopeList) {
+    public Basic3Adapter(Context mContext, List<HopeDetail> hopeList, String hopeTitle) {
         this.LST_HOPE = hopeList;
         setHasStableIds(true);  // MUST have this.
-
+        HOPE_TITLE = hopeTitle;
     }
 
     @Override
@@ -118,6 +121,11 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
 //                                .create()
 //                                .show();
 //                        Snackbar.make(parent, "Clicked to VIDEO", Snackbar.LENGTH_LONG).show();
+                        int _pos = (int) ((Basic3ImageViewHolder) viewHolder).imgCardImage.getTag();
+                        Intent _intent = new Intent(parent.getContext(), ImageDetailActivity.class);
+                        _intent.putExtra("IMG_LINK", LST_HOPE.get(_pos).getMEDIA());
+                        _intent.putExtra("TITLE", HOPE_TITLE);
+                        parent.getContext().startActivity(_intent);
                     } else if (view == ((Basic3ImageViewHolder) viewHolder).tvCardImage) {
 //                        Snackbar.make(parent, "Clicked to TEXT", Snackbar.LENGTH_LONG).show();
                     } else if (view == ((Basic3ImageViewHolder) viewHolder).tvCardImageEdit) {
@@ -139,7 +147,7 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
 
     @Override
     public void onBindViewHolder(Basic3ViewHolder holder, int position) {
-        holder.bind(this, getItem(position));
+        holder.bind(this, getItem(position), position);
     }
 
     Object getItem(int position) {
