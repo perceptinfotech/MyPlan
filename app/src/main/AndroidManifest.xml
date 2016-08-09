@@ -97,7 +97,7 @@
             android:label="@string/title_activity_send_message"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activities.ProfileActivity"
+            android:name=".Activities.SettingProfileActivity"
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -105,15 +105,15 @@
             android:label="@string/title_activity_moodratings"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activities.GeoTrackingActivity"
+            android:name=".Activities.SettingGeoTrackingActivity"
             android:label="@string/title_activity_geotracking"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activities.ExportMyPlanActivity"
+            android:name=".Activities.SettingExportMyPlanActivity"
             android:label="@string/title_activity_exportplan"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activities.NotificationActivity"
+            android:name=".Activities.SettingNotificationActivity"
             android:label="@string/title_activity_notification"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -206,7 +206,10 @@
         <activity
             android:name=".Activities.AddNoteActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".Activities.SidasActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
