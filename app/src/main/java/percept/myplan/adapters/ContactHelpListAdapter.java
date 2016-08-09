@@ -1,5 +1,6 @@
 package percept.myplan.adapters;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,12 +29,14 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
     ImageLoader imageLoader;
 
     public class ContactHelpListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView TV_HELPCONTACT;
+        public TextView TV_HELPCONTACT, TV_CONTACTCHAR;
         public RoundedImageView IMG_CONTACT;
 
         public ContactHelpListHolder(View itemView) {
             super(itemView);
             TV_HELPCONTACT = (TextView) itemView.findViewById(R.id.tvContactName);
+            TV_CONTACTCHAR = (TextView) itemView.findViewById(R.id.tvContactChar);
+
             IMG_CONTACT = (RoundedImageView) itemView.findViewById(R.id.imgContact);
         }
 
@@ -59,22 +62,30 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
     public void onBindViewHolder(final ContactHelpListHolder holder, int position) {
         ContactDisplay _contact = LIST_HELPCONTACT.get(position);
         holder.TV_HELPCONTACT.setText(_contact.getFirst_name());
-//        holder.IMG_CONTACT.setImageBitmap();
-        imageLoader.get(_contact.getCon_image(), new ImageLoader.ImageListener() {
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
+        if (_contact.getCon_image().equals("")) {
+            holder.TV_CONTACTCHAR.setVisibility(View.VISIBLE);
+            holder.TV_CONTACTCHAR.setText(LIST_HELPCONTACT.get(position).getFirst_name().substring(0, 2));
+//            holder.IMG_CONTACT.setBackgroundColor(Color.rgb(169, 169, 169));
+        } else {
+            holder.TV_CONTACTCHAR.setVisibility(View.GONE);
+            imageLoader.get(_contact.getCon_image(), new ImageLoader.ImageListener() {
 
-            }
+                @Override
+                public void onErrorResponse(VolleyError error) {
 
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
-                if (response.getBitmap() != null) {
-                    // load image into imageview
-                    holder.IMG_CONTACT.setImageBitmap(response.getBitmap());
                 }
-            }
-        });
+
+                @Override
+                public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+                    if (response.getBitmap() != null) {
+                        // load image into imageview
+                        holder.IMG_CONTACT.setImageBitmap(response.getBitmap());
+                    }
+                }
+            });
+        }
+//        holder.IMG_CONTACT.setImageBitmap();
     }
 
     @Override
