@@ -10,25 +10,25 @@ import android.widget.TextView;
 
 import percept.myplan.R;
 
-public class NotificationActivity extends AppCompatActivity {
+public class SettingGeoTrackingActivity extends AppCompatActivity {
 
-    private Switch SWITCH_NOTIFICATIONS;
+    private Switch SWITCH_LOCATIONSHARE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notifications);
+        setContentView(R.layout.activity_geotracking);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText(getResources().getString(R.string.title_activity_notification));
+        mTitle.setText(getResources().getString(R.string.title_activity_geotracking));
 
-        SWITCH_NOTIFICATIONS = (Switch) findViewById(R.id.switchNotifications);
+        SWITCH_LOCATIONSHARE = (Switch) findViewById(R.id.switchLocationSharing);
 
-        SWITCH_NOTIFICATIONS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        SWITCH_LOCATIONSHARE.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
 
@@ -41,7 +41,7 @@ public class NotificationActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            NotificationActivity.this.finish();
+            SettingGeoTrackingActivity.this.finish();
             return true;
         }
         return false;

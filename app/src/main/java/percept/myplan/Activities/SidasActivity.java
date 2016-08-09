@@ -1,50 +1,49 @@
 package percept.myplan.Activities;
 
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.CompoundButton;
-import android.widget.Switch;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import percept.myplan.R;
 
-public class ExportMyPlanActivity extends AppCompatActivity {
+public class SidasActivity extends AppCompatActivity {
 
-    private Switch SWITCH_INCLUDE_MOODRATING;
+    private Button BTN_TAKETEST;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_export_myplan);
+        setContentView(R.layout.activity_sidas);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText(getResources().getString(R.string.title_activity_exportplan));
+        mTitle.setText(getResources().getString(R.string.sidas));
 
-        SWITCH_INCLUDE_MOODRATING = (Switch) findViewById(R.id.switchIncludeMoodRatings);
 
-        SWITCH_INCLUDE_MOODRATING.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        BTN_TAKETEST = (Button) findViewById(R.id.btnTakeSidasTest);
+
+        BTN_TAKETEST.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+            public void onClick(View view) {
 
             }
         });
-
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            ExportMyPlanActivity.this.finish();
+            SidasActivity.this.finish();
             return true;
         }
         return false;
     }
-
 }
