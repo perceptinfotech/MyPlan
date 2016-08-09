@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import percept.myplan.Dialogs.dialogAddStrategy;
+import percept.myplan.Dialogs.dialogStrategyImg;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.Utils;
@@ -176,6 +178,22 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
             }
         }));
+
+        LST_OWNSTRATEGYIMG.addOnItemTouchListener(new RecyclerTouchListener(StrategyDetailsOwnActivity.this, LST_STRATEGYCONTACT, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Log.d("::::::::", LIST_IMAGE.get(position));
+                dialogStrategyImg _dialog = new dialogStrategyImg(StrategyDetailsOwnActivity.this, LIST_IMAGE.get(position));
+                _dialog.setCanceledOnTouchOutside(true);
+                _dialog.show();
+
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
     }
 
     @Override
@@ -210,6 +228,14 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                         EDT_STRATEGYDESC.setText(clsStrategy.getDescription());
                         EDT_STRATEGYTITLE.setText(clsStrategy.getTitle());
                         MAP_ALARM.get(STRATEGY_ID);
+
+                        String _images = clsStrategy.getImage();
+                        String[] _arrImg = _images.split(",");
+                        for (int i = 0; i < _arrImg.length; i++) {
+                            LIST_IMAGE.add(_arrImg[i]);
+                        }
+                        ADAPTER_IMG = new ImageAdapter(StrategyDetailsOwnActivity.this, LIST_IMAGE);
+                        LST_OWNSTRATEGYIMG.setAdapter(ADAPTER_IMG);
                     }
                 });
             } catch (Exception e) {
