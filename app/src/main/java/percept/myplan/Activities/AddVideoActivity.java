@@ -129,35 +129,35 @@ public class AddVideoActivity extends AppCompatActivity {
             long _duration = _timeInmillisec / 1000;
             long _hours = _duration / 3600;
             long _minutes = (_duration - _hours * 3600) / 60;
-            long _seconds = _duration - (_hours * 3600 + _minutes * 60);
+            long _seconds = _duration - (_hours * 3600);
 
-            if (_seconds > 20) {
+            if (_duration > 20) {
                 Toast.makeText(AddVideoActivity.this, R.string.pickagainwithlesstime, Toast.LENGTH_SHORT).show();
                 return;
             }
 
 
             int end = videosPath.toString().lastIndexOf("/");
-            String str2 = videosPath.toString().substring(end + 1, videosPath.length());
-
-            String name = "VID_" + currentDateTimeString + seconds + hour + min + ".mp4";
-
-            File mediaStorageDir = new File(Constant.APP_MEDIA_PATH + File.separator + "VIDEOS");
-
-            // Create the storage directory if it does not exist
-            if (!mediaStorageDir.exists()) {
-                if (!mediaStorageDir.mkdirs()) {
-
-                }
-            }
-
-            boolean success = Constant.copyFile(videosPath, Constant.APP_MEDIA_PATH + File.separator + "VIDEOS", name);
-
-            if (success) {
-                String _Path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + name;
-                Log.d("::::::::::: ", _Path);
+//            String str2 = videosPath.toString().substring(end + 1, videosPath.length());
+//
+//            String name = "VID_" + currentDateTimeString + seconds + hour + min + ".mp4";
+//
+//            File mediaStorageDir = new File(Constant.APP_MEDIA_PATH + File.separator + "VIDEOS");
+//
+//            // Create the storage directory if it does not exist
+//            if (!mediaStorageDir.exists()) {
+//                if (!mediaStorageDir.mkdirs()) {
+//
+//                }
+//            }
+//
+//            boolean success = Constant.copyFile(videosPath, Constant.APP_MEDIA_PATH + File.separator + "VIDEOS", name);
+//
+//            if (success) {
+//                String _Path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + name;
+//                Log.d("::::::::::: ", _Path);
                 new AddHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, videosPath, "video").execute();
-            }
+//            }
             //endregion
         } else if (requestCode == REQ_TAKE_VIDEO) {
             //region VIDEO_CAPTURE
