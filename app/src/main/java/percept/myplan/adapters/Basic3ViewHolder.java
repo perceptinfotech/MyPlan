@@ -15,7 +15,7 @@ public abstract class Basic3ViewHolder extends RecyclerView.ViewHolder {
 
     static int TYPE_IMAGE = 3;
 
-    static int TYPE_AUDIO = 3;
+    static int TYPE_AUDIO = 4;
 
     public Basic3ViewHolder(View itemView) {
         super(itemView);
