@@ -55,7 +55,7 @@ public class HelpListEditActivity extends AppCompatActivity {
         LST_HELP = (RecyclerView) findViewById(R.id.lstHelpList);
 
 
-        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(fragmentContacts.LIST_HELPCONTACTS);
+        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(fragmentContacts.LIST_HELPCONTACTS, "HELP");
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(HelpListEditActivity.this);
         LST_HELP.setLayoutManager(mLayoutManager);
@@ -116,7 +116,7 @@ public class HelpListEditActivity extends AppCompatActivity {
                         }
 
 
-                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(fragmentContacts.LIST_HELPCONTACTS);
+                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(fragmentContacts.LIST_HELPCONTACTS,"HELP");
                         LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
                     }
                 });

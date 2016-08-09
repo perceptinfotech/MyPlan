@@ -49,7 +49,7 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
         LST_CONTACTS = (RecyclerView) findViewById(R.id.lstContacts);
 
         LIST_HELPCONTACT = new ArrayList<>();
-        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACT);
+        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACT, "HELP");
 
 
         TV_ADD_CONTACT = (TextView) findViewById(R.id.tvAddContact);

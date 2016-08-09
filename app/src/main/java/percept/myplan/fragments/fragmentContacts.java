@@ -133,10 +133,10 @@ public class fragmentContacts extends Fragment {
                         }
                     }
 
-                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS);
+                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS,"HELP");
                     LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
 
-                    ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS);
+                    ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS,"CONTACT");
                     LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
                 }
             });
@@ -145,17 +145,20 @@ public class fragmentContacts extends Fragment {
         }
 
 
-        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_ALLCONTACTS);
+        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS,"HELP");
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         LST_HELP.setLayoutManager(mLayoutManager);
         LST_HELP.setItemAnimator(new DefaultItemAnimator());
         LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
 
+
+        ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS,"CONTACT");
+
         RecyclerView.LayoutManager mLayoutManagerContact = new LinearLayoutManager(getActivity());
         LST_CONTACTS.setLayoutManager(mLayoutManagerContact);
         LST_CONTACTS.setItemAnimator(new DefaultItemAnimator());
-        LST_CONTACTS.setAdapter(ADPT_CONTACTHELPLIST);
+        LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
         setHasOptionsMenu(true);
 
         TV_EDIT_EMERGENCYNO.setOnClickListener(new View.OnClickListener() {
@@ -252,10 +255,10 @@ public class fragmentContacts extends Fragment {
                             }
                         }
 
-                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS);
+                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
                         LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
 
-                        ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS);
+                        ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
                         LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
                     }
                 });

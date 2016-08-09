@@ -122,7 +122,7 @@ public class HelpListActivity extends AppCompatActivity {
                         }
                     }
 
-                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS);
+                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS,"HELP");
                     LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
 
                 }
@@ -169,7 +169,7 @@ public class HelpListActivity extends AppCompatActivity {
                             }
                         }
 
-                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS);
+                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS,"HELP");
                         LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
                     }
                 });

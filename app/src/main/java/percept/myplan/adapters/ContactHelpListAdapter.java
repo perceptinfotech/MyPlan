@@ -27,6 +27,7 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
 
     public List<ContactDisplay> LIST_HELPCONTACT;
     ImageLoader imageLoader;
+    private String TYPE;
 
     public class ContactHelpListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView TV_HELPCONTACT, TV_CONTACTCHAR;
@@ -46,9 +47,10 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
         }
     }
 
-    public ContactHelpListAdapter(List<ContactDisplay> helpContactList) {
+    public ContactHelpListAdapter(List<ContactDisplay> helpContactList, String type) {
         this.LIST_HELPCONTACT = helpContactList;
         imageLoader = AppController.getInstance().getImageLoader();
+        this.TYPE = type;
     }
 
 
