@@ -27,6 +27,10 @@
             android:theme="@style/AppTheme.NoActionBar.Home" />
         <activity android:name=".Activities.BaseActivity" />
 
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <receiver
             android:name=".receivers.AlarmReceiver"
             android:enabled="true"
@@ -103,7 +107,7 @@
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activities.MoodRatingsActivity"
+            android:name=".Activities.SettingMoodRatingsActivity"
             android:label="@string/title_activity_moodratings"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -212,8 +216,12 @@
         <activity
             android:name=".Activities.SidasActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Activities.ImageDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".Activities.ImageDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.MoodActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

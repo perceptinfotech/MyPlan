@@ -191,4 +191,8 @@
     <string name="permissiondenied">Permission denied</string>
     <string name="requiredpermissionn">Permission is required</string>
 
+    <string name="latitude_label">Latitude</string>
+    <string name="longitude_label">Longitude</string>
+    <string name="last_update_time_label">Last location update time</string>
+
 </resources>

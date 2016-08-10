@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import percept.myplan.R;
 
-public class SettingMoodActivity extends AppCompatActivity {
+public class MoodActivity extends AppCompatActivity {
 
 
     @Override
@@ -29,7 +29,7 @@ public class SettingMoodActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            SettingMoodActivity.this.finish();
+            MoodActivity.this.finish();
             return true;
         }
         return false;

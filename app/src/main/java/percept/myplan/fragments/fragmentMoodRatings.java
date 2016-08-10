@@ -1,6 +1,7 @@
 package percept.myplan.fragments;
 
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,10 +9,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+import percept.myplan.Activities.MoodActivity;
+import percept.myplan.Activities.SidasActivity;
 import percept.myplan.Graph.Bar;
 import percept.myplan.Graph.BarGraph;
 import percept.myplan.Graph.PieGraph;
@@ -30,6 +36,8 @@ public class fragmentMoodRatings extends Fragment {
     ArrayList<PieSlice> LST_PIEDATA;
     ArrayList<Bar> LST_BARDATA;
 
+    private TextView TV_SIDAS, TV_MOOD;
+
     public fragmentMoodRatings() {
         // Required empty public constructor
     }
@@ -41,12 +49,30 @@ public class fragmentMoodRatings extends Fragment {
         // Inflate the layout for this fragment
         View _View = inflater.inflate(R.layout.fragment_mood_ratings, container, false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Mood Ratings");
+
+        TV_SIDAS = (TextView) _View.findViewById(R.id.tvSidas);
+        TV_MOOD = (TextView) _View.findViewById(R.id.tvMood);
+
         BAR_GRAPH = (BarGraph) _View.findViewById(R.id.bargraph);
         PIE_GRAPH = (PieGraph) _View.findViewById(R.id.piegraph);
         LST_PIEDATA = new ArrayList<>();
         LST_BARDATA = new ArrayList<>();
         setBarData();
         setPieData();
+
+        TV_SIDAS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), SidasActivity.class));
+            }
+        });
+
+        TV_MOOD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), MoodActivity.class));
+            }
+        });
         return _View;
     }
 
@@ -78,7 +104,7 @@ public class fragmentMoodRatings extends Fragment {
             @Override
             public void onClick(int index) {
                 Toast.makeText(getActivity(),
-                         LST_PIEDATA.get(index).getTitle(),
+                        LST_PIEDATA.get(index).getTitle(),
                         Toast.LENGTH_SHORT)
                         .show();
             }

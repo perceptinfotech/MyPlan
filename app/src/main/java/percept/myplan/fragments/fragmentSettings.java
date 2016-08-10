@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import percept.myplan.Activities.SettingExportMyPlanActivity;
 import percept.myplan.Activities.SettingGeoTrackingActivity;
-import percept.myplan.Activities.MoodRatingsActivity;
-import percept.myplan.Activities.SettingMoodActivity;
+import percept.myplan.Activities.MoodActivity;
+import percept.myplan.Activities.SettingMoodRatingsActivity;
 import percept.myplan.Activities.SettingNotificationActivity;
 import percept.myplan.Activities.SettingProfileActivity;
 import percept.myplan.R;
@@ -56,7 +56,7 @@ public class fragmentSettings extends Fragment {
         TV_MOODRATINGS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), SettingMoodActivity.class));
+                startActivity(new Intent(getActivity(), SettingMoodRatingsActivity.class));
             }
         });
 
