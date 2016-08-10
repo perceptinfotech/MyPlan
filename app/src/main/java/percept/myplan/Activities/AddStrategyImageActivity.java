@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -63,7 +64,8 @@ public class AddStrategyImageActivity extends AppCompatActivity {
     private boolean FROM_EDIT = false;
     private ProgressBar PB;
 
-    private final static int MY_PERMISSIONS_REQUEST= 22;
+    private final static int MY_PERMISSIONS_REQUEST = 22;
+    private boolean HAS_PERMISSION = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,9 +94,44 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         TV_CHOOSEEXISTING = (TextView) findViewById(R.id.tvChooseExisting);
         TV_TAKENEW = (TextView) findViewById(R.id.tvTakeNew);
         PB = (ProgressBar) findViewById(R.id.pbAddImage);
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (ContextCompat.checkSelfPermission(AddStrategyImageActivity.this, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                HAS_PERMISSION = false;
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(AddStrategyImageActivity.this,
+                        Manifest.permission.CAMERA)) {
+
+                    // Show an expanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+
+                } else {
+
+                    // No explanation needed, we can request the permission.
+
+                    ActivityCompat.requestPermissions(AddStrategyImageActivity.this,
+                            new String[]{Manifest.permission.CAMERA,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE},
+                            MY_PERMISSIONS_REQUEST);
+
+                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                    // app-defined int constant. The callback method gets the
+                    // result of the request.
+                }
+            }
+        }
+
+
         TV_CHOOSEEXISTING.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!HAS_PERMISSION) {
+                    Toast.makeText(AddStrategyImageActivity.this, R.string.requiredpermissionn, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (FROM.equals("") || FROM_EDIT) {
                     new PickConfig.Builder(AddStrategyImageActivity.this)
                             .pickMode(PickConfig.MODE_MULTIP_PICK)
@@ -121,38 +158,16 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         TV_TAKENEW.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!HAS_PERMISSION)
+                    return;
 
-                if (ContextCompat.checkSelfPermission(AddStrategyImageActivity.this, Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    // Should we show an explanation?
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(AddStrategyImageActivity.this,
-                            Manifest.permission.CAMERA)) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                IMG_URI = Uri.fromFile(Constant.getOutputMediaFile());
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, IMG_URI);
+                // start the image capture Intent
+                startActivityForResult(intent, REQ_TAKE_PICTURE);
 
-                        // Show an expanation to the user *asynchronously* -- don't block
-                        // this thread waiting for the user's response! After the user
-                        // sees the explanation, try again to request the permission.
 
-                    } else {
-
-                        // No explanation needed, we can request the permission.
-
-                        ActivityCompat.requestPermissions(AddStrategyImageActivity.this,
-                                new String[]{Manifest.permission.CAMERA,
-                                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                        Manifest.permission.READ_EXTERNAL_STORAGE},
-                                MY_PERMISSIONS_REQUEST);
-
-                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                        // app-defined int constant. The callback method gets the
-                        // result of the request.
-                    }
-                } else {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    IMG_URI = Uri.fromFile(Constant.getOutputMediaFile());
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, IMG_URI);
-                    // start the image capture Intent
-                    startActivityForResult(intent, REQ_TAKE_PICTURE);
-                }
             }
         });
     }
@@ -175,14 +190,9 @@ public class AddStrategyImageActivity extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED
                         && grantResults[1] == PackageManager.PERMISSION_GRANTED
                         && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    IMG_URI = Uri.fromFile(Constant.getOutputMediaFile());
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, IMG_URI);
-                    // start the image capture Intent
-                    startActivityForResult(intent, REQ_TAKE_PICTURE);
-
+                    HAS_PERMISSION = true;
                 } else {
-
+                    HAS_PERMISSION = false;
                     Toast.makeText(AddStrategyImageActivity.this, R.string.camerapermissiondenied, Toast.LENGTH_SHORT).show();
                 }
                 return;

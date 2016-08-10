@@ -184,5 +184,11 @@
     <string name="takefullsidastest">Take full sidas test</string>
     <string name="camerapermissiondenied">Camera permission denied</string>
     <string name="readstoragedenied">Read storage permission denied</string>
+    <string name="gallery">Pick Photo</string>
+    <string name="capture">Take Photo</string>
+    <string name="upload_photo">Select Photo</string>
+    <string name="sharestrategyanno">Share strategy anonymously</string>
+    <string name="permissiondenied">Permission denied</string>
+    <string name="requiredpermissionn">Permission is required</string>
 
 </resources>

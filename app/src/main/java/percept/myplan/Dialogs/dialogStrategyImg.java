@@ -59,6 +59,13 @@ public class dialogStrategyImg extends Dialog implements View.OnClickListener {
                 }
             }
         });
+
+        imgStrImageDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogStrategyImg.this.dismiss();
+            }
+        });
     }
 
     @Override

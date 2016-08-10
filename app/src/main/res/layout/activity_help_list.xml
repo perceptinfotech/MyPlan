@@ -28,9 +28,9 @@
             android:textAllCaps="true" />
 
         <TextView
+            android:id="@+id/tvEditHelpList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tvEditHelpList"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="15dp"
@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
-            android:drawableLeft="@drawable/ic_menu_slideshow"
+            android:drawableLeft="@drawable/add_circle"
             android:drawablePadding="10dp"
             android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:gravity="center_vertical"
@@ -85,10 +85,10 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:src="@drawable/ic_menu_slideshow" />
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/question_mark" />
 
         <TextView
             android:layout_width="match_parent"
@@ -96,6 +96,7 @@
             android:layout_marginBottom="20dp"
             android:layout_marginTop="10dp"
             android:gravity="center"
+            android:padding="10dp"
             android:text="@string/edithelplistmsg"
             android:textColor="@android:color/black" />
 

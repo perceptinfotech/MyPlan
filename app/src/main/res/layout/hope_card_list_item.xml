@@ -24,6 +24,12 @@
                 android:clickable="true"
                 android:scaleType="fitXY" />
 
+            <ImageView
+                android:layout_width="50dp"
+                android:id="@+id/imgAddHope"
+                android:layout_height="50dp"
+                android:src="@drawable/add_circle"
+                android:layout_centerInParent="true" />
 
         </RelativeLayout>
 

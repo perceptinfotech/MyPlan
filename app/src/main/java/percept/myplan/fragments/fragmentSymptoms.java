@@ -14,6 +14,7 @@ import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import percept.myplan.Activities.AddNewSymptomActivity;
+import percept.myplan.Activities.AddStrategyActivity;
 import percept.myplan.Activities.DangerSignalsActivity;
 import percept.myplan.Activities.SymptomDetailsActivity;
 import percept.myplan.POJO.Symptom;
@@ -78,6 +80,7 @@ public class fragmentSymptoms extends Fragment {
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
 
+        setHasOptionsMenu(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         LST_SYMPTOM.setLayoutManager(mLayoutManager);
         LST_SYMPTOM.setItemAnimator(new DefaultItemAnimator());
@@ -150,9 +153,20 @@ public class fragmentSymptoms extends Fragment {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_addContact) {
+            Intent _intent = new Intent(getActivity().getApplicationContext(), AddNewSymptomActivity.class);
+            startActivity(_intent);
+
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        if (fragmentSymptoms.GET_STRATEGY) {
+        if (GET_STRATEGY) {
             try {
                 PB.setVisibility(View.VISIBLE);
                 Map<String, String> params = new HashMap<String, String>();
@@ -184,7 +198,7 @@ public class fragmentSymptoms extends Fragment {
                 PB.setVisibility(View.GONE);
                 e.printStackTrace();
             }
-            fragmentSymptoms.GET_STRATEGY = false;
+            GET_STRATEGY = false;
         }
     }
 

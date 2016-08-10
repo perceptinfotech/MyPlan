@@ -32,6 +32,9 @@ import percept.myplan.R;
 import percept.myplan.adapters.ContactHelpListAdapter;
 import percept.myplan.fragments.fragmentContacts;
 
+import static percept.myplan.fragments.fragmentContacts.HELP_CONTACT_NAME;
+import static percept.myplan.fragments.fragmentContacts.LIST_HELPCONTACTS;
+
 public class HelpListEditActivity extends AppCompatActivity {
 
     private TextView TV_ADDHELPLIST;
@@ -55,7 +58,7 @@ public class HelpListEditActivity extends AppCompatActivity {
         LST_HELP = (RecyclerView) findViewById(R.id.lstHelpList);
 
 
-        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(fragmentContacts.LIST_HELPCONTACTS, "HELP");
+        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(HelpListEditActivity.this);
         LST_HELP.setLayoutManager(mLayoutManager);
@@ -83,10 +86,8 @@ public class HelpListEditActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sid", Constant.SID);
                 params.put("sname", Constant.SNAME);
-                fragmentContacts.LIST_CONTACTS.clear();
-                fragmentContacts.LIST_HELPCONTACTS.clear();
-                fragmentContacts.CONTACT_NAME.clear();
-                fragmentContacts.HELP_CONTACT_NAME.clear();
+                LIST_HELPCONTACTS.clear();
+                HELP_CONTACT_NAME.clear();
                 new General().getJSONContentFromInternetService(HelpListEditActivity.this, General.PHPServices.GET_CONTACTS, params, false, false, true, new VolleyResponseListener() {
                     @Override
                     public void onError(VolleyError message) {
@@ -107,16 +108,16 @@ public class HelpListEditActivity extends AppCompatActivity {
 
                         for (ContactDisplay _obj : _LSTALL) {
                             if (_obj.getHelplist().equals("0")) {
-                                fragmentContacts.CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                                fragmentContacts.LIST_CONTACTS.add(_obj);
+//                                CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
+//                                LIST_CONTACTS.add(_obj);
                             } else {
-                                fragmentContacts.HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                                fragmentContacts.LIST_HELPCONTACTS.add(_obj);
+                                HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
+                                LIST_HELPCONTACTS.add(_obj);
                             }
                         }
 
 
-                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(fragmentContacts.LIST_HELPCONTACTS,"HELP");
+                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS,"HELP");
                         LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
                     }
                 });

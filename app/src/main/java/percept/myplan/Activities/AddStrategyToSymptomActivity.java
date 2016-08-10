@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -154,7 +155,7 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent _intent = new Intent(AddStrategyToSymptomActivity.this, InspirationCategoryActivity.class);
-                _intent.putExtra("FROM_SYMPTOM_INSPI","FROM_SYMPTOM_INSPI");
+                _intent.putExtra("FROM_SYMPTOM_INSPI", "FROM_SYMPTOM_INSPI");
                 startActivity(_intent);
             }
         });
@@ -203,6 +204,12 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.strategy, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             Intent returnIntent = new Intent();
@@ -234,6 +241,10 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
             setResult(Activity.RESULT_OK, returnIntent);
             AddStrategyToSymptomActivity.this.finish();
             return true;
+        } else if (item.getItemId() == R.id.action_addStrategy) {
+            Intent _intent = new Intent(AddStrategyToSymptomActivity.this, AddStrategyActivity.class);
+            _intent.putExtra("FROM_SYMPTOM", "TRUE");
+            startActivity(_intent);
         }
         return false;
     }

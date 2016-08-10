@@ -45,6 +45,8 @@ public class AddContactActivity extends AppCompatActivity {
                 if (getIntent().hasExtra("ADD_TO_HELP")) {
                     _intent.putExtra("ADD_TO_HELP", "true");
                 }
+                if(getIntent().hasExtra("FROM_QUICKMSG"))
+                    _intent.putExtra("FROM_QUICKMSG",getIntent().getExtras().getString("FROM_QUICKMSG"));
                 startActivity(_intent);
                 AddContactActivity.this.finish();
             }

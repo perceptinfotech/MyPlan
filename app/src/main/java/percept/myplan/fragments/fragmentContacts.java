@@ -133,10 +133,10 @@ public class fragmentContacts extends Fragment {
                         }
                     }
 
-                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS,"HELP");
+                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
                     LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
 
-                    ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS,"CONTACT");
+                    ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
                     LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
                 }
             });
@@ -145,7 +145,7 @@ public class fragmentContacts extends Fragment {
         }
 
 
-        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS,"HELP");
+        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         LST_HELP.setLayoutManager(mLayoutManager);
@@ -153,7 +153,7 @@ public class fragmentContacts extends Fragment {
         LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
 
 
-        ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS,"CONTACT");
+        ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
 
         RecyclerView.LayoutManager mLayoutManagerContact = new LinearLayoutManager(getActivity());
         LST_CONTACTS.setLayoutManager(mLayoutManagerContact);
@@ -222,7 +222,7 @@ public class fragmentContacts extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (fragmentContacts.GET_CONTACTS) {
+        if (GET_CONTACTS) {
             try {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sid", Constant.SID);
@@ -265,7 +265,7 @@ public class fragmentContacts extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            fragmentSymptoms.GET_STRATEGY = false;
+            GET_CONTACTS = false;
         }
     }
 

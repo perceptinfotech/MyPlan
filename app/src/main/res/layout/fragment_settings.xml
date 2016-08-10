@@ -18,7 +18,8 @@
             <ImageView
                 android:id="@+id/imgProfile"
                 android:layout_width="32dp"
-                android:layout_height="32dp" />
+                android:layout_height="32dp"
+                android:src="@drawable/setting_profile" />
 
             <TextView
                 android:id="@+id/tvProfile"
@@ -47,7 +48,8 @@
             <ImageView
                 android:id="@+id/imgMoodRatings"
                 android:layout_width="32dp"
-                android:layout_height="32dp" />
+                android:layout_height="32dp"
+                android:src="@drawable/setting_moodrating" />
 
             <TextView
                 android:id="@+id/tvMoodRatings"
@@ -76,7 +78,8 @@
             <ImageView
                 android:id="@+id/imgGeoTracking"
                 android:layout_width="32dp"
-                android:layout_height="32dp" />
+                android:layout_height="32dp"
+                android:src="@drawable/setting_tracking" />
 
             <TextView
                 android:id="@+id/tvGeoTracking"
@@ -105,7 +108,8 @@
             <ImageView
                 android:id="@+id/imgExportPlan"
                 android:layout_width="32dp"
-                android:layout_height="32dp" />
+                android:layout_height="32dp"
+                android:src="@drawable/setting_export" />
 
             <TextView
                 android:id="@+id/tvExportPlan"
@@ -134,7 +138,8 @@
             <ImageView
                 android:id="@+id/imgNotification"
                 android:layout_width="32dp"
-                android:layout_height="32dp" />
+                android:layout_height="32dp"
+                android:src="@drawable/setting_noti" />
 
             <TextView
                 android:id="@+id/tvNotification"
@@ -163,7 +168,8 @@
             <ImageView
                 android:id="@+id/imgFeedBack"
                 android:layout_width="32dp"
-                android:layout_height="32dp" />
+                android:layout_height="32dp"
+                android:src="@drawable/setting_feedback" />
 
             <TextView
                 android:id="@+id/tvFeedBack"
@@ -192,7 +198,8 @@
             <ImageView
                 android:id="@+id/imgShare"
                 android:layout_width="32dp"
-                android:layout_height="32dp" />
+                android:layout_height="32dp"
+                android:src="@drawable/setting_share" />
 
             <TextView
                 android:id="@+id/tvShare"

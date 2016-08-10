@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -26,7 +27,7 @@ import percept.myplan.R;
 
 public class fragmentMoodSummary extends DialogFragment {
     private TextView TV_MOODNOTE;
-
+    private ImageView IMG_CLOSE;
 
     public static fragmentMoodSummary newInstance(String note) {
         fragmentMoodSummary f = new fragmentMoodSummary();
@@ -40,7 +41,6 @@ public class fragmentMoodSummary extends DialogFragment {
     }
 
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -50,9 +50,15 @@ public class fragmentMoodSummary extends DialogFragment {
         getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
         TV_MOODNOTE = (TextView) _view.findViewById(R.id.tvMoodNote);
-
+        IMG_CLOSE = (ImageView) _view.findViewById(R.id.imgCloseRatingSum);
         TV_MOODNOTE.setText(getArguments().getString("NOTE"));
 
+        IMG_CLOSE.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fragmentMoodSummary.this.dismiss();
+            }
+        });
         return _view;
     }
 

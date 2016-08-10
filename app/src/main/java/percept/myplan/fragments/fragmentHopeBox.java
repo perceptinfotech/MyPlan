@@ -15,6 +15,9 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 import percept.myplan.Activities.AddHopeBoxActivity;
+import percept.myplan.Activities.AddNewSymptomActivity;
 import percept.myplan.Activities.HopeDetailsActivity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
@@ -67,6 +71,9 @@ public class fragmentHopeBox extends Fragment {
         // Inflate the layout for this fragment
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Hope Box");
         View _View = inflater.inflate(R.layout.fragment_hope_box, container, false);
+
+        setHasOptionsMenu(true);
+
         LST_HOPE = (RecyclerView) _View.findViewById(R.id.recycler_hope);
         LIST_HOPE = new ArrayList<>();
 
@@ -132,6 +139,23 @@ public class fragmentHopeBox extends Fragment {
             e.printStackTrace();
         }
         return _View;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.contact, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_addContact) {
+            Intent _intent = new Intent(getActivity().getApplicationContext(), AddHopeBoxActivity.class);
+            startActivity(_intent);
+
+            return true;
+        }
+        return false;
     }
 
     @Override

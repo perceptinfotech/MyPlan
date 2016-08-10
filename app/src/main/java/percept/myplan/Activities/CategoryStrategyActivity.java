@@ -79,8 +79,10 @@ public class CategoryStrategyActivity extends AppCompatActivity {
                 Intent _intent = new Intent(CategoryStrategyActivity.this, StrategyDetailsOtherActivity.class);
                 _intent.putExtra("STRATEGY_ID", LIST_STRATEGY_INSPIRATION.get(position).getStrategyId());
                 _intent.putExtra("STRATEGY_NAME", LIST_STRATEGY_INSPIRATION.get(position).getStrategyName());
-                _intent.putExtra("CATEGORY_NAME", getIntent().getExtras().getString("CATEGORY_NAME"));
-                _intent.putExtra("FROM_SYMPTOM_INSPI",getIntent().getExtras().getString("FROM_SYMPTOM_INSPI"));
+                if (getIntent().hasExtra("CATEGORY_NAME"))
+                    _intent.putExtra("CATEGORY_NAME", getIntent().getExtras().getString("CATEGORY_NAME"));
+                if (getIntent().hasExtra("FROM_SYMPTOM_INSPI"))
+                    _intent.putExtra("FROM_SYMPTOM_INSPI", getIntent().getExtras().getString("FROM_SYMPTOM_INSPI"));
                 startActivity(_intent);
             }
 

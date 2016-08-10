@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,6 +65,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     public static List<StrategyContact> LIST_STRATEGYCONTACT;
     private StrategyContactSimpleAdapter ADAPTER;
     private RecyclerView LST_STRATEGYCONTACT;
+    private Button BTN_SHARESTRATEGY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +89,14 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         EDT_STRATEGYDESC = (EditText) findViewById(R.id.edtStrategyDesc);
         EDT_STRATEGYDESC.setEnabled(false);
         EDT_STRATEGYTITLE.setEnabled(false);
+
+        BTN_SHARESTRATEGY = (Button) findViewById(R.id.btnShareStrategyAnony);
+        BTN_SHARESTRATEGY.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    
+            }
+        });
 
         EDT_STRATEGYTITLE.setText(getIntent().getExtras().getString("STRATEGY_NAME"));
 

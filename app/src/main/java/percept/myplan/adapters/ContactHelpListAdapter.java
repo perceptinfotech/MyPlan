@@ -31,7 +31,7 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
 
     public class ContactHelpListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView TV_HELPCONTACT, TV_CONTACTCHAR;
-        public RoundedImageView IMG_CONTACT;
+        public RoundedImageView IMG_CONTACT, IMG_MSG_CONTACT;
 
         public ContactHelpListHolder(View itemView) {
             super(itemView);
@@ -39,6 +39,7 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
             TV_CONTACTCHAR = (TextView) itemView.findViewById(R.id.tvContactChar);
 
             IMG_CONTACT = (RoundedImageView) itemView.findViewById(R.id.imgContact);
+            IMG_MSG_CONTACT = (RoundedImageView) itemView.findViewById(R.id.imgMsgContact);
         }
 
         @Override
@@ -65,8 +66,23 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
         ContactDisplay _contact = LIST_HELPCONTACT.get(position);
         holder.TV_HELPCONTACT.setText(_contact.getFirst_name());
 
-        if (_contact.getCon_image().equals("")) {
+
+        if (TYPE.equals("HELP")) {
+            holder.IMG_CONTACT.setVisibility(View.GONE);
+            holder.IMG_MSG_CONTACT.setVisibility(View.VISIBLE);
+            holder.TV_CONTACTCHAR.setVisibility(View.GONE);
+        } else {
+            holder.IMG_CONTACT.setVisibility(View.VISIBLE);
             holder.TV_CONTACTCHAR.setVisibility(View.VISIBLE);
+            holder.IMG_MSG_CONTACT.setVisibility(View.GONE);
+        }
+
+        if (_contact.getCon_image().equals("")) {
+            if (TYPE.equals("HELP"))
+                holder.TV_CONTACTCHAR.setVisibility(View.GONE);
+            else
+                holder.TV_CONTACTCHAR.setVisibility(View.VISIBLE);
+
             holder.TV_CONTACTCHAR.setText(LIST_HELPCONTACT.get(position).getFirst_name().substring(0, 2));
 //            holder.IMG_CONTACT.setBackgroundColor(Color.rgb(169, 169, 169));
         } else {
@@ -82,7 +98,12 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
                 public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
                     if (response.getBitmap() != null) {
                         // load image into imageview
-                        holder.IMG_CONTACT.setImageBitmap(response.getBitmap());
+                        if (TYPE.equals("HELP")) {
+                            holder.IMG_MSG_CONTACT.setImageBitmap(response.getBitmap());
+                        } else {
+                            holder.IMG_CONTACT.setImageBitmap(response.getBitmap());
+                        }
+
                     }
                 }
             });

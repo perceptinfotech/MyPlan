@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
@@ -94,35 +95,36 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         if (getIntent().hasExtra("ADD_TO_HELP")) {
             ADD_TO_HELP_LIST = "1";
         }
+        if (getIntent().hasExtra("FROM_QUICKMSG")) {
+
+        }
 
         setContentView(R.layout.add_contact_from_phone);
 
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(AddContactFromPhoneActivity.this,
-                Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(AddContactFromPhoneActivity.this,
-                    Manifest.permission.READ_CONTACTS)) {
-
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            // Here, thisActivity is the current activity
+            if (ContextCompat.checkSelfPermission(AddContactFromPhoneActivity.this,
+                    Manifest.permission.READ_CONTACTS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(AddContactFromPhoneActivity.this,
+                        Manifest.permission.READ_CONTACTS)) {
+                    // Show an expanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+                } else {
+                    // No explanation needed, we can request the permission.
+                    ActivityCompat.requestPermissions(AddContactFromPhoneActivity.this,
+                            new String[]{Manifest.permission.READ_CONTACTS},
+                            MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                    // app-defined int constant. The callback method gets the
+                    // result of the request.
+                }
             } else {
-
-                // No explanation needed, we can request the permission.
-
-                ActivityCompat.requestPermissions(AddContactFromPhoneActivity.this,
-                        new String[]{Manifest.permission.READ_CONTACTS},
-                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
+                readContacts();
             }
-        }else{
+        } else {
             readContacts();
         }
 

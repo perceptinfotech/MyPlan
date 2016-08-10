@@ -35,13 +35,13 @@ public class HopeAdapter extends RecyclerView.Adapter<HopeAdapter.MyViewHolder> 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView TV_TITLE;
-        public ImageView IMG_COVER;
+        public ImageView IMG_COVER,IMG_ADDHOPE;
 
         public MyViewHolder(View view) {
             super(view);
             TV_TITLE = (TextView) view.findViewById(R.id.title);
             IMG_COVER = (ImageView) view.findViewById(R.id.thumbnail);
-
+            IMG_ADDHOPE = (ImageView) view.findViewById(R.id.imgAddHope);
         }
     }
 
@@ -65,9 +65,11 @@ public class HopeAdapter extends RecyclerView.Adapter<HopeAdapter.MyViewHolder> 
         Hope album = LST_HOPE.get(position);
 
         if (position == LST_HOPE.size() - 1) {
+            holder.IMG_ADDHOPE.setVisibility(View.VISIBLE);
             holder.TV_TITLE.setText(CONTEXT.getResources().getString(R.string.addnewbox));
             holder.IMG_COVER.setBackgroundColor(CONTEXT.getResources().getColor(android.R.color.white));
         } else {
+            holder.IMG_ADDHOPE.setVisibility(View.GONE);
             holder.TV_TITLE.setText(album.getTITLE());
 //            Picasso.with(CONTEXT).load(album.getIMG_COVER()).into(holder.IMG_COVER);
             imageLoader.get(album.getTHUMB_COVER(), new ImageLoader.ImageListener() {

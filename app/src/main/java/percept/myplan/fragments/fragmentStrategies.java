@@ -194,8 +194,8 @@ public class fragmentStrategies extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_addStrategy) {
-//            Intent _intent = new Intent(getActivity().getApplicationContext(), AddContactActivity.class);
-//            startActivity(_intent);
+            Intent _intent = new Intent(getActivity().getApplicationContext(), AddStrategyActivity.class);
+            startActivity(_intent);
 
             return true;
         }

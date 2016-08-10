@@ -293,7 +293,7 @@ public class HomeActivity extends AppCompatActivity {
                 UTILS.setPreference(Constant.PREF_PROFILE_USER_NAME, "");
                 UTILS.setPreference(Constant.PREF_PROFILE_EMAIL, "");
                 UTILS.setPreference(Constant.PREF_PROFILE_NAME, "");
-                startActivity(new Intent(HomeActivity.this, LoginActivity_1.class));
+                startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                 HomeActivity.this.finish();
                 return;
             default:

@@ -1,11 +1,17 @@
 package percept.myplan.Activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -50,6 +56,8 @@ public class AddVideoActivity extends AppCompatActivity {
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
     private ProgressBar PB;
+    private final static int MY_PERMISSIONS_REQUEST = 22;
+    private boolean HASPERMISSION=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,9 +84,41 @@ public class AddVideoActivity extends AppCompatActivity {
         TV_CHOOSEVIDLINK = (TextView) findViewById(R.id.tvChooseFromLink);
         PB = (ProgressBar) findViewById(R.id.pbVideos);
 
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (ContextCompat.checkSelfPermission(AddVideoActivity.this, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                HASPERMISSION=false;
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(AddVideoActivity.this,
+                        Manifest.permission.CAMERA)) {
+
+                    // Show an expanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+
+                } else {
+
+                    // No explanation needed, we can request the permission.
+
+                    ActivityCompat.requestPermissions(AddVideoActivity.this,
+                            new String[]{Manifest.permission.CAMERA,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE},
+                            MY_PERMISSIONS_REQUEST);
+
+                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                    // app-defined int constant. The callback method gets the
+                    // result of the request.
+                }
+            }
+        }
         TV_CHOOSEVIDEO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(HASPERMISSION){
+                    Toast.makeText(AddVideoActivity.this,R.string.requiredpermissionn,Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
                 intent.setType("video/*");
@@ -89,6 +129,10 @@ public class AddVideoActivity extends AppCompatActivity {
         TV_RECORDVIDEO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!HASPERMISSION){
+                    Toast.makeText(AddVideoActivity.this,R.string.requiredpermissionn,Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intents = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 intents.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 20);
                 intents.putExtra(MediaStore.EXTRA_OUTPUT, videFileUri);
@@ -102,6 +146,28 @@ public class AddVideoActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                    HASPERMISSION=true;
+                } else {
+                    HASPERMISSION=false;
+                    Toast.makeText(AddVideoActivity.this, R.string.permissiondenied, Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     @Override
@@ -156,7 +222,7 @@ public class AddVideoActivity extends AppCompatActivity {
 //            if (success) {
 //                String _Path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + name;
 //                Log.d("::::::::::: ", _Path);
-                new AddHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, videosPath, "video").execute();
+            new AddHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, videosPath, "video").execute();
 //            }
             //endregion
         } else if (requestCode == REQ_TAKE_VIDEO) {

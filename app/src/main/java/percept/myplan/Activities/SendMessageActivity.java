@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -17,7 +18,7 @@ import percept.myplan.R;
 public class SendMessageActivity extends AppCompatActivity {
 
     private Button BTN_SEND;
-    private TextView TV_MSG;
+    private EditText TV_MSG;
     private String NUMBER = "";
 
     @Override
@@ -38,8 +39,9 @@ public class SendMessageActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         BTN_SEND = (Button) findViewById(R.id.btnSendMessage);
-        TV_MSG = (TextView) findViewById(R.id.tvMsg);
+        TV_MSG = (EditText) findViewById(R.id.edtMsg);
 
+        TV_MSG.setText("");
 
         BTN_SEND.setOnClickListener(new View.OnClickListener() {
             @Override

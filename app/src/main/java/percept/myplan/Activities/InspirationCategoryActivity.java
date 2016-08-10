@@ -76,7 +76,8 @@ public class InspirationCategoryActivity extends AppCompatActivity {
                 Intent _intent = new Intent(InspirationCategoryActivity.this, CategoryStrategyActivity.class);
                 _intent.putExtra("CATEGORY_NAME", LIST_CATEGORY.get(position).getCategoryName());
                 _intent.putExtra("CATEGORY_ID", LIST_CATEGORY.get(position).getCategoryId());
-                _intent.putExtra("FROM_SYMPTOM_INSPI",getIntent().getExtras().getString("FROM_SYMPTOM_INSPI"));
+                if (getIntent().hasExtra("FROM_SYMPTOM_INSPI"))
+                    _intent.putExtra("FROM_SYMPTOM_INSPI", getIntent().getExtras().getString("FROM_SYMPTOM_INSPI"));
                 startActivity(_intent);
             }
 

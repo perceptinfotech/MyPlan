@@ -3,11 +3,13 @@ package percept.myplan.Activities;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -15,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -26,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.android.volley.VolleyError;
 import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
@@ -43,12 +47,21 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
+import percept.myplan.Dialogs.dialogAddStrategy;
+import percept.myplan.Dialogs.dialogSelectPic;
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
 import percept.myplan.Global.Utils;
+import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
+
+import static percept.myplan.Activities.AddStrategyToSymptomActivity.GET_STRATEGIES;
+import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
 
 public class SignUpActivity extends AppCompatActivity {
     private ImageView IMG_USER;
@@ -59,8 +72,12 @@ public class SignUpActivity extends AppCompatActivity {
     private String FILE_PATH = "";
     private Utils UTILS;
     private ProgressBar PB;
+    private static Uri IMG_URI;
+    private static final int REQ_TAKE_PICTURE = 33;
 
     private final static int MY_PERMISSIONS_REQUEST = 14;
+
+    public static boolean PIC_FROM_GALLERY = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,33 +108,60 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if (ContextCompat.checkSelfPermission(SignUpActivity.this, Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    // Should we show an explanation?
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(SignUpActivity.this,
-                            Manifest.permission.CAMERA)) {
+                dialogSelectPic _dialogDate = new dialogSelectPic(SignUpActivity.this);
+                _dialogDate.setCanceledOnTouchOutside(false);
+                _dialogDate.show();
+                _dialogDate.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+                            if (ContextCompat.checkSelfPermission(SignUpActivity.this, Manifest.permission.CAMERA)
+                                    != PackageManager.PERMISSION_GRANTED) {
+                                // Should we show an explanation?
+                                if (ActivityCompat.shouldShowRequestPermissionRationale(SignUpActivity.this,
+                                        Manifest.permission.CAMERA)) {
+                                    // Show an expanation to the user *asynchronously* -- don't block
+                                    // this thread waiting for the user's response! After the user
+                                    // sees the explanation, try again to request the permission.
+                                } else {
+                                    // No explanation needed, we can request the permission.
+                                    ActivityCompat.requestPermissions(SignUpActivity.this,
+                                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
+                                            MY_PERMISSIONS_REQUEST);
+                                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                                    // app-defined int constant. The callback method gets the
+                                    // result of the request.
+                                }
+                            } else {
+                                if (PIC_FROM_GALLERY) {
+                                    Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                    startActivityForResult(pickPhoto, 1);
+                                } else {
+                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    IMG_URI = Uri.fromFile(Constant.getOutputMediaFile());
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, IMG_URI);
+                                    // start the image capture Intent
+                                    startActivityForResult(intent, REQ_TAKE_PICTURE);
+                                }
 
-                        // Show an expanation to the user *asynchronously* -- don't block
-                        // this thread waiting for the user's response! After the user
-                        // sees the explanation, try again to request the permission.
-
-                    } else {
-
-                        // No explanation needed, we can request the permission.
-
-                        ActivityCompat.requestPermissions(SignUpActivity.this,
-                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                                MY_PERMISSIONS_REQUEST);
-
-                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                        // app-defined int constant. The callback method gets the
-                        // result of the request.
+                            }
+                        } else {
+                            if (PIC_FROM_GALLERY) {
+                                Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                startActivityForResult(pickPhoto, 1);
+                            } else {
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                IMG_URI = Uri.fromFile(Constant.getOutputMediaFile());
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, IMG_URI);
+                                // start the image capture Intent
+                                startActivityForResult(intent, REQ_TAKE_PICTURE);
+                            }
+                        }
                     }
-                } else {
-                    Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pickPhoto, 1);
-                }
+                });
+
 
             }
         });
@@ -213,7 +257,8 @@ public class SignUpActivity extends AppCompatActivity {
             case MY_PERMISSIONS_REQUEST: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
                     Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -369,6 +414,43 @@ public class SignUpActivity extends AppCompatActivity {
 //                IMG_USER.setImageURI(selectedImage);
                 Picasso.with(SignUpActivity.this).load(selectedImage).into(IMG_USER);
                 TV_CAPTUREIMG.setVisibility(View.INVISIBLE);
+            }
+            if (requestCode == REQ_TAKE_PICTURE) {
+
+                try {
+
+                    Calendar cal = Calendar.getInstance();
+                    int seconds = cal.get(Calendar.SECOND);
+                    int hour = cal.get(Calendar.HOUR);
+                    int min = cal.get(Calendar.MINUTE);
+                    String currentDateTimeString = new SimpleDateFormat("ddMMMyyyy").format(new Date());
+
+                    String name = "IMG_" + currentDateTimeString + seconds + hour + min + ".jpeg";
+
+                    String _imgPath = IMG_URI.getPath();
+
+                    File mediaStorageDir = new File(Constant.APP_MEDIA_PATH + File.separator + "IMAGES");
+
+                    // Create the storage directory if it does not exist
+                    if (!mediaStorageDir.exists()) {
+                        if (!mediaStorageDir.mkdirs()) {
+
+                        }
+                    }
+
+                    Constant.copyFile(_imgPath, Constant.APP_MEDIA_PATH + File.separator + "IMAGES", name);
+
+                    File file = new File(_imgPath);
+                    if (file.exists()) {
+//                        file.delete();
+                    }
+                    FILE_PATH = Constant.APP_MEDIA_PATH + File.separator + "IMAGES" + File.separator + name;
+
+                    Picasso.with(SignUpActivity.this).load(IMG_URI).into(IMG_USER);
+                    TV_CAPTUREIMG.setVisibility(View.INVISIBLE);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

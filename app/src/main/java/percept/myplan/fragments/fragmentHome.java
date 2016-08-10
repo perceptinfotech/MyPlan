@@ -50,7 +50,7 @@ public class fragmentHome extends Fragment {
 
     public static final int INDEX = 0;
 
-    private ImageView IMG_USER;
+    private ImageView IMG_USER,IMG_MOODRATING_CLOSE;
     private LinearLayout LAY_HELP, LAY_EMERGENCY, LAY_MOODRATING;
 
     private ImageView IMG_USERPROFILE;
@@ -79,7 +79,7 @@ public class fragmentHome extends Fragment {
 
         IMG_USERPROFILE = (ImageView) _View.findViewById(R.id.imgUserImage);
 
-
+        IMG_MOODRATING_CLOSE= (ImageView) _View.findViewById(R.id.imgCloseMoodRating);
 //        Picasso.with(getActivity()).load(Constant.PROFILE_IMG_LINK).into(IMG_USERPROFILE);
 
 
@@ -100,8 +100,13 @@ public class fragmentHome extends Fragment {
                 }
             }
         });
+        IMG_MOODRATING_CLOSE.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LAY_MOODRATING.setVisibility(View.GONE);
+            }
+        });
 
-        LAY_MOODRATING.setVisibility(View.GONE);
 
         LAY_EMERGENCY = (LinearLayout) _View.findViewById(R.id.layEmergencyHome);
         LAY_EMERGENCY.setOnClickListener(new View.OnClickListener() {

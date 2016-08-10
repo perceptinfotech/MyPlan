@@ -19,20 +19,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/layHomeButton"
-        android:layout_margin="15dp"
+        android:layout_margin="25dp"
         android:background="@drawable/lay_moodrating_home_border"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:paddingBottom="10dp"
+        android:visibility="visible">
 
-        <TextView
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/appBackColor"
-            android:drawableRight="@drawable/ic_menu_black"
-            android:gravity="center_vertical"
-            android:padding="10dp"
-            android:text="@string/moodratings"
-            android:textColor="@android:color/white" />
+            android:background="@color/appBackColor">
+
+            <TextView
+                android:id="@+id/tvMoodRatingTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/imgCloseMoodRating"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:text="@string/moodratings"
+                android:textColor="@android:color/white" />
+
+            <ImageView
+                android:id="@+id/imgCloseMoodRating"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/close" />
+        </RelativeLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -54,47 +70,48 @@
             <ImageView
                 android:id="@+id/imgVerySad"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:src="@drawable/back_button" />
+                android:src="@drawable/mood_very_sad" />
 
             <ImageView
                 android:id="@+id/imgSad"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:src="@drawable/back_button" />
+                android:src="@drawable/mood_sad" />
 
             <ImageView
                 android:id="@+id/imgOk"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:src="@drawable/back_button" />
+                android:src="@drawable/mood_nomood" />
 
             <ImageView
                 android:id="@+id/imgHappy"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:src="@drawable/back_button" />
+                android:src="@drawable/mood_happy" />
 
             <ImageView
                 android:id="@+id/imgVeryHappy"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:src="@drawable/back_button" />
+                android:src="@drawable/mood_very_happy" />
 
         </LinearLayout>
 
         <ImageView
             android:id="@+id/imgInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="right"
+            android:layout_marginRight="10dp"
             android:layout_marginTop="20dp"
-            android:src="@drawable/ic_menu_gallery" />
+            android:src="@drawable/info" />
     </LinearLayout>
 
     <LinearLayout
