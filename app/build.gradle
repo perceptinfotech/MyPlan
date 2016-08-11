@@ -45,4 +45,5 @@ dependencies {
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.9'
     testCompile 'junit:junit:4.12'
+    compile project(':library')
 }

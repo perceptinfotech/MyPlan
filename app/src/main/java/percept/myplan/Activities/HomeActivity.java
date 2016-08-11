@@ -369,24 +369,27 @@ public class HomeActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         selectItem(Constant.CURRENT_FRAGMENT);
-        if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
-            startLocationUpdates();
-        }
+        if (mGoogleApiClient != null)
+            if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
+                startLocationUpdates();
+            }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+        if (mGoogleApiClient != null)
+            mGoogleApiClient.connect();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         // Stop location updates to save battery, but don't disconnect the GoogleApiClient object.
-        if (mGoogleApiClient.isConnected()) {
-            stopLocationUpdates();
-        }
+        if (mGoogleApiClient != null)
+            if (mGoogleApiClient.isConnected()) {
+                stopLocationUpdates();
+            }
     }
 
     @Override

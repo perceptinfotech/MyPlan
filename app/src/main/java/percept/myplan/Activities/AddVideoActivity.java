@@ -1,6 +1,8 @@
 package percept.myplan.Activities;
 
 import android.Manifest;
+import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -12,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -36,8 +39,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
@@ -57,7 +64,7 @@ public class AddVideoActivity extends AppCompatActivity {
     private String HOPE_ID = "";
     private ProgressBar PB;
     private final static int MY_PERMISSIONS_REQUEST = 22;
-    private boolean HASPERMISSION=true;
+    private boolean HAS_PERMISSION = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,39 +91,17 @@ public class AddVideoActivity extends AppCompatActivity {
         TV_CHOOSEVIDLINK = (TextView) findViewById(R.id.tvChooseFromLink);
         PB = (ProgressBar) findViewById(R.id.pbVideos);
 
+
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            if (ContextCompat.checkSelfPermission(AddVideoActivity.this, Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
-                HASPERMISSION=false;
-                // Should we show an explanation?
-                if (ActivityCompat.shouldShowRequestPermissionRationale(AddVideoActivity.this,
-                        Manifest.permission.CAMERA)) {
-
-                    // Show an expanation to the user *asynchronously* -- don't block
-                    // this thread waiting for the user's response! After the user
-                    // sees the explanation, try again to request the permission.
-
-                } else {
-
-                    // No explanation needed, we can request the permission.
-
-                    ActivityCompat.requestPermissions(AddVideoActivity.this,
-                            new String[]{Manifest.permission.CAMERA,
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                    Manifest.permission.READ_EXTERNAL_STORAGE},
-                            MY_PERMISSIONS_REQUEST);
-
-                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                    // app-defined int constant. The callback method gets the
-                    // result of the request.
-                }
-            }
+            insertDummyPermissionWrapper();
         }
+
+
         TV_CHOOSEVIDEO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(HASPERMISSION){
-                    Toast.makeText(AddVideoActivity.this,R.string.requiredpermissionn,Toast.LENGTH_SHORT).show();
+                if (HAS_PERMISSION) {
+                    Toast.makeText(AddVideoActivity.this, R.string.requiredpermissionn, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Intent intent = new Intent(Intent.ACTION_PICK);
@@ -129,8 +114,8 @@ public class AddVideoActivity extends AppCompatActivity {
         TV_RECORDVIDEO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!HASPERMISSION){
-                    Toast.makeText(AddVideoActivity.this,R.string.requiredpermissionn,Toast.LENGTH_SHORT).show();
+                if (!HAS_PERMISSION) {
+                    Toast.makeText(AddVideoActivity.this, R.string.requiredpermissionn, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Intent intents = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
@@ -148,25 +133,95 @@ public class AddVideoActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-                    HASPERMISSION=true;
-                } else {
-                    HASPERMISSION=false;
-                    Toast.makeText(AddVideoActivity.this, R.string.permissiondenied, Toast.LENGTH_SHORT).show();
+
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
+
+    private void insertDummyPermissionWrapper() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            List<String> permissionsNeeded = new ArrayList<String>();
+
+            final List<String> permissionsList = new ArrayList<String>();
+            if (!addPermission(permissionsList, Manifest.permission.CAMERA))
+                permissionsNeeded.add("Camera");
+            if (!addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                permissionsNeeded.add("Write Storage");
+            if (!addPermission(permissionsList, Manifest.permission.READ_EXTERNAL_STORAGE))
+                permissionsNeeded.add("Read Storage");
+
+            if (permissionsList.size() > 0) {
+                if (permissionsNeeded.size() > 0) {
+                    // Need Rationale
+                    String message = "You need to grant access to " + permissionsNeeded.get(0);
+                    for (int i = 1; i < permissionsNeeded.size(); i++)
+                        message = message + ", " + permissionsNeeded.get(i);
+                    showMessageOKCancel(message,
+                            new DialogInterface.OnClickListener() {
+                                @TargetApi(Build.VERSION_CODES.M)
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                                            REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+                                }
+                            });
+                    return;
                 }
+
+                requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                        REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+
                 return;
             }
+        }
+    }
 
-            // other 'case' lines to check for other
-            // permissions this app might request
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(AddVideoActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean addPermission(List<String> permissionsList, String permission) {
+        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            permissionsList.add(permission);
+            // Check for Rationale Option
+            if (!shouldShowRequestPermissionRationale(permission))
+                return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
+                Map<String, Integer> perms = new HashMap<String, Integer>();
+                // Initial
+                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+                // Check for ACCESS_FINE_LOCATION
+                if (perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    // All Permissions Granted
+                    HAS_PERMISSION = true;
+                } else {
+                    HAS_PERMISSION = false;
+                    // Permission Denied
+                    Toast.makeText(AddVideoActivity.this, "Some Permission is Denied", Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+            break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 

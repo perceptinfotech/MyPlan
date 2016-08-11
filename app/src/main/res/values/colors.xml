@@ -35,4 +35,12 @@
     <color name="home_help">#4CC1B6</color>
 
     <color name="album_title">#4c4c4c</color>
+
+    <color name="date_outside_month_text_color_activity_1">#A1F5FF</color>
+
+    <color name="verysad">#ED1C24</color>
+    <color name="sad">#F7941E</color>
+    <color name="ok">#FED304</color>
+    <color name="happy">#CDCCCC</color>
+    <color name="veryhappy">#4CC1B6</color>
 </resources>

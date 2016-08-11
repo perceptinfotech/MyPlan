@@ -53,7 +53,7 @@ public class General {
         } else if (serviceName == PHPServices.GET_SIDASCALENDER) {
             return "";
         } else if (serviceName == PHPServices.GET_MOODCALENDER) {
-            return "";
+            return ".getMoodCalendar";
         } else if (serviceName == PHPServices.GET_HOPEBOXES) {
             return ".getHopeboxes";
         } else if (serviceName == PHPServices.GET_HOPEBOX) {
@@ -72,12 +72,13 @@ public class General {
             return ".addMystrategy";
         } else if (serviceName == PHPServices.ADD_HOPEBOX) {
             return ".saveHopebox";
-        } else if(serviceName==PHPServices.CHECK_LOGIN){
+        } else if (serviceName == PHPServices.CHECK_LOGIN) {
             return ".checkLoginSession";
-        }else if(serviceName==PHPServices.SAVE_PROFILE){
+        } else if (serviceName == PHPServices.SAVE_PROFILE) {
             return ".saveProfile";
+        } else if (serviceName == PHPServices.ADD_MOOD) {
+            return ".submitMoodTest";
         }
-
 
         return "";
     }
@@ -207,6 +208,7 @@ public class General {
         ADD_MYSTRATEGY,
         ADD_HOPEBOX,
         CHECK_LOGIN,
-        SAVE_PROFILE
+        SAVE_PROFILE,
+        ADD_MOOD
     }
 }
