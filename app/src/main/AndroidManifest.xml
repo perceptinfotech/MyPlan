@@ -222,6 +222,9 @@
         <activity
             android:name=".Activities.MoodActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.MoodSummaryActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

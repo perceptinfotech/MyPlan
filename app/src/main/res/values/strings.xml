@@ -196,5 +196,6 @@
     <string name="last_update_time_label">Last location update time</string>
     <string name="completemoodratings">Complete today\'s Mood Rating</string>
     <string name="seeallnote">See all note</string>
+    <string name="seenotes">See Notes</string>
 
 </resources>

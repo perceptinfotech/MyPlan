@@ -22,6 +22,7 @@ public class Mood {
     private String MOOD_DATE;
     @SerializedName("measurement")
     private String MEASUREMENT;
+    private String MOOD_DATE_STRING;
 
     public Mood(String state, String ID, String ordering, String USER_ID, String NOTE,
                 String MOOD_DATE, String MEASUREMENT) {
@@ -32,6 +33,14 @@ public class Mood {
         this.NOTE = NOTE;
         this.MOOD_DATE = MOOD_DATE;
         this.MEASUREMENT = MEASUREMENT;
+    }
+
+    public String getMOOD_DATE_STRING() {
+        return MOOD_DATE_STRING;
+    }
+
+    public void setMOOD_DATE_STRING(String MOOD_DATE_STRING) {
+        this.MOOD_DATE_STRING = MOOD_DATE_STRING;
     }
 
     public String getState() {

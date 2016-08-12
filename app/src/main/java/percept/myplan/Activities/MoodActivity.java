@@ -3,6 +3,7 @@ package percept.myplan.Activities;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -55,6 +56,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
     Map<String, String> params;
     private String STR_NOTE = "";
     private List<Mood> LIST_MOOD;
+    private Button BTN_SEEALLNOTE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +81,8 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         IMG_OK = (ImageView) findViewById(R.id.imgOk);
         IMG_HAPPY = (ImageView) findViewById(R.id.imgHappy);
         IMG_VHAPPY = (ImageView) findViewById(R.id.imgVeryHappy);
+
+        BTN_SEEALLNOTE = (Button) findViewById(R.id.btnSeeAllNote);
 
         calendarView.setCalendarView(new FlexibleCalendarView.CalendarView() {
             @Override
@@ -178,8 +182,15 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                 MoodRatingAddNoteDialog("5");
             }
         });
+
+        BTN_SEEALLNOTE.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MoodActivity.this, MoodSummaryActivity.class));
+            }
+        });
         //Uncomment for enable current date selection
-//        calendarView.selectDate(Calendar.getInstance().getTime());
+        calendarView.selectDate(Calendar.getInstance().getTime());
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -280,9 +291,12 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         }
         if (NOTE.equals(""))
             NOTE = "No Note Available";
-        NoteCalender _dialog = new NoteCalender(MoodActivity.this, NOTE);
-        _dialog.setCanceledOnTouchOutside(true);
-        _dialog.show();
+
+        if (!NOTE.equals("No Mood Available")) {
+            NoteCalender _dialog = new NoteCalender(MoodActivity.this, NOTE);
+            _dialog.setCanceledOnTouchOutside(true);
+            _dialog.show();
+        }
     }
 
     @Override
