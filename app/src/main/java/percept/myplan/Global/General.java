@@ -78,8 +78,13 @@ public class General {
             return ".saveProfile";
         } else if (serviceName == PHPServices.ADD_MOOD) {
             return ".submitMoodTest";
+        } else if (serviceName == PHPServices.GET_SIDATEST) {
+            return "getSIDASTest";
+        } else if (serviceName == PHPServices.GET_SIDACALENDER) {
+            return "getSIDASCalendar";
+        } else if (serviceName == PHPServices.SUBMIT_SIDATEST) {
+            return "submitSIDASTest";
         }
-
         return "";
     }
 
@@ -209,6 +214,9 @@ public class General {
         ADD_HOPEBOX,
         CHECK_LOGIN,
         SAVE_PROFILE,
-        ADD_MOOD
+        ADD_MOOD,
+        GET_SIDATEST,
+        GET_SIDACALENDER,
+        SUBMIT_SIDATEST
     }
 }
