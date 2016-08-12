@@ -26,7 +26,10 @@
         android:textColor="@android:color/white" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/lstStrategy"
+        android:id="@+id/lstSidaSummary"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/lay1"
+        android:background="@android:color/white"         />
+
 </LinearLayout>

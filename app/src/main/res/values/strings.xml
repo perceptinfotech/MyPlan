@@ -200,5 +200,8 @@
     <string name="sharemyloc">Share my location</string>
     <string name="action_next">Next</string>
     <string name="sharepos">Share Position</string>
+    <string name="moodratingsida">Mood Ratings - Sidas</string>
+    <string name="sidasfulltest">Sidas Full Test</string>
+    <string name="sidastart"><![CDATA[<b>Sidas</b> consist of five question </br></br> Hello]]></string>
 
 </resources>

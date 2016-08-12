@@ -43,4 +43,9 @@
     <color name="ok">#FED304</color>
     <color name="happy">#CDCCCC</color>
     <color name="veryhappy">#4CC1B6</color>
+
+    <color name="pie_color1">#fccf09</color>
+
+    <color name="pie_color2">#1c9889</color>
+
 </resources>
