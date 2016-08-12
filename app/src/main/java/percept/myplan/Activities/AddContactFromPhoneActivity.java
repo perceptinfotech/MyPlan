@@ -3,6 +3,7 @@ package percept.myplan.Activities;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -75,11 +76,13 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
     private EditText EDT_SEARCHTEXT;
     private int NO_COUNT = 0;
     private int SAVED_NO_COUNT = 0;
-    private ProgressBar PB_SAVECONTACT;
+    private ProgressBar PB_SAVECONTACT, PB_GETCONTACT;
 
     private String ADD_TO_HELP_LIST = "0";
     private Utils UTILS;
     private final static int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 13;
+
+    public static boolean SENT = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +101,9 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         if (getIntent().hasExtra("FROM_QUICKMSG")) {
 
         }
+        if (getIntent().hasExtra("FROM_SHARELOC")) {
+
+        }
 
         setContentView(R.layout.add_contact_from_phone);
 
@@ -113,6 +119,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                     // this thread waiting for the user's response! After the user
                     // sees the explanation, try again to request the permission.
                 } else {
+                    PB_GETCONTACT.setVisibility(View.GONE);
                     // No explanation needed, we can request the permission.
                     ActivityCompat.requestPermissions(AddContactFromPhoneActivity.this,
                             new String[]{Manifest.permission.READ_CONTACTS},
@@ -139,6 +146,9 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
 
         PB_SAVECONTACT = (ProgressBar) findViewById(R.id.pbSaveContact);
         PB_SAVECONTACT.setVisibility(View.GONE);
+        PB_GETCONTACT = (ProgressBar) findViewById(R.id.pbGetContact);
+        PB_GETCONTACT.setVisibility(View.VISIBLE);
+
         EDT_SEARCHTEXT = (EditText) findViewById(R.id.edtSearchContact);
 //        LST_CONTACT = (RecyclerView) findViewById(R.id.lstContact);
         LIST_CONTACTS = new ArrayList<>();
@@ -169,6 +179,17 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (getIntent().hasExtra("FROM_SHARELOC")) {
+            if (SENT) {
+                AddContactFromPhoneActivity.this.finish();
+                SENT = false;
+            }
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -179,9 +200,10 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
 
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
+                    PB_GETCONTACT.setVisibility(View.VISIBLE);
                     readContacts();
                 } else {
-
+                    PB_GETCONTACT.setVisibility(View.GONE);
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
@@ -196,6 +218,13 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.add_contact, menu);
+        if (getIntent().hasExtra("FROM_SHARELOC")) {
+            menu.getItem(1).setVisible(true);
+            menu.getItem(0).setVisible(false);
+        } else {
+            menu.getItem(1).setVisible(false);
+            menu.getItem(0).setVisible(true);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -256,6 +285,8 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                 }
             }
             return true;
+        } else if (item.getItemId() == R.id.action_Next) {
+            startActivity(new Intent(AddContactFromPhoneActivity.this, SharePositionActivity.class));
         }
         return false;
     }
@@ -530,18 +561,20 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                         while (nameCur.moveToNext()) {
                             String _fname = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
 
-                            if (!SINGLE_CHECK) {
-                                if (ADD_TO_HELP_LIST.equals("1")) {
-                                    ArrayList<String> lst = new ArrayList<String>(fragmentContacts.HELP_CONTACT_NAME.values());
-                                    if (lst.contains(_fname)) {
-                                        _hasContact = true;
-                                        _WEB_ID = getKey(fragmentContacts.HELP_CONTACT_NAME, _fname);
-                                    }
-                                } else {
-                                    ArrayList<String> lst = new ArrayList<String>(fragmentContacts.CONTACT_NAME.values());
-                                    if (lst.contains(_fname)) {
-                                        _hasContact = true;
-                                        _WEB_ID = getKey(fragmentContacts.CONTACT_NAME, _fname);
+                            if (!getIntent().hasExtra("FROM_SHARELOC")) {
+                                if (!SINGLE_CHECK) {
+                                    if (ADD_TO_HELP_LIST.equals("1")) {
+                                        ArrayList<String> lst = new ArrayList<String>(fragmentContacts.HELP_CONTACT_NAME.values());
+                                        if (lst.contains(_fname)) {
+                                            _hasContact = true;
+                                            _WEB_ID = getKey(fragmentContacts.HELP_CONTACT_NAME, _fname);
+                                        }
+                                    } else {
+                                        ArrayList<String> lst = new ArrayList<String>(fragmentContacts.CONTACT_NAME.values());
+                                        if (lst.contains(_fname)) {
+                                            _hasContact = true;
+                                            _WEB_ID = getKey(fragmentContacts.CONTACT_NAME, _fname);
+                                        }
                                     }
                                 }
                             }
@@ -556,6 +589,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
 
             @Override
             protected void onPostExecute(Void aVoid) {
+                PB_GETCONTACT.setVisibility(View.GONE);
                 super.onPostExecute(aVoid);
                 ADAPTER = new ContactFromPhoneAdapter(AddContactFromPhoneActivity.this, LIST_CONTACTS, SINGLE_CHECK);
                 LST_CONTACT.setAdapter(ADAPTER);

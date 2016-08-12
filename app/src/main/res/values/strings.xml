@@ -197,5 +197,8 @@
     <string name="completemoodratings">Complete today\'s Mood Rating</string>
     <string name="seeallnote">See all note</string>
     <string name="seenotes">See Notes</string>
+    <string name="sharemyloc">Share my location</string>
+    <string name="action_next">Next</string>
+    <string name="sharepos">Share Position</string>
 
 </resources>

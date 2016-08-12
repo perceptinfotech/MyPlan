@@ -72,6 +72,8 @@ public class HomeActivity extends AppCompatActivity implements
     private ListView LST_MENUITEMS;
     private Utils UTILS;
 
+    public static double CURRENT_LAT, CURRENT_LONG;
+
     private final static int MY_PERMISSIONS_REQUEST = 19;
 
     //Location
@@ -206,7 +208,7 @@ public class HomeActivity extends AppCompatActivity implements
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(HomeActivity.this,
-                        Manifest.permission.READ_CONTACTS)) {
+                        Manifest.permission.ACCESS_FINE_LOCATION)) {
                 } else {
 
                     ActivityCompat.requestPermissions(HomeActivity.this,
@@ -276,6 +278,16 @@ public class HomeActivity extends AppCompatActivity implements
     protected void startLocationUpdates() {
         // The final argument to {@code requestLocationUpdates()} is a LocationListener
         // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
     }
@@ -562,6 +574,8 @@ public class HomeActivity extends AppCompatActivity implements
      * Updates the latitude, the longitude, and the last location time in the UI.
      */
     private void updateUI() {
+        CURRENT_LAT = mCurrentLocation.getLatitude();
+        CURRENT_LONG = mCurrentLocation.getLongitude();
         Log.d("::::: ", String.format("%s: %f", mLatitudeLabel,
                 mCurrentLocation.getLatitude()));
         Log.d("::::: ", String.format("%s: %f", mLongitudeLabel,
@@ -585,6 +599,16 @@ public class HomeActivity extends AppCompatActivity implements
         // moves to a new location, and then changes the device orientation, the original location
         // is displayed as the activity is re-created.
         if (mCurrentLocation == null) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
             updateUI();
@@ -618,6 +642,9 @@ public class HomeActivity extends AppCompatActivity implements
         mCurrentLocation = location;
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         updateUI();
+        CURRENT_LAT = location.getLatitude();
+        CURRENT_LONG = location.getLongitude();
+
         Toast.makeText(this, "Location Updated",
                 Toast.LENGTH_SHORT).show();
     }

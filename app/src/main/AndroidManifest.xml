@@ -40,6 +40,10 @@
             android:name=".services.MyIntentService"
             android:exported="false" />
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDqH4mXS_S4vtzjMgsqVFZTbDnWqmsxV9w" />
+
         <activity
             android:name=".Activities.AddContactActivity"
             android:label="@string/title_activity_add_contact"
@@ -224,7 +228,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.MoodSummaryActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.SharePositionActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
