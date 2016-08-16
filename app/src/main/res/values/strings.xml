@@ -202,6 +202,12 @@
     <string name="sharepos">Share Position</string>
     <string name="moodratingsida">Mood Ratings - Sidas</string>
     <string name="sidasfulltest">Sidas Full Test</string>
-    <string name="sidastart"><![CDATA[<b>Sidas</b> consist of five question </br></br> Hello]]></string>
+    <string name="cont">Continue</string>
+    <string name="nextques">Next question</string>
+    <!--<string name="sidastart">"<b>" + "Sidas" + "</b>" + "consist of 5 questions" + "<br />" +
+                    "You can use" + "<b>" + "SIDAS" + "</b>" + "to measure your suicidal thoughts." + "<br />" +
+                    "<b>" + "IMPORTANT " + "</b>" + "if you have a high score, you will get an automate " +
+                    "notification to seek help" + "<br />" + "It is important that you act and follow your crisis plan"</string>-->
+
 
 </resources>

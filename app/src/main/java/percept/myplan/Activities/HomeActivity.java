@@ -574,14 +574,16 @@ public class HomeActivity extends AppCompatActivity implements
      * Updates the latitude, the longitude, and the last location time in the UI.
      */
     private void updateUI() {
-        CURRENT_LAT = mCurrentLocation.getLatitude();
-        CURRENT_LONG = mCurrentLocation.getLongitude();
-        Log.d("::::: ", String.format("%s: %f", mLatitudeLabel,
-                mCurrentLocation.getLatitude()));
-        Log.d("::::: ", String.format("%s: %f", mLongitudeLabel,
-                mCurrentLocation.getLongitude()));
-        Log.d("::::: ", String.format("%s: %s", mLastUpdateTimeLabel,
-                mLastUpdateTime));
+        if (mCurrentLocation != null) {
+            CURRENT_LAT = mCurrentLocation.getLatitude();
+            CURRENT_LONG = mCurrentLocation.getLongitude();
+            Log.d("::::: ", String.format("%s: %f", mLatitudeLabel,
+                    mCurrentLocation.getLatitude()));
+            Log.d("::::: ", String.format("%s: %f", mLongitudeLabel,
+                    mCurrentLocation.getLongitude()));
+            Log.d("::::: ", String.format("%s: %s", mLastUpdateTimeLabel,
+                    mLastUpdateTime));
+        }
     }
 
     @Override

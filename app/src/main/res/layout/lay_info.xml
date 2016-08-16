@@ -19,7 +19,7 @@
             android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
-            android:src="@drawable/setting_export" />
+            android:src="@drawable/exclamation" />
 
         <TextView
             android:id="@+id/tvNote"
@@ -29,12 +29,26 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginTop="15dp"
-            android:text="@string/sidastart"
             android:background="@drawable/edt_register_border"
+            android:text=""
             android:textColor="@android:color/black"
             android:visibility="visible" />
 
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/sidemenu_seperator" />
+
+        <TextView
+            android:id="@+id/tvContinue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text="@string/cont"
+            android:textColor="@color/appbackColor"
+            android:textSize="18dp" />
     </LinearLayout>
 
 </RelativeLayout>

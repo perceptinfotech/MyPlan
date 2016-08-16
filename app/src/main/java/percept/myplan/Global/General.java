@@ -48,8 +48,6 @@ public class General {
             return ".getContacts";
         } else if (serviceName == PHPServices.GET_CONTACT) {
             return ".getContact";
-        } else if (serviceName == PHPServices.GET_SIDASTEST) {
-            return "";
         } else if (serviceName == PHPServices.GET_SIDASCALENDER) {
             return "";
         } else if (serviceName == PHPServices.GET_MOODCALENDER) {
@@ -79,11 +77,11 @@ public class General {
         } else if (serviceName == PHPServices.ADD_MOOD) {
             return ".submitMoodTest";
         } else if (serviceName == PHPServices.GET_SIDATEST) {
-            return "getSIDASTest";
+            return ".getSIDASTest";
         } else if (serviceName == PHPServices.GET_SIDACALENDER) {
-            return "getSIDASCalendar";
+            return ".getSIDASCalendar";
         } else if (serviceName == PHPServices.SUBMIT_SIDATEST) {
-            return "submitSIDASTest";
+            return ".submitSIDASTest";
         }
         return "";
     }
@@ -200,7 +198,6 @@ public class General {
         GET_STRATEGIES,
         GET_CONTACTS,
         GET_CONTACT,
-        GET_SIDASTEST,
         GET_SIDASCALENDER,
         GET_MOODCALENDER,
         GET_HOPEBOXES,
