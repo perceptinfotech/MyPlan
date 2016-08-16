@@ -15,6 +15,7 @@ import java.util.List;
 import percept.myplan.Graph.PieGraph;
 import percept.myplan.Graph.PieSlice;
 import percept.myplan.POJO.Mood;
+import percept.myplan.POJO.SidaSummary;
 import percept.myplan.R;
 
 /**
@@ -23,7 +24,7 @@ import percept.myplan.R;
 public class SidaSummaryAdapter extends RecyclerView.Adapter<SidaSummaryAdapter.MyViewHolder> {
 
     private Context CONTEXT;
-    private List<Mood> LST_MOOD;
+    private List<SidaSummary> LST_MOOD;
     private TextView TV_MOODSUMTITLE;
     private PieGraph SIDA_PIE_GRAPH;
 
@@ -45,7 +46,7 @@ public class SidaSummaryAdapter extends RecyclerView.Adapter<SidaSummaryAdapter.
     }
 
 
-    public SidaSummaryAdapter(Context mContext, List<Mood> hopeList) {
+    public SidaSummaryAdapter(Context mContext, List<SidaSummary> hopeList) {
         this.CONTEXT = mContext;
         this.LST_MOOD = hopeList;
 
@@ -61,19 +62,17 @@ public class SidaSummaryAdapter extends RecyclerView.Adapter<SidaSummaryAdapter.
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        Mood _mood = LST_MOOD.get(position);
+        SidaSummary _mood = LST_MOOD.get(position);
 //        holder.TV_ALARMTITLE.setText(album.getAlarmName());
-        TV_MOODSUMTITLE.setText(_mood.getMOOD_DATE_STRING());
+        TV_MOODSUMTITLE.setText(_mood.getWeek_Number() + " Week of 2016");
         ArrayList<PieSlice> LST_PIEDATA = new ArrayList<>();
         PieSlice slice = new PieSlice();
         slice.setColor(CONTEXT.getResources().getColor(R.color.pie_color1));
-        slice.setValue(2);
-        slice.setTitle("first");
+        slice.setValue(Float.parseFloat(_mood.getAvg_Score()));
         LST_PIEDATA.add(slice);
         slice = new PieSlice();
         slice.setColor(CONTEXT.getResources().getColor(R.color.pie_color2));
-        slice.setValue(3);
-        slice.setTitle("Second");
+        slice.setValue(100 - Float.parseFloat(_mood.getAvg_Score()));
         LST_PIEDATA.add(slice);
         SIDA_PIE_GRAPH.removeSlices();
 

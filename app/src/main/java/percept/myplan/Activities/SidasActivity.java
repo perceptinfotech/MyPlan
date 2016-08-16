@@ -32,6 +32,7 @@ import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.Mood;
+import percept.myplan.POJO.SidaSummary;
 import percept.myplan.R;
 import percept.myplan.adapters.MoodSummaryAdapter;
 import percept.myplan.adapters.SidaSummaryAdapter;
@@ -41,7 +42,7 @@ public class SidasActivity extends AppCompatActivity {
     private Button BTN_TAKETEST;
     private RecyclerView LST_SIDASUMMARY;
     SidaSummaryAdapter ADAPTER;
-    private List<Mood> LIST_SIDA;
+    private List<SidaSummary> LIST_SIDA;
     Map<String, String> params;
 
     @Override
@@ -75,7 +76,7 @@ public class SidasActivity extends AppCompatActivity {
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         try {
-            new General().getJSONContentFromInternetService(SidasActivity.this, General.PHPServices.GET_MOODCALENDER, params, false, false, true, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(SidasActivity.this, General.PHPServices.GET_SIDACALENDER, params, false, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
 
@@ -86,88 +87,10 @@ public class SidasActivity extends AppCompatActivity {
                     Gson gson = new Gson();
                     try {
                         LIST_SIDA = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                .toString(), new TypeToken<List<Mood>>() {
+                                .toString(), new TypeToken<List<SidaSummary>>() {
                         }.getType());
                     } catch (JSONException e) {
                         e.printStackTrace();
-                    }
-
-                    for (int i = 0; i < LIST_SIDA.size(); i++) {
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        try {
-                            Date date = format.parse(LIST_SIDA.get(i).getMOOD_DATE());
-                            Calendar cal = Calendar.getInstance();
-                            cal.setTime(date);
-                            int _day = cal.get(Calendar.DAY_OF_MONTH);
-                            int _Month = cal.get(Calendar.MONTH);
-                            String _strTime = "";
-                            switch (cal.get(Calendar.DAY_OF_WEEK)) {
-                                case 1:
-                                    _strTime = "Sunday ";
-                                    break;
-                                case 2:
-                                    _strTime = "Monday ";
-                                    break;
-                                case 3:
-                                    _strTime = "Tuesday ";
-                                    break;
-                                case 4:
-                                    _strTime = "Wednesday ";
-                                    break;
-                                case 5:
-                                    _strTime = "Thursday ";
-                                    break;
-                                case 6:
-                                    _strTime = "Friday ";
-                                    break;
-                                case 7:
-                                    _strTime = "Saturday ";
-                                    break;
-
-                            }
-                            _strTime = _strTime + String.valueOf(_day) + "th of ";
-                            switch (_Month) {
-                                case 0:
-                                    _strTime = _strTime + "January";
-                                    break;
-                                case 1:
-                                    _strTime = _strTime + "February";
-                                    break;
-                                case 2:
-                                    _strTime = _strTime + "March";
-                                    break;
-                                case 3:
-                                    _strTime = _strTime + "April";
-                                    break;
-                                case 4:
-                                    _strTime = _strTime + "May";
-                                    break;
-                                case 5:
-                                    _strTime = _strTime + "June";
-                                    break;
-                                case 6:
-                                    _strTime = _strTime + "July";
-                                    break;
-                                case 7:
-                                    _strTime = _strTime + "August";
-                                    break;
-                                case 8:
-                                    _strTime = _strTime + "September";
-                                    break;
-                                case 9:
-                                    _strTime = _strTime + "October";
-                                    break;
-                                case 10:
-                                    _strTime = _strTime + "November";
-                                    break;
-                                case 11:
-                                    _strTime = _strTime + "December";
-                                    break;
-                            }
-                            LIST_SIDA.get(i).setMOOD_DATE_STRING(_strTime);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
                     }
                     ADAPTER = new SidaSummaryAdapter(SidasActivity.this, LIST_SIDA);
                     LST_SIDASUMMARY.setAdapter(ADAPTER);
