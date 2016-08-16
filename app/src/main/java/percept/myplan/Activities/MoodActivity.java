@@ -186,7 +186,10 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         BTN_SEEALLNOTE.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MoodActivity.this, MoodSummaryActivity.class));
+                Intent _intent = new Intent(MoodActivity.this, MoodSummaryActivity.class);
+                Log.d("::: ", String.valueOf(calendarView.getCurrentMonth()));
+                _intent.putExtra("MONTH", calendarView.getCurrentMonth());
+                startActivity(_intent);
             }
         });
         //Uncomment for enable current date selection

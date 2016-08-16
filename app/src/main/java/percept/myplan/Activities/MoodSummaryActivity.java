@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,9 +38,11 @@ public class MoodSummaryActivity extends AppCompatActivity {
 
     private RecyclerView LST_MOODSUMMARY;
     private List<Mood> LIST_MOOD;
+    private List<Mood> LIST_MOOD_MONTH;
     Map<String, String> params;
     MoodSummaryAdapter ADAPTER;
     private Utils UTILS;
+    private int MONTH;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,8 @@ public class MoodSummaryActivity extends AppCompatActivity {
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(R.string.seenotes);
 
+        MONTH = getIntent().getExtras().getInt("MONTH");
+        LIST_MOOD_MONTH = new ArrayList<>();
         UTILS = new Utils(MoodSummaryActivity.this);
         LST_MOODSUMMARY = (RecyclerView) findViewById(R.id.lstMoodSummay);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(MoodSummaryActivity.this);
@@ -160,12 +165,18 @@ public class MoodSummaryActivity extends AppCompatActivity {
 //                                    break;
 //                            }
 
-                            LIST_MOOD.get(i).setMOOD_DATE_STRING(_getDay.format(date));
+                            int _month = cal.get(Calendar.MONTH);
+                            Log.d(":::: ", String.valueOf(_month));
+                            if (_month == MONTH) {
+                                LIST_MOOD.get(i).setMOOD_DATE_STRING(_getDay.format(date));
+                                LIST_MOOD_MONTH.add(LIST_MOOD.get(i));
+                            }
+
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
-                    ADAPTER = new MoodSummaryAdapter(MoodSummaryActivity.this, LIST_MOOD);
+                    ADAPTER = new MoodSummaryAdapter(MoodSummaryActivity.this, LIST_MOOD_MONTH);
                     LST_MOODSUMMARY.setAdapter(ADAPTER);
                 }
             });
