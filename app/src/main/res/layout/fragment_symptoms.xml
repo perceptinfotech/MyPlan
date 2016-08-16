@@ -29,7 +29,8 @@
             android:gravity="center_vertical"
             android:padding="5dp"
             android:text="@string/addnewsymptom"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            android:visibility="gone" />
     </LinearLayout>
 
 
@@ -39,21 +40,21 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="15dp"
         android:layout_marginLeft="35dp"
         android:layout_marginRight="35dp"
-        android:layout_marginBottom="15dp"
 
         android:background="@drawable/btn_register_border"
         android:text="@string/dangersignal"
         android:textColor="@android:color/white" />
 
     <ProgressBar
+        android:id="@+id/pbGetSymptoms"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:visibility="gone"
-        android:id="@+id/pbGetSymptoms" />
+        android:layout_centerVertical="true"
+        android:visibility="gone" />
 
 </RelativeLayout>

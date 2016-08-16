@@ -23,6 +23,7 @@
             android:id="@+id/tvAddNewStrategy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_marginLeft="50dp"
             android:drawableLeft="@drawable/add_circle"
             android:drawablePadding="10dp"
