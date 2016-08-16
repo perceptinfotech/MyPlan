@@ -43,7 +43,9 @@ import java.util.List;
 
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.MultiPartParsing;
 import percept.myplan.Global.Utils;
+import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.POJO.Alarm;
 import percept.myplan.R;
 import percept.myplan.adapters.AlarmAdapter;
@@ -171,11 +173,73 @@ public class AddStrategyActivity extends AppCompatActivity {
                     getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-            new AddStrategy(EDT_TITLE.getText().toString().trim(), EDT_TEXT.getText().toString().trim(),
-                    STR_CONTACTID, LIST_IMG, LIST_MUSIC, STR_LINK).execute();
+            /*new AddStrategy(EDT_TITLE.getText().toString().trim(), EDT_TEXT.getText().toString().trim(),
+                    STR_CONTACTID, LIST_IMG, LIST_MUSIC, STR_LINK).execute();*/
+            addStrategy();
             return true;
         }
         return false;
+    }
+
+    private void addStrategy() {
+        HashMap<String, String> map = new HashMap<>();
+        if (LIST_IMG.size() > 0) {
+            for (int i = 0; i < LIST_IMG.size(); i++) {
+                map.put("image" + (i + 1), LIST_IMG.get(i));
+            }
+        }
+        if (LIST_MUSIC.size() > 0) {
+            for (int i = 0; i < LIST_MUSIC.size(); i++) {
+                map.put("video" + (i + 1), LIST_IMG.get(i));
+            }
+        }
+//                }
+        // Extra parameters if you want to pass to server
+
+        map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveStrategy");
+        map.put("sid", Constant.SID);
+        map.put("sname", Constant.SNAME);
+        map.put("image_count", String.valueOf(LIST_IMG.size()));
+        map.put("music_count", String.valueOf(LIST_MUSIC.size()));
+        map.put(Constant.ID, "");
+        map.put(Constant.TITLE, EDT_TITLE.getText().toString().trim());
+        map.put(Constant.DESC, EDT_TEXT.getText().toString().trim());
+        map.put(Constant.CONTACTID, STR_CONTACTID);
+        map.put(Constant.LINK, STR_LINK);
+
+
+        new MultiPartParsing(this, map, new AsyncTaskCompletedListener() {
+            @Override
+            public void onTaskCompleted(String response) {
+                PB.setVisibility(View.GONE);
+                try {
+                    Log.d(":::::: ", response);
+                    String _id = "";
+                    JSONObject _object = new JSONObject(response);
+                    JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
+                    _id = _ObjData.getString(Constant.ID);
+                    MAP_ALARM.put(_id, LIST_ALARM);
+                    Gson gson = new Gson();
+                    String _alarmList = gson.toJson(MAP_ALARM);
+                    UTILS.setPreference("ALARMLIST", _alarmList);
+                    Toast.makeText(AddStrategyActivity.this,
+                            getResources().getString(R.string.strategyadded), Toast.LENGTH_SHORT).show();
+
+
+                    if (getIntent().hasExtra("FROM_SYMPTOM")) {
+                        GET_STRATEGIES = true;
+                    } else {
+                        ADDED_STRATEGIES = true;
+                    }
+                    AddStrategyActivity.this.finish();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+
+        });
     }
 
     private class AddStrategy extends AsyncTask<Void, Integer, String> {

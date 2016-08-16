@@ -59,6 +59,8 @@ public class Constant {
 
 
     //Contact Add
+    public final static String URL="url";
+
     public final static String ID = "id";
     public final static String CON_IMAGE = "con_image";
     public final static String SKYPE = "skype";

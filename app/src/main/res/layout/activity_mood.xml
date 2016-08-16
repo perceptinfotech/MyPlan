@@ -11,7 +11,7 @@
 
     <include
         android:id="@+id/lay1"
-        layout="@layout/app_toolbar"></include>
+        layout="@layout/app_toolbar"/>
 
     <LinearLayout
         android:id="@+id/layMoodRatings"
