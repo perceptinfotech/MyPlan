@@ -34,6 +34,7 @@ import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -138,25 +139,27 @@ public class HomeActivity extends AppCompatActivity implements
             }
         }
         LST_MENUITEMS = (ListView) findViewById(R.id.lst_menu_items);
-        List<String> LST_SIDEMENU = new ArrayList<>();
-        LST_SIDEMENU.add(getString(R.string.symptops));
-        LST_SIDEMENU.add(getString(R.string.strategies));
-        LST_SIDEMENU.add(getString(R.string.contacts));
-        LST_SIDEMENU.add(getString(R.string.hopebox));
-        LST_SIDEMENU.add(getString(R.string.moodratings));
-        LST_SIDEMENU.add(" ");
-        LST_SIDEMENU.add(getString(R.string.nearestemerroom));
-        LST_SIDEMENU.add(getString(R.string.quickmsg));
-        LST_SIDEMENU.add(getString(R.string.shareloc));
-        LST_SIDEMENU.add(" ");
-        LST_SIDEMENU.add(getString(R.string.settings));
-        LST_SIDEMENU.add(getString(R.string.logout));
+//        List<String> LST_SIDEMENU = new ArrayList<>();
+//        LST_SIDEMENU.add(getString(R.string.symptops));
+//        LST_SIDEMENU.add(getString(R.string.strategies));
+//        LST_SIDEMENU.add(getString(R.string.contacts));
+//        LST_SIDEMENU.add(getString(R.string.hopebox));
+//        LST_SIDEMENU.add(getString(R.string.moodratings));
+//        LST_SIDEMENU.add(" ");
+//        LST_SIDEMENU.add(getString(R.string.nearestemerroom));
+//        LST_SIDEMENU.add(getString(R.string.quickmsg));
+//        LST_SIDEMENU.add(getString(R.string.shareloc));
+//        LST_SIDEMENU.add(" ");
+//        LST_SIDEMENU.add(getString(R.string.settings));
+//        LST_SIDEMENU.add(getString(R.string.logout));
 
-        ADAPTER = new NavigationDrawerAdapter(HomeActivity.this, LST_SIDEMENU);
+
+        ADAPTER = new NavigationDrawerAdapter(HomeActivity.this,
+                Arrays.asList(getResources().getStringArray(R.array.navigation_menu)));
         LST_MENUITEMS.setAdapter(ADAPTER);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Home Page");
+        getSupportActionBar().setTitle(getString(R.string.home_page));
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -364,7 +367,7 @@ public class HomeActivity extends AppCompatActivity implements
             }
 
             this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Please click back again to exit", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.click_to_exit), Toast.LENGTH_SHORT).show();
 
             new Handler().postDelayed(new Runnable() {
 
@@ -647,7 +650,7 @@ public class HomeActivity extends AppCompatActivity implements
         CURRENT_LAT = location.getLatitude();
         CURRENT_LONG = location.getLongitude();
 
-        Toast.makeText(this, "Location Updated",
+        Toast.makeText(this, getString(R.string.location_update),
                 Toast.LENGTH_SHORT).show();
     }
 

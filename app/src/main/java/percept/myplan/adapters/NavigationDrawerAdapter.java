@@ -94,16 +94,16 @@ public class NavigationDrawerAdapter extends BaseAdapter {
                 //Blank Row
                 break;
             case 6:
-                //Nearest Emergency Room
-                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_emergency);
-                break;
-            case 7:
                 //Quick Message
                 _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_quickmsg);
                 break;
-            case 8:
+            case 7:
                 //Share My Location
                 _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_shareloc);
+                break;
+            case 8:
+                //Nearest Emergency Room
+                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_emergency);
                 break;
             case 9:
                 //Blank Row

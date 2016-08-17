@@ -76,5 +76,12 @@
         android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textSize="16sp" />
-
+    <ProgressBar
+        android:id="@+id/pbAddStrategyLink"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 </RelativeLayout>

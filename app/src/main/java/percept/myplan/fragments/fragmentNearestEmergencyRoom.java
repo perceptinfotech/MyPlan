@@ -15,7 +15,7 @@ import percept.myplan.R;
  */
 public class fragmentNearestEmergencyRoom extends Fragment {
 
-    public static final int INDEX = 7;
+    public static final int INDEX = 9;
     public fragmentNearestEmergencyRoom() {
         // Required empty public constructor
     }

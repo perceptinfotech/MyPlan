@@ -37,7 +37,7 @@ public class fragmentShareMyLocation extends Fragment {
     private GoogleMap googleMap;
 
 
-    public static final int INDEX = 9;
+    public static final int INDEX = 8;
 
     private Button BTN_SHARELOC;
 

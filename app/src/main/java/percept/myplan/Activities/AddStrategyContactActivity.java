@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -42,6 +43,7 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
     private List<ContactDisplay> LIST_ALLCONTACTS;
     private StrategyContactAdapter ADAPTER;
     private String STR_CONTACTID = "";
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +57,14 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.allcontact));
-
+        PB = (ProgressBar) findViewById(R.id.pbAddStrategyContact);
         LST_CONTACTS = (StickyListHeadersListView) findViewById(R.id.listStrategyContact);
         LST_CONTACTS.setOnStickyHeaderChangedListener(this);
         LST_CONTACTS.setOnStickyHeaderOffsetChangedListener(this);
         LST_CONTACTS.setDrawingListUnderStickyHeader(true);
         LST_CONTACTS.setAreHeadersSticky(true);
 
+        PB.setVisibility(View.VISIBLE);
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -69,7 +72,7 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
             new General().getJSONContentFromInternetService(AddStrategyContactActivity.this, General.PHPServices.GET_CONTACTS, params, false, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -95,6 +98,7 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
                             }
                         }
                     }
+                    PB.setVisibility(View.GONE);
                     ADAPTER = new StrategyContactAdapter(AddStrategyContactActivity.this, LIST_ALLCONTACTS, false);
                     LST_CONTACTS.setAdapter(ADAPTER);
                 }

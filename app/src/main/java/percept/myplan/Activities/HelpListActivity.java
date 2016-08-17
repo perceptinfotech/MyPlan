@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -44,6 +45,7 @@ public class HelpListActivity extends AppCompatActivity {
     private RecyclerView LST_HELP;
     private ContactHelpListAdapter ADPT_CONTACTHELPLIST;
     private List<ContactDisplay> LIST_ALLCONTACTS;
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ public class HelpListActivity extends AppCompatActivity {
         TV_ADDHELPLIST = (TextView) findViewById(R.id.tvAddHelpContact);
         TV_EDITHELPLIST = (TextView) findViewById(R.id.tvEditHelpList);
         LST_HELP = (RecyclerView) findViewById(R.id.lstHelpList);
+        PB = (ProgressBar) findViewById(R.id.pbHelpList);
         LIST_ALLCONTACTS = new ArrayList<>();
         HELP_CONTACT_NAME = new HashMap<>();
         LIST_HELPCONTACTS = new ArrayList<>();
@@ -87,7 +90,21 @@ public class HelpListActivity extends AppCompatActivity {
                 startActivity(_intent);
             }
         });
+        getContacts();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (fragmentContacts.GET_CONTACTS) {
+            getContacts();
+            fragmentContacts.GET_CONTACTS = false;
+        }
+    }
+
+    private void getContacts() {
+        PB.setVisibility(View.VISIBLE);
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -97,7 +114,7 @@ public class HelpListActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(HelpListActivity.this, General.PHPServices.GET_CONTACTS, params, false, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -109,6 +126,7 @@ public class HelpListActivity extends AppCompatActivity {
                         LIST_ALLCONTACTS = gson.fromJson(response.getJSONArray(Constant.DATA)
                                 .toString(), new TypeToken<List<ContactDisplay>>() {
                         }.getType());
+                        PB.setVisibility(View.GONE);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -122,61 +140,13 @@ public class HelpListActivity extends AppCompatActivity {
                         }
                     }
 
-                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS,"HELP");
+                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
                     LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
 
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
-        }
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (fragmentContacts.GET_CONTACTS) {
-            try {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("sid", Constant.SID);
-                params.put("sname", Constant.SNAME);
-
-                LIST_HELPCONTACTS.clear();
-                HELP_CONTACT_NAME.clear();
-                new General().getJSONContentFromInternetService(HelpListActivity.this, General.PHPServices.GET_CONTACTS, params, false, false, true, new VolleyResponseListener() {
-                    @Override
-                    public void onError(VolleyError message) {
-
-                    }
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Gson gson = new Gson();
-                        List<ContactDisplay> _LSTALL = new ArrayList<ContactDisplay>();
-                        try {
-                            _LSTALL = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                    .toString(), new TypeToken<List<ContactDisplay>>() {
-                            }.getType());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        for (ContactDisplay _obj : _LSTALL) {
-                            if (!_obj.getHelplist().equals("0")) {
-                                HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                                LIST_HELPCONTACTS.add(_obj);
-                            }
-                        }
-
-                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS,"HELP");
-                        LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            fragmentContacts.GET_CONTACTS = false;
         }
     }
 

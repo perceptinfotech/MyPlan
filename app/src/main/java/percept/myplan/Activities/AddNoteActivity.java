@@ -8,8 +8,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +47,7 @@ public class AddNoteActivity extends AppCompatActivity {
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +67,7 @@ public class AddNoteActivity extends AppCompatActivity {
             HOPE_ID = getIntent().getExtras().getString("HOPE_ID");
         }
         ED_NOTE = (EditText) findViewById(R.id.edtNote);
+        PB = (ProgressBar) findViewById(R.id.pbAddNote);
     }
 
     @Override
@@ -95,6 +99,7 @@ public class AddNoteActivity extends AppCompatActivity {
     }
 
     private void addHopeBoxNoteElement(String NOTE, String TYPE) {
+        PB.setVisibility(View.VISIBLE);
         Map<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -107,11 +112,12 @@ public class AddNoteActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(AddNoteActivity.this, General.PHPServices.SAVE_HOPE_MEDIA, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    message.getMessage();
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
+                    PB.setVisibility(View.GONE);
                     Log.d(":::::: ", response.toString());
                     if (getIntent().hasExtra("FROM_HOPE")) {
                         GET_HOPE_DETAILS = true;

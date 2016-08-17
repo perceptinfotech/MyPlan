@@ -17,8 +17,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import percept.myplan.Dialogs.dialogAddStrategy;
 import percept.myplan.Dialogs.dialogStrategyImg;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
@@ -46,7 +45,6 @@ import percept.myplan.POJO.StrategyDetails;
 import percept.myplan.R;
 import percept.myplan.adapters.ImageAdapter;
 import percept.myplan.adapters.StrategyContactSimpleAdapter;
-import percept.myplan.fragments.fragmentStrategies;
 
 import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
 
@@ -66,6 +64,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     private StrategyContactSimpleAdapter ADAPTER;
     private RecyclerView LST_STRATEGYCONTACT;
     private Button BTN_SHARESTRATEGY;
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +93,11 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         BTN_SHARESTRATEGY.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    
+
             }
         });
+
+        PB = (ProgressBar) findViewById(R.id.pbStrategyOwn);
 
         EDT_STRATEGYTITLE.setText(getIntent().getExtras().getString("STRATEGY_NAME"));
 
@@ -131,50 +132,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
         LIST_IMAGE = new ArrayList<>();
 
-        params = new HashMap<String, String>();
-        params.put("sid", Constant.SID);
-        params.put("sname", Constant.SNAME);
-        params.put("id", STRATEGY_ID);
-        try {
-            new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this, General.PHPServices.GET_STRATEGY, params, false, false, true, new VolleyResponseListener() {
-                @Override
-                public void onError(VolleyError message) {
-
-                }
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    Gson gson = new Gson();
-                    try {
-                        clsStrategy = gson.fromJson(response.getJSONObject(Constant.DATA)
-                                .toString(), new TypeToken<StrategyDetails>() {
-                        }.getType());
-
-                        LIST_STRATEGYCONTACT = gson.fromJson(response.getJSONObject(Constant.DATA).getJSONArray("contact")
-                                .toString(), new TypeToken<List<StrategyContact>>() {
-                        }.getType());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    ADAPTER = new StrategyContactSimpleAdapter(LIST_STRATEGYCONTACT);
-                    LST_STRATEGYCONTACT.setAdapter(ADAPTER);
-
-                    EDT_STRATEGYDESC.setText(clsStrategy.getDescription());
-                    MAP_ALARM.get(STRATEGY_ID);
-
-                    String _images = clsStrategy.getImage();
-                    String[] _arrImg = _images.split(",");
-                    for (int i = 0; i < _arrImg.length; i++) {
-                        LIST_IMAGE.add(_arrImg[i]);
-                    }
-                    ADAPTER_IMG = new ImageAdapter(StrategyDetailsOwnActivity.this, LIST_IMAGE);
-                    LST_OWNSTRATEGYIMG.setAdapter(ADAPTER_IMG);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        getStrategy();
 
         LST_STRATEGYCONTACT.addOnItemTouchListener(new RecyclerTouchListener(StrategyDetailsOwnActivity.this, LST_STRATEGYCONTACT, new ClickListener() {
             @Override
@@ -210,50 +168,59 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (ADDED_STRATEGIES) {
-            try {
-                new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this, General.PHPServices.GET_STRATEGY, params, false, false, true, new VolleyResponseListener() {
-                    @Override
-                    public void onError(VolleyError message) {
-
-                    }
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Gson gson = new Gson();
-                        try {
-                            clsStrategy = gson.fromJson(response.getJSONObject(Constant.DATA)
-                                    .toString(), new TypeToken<StrategyDetails>() {
-                            }.getType());
-
-                            LIST_STRATEGYCONTACT = gson.fromJson(response.getJSONObject(Constant.DATA).getJSONArray("contact")
-                                    .toString(), new TypeToken<List<StrategyContact>>() {
-                            }.getType());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        ADAPTER = new StrategyContactSimpleAdapter(LIST_STRATEGYCONTACT);
-                        LST_STRATEGYCONTACT.setAdapter(ADAPTER);
-
-                        EDT_STRATEGYDESC.setText(clsStrategy.getDescription());
-                        EDT_STRATEGYTITLE.setText(clsStrategy.getTitle());
-                        MAP_ALARM.get(STRATEGY_ID);
-
-                        String _images = clsStrategy.getImage();
-                        String[] _arrImg = _images.split(",");
-                        for (int i = 0; i < _arrImg.length; i++) {
-                            LIST_IMAGE.add(_arrImg[i]);
-                        }
-                        ADAPTER_IMG = new ImageAdapter(StrategyDetailsOwnActivity.this, LIST_IMAGE);
-                        LST_OWNSTRATEGYIMG.setAdapter(ADAPTER_IMG);
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            getStrategy();
         }
     }
 
+    private void getStrategy()
+    {
+        PB.setVisibility(View.VISIBLE);
+        params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put("id", STRATEGY_ID);
+        try {
+            new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this, General.PHPServices.GET_STRATEGY, params, false, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    Gson gson = new Gson();
+                    try {
+                        clsStrategy = gson.fromJson(response.getJSONObject(Constant.DATA)
+                                .toString(), new TypeToken<StrategyDetails>() {
+                        }.getType());
+
+                        LIST_STRATEGYCONTACT = gson.fromJson(response.getJSONObject(Constant.DATA).getJSONArray("contact")
+                                .toString(), new TypeToken<List<StrategyContact>>() {
+                        }.getType());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    ADAPTER = new StrategyContactSimpleAdapter(LIST_STRATEGYCONTACT);
+                    LST_STRATEGYCONTACT.setAdapter(ADAPTER);
+
+                    EDT_STRATEGYDESC.setText(clsStrategy.getDescription());
+                    MAP_ALARM.get(STRATEGY_ID);
+
+                    String _images = clsStrategy.getImage();
+                    String[] _arrImg = _images.split(",");
+                    for (int i = 0; i < _arrImg.length; i++) {
+                        LIST_IMAGE.add(_arrImg[i]);
+                    }
+                    PB.setVisibility(View.GONE);
+                    ADAPTER_IMG = new ImageAdapter(StrategyDetailsOwnActivity.this, LIST_IMAGE);
+                    LST_OWNSTRATEGYIMG.setAdapter(ADAPTER_IMG);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.edit_strategy, menu);

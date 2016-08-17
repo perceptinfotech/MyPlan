@@ -17,6 +17,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -57,7 +58,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
     private String STR_NOTE = "";
     private List<Mood> LIST_MOOD;
     private Button BTN_SEEALLNOTE;
-
+private ProgressBar PB;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +84,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         IMG_VHAPPY = (ImageView) findViewById(R.id.imgVeryHappy);
 
         BTN_SEEALLNOTE = (Button) findViewById(R.id.btnSeeAllNote);
+        PB = (ProgressBar) findViewById(R.id.pbMood);
 
         calendarView.setCalendarView(new FlexibleCalendarView.CalendarView() {
             @Override
@@ -194,6 +196,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         });
         //Uncomment for enable current date selection
         calendarView.selectDate(Calendar.getInstance().getTime());
+        PB.setVisibility(View.VISIBLE);
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -201,7 +204,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
             new General().getJSONContentFromInternetService(MoodActivity.this, General.PHPServices.GET_MOODCALENDER, params, false, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -253,6 +256,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                             e.printStackTrace();
                         }
                     }
+                    PB.setVisibility(View.GONE);
                     calendarView.refresh();
                 }
             });

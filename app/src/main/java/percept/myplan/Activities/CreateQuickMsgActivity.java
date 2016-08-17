@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
     private ContactHelpListAdapter ADPT_CONTACTHELPLIST;
     private List<ContactDisplay> LIST_ALLCONTACTS;
     private ContactHelpListAdapter ADPT_CONTACTLIST;
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +78,7 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
         TV_EDIT_HELPLIST.setVisibility(View.INVISIBLE);
         LST_HELP = (RecyclerView) findViewById(R.id.lstHelpList);
         LST_CONTACTS = (RecyclerView) findViewById(R.id.lstContacts);
+        PB = (ProgressBar) findViewById(R.id.pbCreateQuickMsg);
 
         TV_ADD_CONTACT = (TextView) findViewById(R.id.tvAddContact);
 
@@ -129,103 +132,15 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
 
             }
         }));
+        getContacts();
 
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("sid", Constant.SID);
-        params.put("sname", Constant.SNAME);
-        try {
-            LIST_HELPCONTACTS.clear();
-            CONTACT_NAME.clear();
-            LIST_CONTACTS.clear();
-            new General().getJSONContentFromInternetService(CreateQuickMsgActivity.this, General.PHPServices.GET_CONTACTS, params, false, false, false, new VolleyResponseListener() {
-                @Override
-                public void onError(VolleyError message) {
-
-                }
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.d(":::::::::::::: ", response.toString());
-
-                    Gson gson = new Gson();
-                    try {
-                        LIST_ALLCONTACTS = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                .toString(), new TypeToken<List<ContactDisplay>>() {
-                        }.getType());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    for (ContactDisplay _obj : LIST_ALLCONTACTS) {
-                        if (_obj.getHelplist().equals("0")) {
-                            CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                            LIST_CONTACTS.add(_obj);
-                        } else {
-                            LIST_HELPCONTACTS.add(_obj);
-                        }
-                    }
-
-                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
-                    LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
-
-                    ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
-                    LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         if (fragmentContacts.GET_CONTACTS) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("sid", Constant.SID);
-            params.put("sname", Constant.SNAME);
-            try {
-                LIST_HELPCONTACTS.clear();
-                CONTACT_NAME.clear();
-                LIST_CONTACTS.clear();
-                new General().getJSONContentFromInternetService(CreateQuickMsgActivity.this, General.PHPServices.GET_CONTACTS, params, false, false, false, new VolleyResponseListener() {
-                    @Override
-                    public void onError(VolleyError message) {
-
-                    }
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d(":::::::::::::: ", response.toString());
-
-                        Gson gson = new Gson();
-                        try {
-                            LIST_ALLCONTACTS = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                    .toString(), new TypeToken<List<ContactDisplay>>() {
-                            }.getType());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        for (ContactDisplay _obj : LIST_ALLCONTACTS) {
-                            if (_obj.getHelplist().equals("0")) {
-                                CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                                LIST_CONTACTS.add(_obj);
-                            } else {
-                                LIST_HELPCONTACTS.add(_obj);
-                            }
-                        }
-
-                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
-                        LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
-
-                        ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
-                        LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            getContacts();
             fragmentContacts.GET_CONTACTS = false;
         }
     }
@@ -257,6 +172,56 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
         void onClick(View view, int position);
 
         void onLongClick(View view, int position);
+    }
+
+    private void getContacts() {
+        PB.setVisibility(View.VISIBLE);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        try {
+            LIST_HELPCONTACTS.clear();
+            CONTACT_NAME.clear();
+            LIST_CONTACTS.clear();
+            new General().getJSONContentFromInternetService(CreateQuickMsgActivity.this, General.PHPServices.GET_CONTACTS, params, false, false, false, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    PB.setVisibility(View.GONE);
+                    Log.d(":::::::::::::: ", response.toString());
+
+                    Gson gson = new Gson();
+                    try {
+                        LIST_ALLCONTACTS = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                .toString(), new TypeToken<List<ContactDisplay>>() {
+                        }.getType());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    for (ContactDisplay _obj : LIST_ALLCONTACTS) {
+                        if (_obj.getHelplist().equals("0")) {
+                            CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
+                            LIST_CONTACTS.add(_obj);
+                        } else {
+                            LIST_HELPCONTACTS.add(_obj);
+                        }
+                    }
+
+                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
+                    LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
+
+                    ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
+                    LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {

@@ -254,7 +254,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                                 General.PHPServices.DELETE_CONTACT, params, false, false, true, new VolleyResponseListener() {
                                     @Override
                                     public void onError(VolleyError message) {
-
+                                        PB_SAVECONTACT.setVisibility(View.GONE);
                                     }
 
                                     @Override

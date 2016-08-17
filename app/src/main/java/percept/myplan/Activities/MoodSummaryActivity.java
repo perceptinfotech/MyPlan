@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -43,6 +45,7 @@ public class MoodSummaryActivity extends AppCompatActivity {
     MoodSummaryAdapter ADAPTER;
     private Utils UTILS;
     private int MONTH;
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +64,11 @@ public class MoodSummaryActivity extends AppCompatActivity {
         LIST_MOOD_MONTH = new ArrayList<>();
         UTILS = new Utils(MoodSummaryActivity.this);
         LST_MOODSUMMARY = (RecyclerView) findViewById(R.id.lstMoodSummay);
+        PB = (ProgressBar) findViewById(R.id.pbMoodSummary);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(MoodSummaryActivity.this);
         LST_MOODSUMMARY.setLayoutManager(mLayoutManager);
         LST_MOODSUMMARY.setItemAnimator(new DefaultItemAnimator());
-
+PB.setVisibility(View.VISIBLE);
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -72,7 +76,7 @@ public class MoodSummaryActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(MoodSummaryActivity.this, General.PHPServices.GET_MOODCALENDER, params, false, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -176,6 +180,7 @@ public class MoodSummaryActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
+                    PB.setVisibility(View.GONE);
                     ADAPTER = new MoodSummaryAdapter(MoodSummaryActivity.this, LIST_MOOD_MONTH);
                     LST_MOODSUMMARY.setAdapter(ADAPTER);
                 }

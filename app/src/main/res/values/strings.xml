@@ -213,4 +213,23 @@
 
 
     <string name="retry">Retry</string>
+    <string name="home_page">Home Page</string>
+    <string name="click_to_exit">Please click back again to exit</string>
+    <string name="location_update">Location Updated</string>
+
+
+    <string-array name="navigation_menu">
+        <item>Symptoms</item>
+        <item>Strategies</item>
+        <item>Contacts</item>
+        <item>Hope Box</item>
+        <item>Mood Ratings</item>
+        <item></item>
+        <item>Quick Messages</item>
+        <item>Share my location</item>
+        <item>Nearest emergency room</item>
+        <item></item>
+        <item>Settings</item>
+        <item>Logout</item>
+    </string-array>
 </resources>

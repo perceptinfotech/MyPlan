@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -48,6 +49,7 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,7 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
 
         BTN_INSERTLINK = (Button) findViewById(R.id.btnInsertLink);
         EDT_LINK = (EditText) findViewById(R.id.edtLink);
+        PB = (ProgressBar) findViewById(R.id.pbAddStrategyLink);
 
         BTN_INSERTLINK.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +111,7 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
     }
 
     private void addHopeBoxLinkElement(String title, String hopeId, String link, String type) {
+        PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -120,11 +124,12 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(AddStrategyLinksActivity.this, General.PHPServices.SAVE_HOPE_MEDIA, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
+                    PB.setVisibility(View.GONE);
                     Log.d(":::::: ", response.toString());
                     if (getIntent().hasExtra("FROM_HOPE")) {
                         GET_HOPE_DETAILS = true;

@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -44,6 +45,7 @@ public class SidasActivity extends AppCompatActivity {
     SidaSummaryAdapter ADAPTER;
     private List<SidaSummary> LIST_SIDA;
     Map<String, String> params;
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,7 @@ public class SidasActivity extends AppCompatActivity {
         mTitle.setText(getResources().getString(R.string.sidas));
 
         LST_SIDASUMMARY = (RecyclerView) findViewById(R.id.lstSidaSummary);
+        PB = (ProgressBar) findViewById(R.id.pbSidas);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(SidasActivity.this);
         LST_SIDASUMMARY.setLayoutManager(mLayoutManager);
         LST_SIDASUMMARY.setItemAnimator(new DefaultItemAnimator());
@@ -71,7 +74,7 @@ public class SidasActivity extends AppCompatActivity {
                 startActivity(new Intent(SidasActivity.this, SidaTestActivity.class));
             }
         });
-
+PB.setVisibility(View.VISIBLE);
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -79,7 +82,7 @@ public class SidasActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(SidasActivity.this, General.PHPServices.GET_SIDACALENDER, params, false, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -92,6 +95,7 @@ public class SidasActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    PB.setVisibility(View.GONE);
                     ADAPTER = new SidaSummaryAdapter(SidasActivity.this, LIST_SIDA);
                     LST_SIDASUMMARY.setAdapter(ADAPTER);
                 }

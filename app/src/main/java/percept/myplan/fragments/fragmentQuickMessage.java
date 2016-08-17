@@ -29,7 +29,7 @@ import percept.myplan.adapters.QuickMessageAdapter;
  */
 public class fragmentQuickMessage extends Fragment {
 
-    public static final int INDEX = 8;
+    public static final int INDEX = 7;
 
     private RecyclerView LSTQUICKMSG;
     private List<QuickMessage> LIST_QUICKMSG;
