@@ -40,11 +40,11 @@ public class MoodSummaryActivity extends AppCompatActivity {
 
     private RecyclerView LST_MOODSUMMARY;
     private List<Mood> LIST_MOOD;
-    private List<Mood> LIST_MOOD_MONTH;
     Map<String, String> params;
     MoodSummaryAdapter ADAPTER;
     private Utils UTILS;
     private int MONTH;
+    private int YEAR;
     private ProgressBar PB;
 
     @Override
@@ -61,17 +61,19 @@ public class MoodSummaryActivity extends AppCompatActivity {
         mTitle.setText(R.string.seenotes);
 
         MONTH = getIntent().getExtras().getInt("MONTH");
-        LIST_MOOD_MONTH = new ArrayList<>();
+        YEAR = getIntent().getExtras().getInt("YEAR");
         UTILS = new Utils(MoodSummaryActivity.this);
         LST_MOODSUMMARY = (RecyclerView) findViewById(R.id.lstMoodSummay);
         PB = (ProgressBar) findViewById(R.id.pbMoodSummary);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(MoodSummaryActivity.this);
         LST_MOODSUMMARY.setLayoutManager(mLayoutManager);
         LST_MOODSUMMARY.setItemAnimator(new DefaultItemAnimator());
-PB.setVisibility(View.VISIBLE);
+        PB.setVisibility(View.VISIBLE);
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
+        params.put("year", String.valueOf(YEAR));
+        params.put("month", String.valueOf(MONTH + 1));
         try {
             new General().getJSONContentFromInternetService(MoodSummaryActivity.this, General.PHPServices.GET_MOODCALENDER, params, false, false, true, new VolleyResponseListener() {
                 @Override
@@ -169,19 +171,13 @@ PB.setVisibility(View.VISIBLE);
 //                                    break;
 //                            }
 
-                            int _month = cal.get(Calendar.MONTH);
-                            Log.d(":::: ", String.valueOf(_month));
-                            if (_month == MONTH) {
-                                LIST_MOOD.get(i).setMOOD_DATE_STRING(_getDay.format(date));
-                                LIST_MOOD_MONTH.add(LIST_MOOD.get(i));
-                            }
-
+                            LIST_MOOD.get(i).setMOOD_DATE_STRING(_getDay.format(date));
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
                     PB.setVisibility(View.GONE);
-                    ADAPTER = new MoodSummaryAdapter(MoodSummaryActivity.this, LIST_MOOD_MONTH);
+                    ADAPTER = new MoodSummaryAdapter(MoodSummaryActivity.this, LIST_MOOD);
                     LST_MOODSUMMARY.setAdapter(ADAPTER);
                 }
             });

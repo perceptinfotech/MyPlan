@@ -58,7 +58,8 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
     private String STR_NOTE = "";
     private List<Mood> LIST_MOOD;
     private Button BTN_SEEALLNOTE;
-private ProgressBar PB;
+    private ProgressBar PB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -191,15 +192,24 @@ private ProgressBar PB;
                 Intent _intent = new Intent(MoodActivity.this, MoodSummaryActivity.class);
                 Log.d("::: ", String.valueOf(calendarView.getCurrentMonth()));
                 _intent.putExtra("MONTH", calendarView.getCurrentMonth());
+                _intent.putExtra("YEAR", calendarView.getCurrentYear());
                 startActivity(_intent);
             }
         });
         //Uncomment for enable current date selection
         calendarView.selectDate(Calendar.getInstance().getTime());
+
+        GetMoodCalender();
+    }
+
+    private void GetMoodCalender() {
         PB.setVisibility(View.VISIBLE);
+        eventMap.clear();
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
+        params.put("year", String.valueOf(calendarView.getCurrentYear()));
+        params.put("month", String.valueOf(calendarView.getCurrentMonth() + 1));
         try {
             new General().getJSONContentFromInternetService(MoodActivity.this, General.PHPServices.GET_MOODCALENDER, params, false, false, true, new VolleyResponseListener() {
                 @Override
@@ -265,6 +275,7 @@ private ProgressBar PB;
         }
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -312,47 +323,49 @@ private ProgressBar PB;
         cal.set(year, month, 1);
         updateTitle(year, month);
 
-        Log.d(":::::::::: ", String.valueOf(month));
-        eventMap.clear();
-        for (Mood _obj : LIST_MOOD) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            try {
-                Date date = format.parse(_obj.getMOOD_DATE());
-                Calendar _cal = Calendar.getInstance();
-                _cal.setTime(date);
-                int _day = _cal.get(Calendar.DAY_OF_MONTH);
-                int _Month = _cal.get(Calendar.MONTH);
-                List<CustomEvent> colorLst = new ArrayList<>();
-                if (_Month == month) {
-                    switch (_obj.getMEASUREMENT()) {
-                        case "1":
-                            colorLst.add(new CustomEvent(R.color.veryhappy));
-                            eventMap.put(_day, colorLst);
-                            break;
-                        case "2":
-                            colorLst.add(new CustomEvent(R.color.happy));
-                            eventMap.put(_day, colorLst);
-                            break;
-                        case "3":
-                            colorLst.add(new CustomEvent(R.color.ok));
-                            eventMap.put(_day, colorLst);
-                            break;
-                        case "4":
-                            colorLst.add(new CustomEvent(R.color.sad));
-                            eventMap.put(_day, colorLst);
-                            break;
-                        case "5":
-                            colorLst.add(new CustomEvent(R.color.verysad));
-                            eventMap.put(_day, colorLst);
-                            break;
-                    }
-                }
 
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        calendarView.refresh();
+        GetMoodCalender();
+        Log.d(":::::::::: ", String.valueOf(month));
+//        eventMap.clear();
+//        for (Mood _obj : LIST_MOOD) {
+//            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            try {
+//                Date date = format.parse(_obj.getMOOD_DATE());
+//                Calendar _cal = Calendar.getInstance();
+//                _cal.setTime(date);
+//                int _day = _cal.get(Calendar.DAY_OF_MONTH);
+//                int _Month = _cal.get(Calendar.MONTH);
+//                List<CustomEvent> colorLst = new ArrayList<>();
+//                if (_Month == month) {
+//                    switch (_obj.getMEASUREMENT()) {
+//                        case "1":
+//                            colorLst.add(new CustomEvent(R.color.veryhappy));
+//                            eventMap.put(_day, colorLst);
+//                            break;
+//                        case "2":
+//                            colorLst.add(new CustomEvent(R.color.happy));
+//                            eventMap.put(_day, colorLst);
+//                            break;
+//                        case "3":
+//                            colorLst.add(new CustomEvent(R.color.ok));
+//                            eventMap.put(_day, colorLst);
+//                            break;
+//                        case "4":
+//                            colorLst.add(new CustomEvent(R.color.sad));
+//                            eventMap.put(_day, colorLst);
+//                            break;
+//                        case "5":
+//                            colorLst.add(new CustomEvent(R.color.verysad));
+//                            eventMap.put(_day, colorLst);
+//                            break;
+//                    }
+//                }
+//
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        calendarView.refresh();
     }
 
     private void MoodRatingAddNoteDialog(final String mood) {

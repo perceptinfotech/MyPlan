@@ -56,11 +56,6 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/pbGetStrategies" />
-    <android.support.design.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:id="@+id/snakeBar"
-        android:layout_alignParentBottom="true">
 
-    </android.support.design.widget.CoordinatorLayout>
+    <include layout="@layout/lay_internet_lost" />
 </RelativeLayout>

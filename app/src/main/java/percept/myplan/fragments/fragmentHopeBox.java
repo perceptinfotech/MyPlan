@@ -64,6 +64,7 @@ public class fragmentHopeBox extends Fragment {
     Map<String, String> params;
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
+
     public fragmentHopeBox() {
         // Required empty public constructor
     }
@@ -146,9 +147,8 @@ public class fragmentHopeBox extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
 
-
-            Snackbar snackbar = Snackbar
-                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_LONG)
+            final Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
