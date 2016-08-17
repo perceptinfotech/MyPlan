@@ -3,7 +3,10 @@ package percept.myplan.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -58,6 +61,7 @@ public class fragmentStrategies extends Fragment {
     public static boolean ADDED_STRATEGIES = false;
     private ProgressBar PB;
     Map<String, String> params;
+    private CoordinatorLayout REL_COORDINATE;
 
     public fragmentStrategies() {
         // Required empty public constructor
@@ -75,6 +79,7 @@ public class fragmentStrategies extends Fragment {
         BTN_INSPIRATION = (Button) _View.findViewById(R.id.btnInspiration);
         TV_ADDNEWSTRATEGY = (TextView) _View.findViewById(R.id.tvAddNewStrategy);
         PB = (ProgressBar) _View.findViewById(R.id.pbGetStrategies);
+        REL_COORDINATE = (CoordinatorLayout) _View.findViewById(R.id.snakeBar);
         setHasOptionsMenu(true);
         LIST_STRATEGY = new ArrayList<>();
         params = new HashMap<String, String>();
@@ -92,34 +97,7 @@ public class fragmentStrategies extends Fragment {
             }
         });
 
-        try {
-            PB.setVisibility(View.VISIBLE);
-            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_STRATEGIES, params, false, false, false, new VolleyResponseListener() {
-                @Override
-                public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    PB.setVisibility(View.GONE);
-                    Log.d(":::: ", response.toString());
-                    Gson gson = new Gson();
-                    try {
-                        LIST_STRATEGY = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                .toString(), new TypeToken<List<Strategy>>() {
-                        }.getType());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    ADAPTER = new StrategyAdapter(LIST_STRATEGY);
-                    LST_STRATEGY.setAdapter(ADAPTER);
-                }
-            });
-        } catch (Exception e) {
-            PB.setVisibility(View.GONE);
-            e.printStackTrace();
-        }
+        GetStrategy();
 
         LST_STRATEGY.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), LST_STRATEGY, new ClickListener() {
             @Override
@@ -154,39 +132,62 @@ public class fragmentStrategies extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    public void GetStrategy() {
+        try {
+            PB.setVisibility(View.VISIBLE);
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_STRATEGIES, params, true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    PB.setVisibility(View.GONE);
+                    LIST_STRATEGY.clear();
+                    Log.d(":::: ", response.toString());
+                    Gson gson = new Gson();
+                    try {
+                        LIST_STRATEGY = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                .toString(), new TypeToken<List<Strategy>>() {
+                        }.getType());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    ADAPTER = new StrategyAdapter(LIST_STRATEGY);
+                    LST_STRATEGY.setAdapter(ADAPTER);
+                }
+            });
+        } catch (Exception e) {
+            PB.setVisibility(View.GONE);
+            e.printStackTrace();
+
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_LONG)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            GetStrategy();
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         if (ADDED_STRATEGIES) {
-            try {
-                PB.setVisibility(View.VISIBLE);
-                new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_STRATEGIES, params, false, false, true, new VolleyResponseListener() {
-                    @Override
-                    public void onError(VolleyError message) {
-                        PB.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        PB.setVisibility(View.GONE);
-                        LIST_STRATEGY.clear();
-                        Log.d(":::: ", response.toString());
-                        Gson gson = new Gson();
-                        try {
-                            LIST_STRATEGY = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                    .toString(), new TypeToken<List<Strategy>>() {
-                            }.getType());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        ADAPTER = new StrategyAdapter(LIST_STRATEGY);
-                        LST_STRATEGY.setAdapter(ADAPTER);
-                    }
-                });
-            } catch (Exception e) {
-                PB.setVisibility(View.GONE);
-                e.printStackTrace();
-            }
+            GetStrategy();
             ADDED_STRATEGIES = false;
         }
     }
