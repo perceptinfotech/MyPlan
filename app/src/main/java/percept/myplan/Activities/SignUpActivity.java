@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -15,11 +16,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -88,6 +92,8 @@ public class SignUpActivity extends AppCompatActivity {
     private final static int MY_PERMISSIONS_REQUEST = 14;
 
     public static boolean PIC_FROM_GALLERY = true;
+    private CoordinatorLayout REL_COORDINATE;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +119,7 @@ public class SignUpActivity extends AppCompatActivity {
         EDT_BIRTHDAY = (EditText) findViewById(R.id.edtBirthDay);
         EDT_PASSWORD = (EditText) findViewById(R.id.edtPassword);
         BTN_ENTER = (Button) findViewById(R.id.btnEnter);
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         IMG_USER.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -234,14 +241,36 @@ public class SignUpActivity extends AppCompatActivity {
                     }
 
                     if (UTILS.isEmailValid(EDT_EMAIL.getText().toString())) {
-                        PB.setVisibility(View.VISIBLE);
-                       signup();
+
+
+                            PB.setVisibility(View.VISIBLE);
+                            signup();
+
                     } else {
                         Toast.makeText(SignUpActivity.this, getResources().getString(R.string.writevalidemail), Toast.LENGTH_SHORT).show();
                     }
 
-                } else
-                    Toast.makeText(SignUpActivity.this, getResources().getString(R.string.internetconn), Toast.LENGTH_SHORT).show();
+                } else {
+//                    Toast.makeText(SignUpActivity.this, getResources().getString(R.string.internetconn), Toast.LENGTH_SHORT).show();
+                    Snackbar snackbar = Snackbar
+                            .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    signup();
+                                }
+                            });
+
+                    // Changing message text color
+                    snackbar.setActionTextColor(Color.RED);
+
+                    // Changing action button text color
+                    View sbView = snackbar.getView();
+                    TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setTextColor(Color.YELLOW);
+
+                    snackbar.show();
+                }
 //                Map<String, String> params = new HashMap<String, String>();
 //                params.put(Constant.FIRST_NAME, EDT_FIRSTNAME.getText().toString().trim());
 //                params.put(Constant.LAST_NAME, EDT_LASTNAME.getText().toString().trim());
@@ -296,38 +325,39 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
-private void signup()
-{
-    HashMap<String,String> params=new HashMap<>();
-    params.put(Constant.URL,getResources().getString(R.string.server_url) + ".register");
-    if (!FILE_PATH.equals("")) {
-        params.put("profile_image", FILE_PATH);
-    }
-    params.put(Constant.FIRST_NAME, EDT_FIRSTNAME.getText().toString().trim());
-    params.put(Constant.LAST_NAME, EDT_LASTNAME.getText().toString().trim());
-    params.put(Constant.EMAIL, EDT_EMAIL.getText().toString().trim());
-    params.put(Constant.PHONE, EDT_PHONENO.getText().toString().trim());
-    params.put(Constant.DOB, YEAR.toString().trim());
-    params.put(Constant.PASSWORD, EDT_PASSWORD.getText().toString().trim());
-    new MultiPartParsing(SignUpActivity.this, params, new AsyncTaskCompletedListener() {
-        @Override
-        public void onTaskCompleted(String response) {
-            PB.setVisibility(View.GONE);
-            try {
-                JSONObject _object = new JSONObject(response);
-                JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
-                if (_ObjData.getString(Constant.STATUS).equals("Success")) {
-                    startActivity(new Intent(SignUpActivity.this, LoginActivity_1.class));
-                    SignUpActivity.this.finish();
-                } else {
-                    Toast.makeText(SignUpActivity.this, getResources().getString(R.string.signuperror), Toast.LENGTH_SHORT).show();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+    private void signup() {
+
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".register");
+        if (!FILE_PATH.equals("")) {
+            params.put("profile_image", FILE_PATH);
         }
-    });
-}
+        params.put(Constant.FIRST_NAME, EDT_FIRSTNAME.getText().toString().trim());
+        params.put(Constant.LAST_NAME, EDT_LASTNAME.getText().toString().trim());
+        params.put(Constant.EMAIL, EDT_EMAIL.getText().toString().trim());
+        params.put(Constant.PHONE, EDT_PHONENO.getText().toString().trim());
+        params.put(Constant.DOB, YEAR.toString().trim());
+        params.put(Constant.PASSWORD, EDT_PASSWORD.getText().toString().trim());
+        new MultiPartParsing(SignUpActivity.this, params, new AsyncTaskCompletedListener() {
+            @Override
+            public void onTaskCompleted(String response) {
+                PB.setVisibility(View.GONE);
+                try {
+                    JSONObject _object = new JSONObject(response);
+                    JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
+                    if (_ObjData.getString(Constant.STATUS).equals("Success")) {
+                        startActivity(new Intent(SignUpActivity.this, LoginActivity_1.class));
+                        SignUpActivity.this.finish();
+                    } else {
+                        Toast.makeText(SignUpActivity.this, getResources().getString(R.string.signuperror), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 //    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
 //        @Override
 //        protected void onPreExecute() {
@@ -552,5 +582,10 @@ private void signup()
                 }
             });
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 }

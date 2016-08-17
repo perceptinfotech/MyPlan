@@ -8,8 +8,9 @@
     android:fitsSystemWindows="true"
     tools:context="percept.myplan.Activities.SignUpActivity">
 
-    <include layout="@layout/app_toolbar"
-        android:id="@+id/include"></include>
+    <include
+        android:id="@+id/include"
+        layout="@layout/app_toolbar"></include>
 
 
     <RelativeLayout
@@ -55,7 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginLeft="10dp"
-            android:background="@color/sidemenu_seperator"/>
+            android:background="@color/sidemenu_seperator" />
 
         <LinearLayout
             android:id="@+id/layFname"
@@ -64,8 +65,8 @@
             android:layout_below="@+id/view1"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:padding="5dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="5dp">
 
             <TextView
                 android:layout_width="0dp"
@@ -100,12 +101,12 @@
         <LinearLayout
             android:id="@+id/layLname"
             android:layout_width="match_parent"
-            android:padding="5dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/layFname"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="5dp">
 
             <TextView
                 android:layout_width="0dp"
@@ -142,10 +143,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/layLname"
-            android:padding="5dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="5dp">
 
             <TextView
                 android:layout_width="0dp"
@@ -182,9 +183,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/layEmail"
             android:layout_marginLeft="10dp"
-            android:padding="5dp"
             android:layout_marginTop="5dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="5dp">
 
             <TextView
                 android:layout_width="0dp"
@@ -220,10 +221,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/layPno"
-            android:padding="5dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="5dp">
 
             <TextView
                 android:layout_width="0dp"
@@ -263,9 +264,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/layBdate"
             android:layout_marginLeft="10dp"
-            android:padding="5dp"
             android:layout_marginTop="5dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="5dp">
 
             <TextView
                 android:layout_width="0dp"
@@ -283,9 +284,9 @@
                 android:layout_weight="0.7"
                 android:background="@drawable/edt_register_border"
                 android:ems="4"
-                android:maxLength="4"
                 android:hint="@string/choose_pwd"
                 android:inputType="numberPassword"
+                android:maxLength="4"
                 android:padding="5dp"
                 android:textSize="14dp" />
         </LinearLayout>
@@ -315,7 +316,9 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:visibility="gone" />
+
+    <include layout="@layout/lay_internet_lost" />
 </RelativeLayout>

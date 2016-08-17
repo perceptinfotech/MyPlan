@@ -209,7 +209,6 @@ public class fragmentContacts extends Fragment {
             });
         } catch (Exception e) {
             e.printStackTrace();
-
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_LONG)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -44,6 +45,8 @@ public class AddNewSymptomActivity extends AppCompatActivity {
     private RecyclerView LST_SYMPTOMSTRATEGY;
     public static List<SymptomStrategy> LIST_ADDSYMPTOMSTRATEGY;
     private SymptomStrategyAdapter ADAPTER;
+    private ProgressBar PB;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,7 @@ public class AddNewSymptomActivity extends AppCompatActivity {
         mTitle.setText(getResources().getString(R.string.title_activity_addsymptom));
 
         TV_ADDSTRATEGY = (TextView) findViewById(R.id.tvAddStrategy);
+        PB = (ProgressBar) findViewById(R.id.pbAddSymptom);
 
         LST_SYMPTOMSTRATEGY = (RecyclerView) findViewById(R.id.lstSymptomStrategy);
         LIST_ADDSYMPTOMSTRATEGY = new ArrayList<>();
@@ -107,7 +111,7 @@ public class AddNewSymptomActivity extends AppCompatActivity {
             InputMethodManager inputManager = (InputMethodManager)
                     getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
+            PB.setVisibility(View.VISIBLE);
             Map<String, String> params = new HashMap<String, String>();
             params.put("sid", Constant.SID);
             params.put("sname", Constant.SNAME);
@@ -121,13 +125,14 @@ public class AddNewSymptomActivity extends AppCompatActivity {
                 new General().getJSONContentFromInternetService(AddNewSymptomActivity.this, General.PHPServices.SAVE_SYMPTOM, params, true, false, true, new VolleyResponseListener() {
                     @Override
                     public void onError(VolleyError message) {
-
+                        PB.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void onResponse(JSONObject response) {
                         fragmentSymptoms.GET_STRATEGY = true;
                         Log.d(":::::", response.toString());
+                        PB.setVisibility(View.GONE);
                     }
                 });
             } catch (Exception e) {

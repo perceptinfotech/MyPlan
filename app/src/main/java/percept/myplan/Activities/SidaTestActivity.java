@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -39,6 +40,7 @@ public class SidaTestActivity extends AppCompatActivity {
     private Button BTN_NEXT_QUES;
     private int CURR_QUES, TOTAL_QUES;
     private String STRANSWER = "";
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public class SidaTestActivity extends AppCompatActivity {
         TV_TESTQUESTION = (TextView) findViewById(R.id.tvQuestions);
         TV_TESTANSWER = (TextView) findViewById(R.id.tvSidaPoints);
         BTN_NEXT_QUES = (Button) findViewById(R.id.btnNextQues);
+        PB = (ProgressBar) findViewById(R.id.pbSidaTest);
 
         SEEK_SIDA = (SeekBar) findViewById(R.id.seekBarSidas);
 
@@ -130,14 +133,16 @@ public class SidaTestActivity extends AppCompatActivity {
                     try {
                         STRANSWER += "," + TV_TESTANSWER.getText().toString();
                         params.put("answer", STRANSWER);
+                        PB.setVisibility(View.VISIBLE);
                         new General().getJSONContentFromInternetService(SidaTestActivity.this, General.PHPServices.SUBMIT_SIDATEST, params, false, false, true, new VolleyResponseListener() {
                             @Override
                             public void onError(VolleyError message) {
-
+                                PB.setVisibility(View.GONE);
                             }
 
                             @Override
                             public void onResponse(JSONObject response) {
+                                PB.setVisibility(View.GONE);
                                 SidaTestActivity.this.finish();
                             }
                         });

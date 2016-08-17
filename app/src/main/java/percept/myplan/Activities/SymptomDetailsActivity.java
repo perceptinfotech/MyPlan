@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +53,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
     private TextView TV_ADDSTRATEGY;
     private boolean isEDIT = false;
     private String STR_STRATEGYID = "";
+    private ProgressBar PB;
 
     private static final int ADDSTRATEGY = 6;
 
@@ -78,7 +80,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
 
         LAY_ADDSTRATEGY = (LinearLayout) findViewById(R.id.layAddStrategy);
         TV_ADDSTRATEGY = (TextView) findViewById(R.id.tvAddStrategy);
-
+        PB = (ProgressBar) findViewById(R.id.pbSymptomDetail);
         LIST_SYMPTOMSTRATEGY = new ArrayList<>();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(SymptomDetailsActivity.this);
         LST_SYMPTOMSTRATEGY.setLayoutManager(mLayoutManager);
@@ -197,7 +199,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
     }
 
     private void GetSymptomDetail() {
-
+        PB.setVisibility(View.VISIBLE);
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -206,7 +208,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(SymptomDetailsActivity.this, General.PHPServices.GET_SYMPTOM, params, false, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -234,7 +236,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
                         }
 
                         LST_SYMPTOMSTRATEGY.setAdapter(ADAPTER);
-
+                        PB.setVisibility(View.GONE);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

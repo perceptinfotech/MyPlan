@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -40,6 +41,7 @@ public class HelpListEditActivity extends AppCompatActivity {
     private TextView TV_ADDHELPLIST;
     private RecyclerView LST_HELP;
     private ContactHelpListAdapter ADPT_CONTACTHELPLIST;
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public class HelpListEditActivity extends AppCompatActivity {
 
         TV_ADDHELPLIST = (TextView) findViewById(R.id.tvAddHelpContact);
         LST_HELP = (RecyclerView) findViewById(R.id.lstHelpList);
+        PB = (ProgressBar) findViewById(R.id.pbHelpListEdit);
 
 
         ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
@@ -83,6 +86,7 @@ public class HelpListEditActivity extends AppCompatActivity {
         super.onResume();
         if (fragmentContacts.GET_CONTACTS) {
             try {
+                PB.setVisibility(View.VISIBLE);
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sid", Constant.SID);
                 params.put("sname", Constant.SNAME);
@@ -91,7 +95,7 @@ public class HelpListEditActivity extends AppCompatActivity {
                 new General().getJSONContentFromInternetService(HelpListEditActivity.this, General.PHPServices.GET_CONTACTS, params, false, false, true, new VolleyResponseListener() {
                     @Override
                     public void onError(VolleyError message) {
-
+                        PB.setVisibility(View.GONE);
                     }
 
                     @Override
@@ -115,7 +119,7 @@ public class HelpListEditActivity extends AppCompatActivity {
                                 LIST_HELPCONTACTS.add(_obj);
                             }
                         }
-
+                        PB.setVisibility(View.GONE);
 
                         ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS,"HELP");
                         LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
