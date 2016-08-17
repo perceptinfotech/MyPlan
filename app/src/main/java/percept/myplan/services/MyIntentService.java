@@ -44,6 +44,7 @@ public class MyIntentService extends IntentService {
             String _URI = _bundle .getString("ALARM_SOUND");
             Uri _uri = Uri.parse(_URI);
 
+
             Context context = this.getApplicationContext();
 
             NOTI_MANAGER = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

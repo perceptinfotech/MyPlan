@@ -7,7 +7,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btnDangerSignal"
         android:layout_below="@+id/viewSeperator"
         android:orientation="vertical">
 
@@ -57,4 +58,11 @@
         android:layout_centerVertical="true"
         android:visibility="gone" />
 
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/snakeBar"
+        android:layout_alignParentBottom="true">
+
+    </android.support.design.widget.CoordinatorLayout>
 </RelativeLayout>

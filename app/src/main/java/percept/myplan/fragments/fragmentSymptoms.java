@@ -3,7 +3,10 @@ package percept.myplan.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -20,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -60,6 +64,7 @@ public class fragmentSymptoms extends Fragment {
     public static Boolean GET_STRATEGY = false;
 
     private ProgressBar PB;
+    private CoordinatorLayout REL_COORDINATE;
 
     public fragmentSymptoms() {
         // Required empty public constructor
@@ -75,6 +80,7 @@ public class fragmentSymptoms extends Fragment {
         LST_SYMPTOM = (RecyclerView) _View.findViewById(R.id.lstSymptom);
         BTN_DANGERSIGNAL = (Button) _View.findViewById(R.id.btnDangerSignal);
         PB = (ProgressBar) _View.findViewById(R.id.pbGetSymptoms);
+        REL_COORDINATE = (CoordinatorLayout) _View.findViewById(R.id.snakeBar);
         LIST_SYMPTOM = new ArrayList<>();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
@@ -93,34 +99,7 @@ public class fragmentSymptoms extends Fragment {
             }
         });
 
-        try {
-            PB.setVisibility(View.VISIBLE);
-            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_SYMPTOMS, params, false, false, false, new VolleyResponseListener() {
-                @Override
-                public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    PB.setVisibility(View.GONE);
-                    Log.d(":::: ", response.toString());
-                    Gson gson = new Gson();
-                    try {
-                        LIST_SYMPTOM = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                .toString(), new TypeToken<List<Symptom>>() {
-                        }.getType());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    ADAPTER = new SymptomAdapter(LIST_SYMPTOM);
-                    LST_SYMPTOM.setAdapter(ADAPTER);
-                }
-            });
-        } catch (Exception e) {
-            PB.setVisibility(View.GONE);
-            e.printStackTrace();
-        }
+        GetSymptom();
 
         LST_SYMPTOM.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), LST_SYMPTOM, new ClickListener() {
             @Override
@@ -163,41 +142,63 @@ public class fragmentSymptoms extends Fragment {
         return false;
     }
 
+    public void GetSymptom() {
+        try {
+            PB.setVisibility(View.VISIBLE);
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("sid", Constant.SID);
+            params.put("sname", Constant.SNAME);
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_SYMPTOMS, params, true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    PB.setVisibility(View.GONE);
+                    Log.d(":::: ", response.toString());
+                    Gson gson = new Gson();
+                    try {
+                        LIST_SYMPTOM = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                .toString(), new TypeToken<List<Symptom>>() {
+                        }.getType());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    ADAPTER = new SymptomAdapter(LIST_SYMPTOM);
+                    LST_SYMPTOM.setAdapter(ADAPTER);
+                }
+            });
+        } catch (Exception e) {
+            PB.setVisibility(View.GONE);
+            e.printStackTrace();
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_LONG)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            GetSymptom();
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         if (GET_STRATEGY) {
-            try {
-                PB.setVisibility(View.VISIBLE);
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("sid", Constant.SID);
-                params.put("sname", Constant.SNAME);
-                new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_SYMPTOMS, params, false, false, true, new VolleyResponseListener() {
-                    @Override
-                    public void onError(VolleyError message) {
-                        PB.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        PB.setVisibility(View.GONE);
-                        Log.d(":::: ", response.toString());
-                        Gson gson = new Gson();
-                        try {
-                            LIST_SYMPTOM = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                    .toString(), new TypeToken<List<Symptom>>() {
-                            }.getType());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        ADAPTER = new SymptomAdapter(LIST_SYMPTOM);
-                        LST_SYMPTOM.setAdapter(ADAPTER);
-                    }
-                });
-            } catch (Exception e) {
-                PB.setVisibility(View.GONE);
-                e.printStackTrace();
-            }
+            GetSymptom();
             GET_STRATEGY = false;
         }
     }
