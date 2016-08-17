@@ -8,16 +8,15 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btnInspiration"
         android:layout_below="@+id/viewSeperator"
         android:orientation="vertical">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/lstStrategy"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:paddingLeft="10dp" />
+            android:layout_height="match_parent"/>
 
         <TextView
             android:id="@+id/tvAddNewStrategy"
@@ -44,7 +43,7 @@
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="35dp"
         android:layout_marginRight="35dp"
-        android:background="@drawable/btn_register_border"
+        android:background="@drawable/btn_inspiration_border"
         android:text="@string/inspiration"
         android:textAllCaps="false"
         android:textColor="@android:color/white" />
@@ -57,5 +56,11 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/pbGetStrategies" />
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/snakeBar"
+        android:layout_alignParentBottom="true">
 
+    </android.support.design.widget.CoordinatorLayout>
 </RelativeLayout>

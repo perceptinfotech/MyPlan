@@ -3,7 +3,10 @@ package percept.myplan.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -63,7 +66,7 @@ public class fragmentContacts extends Fragment {
     private ContactHelpListAdapter ADPT_CONTACTLIST;
     public static boolean GET_CONTACTS = false;
     private Utils UTILS;
-
+    private CoordinatorLayout REL_COORDINATE;
     public fragmentContacts() {
         // Required empty public constructor
     }
@@ -84,6 +87,8 @@ public class fragmentContacts extends Fragment {
         LST_HELP = (RecyclerView) _View.findViewById(R.id.lstHelpList);
         LST_CONTACTS = (RecyclerView) _View.findViewById(R.id.lstContacts);
 
+        REL_COORDINATE = (CoordinatorLayout) _View.findViewById(R.id.snakeBar);
+
         LIST_ALLCONTACTS = new ArrayList<>();
         LIST_HELPCONTACTS = new ArrayList<>();
         LIST_CONTACTS = new ArrayList<>();
@@ -97,54 +102,7 @@ public class fragmentContacts extends Fragment {
             TV_EMERGENCYNO.setText("112");
         }
 
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("sid", Constant.SID);
-        params.put("sname", Constant.SNAME);
-        try {
-            clearData();
-            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, false, false, false, new VolleyResponseListener() {
-                @Override
-                public void onError(VolleyError message) {
-
-                }
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.d(":::::::::::::: ", response.toString());
-
-                    Gson gson = new Gson();
-                    try {
-                        LIST_ALLCONTACTS = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                .toString(), new TypeToken<List<ContactDisplay>>() {
-                        }.getType());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    for (ContactDisplay _obj : LIST_ALLCONTACTS) {
-
-
-                        if (_obj.getHelplist().equals("0")) {
-                            CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                            LIST_CONTACTS.add(_obj);
-                        } else {
-                            HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                            LIST_HELPCONTACTS.add(_obj);
-                        }
-                    }
-
-                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
-                    LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
-
-                    ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
-                    LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
+        GetContacts();
         ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -211,6 +169,68 @@ public class fragmentContacts extends Fragment {
         return _View;
     }
 
+    private void GetContacts() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        try {
+            clearData();
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, false, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    Gson gson = new Gson();
+                    try {
+                        LIST_ALLCONTACTS = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                .toString(), new TypeToken<List<ContactDisplay>>() {
+                        }.getType());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    for (ContactDisplay _obj : LIST_ALLCONTACTS) {
+                        if (_obj.getHelplist().equals("0")) {
+                            CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
+                            LIST_CONTACTS.add(_obj);
+                        } else {
+                            HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
+                            LIST_HELPCONTACTS.add(_obj);
+                        }
+                    }
+                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
+                    LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
+
+                    ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
+                    LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_LONG)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            GetContacts();
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+        }
+    }
+
     private void clearData() {
         LIST_ALLCONTACTS.clear();
         LIST_CONTACTS.clear();
@@ -223,48 +243,7 @@ public class fragmentContacts extends Fragment {
     public void onResume() {
         super.onResume();
         if (GET_CONTACTS) {
-            try {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("sid", Constant.SID);
-                params.put("sname", Constant.SNAME);
-                clearData();
-                new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, false, false, true, new VolleyResponseListener() {
-                    @Override
-                    public void onError(VolleyError message) {
-
-                    }
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Gson gson = new Gson();
-                        try {
-                            LIST_ALLCONTACTS = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                    .toString(), new TypeToken<List<ContactDisplay>>() {
-                            }.getType());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        for (ContactDisplay _obj : LIST_ALLCONTACTS) {
-                            if (_obj.getHelplist().equals("0")) {
-                                CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                                LIST_CONTACTS.add(_obj);
-                            } else {
-                                HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                                LIST_HELPCONTACTS.add(_obj);
-                            }
-                        }
-
-                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
-                        LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
-
-                        ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
-                        LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            GetContacts();
             GET_CONTACTS = false;
         }
     }

@@ -4,8 +4,11 @@ package percept.myplan.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -22,6 +25,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -59,7 +63,7 @@ public class fragmentHopeBox extends Fragment {
     public static boolean ADDED_HOPEBOX = false;
     Map<String, String> params;
     private ProgressBar PB;
-
+    private CoordinatorLayout REL_COORDINATE;
     public fragmentHopeBox() {
         // Required empty public constructor
     }
@@ -71,7 +75,7 @@ public class fragmentHopeBox extends Fragment {
         // Inflate the layout for this fragment
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Hope Box");
         View _View = inflater.inflate(R.layout.fragment_hope_box, container, false);
-
+        REL_COORDINATE = (CoordinatorLayout) _View.findViewById(R.id.snakeBar);
         setHasOptionsMenu(true);
 
         LST_HOPE = (RecyclerView) _View.findViewById(R.id.recycler_hope);
@@ -105,7 +109,11 @@ public class fragmentHopeBox extends Fragment {
 
             }
         }));
+        GetHopeBox();
+        return _View;
+    }
 
+    private void GetHopeBox() {
 
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
@@ -137,8 +145,27 @@ public class fragmentHopeBox extends Fragment {
             });
         } catch (Exception e) {
             e.printStackTrace();
+
+
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_LONG)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            GetHopeBox();
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
         }
-        return _View;
     }
 
     @Override
@@ -162,34 +189,7 @@ public class fragmentHopeBox extends Fragment {
     public void onResume() {
         super.onResume();
         if (ADDED_HOPEBOX) {
-            try {
-                PB.setVisibility(View.VISIBLE);
-                LIST_HOPE.clear();
-                new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_HOPEBOXES, params, false, false, false, new VolleyResponseListener() {
-                    @Override
-                    public void onError(VolleyError message) {
-                        PB.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        PB.setVisibility(View.GONE);
-                        Gson gson = new Gson();
-                        try {
-                            LIST_HOPE = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                    .toString(), new TypeToken<List<Hope>>() {
-                            }.getType());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        LIST_HOPE.add(new Hope("", "", "", "", "", "Add New Box", ""));
-                        ADAPTER = new HopeAdapter(getActivity(), LIST_HOPE);
-                        LST_HOPE.setAdapter(ADAPTER);
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            GetHopeBox();
             ADDED_HOPEBOX = false;
         }
     }
