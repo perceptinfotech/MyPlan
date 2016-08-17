@@ -50,7 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/white"
-                android:drawableLeft="@drawable/ic_menu_gallery"
+                android:drawableLeft="@drawable/exclamation"
                 android:drawablePadding="10dp"
                 android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
                 android:gravity="center_vertical"

@@ -2,11 +2,13 @@ package percept.myplan.Activities;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -19,11 +21,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,10 +48,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -69,7 +76,7 @@ public class SignUpActivity extends AppCompatActivity {
     private Button BTN_ENTER;
     private int SDAY = 0, SMONTH = 0, SYEAR = 0;
     private TextView TV_CAPTUREIMG;
-    private String FILE_PATH = "";
+    private String FILE_PATH = "", YEAR = "1960";
     private Utils UTILS;
     private ProgressBar PB;
     private static Uri IMG_URI;
@@ -175,7 +182,19 @@ public class SignUpActivity extends AppCompatActivity {
         EDT_BIRTHDAY.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(SignUpActivity.this, myDateListener, SYEAR, SMONTH - 1, SDAY).show();
+//                new DatePickerDialog(SignUpActivity.this, myDateListener, SYEAR, SMONTH - 1, SDAY).show();
+
+                YearCalender _dialog = new YearCalender(SignUpActivity.this);
+                _dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                _dialog.setCanceledOnTouchOutside(true);
+                _dialog.show();
+
+                _dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        EDT_BIRTHDAY.setText(YEAR);
+                    }
+                });
             }
         });
 
@@ -317,7 +336,7 @@ public class SignUpActivity extends AppCompatActivity {
                     entity.addPart(Constant.LAST_NAME, new StringBody(EDT_LASTNAME.getText().toString().trim()));
                     entity.addPart(Constant.EMAIL, new StringBody(EDT_EMAIL.getText().toString().trim()));
                     entity.addPart(Constant.PHONE, new StringBody(EDT_PHONENO.getText().toString().trim()));
-                    entity.addPart(Constant.DOB, new StringBody(EDT_BIRTHDAY.getText().toString().trim()));
+                    entity.addPart(Constant.DOB, new StringBody(YEAR.toString().trim()));
                     entity.addPart(Constant.PASSWORD, new StringBody(EDT_PASSWORD.getText().toString().trim()));
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -391,7 +410,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void showDate(int year, int month, int day) {
 
-        EDT_BIRTHDAY.setText(new StringBuilder().append(day).append("/").append(month + 1).append("/").append(year));
+//        EDT_BIRTHDAY.setText(new StringBuilder().append(day).append("/").append(month + 1).append("/").append(year));
         SYEAR = year;
         SMONTH = month;
         SDAY = day;
@@ -463,5 +482,41 @@ public class SignUpActivity extends AppCompatActivity {
 //        super.onBackPressed();
         startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
         SignUpActivity.this.finish();
+    }
+
+    public class YearCalender extends Dialog {
+
+        private NumberPicker YEAR_PICKER;
+        private TextView TV_DONE;
+
+        public YearCalender(Context context) {
+            super(context, R.style.DialogTheme);
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            setContentView(R.layout.lay_year_picker);
+
+            InputMethodManager inputManager = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+            TV_DONE = (TextView) findViewById(R.id.tvDone);
+
+            YEAR_PICKER = (NumberPicker) findViewById(R.id.pickYear);
+            //setNumberPickerTextColor(YEAR_PICKER, android.R.color.black);
+            YEAR_PICKER.setMinValue(1960);
+            YEAR_PICKER.setMaxValue(2010);
+
+            TV_DONE.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    YEAR = String.valueOf(YEAR_PICKER.getValue());
+                    YearCalender.this.dismiss();
+                }
+            });
+        }
     }
 }

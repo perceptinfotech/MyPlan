@@ -15,7 +15,7 @@
     <string name="emailadd">Email Address</string>
     <string name="email">Email</string>
     <string name="phone_no">Phone Number</string>
-    <string name="birthday">Birthday - Day/month/year</string>
+    <string name="birthday">Birthday - year</string>
     <string name="choose_pwd">Choose Password - 4 Digits</string>
     <string name="enter">Enter</string>
 
@@ -204,6 +204,7 @@
     <string name="sidasfulltest">Sidas Full Test</string>
     <string name="cont">Continue</string>
     <string name="nextques">Next question</string>
+    <string name="done">Done</string>
     <!--<string name="sidastart">"<b>" + "Sidas" + "</b>" + "consist of 5 questions" + "<br />" +
                     "You can use" + "<b>" + "SIDAS" + "</b>" + "to measure your suicidal thoughts." + "<br />" +
                     "<b>" + "IMPORTANT " + "</b>" + "if you have a high score, you will get an automate " +
