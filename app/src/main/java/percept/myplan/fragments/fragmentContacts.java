@@ -97,54 +97,7 @@ public class fragmentContacts extends Fragment {
             TV_EMERGENCYNO.setText("112");
         }
 
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("sid", Constant.SID);
-        params.put("sname", Constant.SNAME);
-        try {
-            clearData();
-            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, false, false, false, new VolleyResponseListener() {
-                @Override
-                public void onError(VolleyError message) {
-
-                }
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.d(":::::::::::::: ", response.toString());
-
-                    Gson gson = new Gson();
-                    try {
-                        LIST_ALLCONTACTS = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                .toString(), new TypeToken<List<ContactDisplay>>() {
-                        }.getType());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    for (ContactDisplay _obj : LIST_ALLCONTACTS) {
-
-
-                        if (_obj.getHelplist().equals("0")) {
-                            CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                            LIST_CONTACTS.add(_obj);
-                        } else {
-                            HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                            LIST_HELPCONTACTS.add(_obj);
-                        }
-                    }
-
-                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
-                    LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
-
-                    ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
-                    LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
+        GetContacts();
         ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -211,6 +164,49 @@ public class fragmentContacts extends Fragment {
         return _View;
     }
 
+    private void GetContacts() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        try {
+            clearData();
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, false, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    Gson gson = new Gson();
+                    try {
+                        LIST_ALLCONTACTS = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                .toString(), new TypeToken<List<ContactDisplay>>() {
+                        }.getType());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    for (ContactDisplay _obj : LIST_ALLCONTACTS) {
+                        if (_obj.getHelplist().equals("0")) {
+                            CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
+                            LIST_CONTACTS.add(_obj);
+                        } else {
+                            HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
+                            LIST_HELPCONTACTS.add(_obj);
+                        }
+                    }
+                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
+                    LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
+
+                    ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
+                    LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void clearData() {
         LIST_ALLCONTACTS.clear();
         LIST_CONTACTS.clear();
@@ -223,48 +219,7 @@ public class fragmentContacts extends Fragment {
     public void onResume() {
         super.onResume();
         if (GET_CONTACTS) {
-            try {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("sid", Constant.SID);
-                params.put("sname", Constant.SNAME);
-                clearData();
-                new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, false, false, true, new VolleyResponseListener() {
-                    @Override
-                    public void onError(VolleyError message) {
-
-                    }
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Gson gson = new Gson();
-                        try {
-                            LIST_ALLCONTACTS = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                    .toString(), new TypeToken<List<ContactDisplay>>() {
-                            }.getType());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        for (ContactDisplay _obj : LIST_ALLCONTACTS) {
-                            if (_obj.getHelplist().equals("0")) {
-                                CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                                LIST_CONTACTS.add(_obj);
-                            } else {
-                                HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                                LIST_HELPCONTACTS.add(_obj);
-                            }
-                        }
-
-                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
-                        LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
-
-                        ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
-                        LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            GetContacts();
             GET_CONTACTS = false;
         }
     }
