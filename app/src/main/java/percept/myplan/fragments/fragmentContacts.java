@@ -3,7 +3,10 @@ package percept.myplan.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -63,7 +66,7 @@ public class fragmentContacts extends Fragment {
     private ContactHelpListAdapter ADPT_CONTACTLIST;
     public static boolean GET_CONTACTS = false;
     private Utils UTILS;
-
+    private CoordinatorLayout REL_COORDINATE;
     public fragmentContacts() {
         // Required empty public constructor
     }
@@ -83,6 +86,8 @@ public class fragmentContacts extends Fragment {
 
         LST_HELP = (RecyclerView) _View.findViewById(R.id.lstHelpList);
         LST_CONTACTS = (RecyclerView) _View.findViewById(R.id.lstContacts);
+
+        REL_COORDINATE = (CoordinatorLayout) _View.findViewById(R.id.snakeBar);
 
         LIST_ALLCONTACTS = new ArrayList<>();
         LIST_HELPCONTACTS = new ArrayList<>();
@@ -204,6 +209,25 @@ public class fragmentContacts extends Fragment {
             });
         } catch (Exception e) {
             e.printStackTrace();
+
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_LONG)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            GetContacts();
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
         }
     }
 
