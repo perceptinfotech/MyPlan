@@ -175,7 +175,7 @@ public class fragmentContacts extends Fragment {
         params.put("sname", Constant.SNAME);
         try {
             clearData();
-            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, false, false, true, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
 

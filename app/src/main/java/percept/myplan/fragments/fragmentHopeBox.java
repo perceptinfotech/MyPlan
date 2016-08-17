@@ -122,7 +122,7 @@ public class fragmentHopeBox extends Fragment {
         try {
             PB.setVisibility(View.VISIBLE);
             LIST_HOPE.clear();
-            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_HOPEBOXES, params, false, false, false, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_HOPEBOXES, params, true, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
                     PB.setVisibility(View.GONE);
