@@ -16,8 +16,7 @@
             android:id="@+id/lstSymptom"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:paddingLeft="10dp" />
+            android:background="@color/backcolor"/>
 
         <TextView
             android:id="@+id/tvAddNewSymptom"
