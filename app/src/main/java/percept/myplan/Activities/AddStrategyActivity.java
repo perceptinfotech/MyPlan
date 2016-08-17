@@ -242,144 +242,144 @@ public class AddStrategyActivity extends AppCompatActivity {
         });
     }
 
-    private class AddStrategy extends AsyncTask<Void, Integer, String> {
-
-        private String TITLE, TEXT, CONTACT_ID, LINK;
-        private List<String> LST_IMG, LST_MUSIC;
-
-        public AddStrategy(String title, String text, String STR_CONTACTID, List<String> listImg, List<String> listMusic, String STR_LINK) {
-            this.TITLE = title;
-            this.TEXT = text;
-            this.CONTACT_ID = STR_CONTACTID;
-            this.LST_IMG = listImg;
-            this.LST_MUSIC = listMusic;
-            this.LINK = STR_LINK;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            // setting progress bar to zero
-            super.onPreExecute();
-        }
-
-
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile() {
-            String responseString = null;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveStrategy");
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-//                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-//                if (!FILE_PATH.equals("")) {
-//                    File sourceFile = new File(FILE_PATH);
-
-                // Adding file data to http body
-                if (LST_IMG.size() > 0) {
-                    for (int i = 0; i < LST_IMG.size(); i++) {
-                        File _f = new File(LST_IMG.get(i));
-                        entity.addPart("image" + (i + 1), new FileBody(_f));
-                    }
-                }
-                if (LST_MUSIC.size() > 0) {
-                    for (int i = 0; i < LST_MUSIC.size(); i++) {
-                        File _f = new File(LST_MUSIC.get(i));
-                        entity.addPart("videos" + (i + 1), new FileBody(_f));
-                    }
-                }
+//    private class AddStrategy extends AsyncTask<Void, Integer, String> {
+//
+//        private String TITLE, TEXT, CONTACT_ID, LINK;
+//        private List<String> LST_IMG, LST_MUSIC;
+//
+//        public AddStrategy(String title, String text, String STR_CONTACTID, List<String> listImg, List<String> listMusic, String STR_LINK) {
+//            this.TITLE = title;
+//            this.TEXT = text;
+//            this.CONTACT_ID = STR_CONTACTID;
+//            this.LST_IMG = listImg;
+//            this.LST_MUSIC = listMusic;
+//            this.LINK = STR_LINK;
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            // setting progress bar to zero
+//            super.onPreExecute();
+//        }
+//
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            return uploadFile();
+//        }
+//
+//        @SuppressWarnings("deprecation")
+//        private String uploadFile() {
+//            String responseString = null;
+//
+//            HttpClient httpclient = new DefaultHttpClient();
+//            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveStrategy");
+//
+//            try {
+//                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+//                        new AndroidMultiPartEntity.ProgressListener() {
+//
+//                            @Override
+//                            public void transferred(long num) {
+////                                publishProgress((int) ((num / (float) totalSize) * 100));
+//                            }
+//                        });
+//
+////                if (!FILE_PATH.equals("")) {
+////                    File sourceFile = new File(FILE_PATH);
+//
+//                // Adding file data to http body
+//                if (LST_IMG.size() > 0) {
+//                    for (int i = 0; i < LST_IMG.size(); i++) {
+//                        File _f = new File(LST_IMG.get(i));
+//                        entity.addPart("image" + (i + 1), new FileBody(_f));
+//                    }
 //                }
-                // Extra parameters if you want to pass to server
-                try {
-
-                    entity.addPart("sid", new StringBody(Constant.SID));
-                    entity.addPart("sname", new StringBody(Constant.SNAME));
-                    entity.addPart("image_count", new StringBody(String.valueOf(LST_IMG.size())));
-                    entity.addPart("music_count", new StringBody(String.valueOf(LST_MUSIC.size())));
-                    entity.addPart(Constant.ID, new StringBody(""));
-                    entity.addPart(Constant.TITLE, new StringBody(this.TITLE));
-                    entity.addPart(Constant.DESC, new StringBody(this.TEXT));
-                    entity.addPart(Constant.CONTACTID, new StringBody(this.CONTACT_ID));
-                    entity.addPart(Constant.LINK, new StringBody(this.LINK));
-
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-
-//                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-                long totalLength = entity.getContentLength();
-                System.out.println("TotalLength : " + totalLength);
-
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
-
-            return responseString;
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            PB.setVisibility(View.GONE);
-            super.onPostExecute(result);
-            try {
-                Log.d(":::::: ", result);
-                String _id = "";
-                JSONObject _object = new JSONObject(result);
-                JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
-                _id = _ObjData.getString(Constant.ID);
-                MAP_ALARM.put(_id, LIST_ALARM);
-                Gson gson = new Gson();
-                String _alarmList = gson.toJson(MAP_ALARM);
-                UTILS.setPreference("ALARMLIST", _alarmList);
-                Toast.makeText(AddStrategyActivity.this,
-                        getResources().getString(R.string.strategyadded), Toast.LENGTH_SHORT).show();
-
-
-                if (getIntent().hasExtra("FROM_SYMPTOM")) {
-                    GET_STRATEGIES = true;
-                } else {
-                    ADDED_STRATEGIES = true;
-                }
-                AddStrategyActivity.this.finish();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-    }
+//                if (LST_MUSIC.size() > 0) {
+//                    for (int i = 0; i < LST_MUSIC.size(); i++) {
+//                        File _f = new File(LST_MUSIC.get(i));
+//                        entity.addPart("videos" + (i + 1), new FileBody(_f));
+//                    }
+//                }
+////                }
+//                // Extra parameters if you want to pass to server
+//                try {
+//
+//                    entity.addPart("sid", new StringBody(Constant.SID));
+//                    entity.addPart("sname", new StringBody(Constant.SNAME));
+//                    entity.addPart("image_count", new StringBody(String.valueOf(LST_IMG.size())));
+//                    entity.addPart("music_count", new StringBody(String.valueOf(LST_MUSIC.size())));
+//                    entity.addPart(Constant.ID, new StringBody(""));
+//                    entity.addPart(Constant.TITLE, new StringBody(this.TITLE));
+//                    entity.addPart(Constant.DESC, new StringBody(this.TEXT));
+//                    entity.addPart(Constant.CONTACTID, new StringBody(this.CONTACT_ID));
+//                    entity.addPart(Constant.LINK, new StringBody(this.LINK));
+//
+//                } catch (UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                }
+//
+//
+////                totalSize = entity.getContentLength();
+//                httppost.setEntity(entity);
+//                long totalLength = entity.getContentLength();
+//                System.out.println("TotalLength : " + totalLength);
+//
+//                // Making server call
+//                HttpResponse response = httpclient.execute(httppost);
+//                HttpEntity r_entity = response.getEntity();
+//
+//                int statusCode = response.getStatusLine().getStatusCode();
+//                if (statusCode == 200) {
+//                    // Server response
+//                    responseString = EntityUtils.toString(r_entity);
+//
+//                } else {
+//                    responseString = "Error occurred! Http Status Code: "
+//                            + statusCode;
+//                }
+//
+//            } catch (ClientProtocolException e) {
+//                responseString = e.toString();
+//            } catch (IOException e) {
+//                responseString = e.toString();
+//            }
+//
+//            return responseString;
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            PB.setVisibility(View.GONE);
+//            super.onPostExecute(result);
+//            try {
+//                Log.d(":::::: ", result);
+//                String _id = "";
+//                JSONObject _object = new JSONObject(result);
+//                JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
+//                _id = _ObjData.getString(Constant.ID);
+//                MAP_ALARM.put(_id, LIST_ALARM);
+//                Gson gson = new Gson();
+//                String _alarmList = gson.toJson(MAP_ALARM);
+//                UTILS.setPreference("ALARMLIST", _alarmList);
+//                Toast.makeText(AddStrategyActivity.this,
+//                        getResources().getString(R.string.strategyadded), Toast.LENGTH_SHORT).show();
+//
+//
+//                if (getIntent().hasExtra("FROM_SYMPTOM")) {
+//                    GET_STRATEGIES = true;
+//                } else {
+//                    ADDED_STRATEGIES = true;
+//                }
+//                AddStrategyActivity.this.finish();
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

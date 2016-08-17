@@ -29,15 +29,6 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,16 +37,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
+import percept.myplan.Global.MultiPartParsing;
 import percept.myplan.Global.Utils;
+import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.Contact;
 import percept.myplan.R;
@@ -402,127 +393,168 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             e.printStackTrace();
         }
 
-        new UploadFileToServer(_fname, _lname, _email, _note, _phoneno, ADD_TO_HELP_LIST, _file).execute();
+         saveContact(_fname, _lname, _email, _note, _phoneno, ADD_TO_HELP_LIST, _file);
     }
 
-    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
-        private String FNAME, LNAME, EMAIL, NOTE, PHONENO, HELPLIST;
-        private File IMG_FILE;
+    private void saveContact(String FNAME, String LNAME, String EMAIL, String NOTE, String PHONENO, String HELPLIST, File IMG_FILE) {
 
-        public UploadFileToServer(String fname, String lname, String email, String note, String phoneno, String helplist,
-                                  File image) {
-            this.FNAME = fname;
-            this.LNAME = lname;
-            this.EMAIL = email;
-            this.NOTE = note;
-            this.PHONENO = phoneno;
-            this.HELPLIST = helplist;
-            this.IMG_FILE = image;
-        }
+        HashMap<String, String> map = new HashMap<>();
 
-        @Override
-        protected void onPreExecute() {
-            // setting progress bar to zero
-            super.onPreExecute();
-        }
-
-
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile() {
-            String responseString = null;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveContact");
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-//                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-//                if (!FILE_PATH.equals("")) {
-//                    File sourceFile = new File(FILE_PATH);
-
-                // Adding file data to http body
-                if (IMG_FILE != null)
-                    entity.addPart(Constant.CON_IMAGE, new FileBody(IMG_FILE));
-//                }
-                // Extra parameters if you want to pass to server
+        map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveContact");
+        // Adding file data to http body
+        if (IMG_FILE != null)
+            map.put(Constant.CON_IMAGE, IMG_FILE.getAbsolutePath());
+        map.put("sid", Constant.SID);
+        map.put("sname", Constant.SNAME);
+        map.put(Constant.ID, "");
+        map.put(Constant.FIRST_NAME, FNAME);
+        map.put(Constant.LAST_NAME, LNAME);
+        map.put(Constant.PHONE, PHONENO);
+        map.put(Constant.SKYPE, "");
+        map.put(Constant.EMAIL, EMAIL);
+        map.put(Constant.HELPLIST, HELPLIST);
+        map.put(Constant.NOTE, NOTE);
+        new MultiPartParsing(this, map, new AsyncTaskCompletedListener() {
+            @Override
+            public void onTaskCompleted(String response) {
                 try {
-
-                    entity.addPart("sid", new StringBody(Constant.SID));
-                    entity.addPart("sname", new StringBody(Constant.SNAME));
-                    entity.addPart(Constant.ID, new StringBody(""));
-                    entity.addPart(Constant.FIRST_NAME, new StringBody(this.FNAME));
-                    entity.addPart(Constant.LAST_NAME, new StringBody(this.LNAME));
-                    entity.addPart(Constant.PHONE, new StringBody(this.PHONENO));
-                    entity.addPart(Constant.SKYPE, new StringBody(""));
-                    entity.addPart(Constant.EMAIL, new StringBody(this.EMAIL));
-                    entity.addPart(Constant.HELPLIST, new StringBody(this.HELPLIST));
-                    entity.addPart(Constant.NOTE, new StringBody(this.NOTE));
-                } catch (UnsupportedEncodingException e) {
+                    Log.d(":::::: ", response);
+                    JSONObject _object = new JSONObject(response);
+                    JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
+                    SAVED_NO_COUNT = SAVED_NO_COUNT + 1;
+                    if (NO_COUNT == SAVED_NO_COUNT) {
+                        PB_SAVECONTACT.setVisibility(View.GONE);
+                        Toast.makeText(AddContactFromPhoneActivity.this,
+                                getResources().getString(R.string.contactsaved), Toast.LENGTH_SHORT).show();
+                        AddContactFromPhoneActivity.this.finish();
+                        fragmentContacts.GET_CONTACTS = true;
+                    }
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
-//                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
             }
-
-            return responseString;
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            super.onPostExecute(result);
-            try {
-                Log.d(":::::: ", result);
-                JSONObject _object = new JSONObject(result);
-                JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
-                SAVED_NO_COUNT = SAVED_NO_COUNT + 1;
-                if (NO_COUNT == SAVED_NO_COUNT) {
-                    PB_SAVECONTACT.setVisibility(View.GONE);
-                    Toast.makeText(AddContactFromPhoneActivity.this,
-                            getResources().getString(R.string.contactsaved), Toast.LENGTH_SHORT).show();
-                    AddContactFromPhoneActivity.this.finish();
-                    fragmentContacts.GET_CONTACTS = true;
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-
+        });
     }
+//    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
+//        private String FNAME, LNAME, EMAIL, NOTE, PHONENO, HELPLIST;
+//        private File IMG_FILE;
+//
+//        public UploadFileToServer(String fname, String lname, String email, String note, String phoneno, String helplist,
+//                                  File image) {
+//            this.FNAME = fname;
+//            this.LNAME = lname;
+//            this.EMAIL = email;
+//            this.NOTE = note;
+//            this.PHONENO = phoneno;
+//            this.HELPLIST = helplist;
+//            this.IMG_FILE = image;
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            // setting progress bar to zero
+//            super.onPreExecute();
+//        }
+//
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            return uploadFile();
+//        }
+//
+//        @SuppressWarnings("deprecation")
+//        private String uploadFile() {
+//
+//
+//            String responseString = null;
+//
+//            HttpClient httpclient = new DefaultHttpClient();
+//            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveContact");
+//
+//            try {
+//                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+//                        new AndroidMultiPartEntity.ProgressListener() {
+//
+//                            @Override
+//                            public void transferred(long num) {
+////                                publishProgress((int) ((num / (float) totalSize) * 100));
+//                            }
+//                        });
+//
+////                if (!FILE_PATH.equals("")) {
+////                    File sourceFile = new File(FILE_PATH);
+//
+//                // Adding file data to http body
+//                if (IMG_FILE != null)
+//                    entity.addPart(Constant.CON_IMAGE, new FileBody(IMG_FILE));
+////                }
+//                // Extra parameters if you want to pass to server
+//                try {
+//
+//                    entity.addPart("sid", new StringBody(Constant.SID));
+//                    entity.addPart("sname", new StringBody(Constant.SNAME));
+//                    entity.addPart(Constant.ID, new StringBody(""));
+//                    entity.addPart(Constant.FIRST_NAME, new StringBody(this.FNAME));
+//                    entity.addPart(Constant.LAST_NAME, new StringBody(this.LNAME));
+//                    entity.addPart(Constant.PHONE, new StringBody(this.PHONENO));
+//                    entity.addPart(Constant.SKYPE, new StringBody(""));
+//                    entity.addPart(Constant.EMAIL, new StringBody(this.EMAIL));
+//                    entity.addPart(Constant.HELPLIST, new StringBody(this.HELPLIST));
+//                    entity.addPart(Constant.NOTE, new StringBody(this.NOTE));
+//                } catch (UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                }
+//
+//
+////                totalSize = entity.getContentLength();
+//                httppost.setEntity(entity);
+//
+//                // Making server call
+//                HttpResponse response = httpclient.execute(httppost);
+//                HttpEntity r_entity = response.getEntity();
+//
+//                int statusCode = response.getStatusLine().getStatusCode();
+//                if (statusCode == 200) {
+//                    // Server response
+//                    responseString = EntityUtils.toString(r_entity);
+//                } else {
+//                    responseString = "Error occurred! Http Status Code: "
+//                            + statusCode;
+//                }
+//
+//            } catch (ClientProtocolException e) {
+//                responseString = e.toString();
+//            } catch (IOException e) {
+//                responseString = e.toString();
+//            }
+//
+//            return responseString;
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//
+//            super.onPostExecute(result);
+//            try {
+//                Log.d(":::::: ", result);
+//                JSONObject _object = new JSONObject(result);
+//                JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
+//                SAVED_NO_COUNT = SAVED_NO_COUNT + 1;
+//                if (NO_COUNT == SAVED_NO_COUNT) {
+//                    PB_SAVECONTACT.setVisibility(View.GONE);
+//                    Toast.makeText(AddContactFromPhoneActivity.this,
+//                            getResources().getString(R.string.contactsaved), Toast.LENGTH_SHORT).show();
+//                    AddContactFromPhoneActivity.this.finish();
+//                    fragmentContacts.GET_CONTACTS = true;
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//
+//    }
 
     private void readContacts() {
 

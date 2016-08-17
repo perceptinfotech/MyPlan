@@ -82,6 +82,8 @@ public class General {
             return ".getSIDASCalendar";
         } else if (serviceName == PHPServices.SUBMIT_SIDATEST) {
             return ".submitSIDASTest";
+        }else if (serviceName == PHPServices.SAVE_HOPE_MEDIA) {
+            return ".saveHopemedia";
         }
         return "";
     }
@@ -214,6 +216,7 @@ public class General {
         ADD_MOOD,
         GET_SIDATEST,
         GET_SIDACALENDER,
-        SUBMIT_SIDATEST
+        SUBMIT_SIDATEST,
+        SAVE_HOPE_MEDIA
     }
 }

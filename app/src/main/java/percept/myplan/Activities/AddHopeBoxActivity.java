@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import me.crosswall.photo.pick.PickConfig;
@@ -48,6 +49,8 @@ import percept.myplan.AppController;
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
+import percept.myplan.Global.MultiPartParsing;
+import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.R;
 
 import static percept.myplan.fragments.fragmentHopeBox.ADDED_HOPEBOX;
@@ -126,7 +129,8 @@ public class AddHopeBoxActivity extends AppCompatActivity {
 
             Toast.makeText(AddHopeBoxActivity.this, "Saved Called", Toast.LENGTH_SHORT).show();
 
-            new AddHopeBox(EDT_FOLDERNAME.getText().toString(), FOLDER_IMG_PATH).execute();
+//            new AddHopeBox(EDT_FOLDERNAME.getText().toString(), FOLDER_IMG_PATH).execute();
+            addHopeBox(EDT_FOLDERNAME.getText().toString(), FOLDER_IMG_PATH);
         }
         return false;
     }
@@ -149,102 +153,122 @@ public class AddHopeBoxActivity extends AppCompatActivity {
         }
     }
 
-    private class AddHopeBox extends AsyncTask<Void, Integer, String> {
-
-        private String TITLE, IMG_PATH;
-
-        public AddHopeBox(String title, String folderImg) {
-            this.TITLE = title;
-            this.IMG_PATH = folderImg;
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            // setting progress bar to zero
-            super.onPreExecute();
-        }
-
-
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile() {
-            String responseString = null;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveHopebox");
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-//                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                if (!IMG_PATH.equals("")) {
-                    File sourceFile = new File(IMG_PATH);
-                    entity.addPart("cover", new FileBody(sourceFile));
-                }
-                try {
-
-                    entity.addPart("sid", new StringBody(Constant.SID));
-                    entity.addPart("sname", new StringBody(Constant.SNAME));
-                    entity.addPart(Constant.ID, new StringBody(""));
-                    entity.addPart(Constant.TITLE, new StringBody(TITLE));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-
-//                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-                long totalLength = entity.getContentLength();
-                System.out.println("TotalLength : " + totalLength);
-
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
+    private void addHopeBox(String TITLE, String IMG_PATH) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopebox");
+        map.put("cover", IMG_PATH);
+        map.put("sid", Constant.SID);
+        map.put("sname", Constant.SNAME);
+        map.put(Constant.ID, "");
+        map.put(Constant.TITLE, TITLE);
+        new MultiPartParsing(this, map, new AsyncTaskCompletedListener() {
+            @Override
+            public void onTaskCompleted(String response) {
+                Log.d(":::::: ", response);
+                Toast.makeText(AddHopeBoxActivity.this,
+                        getResources().getString(R.string.hopeboxadded), Toast.LENGTH_SHORT).show();
+                AddHopeBoxActivity.this.finish();
+                ADDED_HOPEBOX = true;
             }
-
-            return responseString;
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            super.onPostExecute(result);
-
-            Log.d(":::::: ", result);
-            Toast.makeText(AddHopeBoxActivity.this,
-                    getResources().getString(R.string.hopeboxadded), Toast.LENGTH_SHORT).show();
-            AddHopeBoxActivity.this.finish();
-            ADDED_HOPEBOX = true;
-
-
-        }
-
+        });
     }
+
+//    private class AddHopeBox extends AsyncTask<Void, Integer, String> {
+//
+//        private String TITLE, IMG_PATH;
+//
+//        public AddHopeBox(String title, String folderImg) {
+//            this.TITLE = title;
+//            this.IMG_PATH = folderImg;
+//
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            // setting progress bar to zero
+//            super.onPreExecute();
+//        }
+//
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            return uploadFile();
+//        }
+//
+//        @SuppressWarnings("deprecation")
+//        private String uploadFile() {
+//            String responseString = null;
+//
+//            HttpClient httpclient = new DefaultHttpClient();
+//            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveHopebox");
+//
+//            try {
+//                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+//                        new AndroidMultiPartEntity.ProgressListener() {
+//
+//                            @Override
+//                            public void transferred(long num) {
+////                                publishProgress((int) ((num / (float) totalSize) * 100));
+//                            }
+//                        });
+//
+//                if (!IMG_PATH.equals("")) {
+//                    File sourceFile = new File(IMG_PATH);
+//                    entity.addPart("cover", new FileBody(sourceFile));
+//                }
+//                try {
+//
+//                    entity.addPart("sid", new StringBody(Constant.SID));
+//                    entity.addPart("sname", new StringBody(Constant.SNAME));
+//                    entity.addPart(Constant.ID, new StringBody(""));
+//                    entity.addPart(Constant.TITLE, new StringBody(TITLE));
+//                } catch (UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                }
+//
+//
+////                totalSize = entity.getContentLength();
+//                httppost.setEntity(entity);
+//                long totalLength = entity.getContentLength();
+//                System.out.println("TotalLength : " + totalLength);
+//
+//                // Making server call
+//                HttpResponse response = httpclient.execute(httppost);
+//                HttpEntity r_entity = response.getEntity();
+//
+//                int statusCode = response.getStatusLine().getStatusCode();
+//                if (statusCode == 200) {
+//                    // Server response
+//                    responseString = EntityUtils.toString(r_entity);
+//
+//                } else {
+//                    responseString = "Error occurred! Http Status Code: "
+//                            + statusCode;
+//                }
+//
+//            } catch (ClientProtocolException e) {
+//                responseString = e.toString();
+//            } catch (IOException e) {
+//                responseString = e.toString();
+//            }
+//
+//            return responseString;
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//
+//            super.onPostExecute(result);
+//
+//            Log.d(":::::: ", result);
+//            Toast.makeText(AddHopeBoxActivity.this,
+//                    getResources().getString(R.string.hopeboxadded), Toast.LENGTH_SHORT).show();
+//            AddHopeBoxActivity.this.finish();
+//            ADDED_HOPEBOX = true;
+//
+//
+//        }
+//
+//    }
 }

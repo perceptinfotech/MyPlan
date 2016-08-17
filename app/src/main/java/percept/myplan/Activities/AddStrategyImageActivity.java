@@ -44,6 +44,8 @@ import java.util.Map;
 import me.crosswall.photo.pick.PickConfig;
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.MultiPartParsing;
+import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.R;
 
 import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
@@ -263,8 +265,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
             } else {
                 List<String> _LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
                 if (_LIST_IMG.size() > 0) {
-                    PB.setVisibility(View.VISIBLE);
-                    new AddHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _LIST_IMG.get(0), "image").execute();
+                    addHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _LIST_IMG.get(0), "image");
                 }
             }
         }
@@ -310,7 +311,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
                     }
 
                 } else {
-                    new AddHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _Path, "image").execute();
+                    addHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _Path, "image");
                 }
 
             } catch (NullPointerException e) {
@@ -318,106 +319,130 @@ public class AddStrategyImageActivity extends AppCompatActivity {
             }
         }
     }
-
-    private class AddHopeBoxImageElement extends AsyncTask<Void, Integer, String> {
-
-        private String HOPE_TITLE, IMG_PATH, HOPE_ID, TYPE;
-
-        public AddHopeBoxImageElement(String title, String hopeId, String imgpath, String type) {
-            this.HOPE_TITLE = title;
-            this.IMG_PATH = imgpath;
-            this.HOPE_ID = hopeId;
-            this.TYPE = type;
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            // setting progress bar to zero
-            super.onPreExecute();
-        }
-
-
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile() {
-            String responseString = null;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveHopemedia");
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-//                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                if (!IMG_PATH.equals("")) {
-                    File sourceFile = new File(IMG_PATH);
-                    entity.addPart("media", new FileBody(sourceFile));
+    private  void addHopeBoxImageElement(String title, String hopeId, String imgpath, String type) {
+        PB.setVisibility(View.VISIBLE);
+       HashMap<String,String> params=new HashMap<>();
+            params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopemedia");
+            params.put("media", imgpath);
+            params.put("sid", Constant.SID);
+            params.put("sname", Constant.SNAME);
+            params.put(Constant.ID, "");
+            params.put(Constant.HOPE_ID, hopeId);
+            params.put(Constant.HOPE_TITLE, title);
+            params.put(Constant.HOPE_TYPE, type);
+        new MultiPartParsing(this, params, new AsyncTaskCompletedListener() {
+            @Override
+            public void onTaskCompleted(String response) {
+                PB.setVisibility(View.GONE);
+                Log.d(":::::: ", response.toString());
+                if (getIntent().hasExtra("FROM_HOPE")) {
+                    GET_HOPE_DETAILS = true;
                 }
-                try {
-
-                    entity.addPart("sid", new StringBody(Constant.SID));
-                    entity.addPart("sname", new StringBody(Constant.SNAME));
-                    entity.addPart(Constant.ID, new StringBody(""));
-                    entity.addPart(Constant.HOPE_ID, new StringBody(HOPE_ID));
-                    entity.addPart(Constant.HOPE_TITLE, new StringBody(HOPE_TITLE));
-                    entity.addPart(Constant.HOPE_TYPE, new StringBody(TYPE));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-
-//                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-                long totalLength = entity.getContentLength();
-                System.out.println("TotalLength : " + totalLength);
-
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
+                AddStrategyImageActivity.this.finish();
             }
-
-            return responseString;
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            PB.setVisibility(View.GONE);
-            super.onPostExecute(result);
-            Log.d(":::::: ", result);
-            if (getIntent().hasExtra("FROM_HOPE")) {
-                GET_HOPE_DETAILS = true;
-            }
-            AddStrategyImageActivity.this.finish();
-        }
+        });
 
     }
+
+//    private class AddHopeBoxImageElement extends AsyncTask<Void, Integer, String> {
+//
+//        private String HOPE_TITLE, IMG_PATH, HOPE_ID, TYPE;
+//
+//        public AddHopeBoxImageElement(String title, String hopeId, String imgpath, String type) {
+//            this.HOPE_TITLE = title;
+//            this.IMG_PATH = imgpath;
+//            this.HOPE_ID = hopeId;
+//            this.TYPE = type;
+//
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            // setting progress bar to zero
+//            super.onPreExecute();
+//        }
+//
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            return uploadFile();
+//        }
+//
+//        @SuppressWarnings("deprecation")
+//        private String uploadFile() {
+//            String responseString = null;
+//
+//            HttpClient httpclient = new DefaultHttpClient();
+//            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveHopemedia");
+//
+//            try {
+//                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+//                        new AndroidMultiPartEntity.ProgressListener() {
+//
+//                            @Override
+//                            public void transferred(long num) {
+////                                publishProgress((int) ((num / (float) totalSize) * 100));
+//                            }
+//                        });
+//
+//                if (!IMG_PATH.equals("")) {
+//                    File sourceFile = new File(IMG_PATH);
+//                    entity.addPart("media", new FileBody(sourceFile));
+//                }
+//                try {
+//
+//                    entity.addPart("sid", new StringBody(Constant.SID));
+//                    entity.addPart("sname", new StringBody(Constant.SNAME));
+//                    entity.addPart(Constant.ID, new StringBody(""));
+//                    entity.addPart(Constant.HOPE_ID, new StringBody(HOPE_ID));
+//                    entity.addPart(Constant.HOPE_TITLE, new StringBody(HOPE_TITLE));
+//                    entity.addPart(Constant.HOPE_TYPE, new StringBody(TYPE));
+//                } catch (UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                }
+//
+//
+////                totalSize = entity.getContentLength();
+//                httppost.setEntity(entity);
+//                long totalLength = entity.getContentLength();
+//                System.out.println("TotalLength : " + totalLength);
+//
+//                // Making server call
+//                HttpResponse response = httpclient.execute(httppost);
+//                HttpEntity r_entity = response.getEntity();
+//
+//                int statusCode = response.getStatusLine().getStatusCode();
+//                if (statusCode == 200) {
+//                    // Server response
+//                    responseString = EntityUtils.toString(r_entity);
+//
+//                } else {
+//                    responseString = "Error occurred! Http Status Code: "
+//                            + statusCode;
+//                }
+//
+//            } catch (ClientProtocolException e) {
+//                responseString = e.toString();
+//            } catch (IOException e) {
+//                responseString = e.toString();
+//            }
+//
+//            return responseString;
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            PB.setVisibility(View.GONE);
+//            super.onPostExecute(result);
+//            Log.d(":::::: ", result);
+//            if (getIntent().hasExtra("FROM_HOPE")) {
+//                GET_HOPE_DETAILS = true;
+//            }
+//            AddStrategyImageActivity.this.finish();
+//        }
+//
+//    }
 
 
 }

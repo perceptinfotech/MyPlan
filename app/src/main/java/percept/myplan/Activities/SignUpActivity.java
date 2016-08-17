@@ -57,13 +57,16 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 import percept.myplan.Dialogs.dialogAddStrategy;
 import percept.myplan.Dialogs.dialogSelectPic;
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
+import percept.myplan.Global.MultiPartParsing;
 import percept.myplan.Global.Utils;
+import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
 
@@ -232,7 +235,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                     if (UTILS.isEmailValid(EDT_EMAIL.getText().toString())) {
                         PB.setVisibility(View.VISIBLE);
-                        new UploadFileToServer().execute();
+                       signup();
                     } else {
                         Toast.makeText(SignUpActivity.this, getResources().getString(R.string.writevalidemail), Toast.LENGTH_SHORT).show();
                     }
@@ -293,89 +296,25 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
-
-    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
+private void signup()
+{
+    HashMap<String,String> params=new HashMap<>();
+    params.put(Constant.URL,getResources().getString(R.string.server_url) + ".register");
+    if (!FILE_PATH.equals("")) {
+        params.put("profile_image", FILE_PATH);
+    }
+    params.put(Constant.FIRST_NAME, EDT_FIRSTNAME.getText().toString().trim());
+    params.put(Constant.LAST_NAME, EDT_LASTNAME.getText().toString().trim());
+    params.put(Constant.EMAIL, EDT_EMAIL.getText().toString().trim());
+    params.put(Constant.PHONE, EDT_PHONENO.getText().toString().trim());
+    params.put(Constant.DOB, YEAR.toString().trim());
+    params.put(Constant.PASSWORD, EDT_PASSWORD.getText().toString().trim());
+    new MultiPartParsing(SignUpActivity.this, params, new AsyncTaskCompletedListener() {
         @Override
-        protected void onPreExecute() {
-            // setting progress bar to zero
-            super.onPreExecute();
-        }
-
-
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile() {
-            String responseString = null;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".register");
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-//                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                if (!FILE_PATH.equals("")) {
-                    File sourceFile = new File(FILE_PATH);
-
-                    // Adding file data to http body
-                    entity.addPart("profile_image", new FileBody(sourceFile));
-                }
-                // Extra parameters if you want to pass to server
-                try {
-                    entity.addPart(Constant.FIRST_NAME, new StringBody(EDT_FIRSTNAME.getText().toString().trim()));
-                    entity.addPart(Constant.LAST_NAME, new StringBody(EDT_LASTNAME.getText().toString().trim()));
-                    entity.addPart(Constant.EMAIL, new StringBody(EDT_EMAIL.getText().toString().trim()));
-                    entity.addPart(Constant.PHONE, new StringBody(EDT_PHONENO.getText().toString().trim()));
-                    entity.addPart(Constant.DOB, new StringBody(YEAR.toString().trim()));
-                    entity.addPart(Constant.PASSWORD, new StringBody(EDT_PASSWORD.getText().toString().trim()));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-
-//                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
-
-            return responseString;
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            super.onPostExecute(result);
+        public void onTaskCompleted(String response) {
             PB.setVisibility(View.GONE);
             try {
-                JSONObject _object = new JSONObject(result);
+                JSONObject _object = new JSONObject(response);
                 JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
                 if (_ObjData.getString(Constant.STATUS).equals("Success")) {
                     startActivity(new Intent(SignUpActivity.this, LoginActivity_1.class));
@@ -386,10 +325,105 @@ public class SignUpActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }
-
-    }
+    });
+}
+//    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
+//        @Override
+//        protected void onPreExecute() {
+//            // setting progress bar to zero
+//            super.onPreExecute();
+//        }
+//
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            return uploadFile();
+//        }
+//
+//        @SuppressWarnings("deprecation")
+//        private String uploadFile() {
+//            String responseString = null;
+//
+//            HttpClient httpclient = new DefaultHttpClient();
+//            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".register");
+//
+//            try {
+//                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+//                        new AndroidMultiPartEntity.ProgressListener() {
+//
+//                            @Override
+//                            public void transferred(long num) {
+////                                publishProgress((int) ((num / (float) totalSize) * 100));
+//                            }
+//                        });
+//
+//                if (!FILE_PATH.equals("")) {
+//                    File sourceFile = new File(FILE_PATH);
+//
+//                    // Adding file data to http body
+//                    entity.addPart("profile_image", new FileBody(sourceFile));
+//                }
+//                // Extra parameters if you want to pass to server
+//                try {
+//                    entity.addPart(Constant.FIRST_NAME, new StringBody(EDT_FIRSTNAME.getText().toString().trim()));
+//                    entity.addPart(Constant.LAST_NAME, new StringBody(EDT_LASTNAME.getText().toString().trim()));
+//                    entity.addPart(Constant.EMAIL, new StringBody(EDT_EMAIL.getText().toString().trim()));
+//                    entity.addPart(Constant.PHONE, new StringBody(EDT_PHONENO.getText().toString().trim()));
+//                    entity.addPart(Constant.DOB, new StringBody(YEAR.toString().trim()));
+//                    entity.addPart(Constant.PASSWORD, new StringBody(EDT_PASSWORD.getText().toString().trim()));
+//                } catch (UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                }
+//
+//
+////                totalSize = entity.getContentLength();
+//                httppost.setEntity(entity);
+//
+//                // Making server call
+//                HttpResponse response = httpclient.execute(httppost);
+//                HttpEntity r_entity = response.getEntity();
+//
+//                int statusCode = response.getStatusLine().getStatusCode();
+//                if (statusCode == 200) {
+//                    // Server response
+//                    responseString = EntityUtils.toString(r_entity);
+//                } else {
+//                    responseString = "Error occurred! Http Status Code: "
+//                            + statusCode;
+//                }
+//
+//            } catch (ClientProtocolException e) {
+//                responseString = e.toString();
+//            } catch (IOException e) {
+//                responseString = e.toString();
+//            }
+//
+//            return responseString;
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//
+//            super.onPostExecute(result);
+//            PB.setVisibility(View.GONE);
+//            try {
+//                JSONObject _object = new JSONObject(result);
+//                JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
+//                if (_ObjData.getString(Constant.STATUS).equals("Success")) {
+//                    startActivity(new Intent(SignUpActivity.this, LoginActivity_1.class));
+//                    SignUpActivity.this.finish();
+//                } else {
+//                    Toast.makeText(SignUpActivity.this, getResources().getString(R.string.signuperror), Toast.LENGTH_SHORT).show();
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//
+//    }
 
     private void setViews() {
         IMG_USER = (ImageView) findViewById(R.id.imgUserImage);

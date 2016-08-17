@@ -33,6 +33,7 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.apache.http.util.TextUtils;
 import org.w3c.dom.Text;
 
 import java.io.File;
@@ -48,6 +49,8 @@ import java.util.Map;
 
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.MultiPartParsing;
+import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.R;
 
 import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
@@ -277,7 +280,7 @@ public class AddVideoActivity extends AppCompatActivity {
 //            if (success) {
 //                String _Path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + name;
 //                Log.d("::::::::::: ", _Path);
-            new AddHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, videosPath, "video").execute();
+            addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, videosPath, "video");
 //            }
             //endregion
         } else if (requestCode == REQ_TAKE_VIDEO) {
@@ -311,109 +314,137 @@ public class AddVideoActivity extends AppCompatActivity {
 
             String _path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + name;
             Log.d("::::::::::: ", _path);
-            new AddHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, _path, "video").execute();
+            addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, _path, "video");
         }
     }
 
-
-    private class AddHopeBoxVideoElement extends AsyncTask<Void, Integer, String> {
-
-        private String HOPE_TITLE, VID_PATH, HOPE_ID, TYPE;
-
-        public AddHopeBoxVideoElement(String title, String hopeId, String vidpath, String type) {
-            this.HOPE_TITLE = title;
-            this.VID_PATH = vidpath;
-            this.HOPE_ID = hopeId;
-            this.TYPE = type;
-
+    public void addHopeBoxVideoElement(String title, String hopeId, String vidpath, String type) {
+        PB.setVisibility(View.VISIBLE);
+        HashMap<String, String> params = new HashMap<>();
+        params.put(Constant.URL,getResources().getString(R.string.server_url) + ".saveHopemedia");
+        if (!TextUtils.isEmpty(vidpath)) {
+            params.put("media", vidpath);
         }
 
-        @Override
-        protected void onPreExecute() {
-            // setting progress bar to zero
-            super.onPreExecute();
-            PB.setVisibility(View.VISIBLE);
-        }
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put(Constant.ID, "");
+        params.put(Constant.HOPE_ID, hopeId);
+        params.put(Constant.HOPE_TITLE, title);
+        params.put(Constant.HOPE_TYPE, type);
 
-
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile() {
-            String responseString = null;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveHopemedia");
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-//                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                if (!VID_PATH.equals("")) {
-                    File sourceFile = new File(VID_PATH);
-                    entity.addPart("media", new FileBody(sourceFile));
+        new MultiPartParsing(AddVideoActivity.this, params, new AsyncTaskCompletedListener() {
+            @Override
+            public void onTaskCompleted(String response) {
+                PB.setVisibility(View.GONE);
+                Log.d(":::::: ", response);
+                if (getIntent().hasExtra("FROM_HOPE")) {
+                    GET_HOPE_DETAILS = true;
                 }
-                try {
-
-                    entity.addPart("sid", new StringBody(Constant.SID));
-                    entity.addPart("sname", new StringBody(Constant.SNAME));
-                    entity.addPart(Constant.ID, new StringBody(""));
-                    entity.addPart(Constant.HOPE_ID, new StringBody(HOPE_ID));
-                    entity.addPart(Constant.HOPE_TITLE, new StringBody(HOPE_TITLE));
-                    entity.addPart(Constant.HOPE_TYPE, new StringBody(TYPE));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-
-//                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-                long totalLength = entity.getContentLength();
-                System.out.println("TotalLength : " + totalLength);
-
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
+                AddVideoActivity.this.finish();
             }
-
-            return responseString;
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            PB.setVisibility(View.GONE);
-            super.onPostExecute(result);
-            Log.d(":::::: ", result);
-            if (getIntent().hasExtra("FROM_HOPE")) {
-                GET_HOPE_DETAILS = true;
-            }
-            AddVideoActivity.this.finish();
-        }
+        });
 
     }
+
+//    private class AddHopeBoxVideoElement extends AsyncTask<Void, Integer, String> {
+//
+//        private String HOPE_TITLE, VID_PATH, HOPE_ID, TYPE;
+//
+//        public AddHopeBoxVideoElement(String title, String hopeId, String vidpath, String type) {
+//            this.HOPE_TITLE = title;
+//            this.VID_PATH = vidpath;
+//            this.HOPE_ID = hopeId;
+//            this.TYPE = type;
+//
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            // setting progress bar to zero
+//            super.onPreExecute();
+//            PB.setVisibility(View.VISIBLE);
+//        }
+//
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            return uploadFile();
+//        }
+//
+//        @SuppressWarnings("deprecation")
+//        private String uploadFile() {
+//            String responseString = null;
+//
+//            HttpClient httpclient = new DefaultHttpClient();
+//            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveHopemedia");
+//
+//            try {
+//                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+//                        new AndroidMultiPartEntity.ProgressListener() {
+//
+//                            @Override
+//                            public void transferred(long num) {
+////                                publishProgress((int) ((num / (float) totalSize) * 100));
+//                            }
+//                        });
+//
+//                if (!VID_PATH.equals("")) {
+//                    File sourceFile = new File(VID_PATH);
+//                    entity.addPart("media", new FileBody(sourceFile));
+//                }
+//                try {
+//
+//                    entity.addPart("sid", new StringBody(Constant.SID));
+//                    entity.addPart("sname", new StringBody(Constant.SNAME));
+//                    entity.addPart(Constant.ID, new StringBody(""));
+//                    entity.addPart(Constant.HOPE_ID, new StringBody(HOPE_ID));
+//                    entity.addPart(Constant.HOPE_TITLE, new StringBody(HOPE_TITLE));
+//                    entity.addPart(Constant.HOPE_TYPE, new StringBody(TYPE));
+//                } catch (UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                }
+//
+//
+////                totalSize = entity.getContentLength();
+//                httppost.setEntity(entity);
+//                long totalLength = entity.getContentLength();
+//                System.out.println("TotalLength : " + totalLength);
+//
+//                // Making server call
+//                HttpResponse response = httpclient.execute(httppost);
+//                HttpEntity r_entity = response.getEntity();
+//
+//                int statusCode = response.getStatusLine().getStatusCode();
+//                if (statusCode == 200) {
+//                    // Server response
+//                    responseString = EntityUtils.toString(r_entity);
+//
+//                } else {
+//                    responseString = "Error occurred! Http Status Code: "
+//                            + statusCode;
+//                }
+//
+//            } catch (ClientProtocolException e) {
+//                responseString = e.toString();
+//            } catch (IOException e) {
+//                responseString = e.toString();
+//            }
+//
+//            return responseString;
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            PB.setVisibility(View.GONE);
+//            super.onPostExecute(result);
+//            Log.d(":::::: ", result);
+//            if (getIntent().hasExtra("FROM_HOPE")) {
+//                GET_HOPE_DETAILS = true;
+//            }
+//            AddVideoActivity.this.finish();
+//        }
+//
+//    }
 }

@@ -31,13 +31,17 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.apache.http.util.TextUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.MultiPartParsing;
+import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.R;
 
 import static percept.myplan.Activities.AddStrategyMusicActivity.CLOSE_PAGE;
@@ -180,7 +184,7 @@ public class MusicListActivity extends AppCompatActivity {
             } else {
                 for (int i = 0; i < len; i++) {
                     if (thumbnailsselection[i]) {
-                        new AddHopeBoxMusicElement(HOPE_TITLE, HOPE_ID, arrPath[i], "music").execute();
+                        addHopeBoxMusicElement(HOPE_TITLE, HOPE_ID, arrPath[i], "music");
                         break;
                     }
                 }
@@ -191,106 +195,132 @@ public class MusicListActivity extends AppCompatActivity {
         return false;
     }
 
-    private class AddHopeBoxMusicElement extends AsyncTask<Void, Integer, String> {
-
-        private String HOPE_TITLE, MUSIC_PATH, HOPE_ID, TYPE;
-
-        public AddHopeBoxMusicElement(String title, String hopeId, String musicpath, String type) {
-            this.HOPE_TITLE = title;
-            this.MUSIC_PATH = musicpath;
-            this.HOPE_ID = hopeId;
-            this.TYPE = type;
-
+    public void addHopeBoxMusicElement(String title, String hopeId, String musicpath, String type) {
+        HashMap<String,String> params=new HashMap<>();
+        params.put(Constant.URL,getResources().getString(R.string.server_url) + ".saveHopemedia");
+        if (!TextUtils.isEmpty(musicpath)) {
+            params.put("media", musicpath);
         }
 
-        @Override
-        protected void onPreExecute() {
-            // setting progress bar to zero
-            super.onPreExecute();
-        }
-
-
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile() {
-            String responseString = null;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveHopemedia");
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-//                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                if (!MUSIC_PATH.equals("")) {
-                    File sourceFile = new File(MUSIC_PATH);
-                    entity.addPart("media", new FileBody(sourceFile));
+            params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put(Constant.ID,"");
+        params.put(Constant.HOPE_ID, hopeId);
+        params.put(Constant.HOPE_TITLE, title);
+        params.put(Constant.HOPE_TYPE, type);
+        new MultiPartParsing(MusicListActivity.this, params, new AsyncTaskCompletedListener() {
+            @Override
+            public void onTaskCompleted(String response) {
+                if (getIntent().hasExtra("FROM_HOPE")) {
+                    GET_HOPE_DETAILS=true;
                 }
-                try {
-
-                    entity.addPart("sid", new StringBody(Constant.SID));
-                    entity.addPart("sname", new StringBody(Constant.SNAME));
-                    entity.addPart(Constant.ID, new StringBody(""));
-                    entity.addPart(Constant.HOPE_ID, new StringBody(HOPE_ID));
-                    entity.addPart(Constant.HOPE_TITLE, new StringBody(HOPE_TITLE));
-                    entity.addPart(Constant.HOPE_TYPE, new StringBody(TYPE));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-
-//                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-                long totalLength = entity.getContentLength();
-                System.out.println("TotalLength : " + totalLength);
-
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
+                Log.d(":::::: ", response);
+                CLOSE_PAGE = true;
+                MusicListActivity.this.finish();
             }
-
-            return responseString;
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            super.onPostExecute(result);
-            if (getIntent().hasExtra("FROM_HOPE")) {
-                GET_HOPE_DETAILS=true;
-            }
-            Log.d(":::::: ", result);
-            CLOSE_PAGE = true;
-            MusicListActivity.this.finish();
-        }
-
+        });
     }
+
+//    private class AddHopeBoxMusicElement extends AsyncTask<Void, Integer, String> {
+//
+//        private String HOPE_TITLE, MUSIC_PATH, HOPE_ID, TYPE;
+//
+//        public AddHopeBoxMusicElement(String title, String hopeId, String musicpath, String type) {
+//            this.HOPE_TITLE = title;
+//            this.MUSIC_PATH = musicpath;
+//            this.HOPE_ID = hopeId;
+//            this.TYPE = type;
+//
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            // setting progress bar to zero
+//            super.onPreExecute();
+//        }
+//
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            return uploadFile();
+//        }
+//
+//        @SuppressWarnings("deprecation")
+//        private String uploadFile() {
+//            String responseString = null;
+//
+//            HttpClient httpclient = new DefaultHttpClient();
+//            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveHopemedia");
+//
+//            try {
+//                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+//                        new AndroidMultiPartEntity.ProgressListener() {
+//
+//                            @Override
+//                            public void transferred(long num) {
+////                                publishProgress((int) ((num / (float) totalSize) * 100));
+//                            }
+//                        });
+//
+//                if (!MUSIC_PATH.equals("")) {
+//                    File sourceFile = new File(MUSIC_PATH);
+//                    entity.addPart("media", new FileBody(sourceFile));
+//                }
+//                try {
+//
+//                    entity.addPart("sid", new StringBody(Constant.SID));
+//                    entity.addPart("sname", new StringBody(Constant.SNAME));
+//                    entity.addPart(Constant.ID, new StringBody(""));
+//                    entity.addPart(Constant.HOPE_ID, new StringBody(HOPE_ID));
+//                    entity.addPart(Constant.HOPE_TITLE, new StringBody(HOPE_TITLE));
+//                    entity.addPart(Constant.HOPE_TYPE, new StringBody(TYPE));
+//                } catch (UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                }
+//
+//
+////                totalSize = entity.getContentLength();
+//                httppost.setEntity(entity);
+//                long totalLength = entity.getContentLength();
+//                System.out.println("TotalLength : " + totalLength);
+//
+//                // Making server call
+//                HttpResponse response = httpclient.execute(httppost);
+//                HttpEntity r_entity = response.getEntity();
+//
+//                int statusCode = response.getStatusLine().getStatusCode();
+//                if (statusCode == 200) {
+//                    // Server response
+//                    responseString = EntityUtils.toString(r_entity);
+//
+//                } else {
+//                    responseString = "Error occurred! Http Status Code: "
+//                            + statusCode;
+//                }
+//
+//            } catch (ClientProtocolException e) {
+//                responseString = e.toString();
+//            } catch (IOException e) {
+//                responseString = e.toString();
+//            }
+//
+//            return responseString;
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//
+//            super.onPostExecute(result);
+//            if (getIntent().hasExtra("FROM_HOPE")) {
+//                GET_HOPE_DETAILS=true;
+//            }
+//            Log.d(":::::: ", result);
+//            CLOSE_PAGE = true;
+//            MusicListActivity.this.finish();
+//        }
+//
+//    }
 
     public class ImageAdapter extends BaseAdapter {
         private LayoutInflater mInflater;

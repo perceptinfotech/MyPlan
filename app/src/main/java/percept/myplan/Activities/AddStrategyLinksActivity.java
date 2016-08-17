@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -23,13 +25,17 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
+import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
 
 import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
@@ -89,7 +95,7 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == R.id.action_AddStrategyLink) {
             if (getIntent().hasExtra("FROM_HOPE")) {
-                new AddHopeBoxLinkElement(HOPE_TITLE, HOPE_ID, EDT_LINK.getText().toString().trim(), "link").execute();
+                addHopeBoxLinkElement(HOPE_TITLE, HOPE_ID, EDT_LINK.getText().toString().trim(), "link");
             } else {
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("LINK", EDT_LINK.getText().toString().trim());
@@ -101,105 +107,134 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
         return false;
     }
 
-    private class AddHopeBoxLinkElement extends AsyncTask<Void, Integer, String> {
+    private void addHopeBoxLinkElement(String title, String hopeId, String link, String type) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put(Constant.ID, "");
+        params.put("media", link);
+        params.put(Constant.HOPE_ID, hopeId);
+        params.put(Constant.HOPE_TITLE, title);
+        params.put(Constant.HOPE_TYPE, type);
+        try {
+            new General().getJSONContentFromInternetService(AddStrategyLinksActivity.this, General.PHPServices.SAVE_HOPE_MEDIA, params, true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
 
-        private String HOPE_TITLE, LINK, HOPE_ID, TYPE;
-
-        public AddHopeBoxLinkElement(String title, String hopeId, String link, String type) {
-            this.HOPE_TITLE = title;
-            this.LINK = link;
-            this.HOPE_ID = hopeId;
-            this.TYPE = type;
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            // setting progress bar to zero
-            super.onPreExecute();
-        }
-
-
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile() {
-            String responseString = null;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveHopemedia");
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-//                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-//                if (!MUSIC_PATH.equals("")) {
-//                    File sourceFile = new File(MUSIC_PATH);
-//                    entity.addPart("media", new FileBody(sourceFile));
-//                }
-                try {
-
-                    entity.addPart("sid", new StringBody(Constant.SID));
-                    entity.addPart("sname", new StringBody(Constant.SNAME));
-                    entity.addPart(Constant.ID, new StringBody(""));
-                    entity.addPart("media", new StringBody(LINK));
-                    entity.addPart(Constant.HOPE_ID, new StringBody(HOPE_ID));
-                    entity.addPart(Constant.HOPE_TITLE, new StringBody(HOPE_TITLE));
-                    entity.addPart(Constant.HOPE_TYPE, new StringBody(TYPE));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
                 }
 
-
-//                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-                long totalLength = entity.getContentLength();
-                System.out.println("TotalLength : " + totalLength);
-
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d(":::::: ", response.toString());
+                    if (getIntent().hasExtra("FROM_HOPE")) {
+                        GET_HOPE_DETAILS = true;
+                    }
+                    AddStrategyLinksActivity.this.finish();
                 }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
-
-            return responseString;
-
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            super.onPostExecute(result);
-
-            Log.d(":::::: ", result);
-            if (getIntent().hasExtra("FROM_HOPE")) {
-                GET_HOPE_DETAILS=true;
-            }
-            AddStrategyLinksActivity.this.finish();
-        }
-
     }
+//    private class AddHopeBoxLinkElement extends AsyncTask<Void, Integer, String> {
+//
+//        private String HOPE_TITLE, LINK, HOPE_ID, TYPE;
+//
+//        public AddHopeBoxLinkElement(String title, String hopeId, String link, String type) {
+//            this.HOPE_TITLE = title;
+//            this.LINK = link;
+//            this.HOPE_ID = hopeId;
+//            this.TYPE = type;
+//
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            // setting progress bar to zero
+//            super.onPreExecute();
+//        }
+//
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            return uploadFile();
+//        }
+//
+//        @SuppressWarnings("deprecation")
+//        private String uploadFile() {
+//            String responseString = null;
+//
+//            HttpClient httpclient = new DefaultHttpClient();
+//            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveHopemedia");
+//
+//            try {
+//                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+//                        new AndroidMultiPartEntity.ProgressListener() {
+//
+//                            @Override
+//                            public void transferred(long num) {
+////                                publishProgress((int) ((num / (float) totalSize) * 100));
+//                            }
+//                        });
+//
+////                if (!MUSIC_PATH.equals("")) {
+////                    File sourceFile = new File(MUSIC_PATH);
+////                    entity.addPart("media", new FileBody(sourceFile));
+////                }
+//                try {
+//
+//                    entity.addPart("sid", new StringBody(Constant.SID));
+//                    entity.addPart("sname", new StringBody(Constant.SNAME));
+//                    entity.addPart(Constant.ID, ""));
+//                    entity.addPart("media", new StringBody(LINK));
+//                    entity.addPart(Constant.HOPE_ID, new StringBody(HOPE_ID));
+//                    entity.addPart(Constant.HOPE_TITLE, new StringBody(HOPE_TITLE));
+//                    entity.addPart(Constant.HOPE_TYPE, new StringBody(TYPE));
+//                } catch (UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                }
+//
+//
+////                totalSize = entity.getContentLength();
+//                httppost.setEntity(entity);
+//                long totalLength = entity.getContentLength();
+//                System.out.println("TotalLength : " + totalLength);
+//
+//                // Making server call
+//                HttpResponse response = httpclient.execute(httppost);
+//                HttpEntity r_entity = response.getEntity();
+//
+//                int statusCode = response.getStatusLine().getStatusCode();
+//                if (statusCode == 200) {
+//                    // Server response
+//                    responseString = EntityUtils.toString(r_entity);
+//
+//                } else {
+//                    responseString = "Error occurred! Http Status Code: "
+//                            + statusCode;
+//                }
+//
+//            } catch (ClientProtocolException e) {
+//                responseString = e.toString();
+//            } catch (IOException e) {
+//                responseString = e.toString();
+//            }
+//
+//            return responseString;
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//
+//            super.onPostExecute(result);
+//
+//            Log.d(":::::: ", result);
+//            if (getIntent().hasExtra("FROM_HOPE")) {
+//                GET_HOPE_DETAILS=true;
+//            }
+//            AddStrategyLinksActivity.this.finish();
+//        }
+//
+//    }
 }
