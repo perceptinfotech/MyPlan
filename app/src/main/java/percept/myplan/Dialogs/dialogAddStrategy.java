@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -41,7 +42,8 @@ public abstract class dialogAddStrategy extends Dialog implements View.OnClickLi
         setContentView(R.layout.dialog_add_strategy);
 
         TV_DIALOGMSG = (TextView) findViewById(R.id.tvDialogMsg);
-        TV_DIALOGMSG.setText(dialogMsg);
+        if (!TextUtils.isEmpty(dialogMsg))
+            TV_DIALOGMSG.setText(dialogMsg);
 
         TV_YES = (TextView) findViewById(R.id.tvYes);
         TV_YES.setOnClickListener(this);

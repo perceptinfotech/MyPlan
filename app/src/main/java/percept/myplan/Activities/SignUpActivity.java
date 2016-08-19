@@ -518,6 +518,7 @@ public class SignUpActivity extends AppCompatActivity {
 
             YEAR_PICKER = (NumberPicker) findViewById(R.id.pickYear);
             //setNumberPickerTextColor(YEAR_PICKER, android.R.color.black);
+
             YEAR_PICKER.setMinValue(1960);
             YEAR_PICKER.setMaxValue(2010);
 

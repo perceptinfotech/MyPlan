@@ -96,11 +96,6 @@ public class fragmentContacts extends Fragment {
         HELP_CONTACT_NAME = new HashMap<>();
         UTILS = new Utils(getActivity());
 
-        if (!UTILS.getPreference("EMERGENCY_CONTACT_NAME").equals("")) {
-            TV_EMERGENCYNO.setText(UTILS.getPreference("EMERGENCY_CONTACT_NAME"));
-        } else {
-            TV_EMERGENCYNO.setText("112");
-        }
 
         GetContacts();
         ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
@@ -241,6 +236,14 @@ public class fragmentContacts extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        if (!UTILS.getPreference("EMERGENCY_CONTACT_NAME").equals("")) {
+            TV_EMERGENCYNO.setText(UTILS.getPreference("EMERGENCY_CONTACT_NAME"));
+        } else {
+            TV_EMERGENCYNO.setText("112");
+        }
+
+
         if (GET_CONTACTS) {
             GetContacts();
             GET_CONTACTS = false;

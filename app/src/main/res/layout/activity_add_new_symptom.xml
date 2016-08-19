@@ -59,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edt_register_border_white"
-            android:gravity="center_vertical"
+            android:gravity="top|left"
             android:lines="3"
             android:padding="10dp" />
 

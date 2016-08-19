@@ -71,6 +71,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/edt_register_border"
             android:lines="3"
+            android:gravity="top|left"
             android:padding="5dp" />
     </LinearLayout>
 
