@@ -662,6 +662,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                         LIST_CONTACTS.add(new Contact(name, phoneNo, _contactID, _hasContact, _hasContact, _WEB_ID));
                     } while (cur.moveToNext());
                 }
+                Collections.sort(LIST_CONTACTS);
                 return null;
             }
 
@@ -669,7 +670,6 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             protected void onPostExecute(Void aVoid) {
                 PB_GETCONTACT.setVisibility(View.GONE);
                 super.onPostExecute(aVoid);
-                Collections.sort(LIST_CONTACTS);
                 ADAPTER = new ContactFromPhoneAdapter(AddContactFromPhoneActivity.this, LIST_CONTACTS, SINGLE_CHECK);
                 LST_CONTACT.setAdapter(ADAPTER);
             }
