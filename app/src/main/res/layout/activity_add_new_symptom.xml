@@ -38,6 +38,8 @@
                 android:background="@drawable/edt_register_border"
                 android:gravity="right"
                 android:padding="10dp"
+                android:imeOptions="actionNext"
+                android:singleLine="true"
                 android:textColor="@color/appBackColor" />
         </LinearLayout>
 
