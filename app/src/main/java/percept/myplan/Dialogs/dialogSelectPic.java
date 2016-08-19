@@ -15,7 +15,7 @@ import percept.myplan.R;
 /**
  * Created by percept on 2/5/15.
  */
-public class dialogSelectPic extends Dialog implements View.OnClickListener {
+public abstract class dialogSelectPic extends Dialog implements View.OnClickListener {
     private Context CONTEXT;
     private TextView TV_GALLERY, TV_CAMERA;
 
@@ -43,12 +43,10 @@ public class dialogSelectPic extends Dialog implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.txtPhoneGallery:
-                SignUpActivity.PIC_FROM_GALLERY = true;
-                dismiss();
+                fromGallery();
                 break;
             case R.id.txtCapture:
-                SignUpActivity.PIC_FROM_GALLERY = false;
-                dismiss();
+                fromCamera();
                 break;
 
 
@@ -59,4 +57,7 @@ public class dialogSelectPic extends Dialog implements View.OnClickListener {
     public void onBackPressed() {
         super.onBackPressed();
     }
+
+    abstract public void fromGallery();
+    abstract public void fromCamera();
 }

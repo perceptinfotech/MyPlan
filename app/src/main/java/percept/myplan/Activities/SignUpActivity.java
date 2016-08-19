@@ -1,6 +1,7 @@
 package percept.myplan.Activities;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -20,6 +21,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -59,9 +61,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import percept.myplan.Dialogs.dialogAddStrategy;
 import percept.myplan.Dialogs.dialogSelectPic;
@@ -93,6 +98,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     public static boolean PIC_FROM_GALLERY = true;
     private CoordinatorLayout REL_COORDINATE;
+    private boolean HAS_PERMISSION = true;
 
 
     @Override
@@ -124,62 +130,7 @@ public class SignUpActivity extends AppCompatActivity {
         IMG_USER.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                dialogSelectPic _dialogDate = new dialogSelectPic(SignUpActivity.this);
-                _dialogDate.setCanceledOnTouchOutside(false);
-                _dialogDate.show();
-                _dialogDate.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-                            if (ContextCompat.checkSelfPermission(SignUpActivity.this, Manifest.permission.CAMERA)
-                                    != PackageManager.PERMISSION_GRANTED) {
-                                // Should we show an explanation?
-                                if (ActivityCompat.shouldShowRequestPermissionRationale(SignUpActivity.this,
-                                        Manifest.permission.CAMERA)) {
-                                    // Show an expanation to the user *asynchronously* -- don't block
-                                    // this thread waiting for the user's response! After the user
-                                    // sees the explanation, try again to request the permission.
-                                } else {
-                                    // No explanation needed, we can request the permission.
-                                    ActivityCompat.requestPermissions(SignUpActivity.this,
-                                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
-                                            MY_PERMISSIONS_REQUEST);
-                                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                                    // app-defined int constant. The callback method gets the
-                                    // result of the request.
-                                }
-                            } else {
-                                if (PIC_FROM_GALLERY) {
-                                    Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                    startActivityForResult(pickPhoto, 1);
-                                } else {
-                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    IMG_URI = Uri.fromFile(Constant.getOutputMediaFile());
-                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, IMG_URI);
-                                    // start the image capture Intent
-                                    startActivityForResult(intent, REQ_TAKE_PICTURE);
-                                }
-
-                            }
-                        } else {
-                            if (PIC_FROM_GALLERY) {
-                                Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                startActivityForResult(pickPhoto, 1);
-                            } else {
-                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                IMG_URI = Uri.fromFile(Constant.getOutputMediaFile());
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT, IMG_URI);
-                                // start the image capture Intent
-                                startActivityForResult(intent, REQ_TAKE_PICTURE);
-                            }
-                        }
-                    }
-                });
-
-
+                getPermission();
             }
         });
 
@@ -300,29 +251,6 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
         setViews();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-
-                    Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pickPhoto, 1);
-                } else {
-                    Toast.makeText(SignUpActivity.this, R.string.readstoragedenied, Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
     }
 
     private void signup() {
@@ -607,4 +535,122 @@ public class SignUpActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
+
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
+
+    private void getPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            List<String> permissionsNeeded = new ArrayList<String>();
+
+            final List<String> permissionsList = new ArrayList<String>();
+            if (!addPermission(permissionsList, Manifest.permission.CAMERA))
+                permissionsNeeded.add("Camera");
+            if (!addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                permissionsNeeded.add("Write Storage");
+            if (!addPermission(permissionsList, Manifest.permission.READ_EXTERNAL_STORAGE))
+                permissionsNeeded.add("Read Storage");
+
+            if (permissionsList.size() > 0) {
+                if (permissionsNeeded.size() > 0) {
+                    // Need Rationale
+                    String message = "You need to grant access to " + permissionsNeeded.get(0);
+                    for (int i = 1; i < permissionsNeeded.size(); i++)
+                        message = message + ", " + permissionsNeeded.get(i);
+                    showMessageOKCancel(message,
+                            new DialogInterface.OnClickListener() {
+                                @TargetApi(Build.VERSION_CODES.M)
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                                            REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+                                }
+                            });
+                    return;
+                }
+
+                requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                        REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+
+                return;
+            }
+        } else {
+            OpenDialog();
+        }
+    }
+
+    public void OpenDialog() {
+        dialogSelectPic _dialogDate = new dialogSelectPic(SignUpActivity.this) {
+            @Override
+            public void fromGallery() {
+                dismiss();
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto, 1);
+            }
+
+            @Override
+            public void fromCamera() {
+                dismiss();
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                IMG_URI = Uri.fromFile(Constant.getOutputMediaFile());
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, IMG_URI);
+                // start the image capture Intent
+                startActivityForResult(intent, REQ_TAKE_PICTURE);
+            }
+        };
+        _dialogDate.setCanceledOnTouchOutside(false);
+        _dialogDate.show();
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(SignUpActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean addPermission(List<String> permissionsList, String permission) {
+        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            permissionsList.add(permission);
+            // Check for Rationale Option
+            if (!shouldShowRequestPermissionRationale(permission))
+                return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
+                Map<String, Integer> perms = new HashMap<String, Integer>();
+                // Initial
+                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+                // Check for ACCESS_FINE_LOCATION
+                if (perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    // All Permissions Granted
+                    OpenDialog();
+                } else {
+                    HAS_PERMISSION = false;
+                    // Permission Denied
+                    Toast.makeText(SignUpActivity.this, "Some Permission is Denied", Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+            break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
 }
