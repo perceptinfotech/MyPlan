@@ -38,7 +38,7 @@ public class StrategyAlarmAdapter extends RecyclerView.Adapter<StrategyAlarmAdap
 
     @Override
     public SymptomHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.symptom_strategy_list_item, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.strategy_alarm_list_item, parent, false);
 
         return new SymptomHolder(itemView);
     }
