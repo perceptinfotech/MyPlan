@@ -172,7 +172,7 @@ public class HomeActivity extends AppCompatActivity implements
         toggle.syncState();
 
         TV_PROFILE_NAME = (TextView) findViewById(R.id.tvProfileName);
-        TV_PROFILE_NAME.setText(UTILS.getPreference(Constant.PREF_PROFILE_NAME));
+        TV_PROFILE_NAME.setText(getResources().getString(R.string.hello)+" "+ UTILS.getPreference(Constant.PREF_PROFILE_NAME));
         LST_MENUITEMS.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

@@ -217,6 +217,7 @@
     <string name="home_page">Home Page</string>
     <string name="click_to_exit">Please click back again to exit</string>
     <string name="location_update">Location Updated</string>
+    <string name="hello">Hello</string>
 
 
     <string-array name="navigation_menu">
