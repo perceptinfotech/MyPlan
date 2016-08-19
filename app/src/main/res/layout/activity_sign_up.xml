@@ -307,6 +307,7 @@
         android:layout_centerHorizontal="true"
         android:layout_margin="5dp"
         android:layout_marginTop="5dp"
+        android:layout_above="@+id/snakeBar"
         android:background="@drawable/btn_register_border"
         android:text="@string/enter"
         android:textColor="@android:color/white" />
@@ -320,5 +321,6 @@
         android:layout_centerVertical="true"
         android:visibility="gone" />
 
-    <include layout="@layout/lay_internet_lost" />
+    <include layout="@layout/lay_internet_lost"
+        android:id="@+id/snakeBar"/>
 </RelativeLayout>

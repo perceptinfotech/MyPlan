@@ -43,6 +43,7 @@
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="35dp"
         android:layout_marginRight="35dp"
+        android:layout_above="@+id/snakeBar"
         android:background="@drawable/btn_inspiration_border"
         android:text="@string/inspiration"
         android:textAllCaps="false"
@@ -57,5 +58,6 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/pbGetStrategies" />
 
-    <include layout="@layout/lay_internet_lost" />
+    <include layout="@layout/lay_internet_lost"
+        android:id="@+id/snakeBar"/>
 </RelativeLayout>

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import percept.myplan.POJO.Alarm;
 import percept.myplan.POJO.StrategyContact;
@@ -46,8 +47,11 @@ public class StrategyAlarmAdapter extends RecyclerView.Adapter<StrategyAlarmAdap
     @Override
     public void onBindViewHolder(SymptomHolder holder, int position) {
         Alarm _symptom = LIST_SYMPTOMSTRATEGY.get(position);
+        String hm = String.format("%02d:%02d", TimeUnit.MILLISECONDS.toHours(Long.parseLong(_symptom.getAlarmTime())),
+                TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(_symptom.getAlarmTime())) % TimeUnit.HOURS.toMinutes(1));
+
         holder.TV_STRATEGYALARMNAME.setText(_symptom.getAlarmName());
-        holder.TV_STRATEGYALARMTIME.setText(_symptom.getAlarmTime());
+        holder.TV_STRATEGYALARMTIME.setText(hm);
     }
 
     @Override
