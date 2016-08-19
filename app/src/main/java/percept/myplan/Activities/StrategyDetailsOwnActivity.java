@@ -97,6 +97,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         EDT_STRATEGYDESC.setEnabled(false);
         EDT_STRATEGYTITLE.setEnabled(false);
 
+        LIST_STRATEGYCONTACT = new ArrayList<>();
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         BTN_SHARESTRATEGY = (Button) findViewById(R.id.btnShareStrategyAnony);
@@ -139,6 +140,9 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         LST_STRATEGYCONTACT.setLayoutManager(_mLayoutManager);
         LST_STRATEGYCONTACT.setItemAnimator(new DefaultItemAnimator());
 
+        RecyclerView.LayoutManager _mLayoutManagerAlarm = new LinearLayoutManager(StrategyDetailsOwnActivity.this);
+        LST_STRATEGYALARM.setLayoutManager(_mLayoutManagerAlarm);
+        LST_STRATEGYALARM.setItemAnimator(new DefaultItemAnimator());
 
         LIST_IMAGE = new ArrayList<>();
 
