@@ -47,6 +47,7 @@ import percept.myplan.POJO.StrategyContact;
 import percept.myplan.POJO.StrategyDetails;
 import percept.myplan.R;
 import percept.myplan.adapters.ImageAdapter;
+import percept.myplan.adapters.StrategyAlarmAdapter;
 import percept.myplan.adapters.StrategyContactSimpleAdapter;
 
 import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
@@ -65,10 +66,12 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     private EditText EDT_STRATEGYTITLE, EDT_STRATEGYDESC;
     public static List<StrategyContact> LIST_STRATEGYCONTACT;
     private StrategyContactSimpleAdapter ADAPTER;
-    private RecyclerView LST_STRATEGYCONTACT;
+    private StrategyAlarmAdapter ADAPTER_ALARM;
+    private RecyclerView LST_STRATEGYCONTACT, LST_STRATEGYALARM;
     private Button BTN_SHARESTRATEGY;
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
+    private List<Alarm> LIST_ALARM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +90,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         }
         LST_OWNSTRATEGYIMG = (RecyclerView) findViewById(R.id.lstOwnStrategyImage);
         LST_STRATEGYCONTACT = (RecyclerView) findViewById(R.id.lstStrategyContacts);
+        LST_STRATEGYALARM = (RecyclerView) findViewById(R.id.lstStrategyAlarm);
 
         EDT_STRATEGYTITLE = (EditText) findViewById(R.id.edtStrategyTitle);
         EDT_STRATEGYDESC = (EditText) findViewById(R.id.edtStrategyDesc);
@@ -178,14 +182,15 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         }
     }
 
-    private void getStrategy()
-    {
+    private void getStrategy() {
         PB.setVisibility(View.VISIBLE);
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         params.put("id", STRATEGY_ID);
         try {
+            LIST_IMAGE.clear();
+            LIST_STRATEGYCONTACT.clear();
             new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this, General.PHPServices.GET_STRATEGY, params, false, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
@@ -211,7 +216,10 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                     LST_STRATEGYCONTACT.setAdapter(ADAPTER);
 
                     EDT_STRATEGYDESC.setText(clsStrategy.getDescription());
-                    MAP_ALARM.get(STRATEGY_ID);
+                    LIST_ALARM = MAP_ALARM.get(STRATEGY_ID);
+
+                    ADAPTER_ALARM = new StrategyAlarmAdapter(LIST_ALARM);
+                    LST_STRATEGYALARM.setAdapter(ADAPTER_ALARM);
 
                     String _images = clsStrategy.getImage();
                     String[] _arrImg = _images.split(",");
@@ -241,6 +249,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             snackbar.show();
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.edit_strategy, menu);
