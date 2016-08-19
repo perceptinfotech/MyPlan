@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -58,11 +59,23 @@ public class EmergencyContactActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.contact, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             EmergencyContactActivity.this.finish();
             return true;
+        } else if (item.getItemId() == R.id.action_addContact) {
+            Intent _intent = new Intent(EmergencyContactActivity.this, AddContactFromPhoneActivity.class);
+            _intent.putExtra("FROM", "emergency");
+            startActivity(_intent);
+            return true;
         }
+
         return false;
     }
 

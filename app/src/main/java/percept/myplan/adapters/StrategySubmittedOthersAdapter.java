@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import percept.myplan.Dialogs.dialogAddStrategy;
 import percept.myplan.R;
 
 /**
@@ -48,7 +49,7 @@ public class StrategySubmittedOthersAdapter extends RecyclerView.Adapter<Strateg
             public void onClick(View view) {
                 switch (view.getId()) {
                     case R.id.ivAddStrategy:
-                        Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
+                        openConfimationDialog((Integer) view.getTag());
                         break;
                 }
             }
@@ -59,11 +60,30 @@ public class StrategySubmittedOthersAdapter extends RecyclerView.Adapter<Strateg
     @Override
     public void onBindViewHolder(StrategyAdapter holder, int position) {
         holder.tvStrategyDetail.setText(context.getString(R.string.description) + " " + position);
+        holder.tvStrategyDetail.setTag(position);
 
     }
 
     @Override
     public int getItemCount() {
         return 5;
+    }
+
+    private void openConfimationDialog(int position)
+    {
+        dialogAddStrategy _dialog=new dialogAddStrategy(context) {
+            @Override
+            public void onClickYes() {
+                dismiss();
+            }
+
+            @Override
+            public void onClickNo() {
+                dismiss();
+            }
+        };
+        _dialog.setCanceledOnTouchOutside(false);
+        _dialog.show();
+
     }
 }
