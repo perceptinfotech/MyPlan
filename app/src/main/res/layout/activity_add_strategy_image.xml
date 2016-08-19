@@ -58,4 +58,5 @@
         android:layout_centerHorizontal="true"
         android:visibility="gone"
         android:id="@+id/pbAddImage" />
+    <include layout="@layout/lay_internet_lost"/>
 </RelativeLayout>

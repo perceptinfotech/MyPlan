@@ -1,11 +1,16 @@
 package percept.myplan.Activities;
 
+import android.graphics.Color;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +30,8 @@ public class SettingProfileActivity extends AppCompatActivity {
 
     private EditText EDT_FIRSTNAME, EDT_LASTNAME, EDT_PASSWORD, EDT_EMAIL;
     Map<String, String> params;
+    private ProgressBar PB;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +44,9 @@ public class SettingProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.title_activity_profile));
+
+        PB = (ProgressBar) findViewById(R.id.pbSaveProfile);
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         EDT_FIRSTNAME = (EditText) findViewById(R.id.edtFirstName);
         EDT_LASTNAME = (EditText) findViewById(R.id.edtLastName);
@@ -62,23 +72,42 @@ public class SettingProfileActivity extends AppCompatActivity {
             SettingProfileActivity.this.finish();
             Toast.makeText(SettingProfileActivity.this, "Profile saved called", Toast.LENGTH_SHORT).show();
 
-            try {
-                new General().getJSONContentFromInternetService(SettingProfileActivity.this, General.PHPServices.SAVE_PROFILE, params, false, false, true, new VolleyResponseListener() {
-                    @Override
-                    public void onError(VolleyError message) {
+            SaveProfile();
 
-                    }
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             return true;
         }
         return false;
+    }
+
+    private void SaveProfile() {
+        try {
+            new General().getJSONContentFromInternetService(SettingProfileActivity.this, General.PHPServices.SAVE_PROFILE, params, false, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            SaveProfile();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
     }
 }

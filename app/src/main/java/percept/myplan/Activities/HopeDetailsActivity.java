@@ -2,7 +2,10 @@ package percept.myplan.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.provider.MediaStore;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -50,6 +53,7 @@ public class HopeDetailsActivity extends AppCompatActivity {
     protected RecyclerView.Adapter mAdapter;
     private ProgressBar PB;
     private String HOPE_TITLE;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +83,9 @@ public class HopeDetailsActivity extends AppCompatActivity {
 
 
         mRecyclerView = (RecyclerView) findViewById(R.id.lstHopeDetails);
+
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
+
         PB = (ProgressBar) findViewById(R.id.pbgetHopeDetail);
         Toro.register(mRecyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(HopeDetailsActivity.this);
@@ -89,13 +96,17 @@ public class HopeDetailsActivity extends AppCompatActivity {
         }
 
 
+        GetHopeDetails();
+    }
+
+    private void GetHopeDetails() {
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         params.put("id", getIntent().getExtras().getString("HOPE_ID"));
         try {
             PB.setVisibility(View.VISIBLE);
-            new General().getJSONContentFromInternetService(HopeDetailsActivity.this, General.PHPServices.GET_HOPEBOX, params, false, false, true, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(HopeDetailsActivity.this, General.PHPServices.GET_HOPEBOX, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
                     PB.setVisibility(View.GONE);
@@ -123,6 +134,20 @@ public class HopeDetailsActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            GetHopeDetails();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
         }
     }
 
@@ -145,38 +170,8 @@ public class HopeDetailsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (GET_HOPE_DETAILS) {
-            try {
-                PB.setVisibility(View.VISIBLE);
-                new General().getJSONContentFromInternetService(HopeDetailsActivity.this, General.PHPServices.GET_HOPEBOX, params, false, false, true, new VolleyResponseListener() {
-                    @Override
-                    public void onError(VolleyError message) {
-                        PB.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        PB.setVisibility(View.GONE);
-                        LIST_HOPEDETAILS.clear();
-                        Gson gson = new Gson();
-                        try {
-                            LIST_HOPEDETAILS = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                    .toString(), new TypeToken<List<HopeDetail>>() {
-                            }.getType());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-//                        Log.d("::::::  ", String.valueOf(LIST_HOPEDETAILS.size()));
-//                        ADAPTER = new HopeDetailsAdapter(HopeDetailsActivity.this, LIST_HOPEDETAILS);
-//                        LST_HOPEDETAILS.setAdapter(ADAPTER);
-                        mAdapter = new Basic3Adapter(HopeDetailsActivity.this, LIST_HOPEDETAILS, HOPE_TITLE);
-                        mRecyclerView.setHasFixedSize(false);
-                        mRecyclerView.setAdapter(mAdapter);
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            GetHopeDetails();
+            GET_HOPE_DETAILS = false;
         }
     }
 

@@ -3,6 +3,9 @@ package percept.myplan.Activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -56,6 +59,8 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
     Map<String, String> params;
     private ProgressBar PB;
 
+    private CoordinatorLayout REL_COORDINATE;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +74,7 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.addastrategy));
 
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         if (getIntent().hasExtra("ADDED_STRATEGY")) {
             String _str = getIntent().getExtras().getString("ADDED_STRATEGY");
@@ -133,7 +139,7 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
     private void getStrategies() {
         PB.setVisibility(View.VISIBLE);
         try {
-            new General().getJSONContentFromInternetService(AddStrategyToSymptomActivity.this, General.PHPServices.GET_STRATEGIES, params, false, false, false, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(AddStrategyToSymptomActivity.this, General.PHPServices.GET_STRATEGIES, params, true, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
                     PB.setVisibility(View.GONE);
@@ -165,6 +171,20 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            getStrategies();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
         }
     }
 

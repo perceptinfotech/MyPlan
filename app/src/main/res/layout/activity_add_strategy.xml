@@ -212,5 +212,5 @@
         android:id="@+id/pbAddStrategy"
         android:visibility="gone"/>
 
-
+    <include layout="@layout/lay_internet_lost" />
 </RelativeLayout>

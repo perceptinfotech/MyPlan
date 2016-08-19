@@ -3,7 +3,10 @@ package percept.myplan.Activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -71,6 +74,7 @@ public class AddStrategyActivity extends AppCompatActivity {
     private HashMap<String, List<Alarm>> MAP_ALARM;
     private Utils UTILS;
     private ProgressBar PB;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +92,8 @@ public class AddStrategyActivity extends AppCompatActivity {
 
         EDT_TITLE = (EditText) findViewById(R.id.edtTitle);
         EDT_TEXT = (EditText) findViewById(R.id.edtText);
+
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         PB = (ProgressBar) findViewById(R.id.pbAddStrategy);
 
@@ -168,11 +174,9 @@ public class AddStrategyActivity extends AppCompatActivity {
             AddStrategyActivity.this.finish();
             return true;
         } else if (item.getItemId() == R.id.action_saveStrategy) {
-            PB.setVisibility(View.VISIBLE);
             InputMethodManager inputManager = (InputMethodManager)
                     getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
             /*new AddStrategy(EDT_TITLE.getText().toString().trim(), EDT_TEXT.getText().toString().trim(),
                     STR_CONTACTID, LIST_IMG, LIST_MUSIC, STR_LINK).execute();*/
             addStrategy();
@@ -182,6 +186,29 @@ public class AddStrategyActivity extends AppCompatActivity {
     }
 
     private void addStrategy() {
+
+        if (!UTILS.isNetConnected()) {
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            addStrategy();
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+            return;
+        }
+        PB.setVisibility(View.VISIBLE);
         HashMap<String, String> map = new HashMap<>();
         if (LIST_IMG.size() > 0) {
             for (int i = 0; i < LIST_IMG.size(); i++) {

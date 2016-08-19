@@ -4,10 +4,12 @@ package percept.myplan.Activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -175,25 +177,9 @@ public class HomeActivity extends AppCompatActivity implements
             }
         });
 
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("sid", Constant.SID);
-        params.put("sname", Constant.SNAME);
-        try {
-            new General().getJSONContentFromInternetService(HomeActivity.this, General.PHPServices.CHECK_LOGIN,
-                    params, false, false, true, new VolleyResponseListener() {
-                        @Override
-                        public void onError(VolleyError message) {
+        CheckSession();
 
-                        }
 
-                        @Override
-                        public void onResponse(JSONObject response) {
-
-                        }
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
 
         // Set labels.
@@ -225,6 +211,41 @@ public class HomeActivity extends AppCompatActivity implements
             }
         } else {
             buildGoogleApiClient();
+        }
+    }
+
+    private void CheckSession() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        try {
+            new General().getJSONContentFromInternetService(HomeActivity.this, General.PHPServices.CHECK_LOGIN,
+                    params, true, false, true, new VolleyResponseListener() {
+                        @Override
+                        public void onError(VolleyError message) {
+
+                        }
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+//            Snackbar snackbar = Snackbar
+//                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+//                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            CheckSession();
+//                        }
+//                    });
+//            snackbar.setActionTextColor(Color.RED);
+//            View sbView = snackbar.getView();
+//            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+//            textView.setTextColor(Color.YELLOW);
+//            snackbar.show();
         }
     }
 

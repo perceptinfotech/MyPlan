@@ -2,7 +2,10 @@ package percept.myplan.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -57,6 +60,8 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
     private ContactHelpListAdapter ADPT_CONTACTLIST;
     private ProgressBar PB;
 
+    private CoordinatorLayout REL_COORDINATE;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +78,8 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
         LIST_HELPCONTACTS = new ArrayList<>();
         LIST_CONTACTS = new ArrayList<>();
         CONTACT_NAME = new HashMap<>();
+
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         TV_EDIT_HELPLIST = (TextView) findViewById(R.id.tvEditHelpList);
         TV_EDIT_HELPLIST.setVisibility(View.INVISIBLE);
@@ -183,7 +190,7 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
             LIST_HELPCONTACTS.clear();
             CONTACT_NAME.clear();
             LIST_CONTACTS.clear();
-            new General().getJSONContentFromInternetService(CreateQuickMsgActivity.this, General.PHPServices.GET_CONTACTS, params, false, false, false, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(CreateQuickMsgActivity.this, General.PHPServices.GET_CONTACTS, params, true, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
                     PB.setVisibility(View.GONE);
@@ -221,6 +228,20 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            getContacts();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
         }
     }
 

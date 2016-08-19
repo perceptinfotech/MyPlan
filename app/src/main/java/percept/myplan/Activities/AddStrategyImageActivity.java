@@ -5,10 +5,13 @@ import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -45,6 +48,7 @@ import me.crosswall.photo.pick.PickConfig;
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.MultiPartParsing;
+import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.R;
 
@@ -61,6 +65,8 @@ public class AddStrategyImageActivity extends AppCompatActivity {
     private String HOPE_ID = "";
     private boolean FROM_EDIT = false;
     private ProgressBar PB;
+    private Utils UTILS;
+    private CoordinatorLayout REL_COORDINATE;
 
     private final static int MY_PERMISSIONS_REQUEST = 22;
     private boolean HAS_PERMISSION = true;
@@ -88,6 +94,8 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         if (getIntent().hasExtra("FROM_EDIT")) {
             FROM_EDIT = true;
         }
+        UTILS = new Utils(AddStrategyImageActivity.this);
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         TV_CHOOSEEXISTING = (TextView) findViewById(R.id.tvChooseExisting);
         TV_TAKENEW = (TextView) findViewById(R.id.tvTakeNew);
@@ -309,7 +317,6 @@ public class AddStrategyImageActivity extends AppCompatActivity {
                         AddStrategyActivity.LIST_IMG.add(_Path);
                         AddStrategyImageActivity.this.finish();
                     }
-
                 } else {
                     addHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _Path, "image");
                 }
@@ -319,17 +326,40 @@ public class AddStrategyImageActivity extends AppCompatActivity {
             }
         }
     }
-    private  void addHopeBoxImageElement(String title, String hopeId, String imgpath, String type) {
+
+    private void addHopeBoxImageElement(final String title, final String hopeId, final String imgpath, final String type) {
+
+        if (!UTILS.isNetConnected()) {
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            addHopeBoxImageElement(title, hopeId, imgpath, type);
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+            return;
+        }
         PB.setVisibility(View.VISIBLE);
-       HashMap<String,String> params=new HashMap<>();
-            params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopemedia");
-            params.put("media", imgpath);
-            params.put("sid", Constant.SID);
-            params.put("sname", Constant.SNAME);
-            params.put(Constant.ID, "");
-            params.put(Constant.HOPE_ID, hopeId);
-            params.put(Constant.HOPE_TITLE, title);
-            params.put(Constant.HOPE_TYPE, type);
+        HashMap<String, String> params = new HashMap<>();
+        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopemedia");
+        params.put("media", imgpath);
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put(Constant.ID, "");
+        params.put(Constant.HOPE_ID, hopeId);
+        params.put(Constant.HOPE_TITLE, title);
+        params.put(Constant.HOPE_TYPE, type);
         new MultiPartParsing(this, params, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {

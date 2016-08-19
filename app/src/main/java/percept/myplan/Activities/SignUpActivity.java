@@ -243,8 +243,8 @@ public class SignUpActivity extends AppCompatActivity {
                     if (UTILS.isEmailValid(EDT_EMAIL.getText().toString())) {
 
 
-                            PB.setVisibility(View.VISIBLE);
-                            signup();
+                        PB.setVisibility(View.VISIBLE);
+                        signup();
 
                     } else {
                         Toast.makeText(SignUpActivity.this, getResources().getString(R.string.writevalidemail), Toast.LENGTH_SHORT).show();
@@ -326,8 +326,27 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void signup() {
+        if (!UTILS.isNetConnected()) {
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            signup();
+                        }
+                    });
 
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
 
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+            return;
+        }
         HashMap<String, String> params = new HashMap<>();
         params.put(Constant.URL, getResources().getString(R.string.server_url) + ".register");
         if (!FILE_PATH.equals("")) {

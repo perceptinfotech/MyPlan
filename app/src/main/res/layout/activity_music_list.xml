@@ -16,5 +16,6 @@
         android:layout_height="wrap_content"
         android:divider="@color/sidemenu_seperator"
         android:dividerHeight="1dp"></ListView>
+    <include layout="@layout/lay_internet_lost"/>
 
 </LinearLayout>

@@ -3,7 +3,10 @@ package percept.myplan.Activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -54,6 +57,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
     private boolean isEDIT = false;
     private String STR_STRATEGYID = "";
     private ProgressBar PB;
+    private CoordinatorLayout REL_COORDINATE;
 
     private static final int ADDSTRATEGY = 6;
 
@@ -77,6 +81,8 @@ public class SymptomDetailsActivity extends AppCompatActivity {
         TV_TEXT.setEnabled(false);
 
         LST_SYMPTOMSTRATEGY = (RecyclerView) findViewById(R.id.lstSymptomStrategy);
+
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         LAY_ADDSTRATEGY = (LinearLayout) findViewById(R.id.layAddStrategy);
         TV_ADDSTRATEGY = (TextView) findViewById(R.id.tvAddStrategy);
@@ -166,36 +172,58 @@ public class SymptomDetailsActivity extends AppCompatActivity {
             isEDIT = false;
             invalidateOptionsMenu();
 
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("sid", Constant.SID);
-            params.put("sname", Constant.SNAME);
-            params.put("id", SYMPTOM_ID);
-            params.put("title", TV_TITLE.getText().toString().trim());
-            params.put("description", TV_TEXT.getText().toString().trim());
-            params.put("strategy_id", STR_STRATEGYID);
-            params.put("state", "1");
+            SaveSymptoms();
 
-            try {
-                new General().getJSONContentFromInternetService(SymptomDetailsActivity.this, General.PHPServices.SAVE_SYMPTOM, params, true, false, true, new VolleyResponseListener() {
-                    @Override
-                    public void onError(VolleyError message) {
 
-                    }
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        fragmentSymptoms.GET_STRATEGY = true;
-                        Log.d(":::::", response.toString());
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-            SymptomDetailsActivity.this.finish();
             return true;
         }
         return false;
+    }
+
+    private void SaveSymptoms() {
+        PB.setVisibility(View.VISIBLE);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put("id", SYMPTOM_ID);
+        params.put("title", TV_TITLE.getText().toString().trim());
+        params.put("description", TV_TEXT.getText().toString().trim());
+        params.put("strategy_id", STR_STRATEGYID);
+        params.put("state", "1");
+
+        try {
+            new General().getJSONContentFromInternetService(SymptomDetailsActivity.this, General.PHPServices.SAVE_SYMPTOM, params, true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    PB.setVisibility(View.GONE);
+                    fragmentSymptoms.GET_STRATEGY = true;
+                    Log.d(":::::", response.toString());
+                    SymptomDetailsActivity.this.finish();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            SaveSymptoms();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+
     }
 
     private void GetSymptomDetail() {
@@ -205,7 +233,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
         params.put("sname", Constant.SNAME);
         params.put("id", SYMPTOM_ID);
         try {
-            new General().getJSONContentFromInternetService(SymptomDetailsActivity.this, General.PHPServices.GET_SYMPTOM, params, false, false, true, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(SymptomDetailsActivity.this, General.PHPServices.GET_SYMPTOM, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
                     PB.setVisibility(View.GONE);
@@ -244,6 +272,20 @@ public class SymptomDetailsActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            GetSymptomDetail();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
         }
     }
 

@@ -2,7 +2,10 @@ package percept.myplan.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -65,6 +68,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     private RecyclerView LST_STRATEGYCONTACT;
     private Button BTN_SHARESTRATEGY;
     private ProgressBar PB;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +92,8 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         EDT_STRATEGYDESC = (EditText) findViewById(R.id.edtStrategyDesc);
         EDT_STRATEGYDESC.setEnabled(false);
         EDT_STRATEGYTITLE.setEnabled(false);
+
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         BTN_SHARESTRATEGY = (Button) findViewById(R.id.btnShareStrategyAnony);
         BTN_SHARESTRATEGY.setOnClickListener(new View.OnClickListener() {
@@ -219,6 +225,20 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            getStrategy();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
         }
     }
     @Override

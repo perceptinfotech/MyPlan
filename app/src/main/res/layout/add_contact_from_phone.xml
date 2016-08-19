@@ -71,4 +71,6 @@
         android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
+
+    <include layout="@layout/lay_internet_lost" />
 </RelativeLayout>

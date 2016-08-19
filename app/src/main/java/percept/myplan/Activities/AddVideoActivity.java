@@ -6,12 +6,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -50,6 +53,7 @@ import java.util.Map;
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.MultiPartParsing;
+import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.R;
 
@@ -68,6 +72,9 @@ public class AddVideoActivity extends AppCompatActivity {
     private ProgressBar PB;
     private final static int MY_PERMISSIONS_REQUEST = 22;
     private boolean HAS_PERMISSION = true;
+
+    private Utils UTILS;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +95,8 @@ public class AddVideoActivity extends AppCompatActivity {
             HOPE_ID = getIntent().getExtras().getString("HOPE_ID");
         }
 
+        UTILS = new Utils(AddVideoActivity.this);
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         TV_CHOOSEVIDEO = (TextView) findViewById(R.id.tvChooseExistingVideo);
         TV_RECORDVIDEO = (TextView) findViewById(R.id.tvRecordVideo);
@@ -318,7 +327,29 @@ public class AddVideoActivity extends AppCompatActivity {
         }
     }
 
-    public void addHopeBoxVideoElement(String title, String hopeId, String vidpath, String type) {
+    public void addHopeBoxVideoElement(final String title,final String hopeId, final String vidpath,final String type) {
+
+        if (!UTILS.isNetConnected()) {
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            addHopeBoxVideoElement(title, hopeId, vidpath, type);
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+            return;
+        }
         PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
         params.put(Constant.URL,getResources().getString(R.string.server_url) + ".saveHopemedia");

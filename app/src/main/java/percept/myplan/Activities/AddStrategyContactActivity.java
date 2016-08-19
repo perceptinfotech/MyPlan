@@ -2,6 +2,9 @@ package percept.myplan.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -44,7 +47,7 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
     private StrategyContactAdapter ADAPTER;
     private String STR_CONTACTID = "";
     private ProgressBar PB;
-
+    private CoordinatorLayout REL_COORDINATE;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,18 +61,28 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.allcontact));
         PB = (ProgressBar) findViewById(R.id.pbAddStrategyContact);
+
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
+
         LST_CONTACTS = (StickyListHeadersListView) findViewById(R.id.listStrategyContact);
         LST_CONTACTS.setOnStickyHeaderChangedListener(this);
         LST_CONTACTS.setOnStickyHeaderOffsetChangedListener(this);
         LST_CONTACTS.setDrawingListUnderStickyHeader(true);
         LST_CONTACTS.setAreHeadersSticky(true);
 
+
+        AddStrategyContacts();
+
+    }
+
+    private void AddStrategyContacts() {
+
         PB.setVisibility(View.VISIBLE);
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         try {
-            new General().getJSONContentFromInternetService(AddStrategyContactActivity.this, General.PHPServices.GET_CONTACTS, params, false, false, false, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(AddStrategyContactActivity.this, General.PHPServices.GET_CONTACTS, params, true, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
                     PB.setVisibility(View.GONE);
@@ -105,6 +118,20 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            AddStrategyContacts();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
         }
     }
 

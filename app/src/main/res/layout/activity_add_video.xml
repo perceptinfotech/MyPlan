@@ -76,4 +76,6 @@
         android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:id="@+id/pbVideos" />
+
+    <include layout="@layout/lay_internet_lost"/>
 </RelativeLayout>

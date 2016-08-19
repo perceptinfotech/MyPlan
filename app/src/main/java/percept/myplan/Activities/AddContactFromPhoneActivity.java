@@ -8,10 +8,13 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -74,6 +77,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
     private final static int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 13;
 
     public static boolean SENT = false;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +101,6 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         }
 
         setContentView(R.layout.add_contact_from_phone);
-
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             // Here, thisActivity is the current activity
             if (ContextCompat.checkSelfPermission(AddContactFromPhoneActivity.this,
@@ -139,6 +142,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         PB_SAVECONTACT.setVisibility(View.GONE);
         PB_GETCONTACT = (ProgressBar) findViewById(R.id.pbGetContact);
         PB_GETCONTACT.setVisibility(View.VISIBLE);
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         EDT_SEARCHTEXT = (EditText) findViewById(R.id.edtSearchContact);
 //        LST_CONTACT = (RecyclerView) findViewById(R.id.lstContact);
@@ -235,51 +239,92 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                 AddContactFromPhoneActivity.this.finish();
                 return true;
             }
-            Toast.makeText(AddContactFromPhoneActivity.this, "Add Contact Pressed", Toast.LENGTH_SHORT).show();
-            for (int i = 0; i < LIST_CONTACTS.size(); i++) {
-                if (LIST_CONTACTS.get(i).isSelected() && !LIST_CONTACTS.get(i).isOriginalSelection()) {
-                    PB_SAVECONTACT.setVisibility(View.VISIBLE);
-                    NO_COUNT = NO_COUNT + 1;
-                    getContactInfoFromID(LIST_CONTACTS.get(i).getContactID(), LIST_CONTACTS.get(i).getPhoneNo());
-
-                } else if (!LIST_CONTACTS.get(i).isSelected() && LIST_CONTACTS.get(i).isOriginalSelection()) {
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("sid", Constant.SID);
-                    params.put("sname", Constant.SNAME);
-                    params.put(Constant.ID, LIST_CONTACTS.get(i).getWEB_ID());
-                    PB_SAVECONTACT.setVisibility(View.VISIBLE);
-                    NO_COUNT = NO_COUNT + 1;
-                    try {
-                        new General().getJSONContentFromInternetService(AddContactFromPhoneActivity.this,
-                                General.PHPServices.DELETE_CONTACT, params, false, false, true, new VolleyResponseListener() {
-                                    @Override
-                                    public void onError(VolleyError message) {
-                                        PB_SAVECONTACT.setVisibility(View.GONE);
-                                    }
-
-                                    @Override
-                                    public void onResponse(JSONObject response) {
-                                        Log.d("::::::::::::: ", response.toString());
-                                        SAVED_NO_COUNT = SAVED_NO_COUNT + 1;
-                                        if (NO_COUNT == SAVED_NO_COUNT) {
-                                            PB_SAVECONTACT.setVisibility(View.GONE);
-                                            Toast.makeText(AddContactFromPhoneActivity.this,
-                                                    getResources().getString(R.string.contactsaved), Toast.LENGTH_SHORT).show();
-                                            AddContactFromPhoneActivity.this.finish();
-                                            fragmentContacts.GET_CONTACTS = true;
-                                        }
-                                    }
-                                });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+//            Toast.makeText(AddContactFromPhoneActivity.this, "Add Contact Pressed", Toast.LENGTH_SHORT).show();
+            if (UTILS.isNetConnected()) {
+                UpdateContacts();
+            } else {
+                Snackbar snackbar = Snackbar
+                        .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                UpdateContacts();
+                            }
+                        });
+                snackbar.setActionTextColor(Color.RED);
+                View sbView = snackbar.getView();
+                TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+                textView.setTextColor(Color.YELLOW);
+                snackbar.show();
             }
             return true;
         } else if (item.getItemId() == R.id.action_Next) {
             startActivity(new Intent(AddContactFromPhoneActivity.this, SharePositionActivity.class));
         }
         return false;
+    }
+
+    private void UpdateContacts() {
+        if (!UTILS.isNetConnected()) {
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            UpdateContacts();
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+            return;
+        }
+        for (int i = 0; i < LIST_CONTACTS.size(); i++) {
+            if (LIST_CONTACTS.get(i).isSelected() && !LIST_CONTACTS.get(i).isOriginalSelection()) {
+                PB_SAVECONTACT.setVisibility(View.VISIBLE);
+                NO_COUNT = NO_COUNT + 1;
+                getContactInfoFromID(LIST_CONTACTS.get(i).getContactID(), LIST_CONTACTS.get(i).getPhoneNo());
+
+            } else if (!LIST_CONTACTS.get(i).isSelected() && LIST_CONTACTS.get(i).isOriginalSelection()) {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("sid", Constant.SID);
+                params.put("sname", Constant.SNAME);
+                params.put(Constant.ID, LIST_CONTACTS.get(i).getWEB_ID());
+                PB_SAVECONTACT.setVisibility(View.VISIBLE);
+                NO_COUNT = NO_COUNT + 1;
+                try {
+                    new General().getJSONContentFromInternetService(AddContactFromPhoneActivity.this,
+                            General.PHPServices.DELETE_CONTACT, params, false, false, true, new VolleyResponseListener() {
+                                @Override
+                                public void onError(VolleyError message) {
+                                    PB_SAVECONTACT.setVisibility(View.GONE);
+                                }
+
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    Log.d("::::::::::::: ", response.toString());
+                                    SAVED_NO_COUNT = SAVED_NO_COUNT + 1;
+                                    if (NO_COUNT == SAVED_NO_COUNT) {
+                                        PB_SAVECONTACT.setVisibility(View.GONE);
+                                        Toast.makeText(AddContactFromPhoneActivity.this,
+                                                getResources().getString(R.string.contactsaved), Toast.LENGTH_SHORT).show();
+                                        AddContactFromPhoneActivity.this.finish();
+                                        fragmentContacts.GET_CONTACTS = true;
+                                    }
+                                }
+                            });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private void getContactInfoFromID(String _contactID, String _phoneno) {
@@ -393,7 +438,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             e.printStackTrace();
         }
 
-         saveContact(_fname, _lname, _email, _note, _phoneno, ADD_TO_HELP_LIST, _file);
+        saveContact(_fname, _lname, _email, _note, _phoneno, ADD_TO_HELP_LIST, _file);
     }
 
     private void saveContact(String FNAME, String LNAME, String EMAIL, String NOTE, String PHONENO, String HELPLIST, File IMG_FILE) {

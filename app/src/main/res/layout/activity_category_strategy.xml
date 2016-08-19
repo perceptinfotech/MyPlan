@@ -26,5 +26,5 @@
         android:id="@+id/pbStrCate"
         android:visibility="gone"/>
 
-
+<include layout="@layout/lay_internet_lost"/>
 </RelativeLayout>

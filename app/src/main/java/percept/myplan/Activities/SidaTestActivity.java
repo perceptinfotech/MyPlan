@@ -2,7 +2,10 @@ package percept.myplan.Activities;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -41,6 +44,7 @@ public class SidaTestActivity extends AppCompatActivity {
     private int CURR_QUES, TOTAL_QUES;
     private String STRANSWER = "";
     private ProgressBar PB;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,8 @@ public class SidaTestActivity extends AppCompatActivity {
         TV_TESTANSWER = (TextView) findViewById(R.id.tvSidaPoints);
         BTN_NEXT_QUES = (Button) findViewById(R.id.btnNextQues);
         PB = (ProgressBar) findViewById(R.id.pbSidaTest);
+
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         SEEK_SIDA = (SeekBar) findViewById(R.id.seekBarSidas);
 
@@ -83,11 +89,70 @@ public class SidaTestActivity extends AppCompatActivity {
         _dialog.setCanceledOnTouchOutside(true);
         _dialog.show();
 
+        GetSidaTest();
+
+        BTN_NEXT_QUES.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (CURR_QUES + 1 < TOTAL_QUES) {
+                    CURR_QUES = CURR_QUES + 1;
+                    TV_TESTQUESTION.setText(LST_SIDAQUES.get(CURR_QUES - 1).getQuestion());
+                    BTN_NEXT_QUES.setText(getResources().getString(R.string.nextques) +
+                            "(" + String.valueOf(CURR_QUES + 1) + "/" + String.valueOf(TOTAL_QUES) + ")");
+                    if (STRANSWER.equals(""))
+                        STRANSWER = TV_TESTANSWER.getText().toString();
+                    else
+                        STRANSWER += "," + TV_TESTANSWER.getText().toString();
+                } else {
+                    SubmitSidaTest();
+
+                }
+            }
+        });
+    }
+
+    private void SubmitSidaTest() {
+        try {
+            STRANSWER += "," + TV_TESTANSWER.getText().toString();
+            params.put("answer", STRANSWER);
+            PB.setVisibility(View.VISIBLE);
+            new General().getJSONContentFromInternetService(SidaTestActivity.this, General.PHPServices.SUBMIT_SIDATEST, params, true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    PB.setVisibility(View.GONE);
+                    SidaTestActivity.this.finish();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            SubmitSidaTest();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+    }
+
+    private void GetSidaTest() {
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         try {
-            new General().getJSONContentFromInternetService(SidaTestActivity.this, General.PHPServices.GET_SIDATEST, params, false, false, true, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(SidaTestActivity.this, General.PHPServices.GET_SIDATEST, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
 
@@ -115,43 +180,21 @@ public class SidaTestActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            GetSidaTest();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
         }
-
-        BTN_NEXT_QUES.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (CURR_QUES + 1 < TOTAL_QUES) {
-                    CURR_QUES = CURR_QUES + 1;
-                    TV_TESTQUESTION.setText(LST_SIDAQUES.get(CURR_QUES - 1).getQuestion());
-                    BTN_NEXT_QUES.setText(getResources().getString(R.string.nextques) +
-                            "(" + String.valueOf(CURR_QUES + 1) + "/" + String.valueOf(TOTAL_QUES) + ")");
-                    if (STRANSWER.equals(""))
-                        STRANSWER = TV_TESTANSWER.getText().toString();
-                    else
-                        STRANSWER += "," + TV_TESTANSWER.getText().toString();
-                } else {
-                    try {
-                        STRANSWER += "," + TV_TESTANSWER.getText().toString();
-                        params.put("answer", STRANSWER);
-                        PB.setVisibility(View.VISIBLE);
-                        new General().getJSONContentFromInternetService(SidaTestActivity.this, General.PHPServices.SUBMIT_SIDATEST, params, false, false, true, new VolleyResponseListener() {
-                            @Override
-                            public void onError(VolleyError message) {
-                                PB.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                PB.setVisibility(View.GONE);
-                                SidaTestActivity.this.finish();
-                            }
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
     }
 
     @Override

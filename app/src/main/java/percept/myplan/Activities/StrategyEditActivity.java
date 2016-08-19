@@ -3,8 +3,11 @@ package percept.myplan.Activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -74,6 +77,8 @@ public class StrategyEditActivity extends AppCompatActivity {
     private String STRATEGY_ID;
     private ProgressBar PB;
 
+    private CoordinatorLayout REL_COORDINATE;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +107,8 @@ public class StrategyEditActivity extends AppCompatActivity {
         TV_LINKS = (TextView) findViewById(R.id.tvLinks);
         TV_NETWORK = (TextView) findViewById(R.id.tvNetwork);
         TV_MUSIC = (TextView) findViewById(R.id.tvMusic);
+
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         LIST_ALARM = new ArrayList<>();
         LIST_IMG = new ArrayList<>();
@@ -199,7 +206,7 @@ public class StrategyEditActivity extends AppCompatActivity {
                     getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-            PB.setVisibility(View.VISIBLE);
+
             addStrategy(EDT_TITLE.getText().toString().trim(), EDT_TEXT.getText().toString().trim(),
                     STR_CONTACTID, LIST_IMG, LIST_MUSIC, STR_LINK);
             return true;
@@ -207,9 +214,31 @@ public class StrategyEditActivity extends AppCompatActivity {
         return false;
     }
 
-    private void addStrategy(String title, String text, String STR_CONTACTID, List<String> listImg, List<String> listMusic, String STR_LINK) {
+    private void addStrategy(final String title, final String text, final String STR_CONTACTID, final List<String> listImg, final List<String> listMusic, final String STR_LINK) {
+        if (!UTILS.isNetConnected()) {
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            addStrategy(title, text, STR_CONTACTID, listImg, listMusic, STR_LINK);
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+            return;
+        }
+        PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
-        params.put(Constant.URL,getResources().getString(R.string.server_url) + ".saveStrategy");
+        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveStrategy");
         // Adding file data to http body
         if (listImg.size() > 0) {
             for (int i = 0; i < listImg.size(); i++) {

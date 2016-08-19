@@ -2,7 +2,10 @@ package percept.myplan.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -50,6 +53,7 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
     private ProgressBar PB;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,8 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.addlink));
+
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         BTN_INSERTLINK = (Button) findViewById(R.id.btnInsertLink);
         EDT_LINK = (EditText) findViewById(R.id.edtLink);
@@ -110,7 +116,7 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
         return false;
     }
 
-    private void addHopeBoxLinkElement(String title, String hopeId, String link, String type) {
+    private void addHopeBoxLinkElement(final String title, final String hopeId, final String link, final String type) {
         PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
@@ -139,6 +145,20 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            addHopeBoxLinkElement(title,hopeId,link,type);
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
         }
     }
 //    private class AddHopeBoxLinkElement extends AsyncTask<Void, Integer, String> {

@@ -3,6 +3,9 @@ package percept.myplan.Activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -46,7 +49,7 @@ public class AddNewSymptomActivity extends AppCompatActivity {
     public static List<SymptomStrategy> LIST_ADDSYMPTOMSTRATEGY;
     private SymptomStrategyAdapter ADAPTER;
     private ProgressBar PB;
-
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +71,7 @@ public class AddNewSymptomActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(AddNewSymptomActivity.this);
         LST_SYMPTOMSTRATEGY.setLayoutManager(mLayoutManager);
         LST_SYMPTOMSTRATEGY.setItemAnimator(new DefaultItemAnimator());
-
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         TV_ADDSTRATEGY.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,38 +114,54 @@ public class AddNewSymptomActivity extends AppCompatActivity {
             InputMethodManager inputManager = (InputMethodManager)
                     getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            PB.setVisibility(View.VISIBLE);
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("sid", Constant.SID);
-            params.put("sname", Constant.SNAME);
-            params.put("title", EDT_TITLE.getText().toString().trim());
-            params.put("description", EDT_DESC.getText().toString().trim());
-            params.put("strategy_id", STR_STRATEGYID);
-            params.put("state", "1");
-            params.put("id", "");
-
-            try {
-                new General().getJSONContentFromInternetService(AddNewSymptomActivity.this, General.PHPServices.SAVE_SYMPTOM, params, true, false, true, new VolleyResponseListener() {
-                    @Override
-                    public void onError(VolleyError message) {
-                        PB.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        fragmentSymptoms.GET_STRATEGY = true;
-                        Log.d(":::::", response.toString());
-                        PB.setVisibility(View.GONE);
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-            fragmentSymptoms.GET_STRATEGY = true;
-            AddNewSymptomActivity.this.finish();
+            AddNewSymptom();
             return true;
         }
         return false;
+    }
+
+    private void AddNewSymptom() {
+        PB.setVisibility(View.VISIBLE);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put("title", EDT_TITLE.getText().toString().trim());
+        params.put("description", EDT_DESC.getText().toString().trim());
+        params.put("strategy_id", STR_STRATEGYID);
+        params.put("state", "1");
+        params.put("id", "");
+
+        try {
+            new General().getJSONContentFromInternetService(AddNewSymptomActivity.this, General.PHPServices.SAVE_SYMPTOM, params, true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    fragmentSymptoms.GET_STRATEGY = true;
+                    Log.d(":::::", response.toString());
+                    PB.setVisibility(View.GONE);
+                    AddNewSymptomActivity.this.finish();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            AddNewSymptom();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
     }
 }

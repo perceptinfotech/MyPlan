@@ -1,6 +1,9 @@
 package percept.myplan.Activities;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -46,6 +49,7 @@ public class MoodSummaryActivity extends AppCompatActivity {
     private int MONTH;
     private int YEAR;
     private ProgressBar PB;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,8 @@ public class MoodSummaryActivity extends AppCompatActivity {
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(R.string.seenotes);
 
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
+
         MONTH = getIntent().getExtras().getInt("MONTH");
         YEAR = getIntent().getExtras().getInt("YEAR");
         UTILS = new Utils(MoodSummaryActivity.this);
@@ -68,6 +74,12 @@ public class MoodSummaryActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(MoodSummaryActivity.this);
         LST_MOODSUMMARY.setLayoutManager(mLayoutManager);
         LST_MOODSUMMARY.setItemAnimator(new DefaultItemAnimator());
+
+        GetMoodSummary();
+
+    }
+
+    private void GetMoodSummary() {
         PB.setVisibility(View.VISIBLE);
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
@@ -75,7 +87,7 @@ public class MoodSummaryActivity extends AppCompatActivity {
         params.put("year", String.valueOf(YEAR));
         params.put("month", String.valueOf(MONTH + 1));
         try {
-            new General().getJSONContentFromInternetService(MoodSummaryActivity.this, General.PHPServices.GET_MOODCALENDER, params, false, false, true, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(MoodSummaryActivity.this, General.PHPServices.GET_MOODCALENDER, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
                     PB.setVisibility(View.GONE);
@@ -99,78 +111,7 @@ public class MoodSummaryActivity extends AppCompatActivity {
                             Calendar cal = Calendar.getInstance();
                             cal.setTime(date);
                             String _suffix = UTILS.getDayOfMonthSuffix(cal.get(Calendar.DAY_OF_MONTH));
-
                             SimpleDateFormat _getDay = new SimpleDateFormat("EEEE d'" + _suffix + "' ' of ' MMMM");
-
-                            Log.d(":::: ", _getDay.format(date));
-
-//                            int _day = cal.get(Calendar.DAY_OF_MONTH);
-//                            int _Month = cal.get(Calendar.MONTH);
-//                            String _strTime = "";
-//                            switch (cal.get(Calendar.DAY_OF_WEEK)) {
-//                                case 1:
-//                                    _strTime = "Sunday ";
-//                                    break;
-//                                case 2:
-//                                    _strTime = "Monday ";
-//                                    break;
-//                                case 3:
-//                                    _strTime = "Tuesday ";
-//                                    break;
-//                                case 4:
-//                                    _strTime = "Wednesday ";
-//                                    break;
-//                                case 5:
-//                                    _strTime = "Thursday ";
-//                                    break;
-//                                case 6:
-//                                    _strTime = "Friday ";
-//                                    break;
-//                                case 7:
-//                                    _strTime = "Saturday ";
-//                                    break;
-//
-//                            }
-//                            _strTime = _strTime + String.valueOf(_day) + "th of ";
-//                            switch (_Month) {
-//                                case 0:
-//                                    _strTime = _strTime + "January";
-//                                    break;
-//                                case 1:
-//                                    _strTime = _strTime + "February";
-//                                    break;
-//                                case 2:
-//                                    _strTime = _strTime + "March";
-//                                    break;
-//                                case 3:
-//                                    _strTime = _strTime + "April";
-//                                    break;
-//                                case 4:
-//                                    _strTime = _strTime + "May";
-//                                    break;
-//                                case 5:
-//                                    _strTime = _strTime + "June";
-//                                    break;
-//                                case 6:
-//                                    _strTime = _strTime + "July";
-//                                    break;
-//                                case 7:
-//                                    _strTime = _strTime + "August";
-//                                    break;
-//                                case 8:
-//                                    _strTime = _strTime + "September";
-//                                    break;
-//                                case 9:
-//                                    _strTime = _strTime + "October";
-//                                    break;
-//                                case 10:
-//                                    _strTime = _strTime + "November";
-//                                    break;
-//                                case 11:
-//                                    _strTime = _strTime + "December";
-//                                    break;
-//                            }
-
                             LIST_MOOD.get(i).setMOOD_DATE_STRING(_getDay.format(date));
                         } catch (ParseException e) {
                             e.printStackTrace();
@@ -183,6 +124,20 @@ public class MoodSummaryActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            GetMoodSummary();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
         }
     }
 

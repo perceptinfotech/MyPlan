@@ -1,7 +1,10 @@
 package percept.myplan.Activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,6 +45,7 @@ public class HelpListEditActivity extends AppCompatActivity {
     private RecyclerView LST_HELP;
     private ContactHelpListAdapter ADPT_CONTACTHELPLIST;
     private ProgressBar PB;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,7 @@ public class HelpListEditActivity extends AppCompatActivity {
         LST_HELP = (RecyclerView) findViewById(R.id.lstHelpList);
         PB = (ProgressBar) findViewById(R.id.pbHelpListEdit);
 
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
 
@@ -85,49 +90,67 @@ public class HelpListEditActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (fragmentContacts.GET_CONTACTS) {
-            try {
-                PB.setVisibility(View.VISIBLE);
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("sid", Constant.SID);
-                params.put("sname", Constant.SNAME);
-                LIST_HELPCONTACTS.clear();
-                HELP_CONTACT_NAME.clear();
-                new General().getJSONContentFromInternetService(HelpListEditActivity.this, General.PHPServices.GET_CONTACTS, params, false, false, true, new VolleyResponseListener() {
-                    @Override
-                    public void onError(VolleyError message) {
-                        PB.setVisibility(View.GONE);
+            GetContacts();
+        }
+    }
+
+    private void GetContacts() {
+        try {
+            PB.setVisibility(View.VISIBLE);
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("sid", Constant.SID);
+            params.put("sname", Constant.SNAME);
+            LIST_HELPCONTACTS.clear();
+            HELP_CONTACT_NAME.clear();
+            new General().getJSONContentFromInternetService(HelpListEditActivity.this, General.PHPServices.GET_CONTACTS, params, true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    Gson gson = new Gson();
+                    List<ContactDisplay> _LSTALL = new ArrayList<ContactDisplay>();
+                    try {
+                        _LSTALL = gson.fromJson(response.getJSONArray(Constant.DATA)
+                                .toString(), new TypeToken<List<ContactDisplay>>() {
+                        }.getType());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Gson gson = new Gson();
-                        List<ContactDisplay> _LSTALL = new ArrayList<ContactDisplay>();
-                        try {
-                            _LSTALL = gson.fromJson(response.getJSONArray(Constant.DATA)
-                                    .toString(), new TypeToken<List<ContactDisplay>>() {
-                            }.getType());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        for (ContactDisplay _obj : _LSTALL) {
-                            if (_obj.getHelplist().equals("0")) {
+                    for (ContactDisplay _obj : _LSTALL) {
+                        if (_obj.getHelplist().equals("0")) {
 //                                CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
 //                                LIST_CONTACTS.add(_obj);
-                            } else {
-                                HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
-                                LIST_HELPCONTACTS.add(_obj);
-                            }
+                        } else {
+                            HELP_CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
+                            LIST_HELPCONTACTS.add(_obj);
                         }
-                        PB.setVisibility(View.GONE);
-
-                        ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS,"HELP");
-                        LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
                     }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                    PB.setVisibility(View.GONE);
+
+                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
+                    LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            GetContacts();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
         }
     }
 

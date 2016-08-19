@@ -1,7 +1,10 @@
 package percept.myplan.Activities;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -48,6 +51,7 @@ public class AddNoteActivity extends AppCompatActivity {
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
     private ProgressBar PB;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,9 @@ public class AddNoteActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
+
         mTitle.setText(R.string.leavenote);
         if (getIntent().hasExtra("FROM_HOPE")) {
             FROM = getIntent().getExtras().getString("FROM_HOPE");
@@ -98,7 +105,7 @@ public class AddNoteActivity extends AppCompatActivity {
         return false;
     }
 
-    private void addHopeBoxNoteElement(String NOTE, String TYPE) {
+    private void addHopeBoxNoteElement(final String NOTE, final String TYPE) {
         PB.setVisibility(View.VISIBLE);
         Map<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
@@ -127,6 +134,20 @@ public class AddNoteActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            addHopeBoxNoteElement(NOTE,TYPE);
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
         }
     }
 

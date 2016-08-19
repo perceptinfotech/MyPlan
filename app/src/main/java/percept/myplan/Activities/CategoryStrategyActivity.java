@@ -2,6 +2,9 @@ package percept.myplan.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -49,6 +52,8 @@ public class CategoryStrategyActivity extends AppCompatActivity {
     private InspirationWiseStrategyAdapter ADAPTER;
     private ProgressBar PB;
 
+    private CoordinatorLayout REL_COORDINATE;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +70,9 @@ public class CategoryStrategyActivity extends AppCompatActivity {
             mTitle.setText(getIntent().getExtras().getString("CATEGORY_NAME"));
             CATEGORYID = getIntent().getExtras().getString("CATEGORY_ID");
         }
+
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
+
         LST_CATEGORY_STRATEGY = (RecyclerView) findViewById(R.id.lstCategoryStrategy);
         PB = (ProgressBar) findViewById(R.id.pbStrCate);
         LIST_STRATEGY_INSPIRATION = new ArrayList<>();
@@ -92,13 +100,18 @@ public class CategoryStrategyActivity extends AppCompatActivity {
             }
         }));
 
+        GetCategoryStrategy();
+
+    }
+
+    private void GetCategoryStrategy() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         params.put("catid", CATEGORYID);
         try {
             PB.setVisibility(View.VISIBLE);
-            new General().getJSONContentFromInternetService(CategoryStrategyActivity.this, General.PHPServices.GET_CATEGORY_INSPIRATIONS, params, false, false, true, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(CategoryStrategyActivity.this, General.PHPServices.GET_CATEGORY_INSPIRATIONS, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
                     PB.setVisibility(View.GONE);
@@ -122,6 +135,20 @@ public class CategoryStrategyActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            GetCategoryStrategy();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
         }
     }
 

@@ -1,7 +1,10 @@
 package percept.myplan.Activities;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -44,6 +47,7 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
     private Button BTN_ADDTOMYSTRATEGIES;
     public static boolean IS_YES;
     Map<String, String> params;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +69,8 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
 
         BTN_ADDTOMYSTRATEGIES = (Button) findViewById(R.id.btnAddToMyStrategies);
 
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
+
         if (getIntent().hasExtra("FROM_SYMPTOM")) {
             BTN_ADDTOMYSTRATEGIES.setVisibility(View.GONE);
         }
@@ -73,6 +79,75 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
             STRATEGY_ID = getIntent().getExtras().getString("STRATEGY_ID");
             mTitle.setText(getIntent().getExtras().getString("STRATEGY_NAME"));
         }
+
+        GetStrategies();
+
+
+        BTN_ADDTOMYSTRATEGIES.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                dialogAddStrategy _dialogDate = new dialogAddStrategy(StrategyDetailsOtherActivity.this);
+                _dialogDate.setCanceledOnTouchOutside(false);
+                _dialogDate.show();
+                _dialogDate.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        if (IS_YES) {
+                            AddMyStrategy();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private void AddMyStrategy() {
+        PB.setVisibility(View.VISIBLE);
+
+        try {
+            new General().getJSONContentFromInternetService(StrategyDetailsOtherActivity.this,
+                    General.PHPServices.ADD_MYSTRATEGY, params, true, false, true, new VolleyResponseListener() {
+                        @Override
+                        public void onError(VolleyError message) {
+                            PB.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            PB.setVisibility(View.GONE);
+                            Log.d("::::::: ", response.toString());
+                            ADDED_STRATEGIES = true;
+                            if (getIntent().hasExtra("FROM_SYMPTOM")) {
+                                GET_STRATEGIES = true;
+                            }
+                            if (getIntent().hasExtra("FROM_SYMPTOM_INSPI")) {
+                                GET_STRATEGIES = true;
+                            }
+                            StrategyDetailsOtherActivity.this.finish();
+
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            AddMyStrategy();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+    }
+
+    private void GetStrategies() {
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -81,7 +156,7 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
         try {
             PB.setVisibility(View.VISIBLE);
             new General().getJSONContentFromInternetService(StrategyDetailsOtherActivity.this, General.PHPServices.GET_STRATEGY, params,
-                    false, false, true, new VolleyResponseListener() {
+                    true, false, true, new VolleyResponseListener() {
                         @Override
                         public void onError(VolleyError message) {
                             PB.setVisibility(View.GONE);
@@ -113,54 +188,21 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
                     });
         } catch (Exception e) {
             e.printStackTrace();
-        }
-
-        BTN_ADDTOMYSTRATEGIES.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                dialogAddStrategy _dialogDate = new dialogAddStrategy(StrategyDetailsOtherActivity.this);
-                _dialogDate.setCanceledOnTouchOutside(false);
-                _dialogDate.show();
-                _dialogDate.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        if (IS_YES) {
-                            PB.setVisibility(View.VISIBLE);
-
-                            try {
-                                new General().getJSONContentFromInternetService(StrategyDetailsOtherActivity.this,
-                                        General.PHPServices.ADD_MYSTRATEGY, params, false, false, true, new VolleyResponseListener() {
-                                            @Override
-                                            public void onError(VolleyError message) {
-                                                PB.setVisibility(View.GONE);
-                                            }
-
-                                            @Override
-                                            public void onResponse(JSONObject response) {
-                                                PB.setVisibility(View.GONE);
-                                                Log.d("::::::: ", response.toString());
-                                                ADDED_STRATEGIES = true;
-                                                if (getIntent().hasExtra("FROM_SYMPTOM")) {
-                                                    GET_STRATEGIES = true;
-                                                }
-                                                if (getIntent().hasExtra("FROM_SYMPTOM_INSPI")) {
-                                                    GET_STRATEGIES = true;
-                                                }
-                                                StrategyDetailsOtherActivity.this.finish();
-
-                                            }
-                                        });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            GetStrategies();
                         }
-                    }
-                });
-            }
-        });
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
     }
 
     @Override

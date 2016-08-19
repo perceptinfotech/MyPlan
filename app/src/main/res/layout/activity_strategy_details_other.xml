@@ -169,4 +169,6 @@
         android:background="@drawable/btn_register_border"
         android:text="@string/addtomystrategies"
         android:textColor="@android:color/white" />
+
+    <include layout="@layout/lay_internet_lost"/>
 </RelativeLayout>

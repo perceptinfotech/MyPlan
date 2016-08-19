@@ -213,5 +213,5 @@
         android:visibility="gone"
         android:layout_centerInParent="true" />
 
-
+    <include layout="@layout/lay_internet_lost"/>
 </RelativeLayout>

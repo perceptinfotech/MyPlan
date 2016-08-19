@@ -2,8 +2,11 @@ package percept.myplan.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -50,6 +53,7 @@ import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
+import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.R;
 
@@ -62,6 +66,8 @@ public class AddHopeBoxActivity extends AppCompatActivity {
     private EditText EDT_FOLDERNAME;
     private ImageView IMG_HOPE;
     private RelativeLayout LAY_SELECTIMG, LAY_SELECTEDIMG;
+    private Utils UTILS;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +81,11 @@ public class AddHopeBoxActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.title_activity_addhopebox));
-
+        UTILS = new Utils(AddHopeBoxActivity.this);
         LAY_SELECTIMG = (RelativeLayout) findViewById(R.id.relSelectImg);
         LAY_SELECTEDIMG = (RelativeLayout) findViewById(R.id.relSelectedImg);
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
+
         LAY_SELECTEDIMG.setVisibility(View.GONE);
 
         BTN_ADDFOLDERIMG = (Button) findViewById(R.id.btnAddFolderImage);
@@ -153,7 +161,29 @@ public class AddHopeBoxActivity extends AppCompatActivity {
         }
     }
 
-    private void addHopeBox(String TITLE, String IMG_PATH) {
+    private void addHopeBox(final String TITLE, final String IMG_PATH) {
+
+        if (!UTILS.isNetConnected()) {
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            addHopeBox(TITLE, IMG_PATH);
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+            return;
+        }
         HashMap<String, String> map = new HashMap<>();
         map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopebox");
         map.put("cover", IMG_PATH);

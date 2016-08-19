@@ -1,6 +1,9 @@
 package percept.myplan.Activities;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -46,6 +49,7 @@ public class SidasActivity extends AppCompatActivity {
     private List<SidaSummary> LIST_SIDA;
     Map<String, String> params;
     private ProgressBar PB;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,8 @@ public class SidasActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.sidas));
+
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         LST_SIDASUMMARY = (RecyclerView) findViewById(R.id.lstSidaSummary);
         PB = (ProgressBar) findViewById(R.id.pbSidas);
@@ -74,12 +80,19 @@ public class SidasActivity extends AppCompatActivity {
                 startActivity(new Intent(SidasActivity.this, SidaTestActivity.class));
             }
         });
-PB.setVisibility(View.VISIBLE);
+
+        GetSida();
+
+
+    }
+
+    private void GetSida() {
+        PB.setVisibility(View.VISIBLE);
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         try {
-            new General().getJSONContentFromInternetService(SidasActivity.this, General.PHPServices.GET_SIDACALENDER, params, false, false, true, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(SidasActivity.this, General.PHPServices.GET_SIDACALENDER, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
                     PB.setVisibility(View.GONE);
@@ -102,6 +115,20 @@ PB.setVisibility(View.VISIBLE);
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            GetSida();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
         }
     }
 

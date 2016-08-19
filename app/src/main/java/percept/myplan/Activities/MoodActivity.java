@@ -4,8 +4,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -60,6 +63,8 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
     private Button BTN_SEEALLNOTE;
     private ProgressBar PB;
 
+    private CoordinatorLayout REL_COORDINATE;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +88,8 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         IMG_OK = (ImageView) findViewById(R.id.imgOk);
         IMG_HAPPY = (ImageView) findViewById(R.id.imgHappy);
         IMG_VHAPPY = (ImageView) findViewById(R.id.imgVeryHappy);
+
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         BTN_SEEALLNOTE = (Button) findViewById(R.id.btnSeeAllNote);
         PB = (ProgressBar) findViewById(R.id.pbMood);
@@ -211,7 +218,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         params.put("year", String.valueOf(calendarView.getCurrentYear()));
         params.put("month", String.valueOf(calendarView.getCurrentMonth() + 1));
         try {
-            new General().getJSONContentFromInternetService(MoodActivity.this, General.PHPServices.GET_MOODCALENDER, params, false, false, true, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(MoodActivity.this, General.PHPServices.GET_MOODCALENDER, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
                     PB.setVisibility(View.GONE);
@@ -272,6 +279,20 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            GetMoodCalender();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
         }
     }
 
@@ -375,28 +396,49 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         _dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("sid", Constant.SID);
-                params.put("sname", Constant.SNAME);
-                params.put("note", STR_NOTE);
-                params.put("measurement", mood);
-                try {
-                    new General().getJSONContentFromInternetService(MoodActivity.this, General.PHPServices.ADD_MOOD, params, false, false, true, new VolleyResponseListener() {
-                        @Override
-                        public void onError(VolleyError message) {
 
-                        }
+                SubmitTodayMood(mood);
 
-                        @Override
-                        public void onResponse(JSONObject response) {
 
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
         });
+    }
+
+    private void SubmitTodayMood(final String mood) {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put("note", STR_NOTE);
+        params.put("measurement", mood);
+        try {
+            new General().getJSONContentFromInternetService(MoodActivity.this, General.PHPServices.ADD_MOOD, params, true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            SubmitTodayMood(mood);
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
     }
 
 //    private void initializeEvents() {

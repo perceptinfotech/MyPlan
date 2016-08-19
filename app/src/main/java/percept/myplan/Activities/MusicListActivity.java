@@ -4,9 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -41,6 +44,7 @@ import java.util.HashMap;
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.MultiPartParsing;
+import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.R;
 
@@ -60,6 +64,8 @@ public class MusicListActivity extends AppCompatActivity {
     private String HOPE_ID = "";
     private boolean FROM_EDIT = false;
 
+    private Utils UTILS;
+    private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +89,9 @@ public class MusicListActivity extends AppCompatActivity {
         if (getIntent().hasExtra("FROM_EDIT")) {
             FROM_EDIT = true;
         }
+
+        UTILS = new Utils(MusicListActivity.this);
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         final String[] columns = {MediaStore.Images.Media.DATA, MediaStore.Audio.Media._ID};
         final String orderBy = MediaStore.Images.Media._ID;
@@ -182,12 +191,7 @@ public class MusicListActivity extends AppCompatActivity {
                     MusicListActivity.this.finish();
                 }
             } else {
-                for (int i = 0; i < len; i++) {
-                    if (thumbnailsselection[i]) {
-                        addHopeBoxMusicElement(HOPE_TITLE, HOPE_ID, arrPath[i], "music");
-                        break;
-                    }
-                }
+                AddMusicElement(len);
             }
 
             return true;
@@ -195,16 +199,47 @@ public class MusicListActivity extends AppCompatActivity {
         return false;
     }
 
-    public void addHopeBoxMusicElement(String title, String hopeId, String musicpath, String type) {
-        HashMap<String,String> params=new HashMap<>();
-        params.put(Constant.URL,getResources().getString(R.string.server_url) + ".saveHopemedia");
+    private void AddMusicElement(final int len) {
+        if (!UTILS.isNetConnected()) {
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            AddMusicElement(len);
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+            return;
+        }
+        for (int i = 0; i < len; i++) {
+            if (thumbnailsselection[i]) {
+                addHopeBoxMusicElement(HOPE_TITLE, HOPE_ID, arrPath[i], "music");
+                break;
+            }
+        }
+    }
+
+    public void addHopeBoxMusicElement(final String title, final String hopeId, final String musicpath, final String type) {
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopemedia");
         if (!TextUtils.isEmpty(musicpath)) {
             params.put("media", musicpath);
         }
 
-            params.put("sid", Constant.SID);
+        params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
-        params.put(Constant.ID,"");
+        params.put(Constant.ID, "");
         params.put(Constant.HOPE_ID, hopeId);
         params.put(Constant.HOPE_TITLE, title);
         params.put(Constant.HOPE_TYPE, type);
@@ -212,7 +247,7 @@ public class MusicListActivity extends AppCompatActivity {
             @Override
             public void onTaskCompleted(String response) {
                 if (getIntent().hasExtra("FROM_HOPE")) {
-                    GET_HOPE_DETAILS=true;
+                    GET_HOPE_DETAILS = true;
                 }
                 Log.d(":::::: ", response);
                 CLOSE_PAGE = true;
