@@ -67,8 +67,9 @@ public class AddAlarmActivity extends AppCompatActivity {
             EDT_ALARMLABLE.setText(getIntent().getExtras().getString("ALARM_NAME"));
             TV_ALARMREPEAT.setText(getIntent().getExtras().getString("ALARM_REPEAT"));
             TV_ALARMSOUND.setText(getIntent().getExtras().getString("ALARM_TUNE"));
-            EDT_ALARMLABLE.setActivated(Boolean.parseBoolean(getIntent().getExtras().getString("ALARM_STATUS")));
-
+            SWITCH_ALARMSNOOZE.setActivated(Boolean.parseBoolean(getIntent().getExtras().getString("ALARM_STATUS")));
+            ALARM_SOUND_NAME = getIntent().getExtras().getString("ALARM_NAME");
+            ALARM_SOUND = getIntent().getExtras().getString("ALARM_URI");
 
             Calendar calendar2 = Calendar.getInstance();
             calendar2.setTimeInMillis(Long.valueOf(getIntent().getExtras().getString("ALARM_TIME")));

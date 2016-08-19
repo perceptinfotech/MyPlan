@@ -80,7 +80,7 @@ public class AlarmListActivity extends AppCompatActivity {
                 _intent.putExtra("ALARM_TUNE", _objAlarm.getAlarmTuneName());
                 _intent.putExtra("ALARM_STATUS", String.valueOf(_objAlarm.isStatus()));
                 POSITION = position;
-                startActivityForResult(_intent, EDITALARM);
+                startActivityForResult(_intent, ADDALARM);
             }
 
             @Override
