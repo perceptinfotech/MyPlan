@@ -75,6 +75,8 @@ public class HomeActivity extends AppCompatActivity implements
     private ListView LST_MENUITEMS;
     private Utils UTILS;
 
+    private TextView TV_PROFILE_NAME;
+
     public static double CURRENT_LAT, CURRENT_LONG;
 
     private final static int MY_PERMISSIONS_REQUEST = 19;
@@ -169,6 +171,8 @@ public class HomeActivity extends AppCompatActivity implements
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        TV_PROFILE_NAME = (TextView) findViewById(R.id.tvProfileName);
+        TV_PROFILE_NAME.setText(UTILS.getPreference(Constant.PREF_PROFILE_NAME));
         LST_MENUITEMS.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -178,8 +182,6 @@ public class HomeActivity extends AppCompatActivity implements
         });
 
         CheckSession();
-
-
 
 
         // Set labels.

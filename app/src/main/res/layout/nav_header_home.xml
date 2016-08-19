@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:text="Hello Rudrik!"
+            android:id="@+id/tvProfileName"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textColor="@color/appBackColor"
             android:textSize="18sp"

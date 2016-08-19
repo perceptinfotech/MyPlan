@@ -193,7 +193,7 @@ public class HopeDetailsActivity extends AppCompatActivity {
             _intent.putExtra("HOPE_ID", getIntent().getExtras().getString("HOPE_ID"));
             startActivity(_intent);
 
-            Toast.makeText(HopeDetailsActivity.this, "Add Hope Element clicked", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(HopeDetailsActivity.this, "Add Hope Element clicked", Toast.LENGTH_SHORT).show();
             return true;
         }
         return false;

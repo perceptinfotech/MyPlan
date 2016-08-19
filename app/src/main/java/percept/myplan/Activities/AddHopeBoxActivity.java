@@ -135,7 +135,7 @@ public class AddHopeBoxActivity extends AppCompatActivity {
                     getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-            Toast.makeText(AddHopeBoxActivity.this, "Saved Called", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(AddHopeBoxActivity.this, "Saved Called", Toast.LENGTH_SHORT).show();
 
 //            new AddHopeBox(EDT_FOLDERNAME.getText().toString(), FOLDER_IMG_PATH).execute();
             addHopeBox(EDT_FOLDERNAME.getText().toString(), FOLDER_IMG_PATH);

@@ -70,7 +70,7 @@ public class SettingProfileActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == R.id.action_SaveProfile) {
             SettingProfileActivity.this.finish();
-            Toast.makeText(SettingProfileActivity.this, "Profile saved called", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(SettingProfileActivity.this, "Profile saved called", Toast.LENGTH_SHORT).show();
 
             SaveProfile();
 
