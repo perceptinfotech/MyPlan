@@ -77,7 +77,9 @@ public class MultiPartParsing {
                 for (String key : map.keySet()) {
                     if (key.contains("image") || key.contains("video") ||
                             key.contains("audio") || key.contains("cover") || key.contains("media")) {
-                        if (Pattern.matches("[0-9]+",map.get(key)))
+                        if (key.equals("media_title")) {
+                            entity.addPart(key, new StringBody(map.get(key)));
+                        } else if (Pattern.matches("[0-9]+", map.get(key)))
                             entity.addPart(key, new StringBody(map.get(key)));
                         else if (!TextUtils.isEmpty(map.get(key))) {
                             File _f = new File(map.get(key));
