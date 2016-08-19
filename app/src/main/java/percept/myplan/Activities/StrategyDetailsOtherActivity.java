@@ -43,7 +43,6 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
     private Strategy clsStrategy;
     private TextView TV_DESCRIPTION, TV_USEDBY, TV_SUBMITTEDBY, TV_CATEGORY;
     private Button BTN_ADDTOMYSTRATEGIES;
-    public static boolean IS_YES;
     Map<String, String> params;
 
     @Override
@@ -120,46 +119,47 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                dialogAddStrategy _dialogDate = new dialogAddStrategy(StrategyDetailsOtherActivity.this);
-                _dialogDate.setCanceledOnTouchOutside(false);
-                _dialogDate.show();
-                _dialogDate.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                dialogAddStrategy _dialogDate = new dialogAddStrategy(StrategyDetailsOtherActivity.this) {
                     @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        if (IS_YES) {
-                            PB.setVisibility(View.VISIBLE);
+                    public void onClickYes() {
+                        dismiss();
+                        PB.setVisibility(View.VISIBLE);
+                        try {
+                            new General().getJSONContentFromInternetService(StrategyDetailsOtherActivity.this,
+                                    General.PHPServices.ADD_MYSTRATEGY, params, false, false, true, new VolleyResponseListener() {
+                                        @Override
+                                        public void onError(VolleyError message) {
+                                            PB.setVisibility(View.GONE);
+                                        }
 
-                            try {
-                                new General().getJSONContentFromInternetService(StrategyDetailsOtherActivity.this,
-                                        General.PHPServices.ADD_MYSTRATEGY, params, false, false, true, new VolleyResponseListener() {
-                                            @Override
-                                            public void onError(VolleyError message) {
-                                                PB.setVisibility(View.GONE);
+                                        @Override
+                                        public void onResponse(JSONObject response) {
+                                            PB.setVisibility(View.GONE);
+                                            Log.d("::::::: ", response.toString());
+                                            ADDED_STRATEGIES = true;
+                                            if (getIntent().hasExtra("FROM_SYMPTOM")) {
+                                                GET_STRATEGIES = true;
                                             }
-
-                                            @Override
-                                            public void onResponse(JSONObject response) {
-                                                PB.setVisibility(View.GONE);
-                                                Log.d("::::::: ", response.toString());
-                                                ADDED_STRATEGIES = true;
-                                                if (getIntent().hasExtra("FROM_SYMPTOM")) {
-                                                    GET_STRATEGIES = true;
-                                                }
-                                                if (getIntent().hasExtra("FROM_SYMPTOM_INSPI")) {
-                                                    GET_STRATEGIES = true;
-                                                }
-                                                StrategyDetailsOtherActivity.this.finish();
-
+                                            if (getIntent().hasExtra("FROM_SYMPTOM_INSPI")) {
+                                                GET_STRATEGIES = true;
                                             }
-                                        });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                                            StrategyDetailsOtherActivity.this.finish();
 
-
+                                        }
+                                    });
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
-                });
+
+                    @Override
+                    public void onClickNo() {
+                        dismiss();
+                    }
+                };
+                _dialogDate.setCanceledOnTouchOutside(false);
+                _dialogDate.show();
+
             }
         });
         TV_SUBMITTEDBY.setOnClickListener(new View.OnClickListener() {

@@ -16,14 +16,21 @@ import percept.myplan.R;
 /**
  * Created by percept on 2/5/15.
  */
-public class dialogAddStrategy extends Dialog implements View.OnClickListener {
+public abstract class dialogAddStrategy extends Dialog implements View.OnClickListener {
     private Context CONTEXT;
-    private TextView TV_YES, TV_NO;
+    private TextView TV_YES, TV_NO, TV_DIALOGMSG;
+    private String dialogMsg;
 
     public dialogAddStrategy(Context context) {
+        super(context, R.style.DialogTheme);
+        this.CONTEXT = context;
+    }
+
+    public dialogAddStrategy(Context context, String dialogMsg) {
 
         super(context, R.style.DialogTheme);
         this.CONTEXT = context;
+        this.dialogMsg = dialogMsg;
 
     }
 
@@ -32,6 +39,9 @@ public class dialogAddStrategy extends Dialog implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_add_strategy);
+
+        TV_DIALOGMSG = (TextView) findViewById(R.id.tvDialogMsg);
+        TV_DIALOGMSG.setText(dialogMsg);
 
         TV_YES = (TextView) findViewById(R.id.tvYes);
         TV_YES.setOnClickListener(this);
@@ -44,21 +54,17 @@ public class dialogAddStrategy extends Dialog implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tvYes:
-                StrategyDetailsOtherActivity.IS_YES = true;
-                dismiss();
+                onClickYes();
                 break;
             case R.id.tvNo:
-                StrategyDetailsOtherActivity.IS_YES = false;
-                dismiss();
+                onClickNo();
                 break;
 
 
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        StrategyDetailsOtherActivity.IS_YES = false;
-        super.onBackPressed();
-    }
+    public abstract void onClickYes();
+
+    public abstract void onClickNo();
 }
