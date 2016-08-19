@@ -112,7 +112,7 @@
                         android:layout_height="wrap_content"
                         android:background="@android:color/white" />
 
-                    <TextView
+                 <!--   <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -134,7 +134,7 @@
                         android:padding="5dp"
                         android:text="9:30"
                         android:textColor="@color/appBackColor"
-                        android:textSize="16sp" />
+                        android:textSize="16sp" />-->
                 </LinearLayout>
 
                 <View
