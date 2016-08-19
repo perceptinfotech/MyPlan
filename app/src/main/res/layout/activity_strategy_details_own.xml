@@ -103,8 +103,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/white"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:orientation="horizontal">
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/lstStrategyAlarm"
@@ -136,11 +135,6 @@
                         android:textColor="@color/appBackColor"
                         android:textSize="16sp" />-->
                 </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/sidemenu_seperator" />
 
                 <TextView
                     android:layout_width="match_parent"

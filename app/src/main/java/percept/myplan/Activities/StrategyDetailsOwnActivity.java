@@ -97,6 +97,8 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         EDT_STRATEGYDESC.setEnabled(false);
         EDT_STRATEGYTITLE.setEnabled(false);
 
+        LIST_STRATEGYCONTACT = new ArrayList<>();
+        LIST_ALARM = new ArrayList<>();
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         BTN_SHARESTRATEGY = (Button) findViewById(R.id.btnShareStrategyAnony);
@@ -139,6 +141,9 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         LST_STRATEGYCONTACT.setLayoutManager(_mLayoutManager);
         LST_STRATEGYCONTACT.setItemAnimator(new DefaultItemAnimator());
 
+        RecyclerView.LayoutManager _mLayoutManagerAlarm = new LinearLayoutManager(StrategyDetailsOwnActivity.this);
+        LST_STRATEGYALARM.setLayoutManager(_mLayoutManagerAlarm);
+        LST_STRATEGYALARM.setItemAnimator(new DefaultItemAnimator());
 
         LIST_IMAGE = new ArrayList<>();
 
@@ -218,8 +223,10 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                     EDT_STRATEGYDESC.setText(clsStrategy.getDescription());
                     LIST_ALARM = MAP_ALARM.get(STRATEGY_ID);
 
-                    ADAPTER_ALARM = new StrategyAlarmAdapter(LIST_ALARM);
-                    LST_STRATEGYALARM.setAdapter(ADAPTER_ALARM);
+                    if (LIST_ALARM != null && LIST_ALARM.size() > 0) {
+                        ADAPTER_ALARM = new StrategyAlarmAdapter(LIST_ALARM);
+                        LST_STRATEGYALARM.setAdapter(ADAPTER_ALARM);
+                    }
 
                     String _images = clsStrategy.getImage();
                     String[] _arrImg = _images.split(",");
@@ -227,8 +234,11 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                         LIST_IMAGE.add(_arrImg[i]);
                     }
                     PB.setVisibility(View.GONE);
-                    ADAPTER_IMG = new ImageAdapter(StrategyDetailsOwnActivity.this, LIST_IMAGE);
-                    LST_OWNSTRATEGYIMG.setAdapter(ADAPTER_IMG);
+
+                    if (LIST_IMAGE != null && LIST_IMAGE.size() > 0) {
+                        ADAPTER_IMG = new ImageAdapter(StrategyDetailsOwnActivity.this, LIST_IMAGE);
+                        LST_OWNSTRATEGYIMG.setAdapter(ADAPTER_IMG);
+                    }
                 }
             });
         } catch (Exception e) {

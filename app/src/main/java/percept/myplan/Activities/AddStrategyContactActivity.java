@@ -112,8 +112,10 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
                         }
                     }
                     PB.setVisibility(View.GONE);
-                    ADAPTER = new StrategyContactAdapter(AddStrategyContactActivity.this, LIST_ALLCONTACTS, false);
-                    LST_CONTACTS.setAdapter(ADAPTER);
+                    if(LIST_ALLCONTACTS.size()>0) {
+                        ADAPTER = new StrategyContactAdapter(AddStrategyContactActivity.this, LIST_ALLCONTACTS, false);
+                        LST_CONTACTS.setAdapter(ADAPTER);
+                    }
                 }
             });
         } catch (Exception e) {

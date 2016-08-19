@@ -4,7 +4,7 @@ package percept.myplan.POJO;
  * Created by percept on 11/7/16.
  */
 
-public class Contact {
+public class Contact implements Comparable<Contact>{
 
     private String ContactName;
     private String PhoneNo;
@@ -76,5 +76,10 @@ public class Contact {
 
     public void setWEB_ID(String WEB_ID) {
         this.WEB_ID = WEB_ID;
+    }
+
+    @Override
+    public int compareTo(Contact contact) {
+        return ContactName.compareTo(contact.getContactName());
     }
 }

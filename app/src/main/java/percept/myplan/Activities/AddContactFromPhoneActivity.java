@@ -41,6 +41,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,7 +115,6 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                     // this thread waiting for the user's response! After the user
                     // sees the explanation, try again to request the permission.
                 } else {
-                    PB_GETCONTACT.setVisibility(View.GONE);
                     // No explanation needed, we can request the permission.
                     ActivityCompat.requestPermissions(AddContactFromPhoneActivity.this,
                             new String[]{Manifest.permission.READ_CONTACTS},
@@ -152,7 +153,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         LST_CONTACT.setOnStickyHeaderChangedListener(this);
         LST_CONTACT.setOnStickyHeaderOffsetChangedListener(this);
         LST_CONTACT.setDrawingListUnderStickyHeader(true);
-        LST_CONTACT.setAreHeadersSticky(true);
+//        LST_CONTACT.setAreHeadersSticky(true);
 
 
         EDT_SEARCHTEXT.addTextChangedListener(new TextWatcher() {
@@ -661,6 +662,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                         LIST_CONTACTS.add(new Contact(name, phoneNo, _contactID, _hasContact, _hasContact, _WEB_ID));
                     } while (cur.moveToNext());
                 }
+                Collections.sort(LIST_CONTACTS);
                 return null;
             }
 

@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
+import org.apache.http.util.TextUtils;
+
 import java.util.List;
 
 import percept.myplan.AppController;
@@ -64,7 +66,11 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
     @Override
     public void onBindViewHolder(final ContactHelpListHolder holder, int position) {
         ContactDisplay _contact = LIST_HELPCONTACT.get(position);
-        holder.TV_HELPCONTACT.setText(_contact.getFirst_name());
+        if (!TextUtils.isEmpty(_contact.getFirst_name())) {
+            holder.TV_HELPCONTACT.setText(_contact.getFirst_name());
+        } else {
+            holder.TV_HELPCONTACT.setText(_contact.getPhone());
+        }
 
 
         if (TYPE.equals("HELP")) {
@@ -83,7 +89,11 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
             else
                 holder.TV_CONTACTCHAR.setVisibility(View.VISIBLE);
 
-            holder.TV_CONTACTCHAR.setText(LIST_HELPCONTACT.get(position).getFirst_name().substring(0, 2));
+            if (!TextUtils.isEmpty(LIST_HELPCONTACT.get(position).getFirst_name())) {
+                holder.TV_CONTACTCHAR.setText(LIST_HELPCONTACT.get(position).getFirst_name().substring(0, 2));
+            }
+
+
 //            holder.IMG_CONTACT.setBackgroundColor(Color.rgb(169, 169, 169));
         } else {
             holder.TV_CONTACTCHAR.setVisibility(View.GONE);
