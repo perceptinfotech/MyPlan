@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -131,6 +132,8 @@ public class HomeActivity extends AppCompatActivity implements
     protected String mLongitudeLabel;
     protected String mLastUpdateTimeLabel;
 
+    private ImageView IMG_DRAWER;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,6 +175,8 @@ public class HomeActivity extends AppCompatActivity implements
         toggle.syncState();
 
         TV_PROFILE_NAME = (TextView) findViewById(R.id.tvProfileName);
+        IMG_DRAWER= (ImageView) findViewById(R.id.imgDrawer);
+
         TV_PROFILE_NAME.setText(getResources().getString(R.string.hello)+" "+ UTILS.getPreference(Constant.PREF_PROFILE_NAME));
         LST_MENUITEMS.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -182,7 +187,12 @@ public class HomeActivity extends AppCompatActivity implements
         });
 
         CheckSession();
-
+        IMG_DRAWER.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer.closeDrawers();
+            }
+        });
 
         // Set labels.
         mLatitudeLabel = getResources().getString(R.string.latitude_label);
