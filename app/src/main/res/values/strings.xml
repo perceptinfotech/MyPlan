@@ -116,6 +116,7 @@
     <string name="action_edit">Edit</string>
     <string name="title_activity_strategy">Strategy</string>
     <string name="title_activity_strategy_details_other">StrategyDetailsOtherActivity</string>
+    <string name="title_activity_strategy_details_other_submitted">Inspired By</string>
     <string name="addnewstrategy">Add new strategy</string>
     <string name="inspiration">Inspiration</string>
     <string name="action_add">Add</string>
