@@ -31,8 +31,8 @@
     <color name="pin_normal">#000000</color>
     <color name="login_forget_color">#0B554E</color>
     <color name="backcolor">#EFEFF3</color>
-    <color name="home_emergency">#ED1C24</color>
-    <color name="home_help">#4CC1B6</color>
+    <color name="home_emergency">#ed1c24</color>
+    <color name="home_help">#fed304</color>
 
     <color name="album_title">#4c4c4c</color>
 

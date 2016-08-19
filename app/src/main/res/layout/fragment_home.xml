@@ -23,7 +23,7 @@
         android:background="@drawable/lay_moodrating_home_border"
         android:orientation="vertical"
         android:paddingBottom="10dp"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <RelativeLayout
             android:layout_width="match_parent"
