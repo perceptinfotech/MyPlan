@@ -22,6 +22,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,7 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
     private String STR_CONTACTID = "";
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,7 +114,8 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
                         }
                     }
                     PB.setVisibility(View.GONE);
-                    if(LIST_ALLCONTACTS.size()>0) {
+                    if (LIST_ALLCONTACTS.size() > 0) {
+                        Collections.sort(LIST_ALLCONTACTS);
                         ADAPTER = new StrategyContactAdapter(AddStrategyContactActivity.this, LIST_ALLCONTACTS, false);
                         LST_CONTACTS.setAdapter(ADAPTER);
                     }

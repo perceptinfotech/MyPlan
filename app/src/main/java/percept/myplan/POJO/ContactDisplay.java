@@ -4,11 +4,11 @@ package percept.myplan.POJO;
  * Created by percept on 30/7/16.
  */
 
-public class ContactDisplay {
+public class ContactDisplay implements Comparable<ContactDisplay> {
 
     private String created_by;
     private String id;
-    private String first_name;
+    private String first_name = "";
     private String phone;
     private String email;
     private String helplist;
@@ -143,4 +143,8 @@ public class ContactDisplay {
     }
 
 
+    @Override
+    public int compareTo(ContactDisplay contactDisplay) {
+        return first_name.compareTo(contactDisplay.getFirst_name());
+    }
 }
