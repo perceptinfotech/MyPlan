@@ -226,8 +226,16 @@
     <string name="required">Required</string>
     <string name="toast_old_password_invalid">Please enter valid Old Password</string>
     <string name="toast_new_password_invalid">Please enter valid New Password</string>
-    <string name="share_strategy_success">Successfully share your Strategy.</string>
-    <string name="note">Note</string>
+    <string name="share_strategy_success">Successfully shared your Strategy.</string>
+    <string name="add_ringtone">Add new Ringtone</string>
+    <string name="add_email">Add new E-mail</string>
+    <string name="add_url">Add new URL</string>
+    <string name="add_address">Add new address</string>
+    <string name="assign_priority">Assign Priority</string>
+    <string name="company">Company</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_photo">Add Photo</string>
 
     <string-array name="navigation_menu">
         <item>Symptoms</item>

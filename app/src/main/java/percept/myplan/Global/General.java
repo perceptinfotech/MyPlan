@@ -33,7 +33,7 @@ import percept.myplan.R;
 
 public class General {
 
-    private String getServiceName(PHPServices serviceName) {
+    public String getServiceName(PHPServices serviceName) {
         if (serviceName == PHPServices.LOGIN) {
             return ".login";
         } else if (serviceName == PHPServices.REGISTER) {
@@ -86,6 +86,10 @@ public class General {
             return ".saveHopemedia";
         }else if (serviceName == PHPServices.SHARE_STRATEGIES) {
             return ".shareStrategies";
+        }else if (serviceName == PHPServices.SAVE_CONTACT) {
+            return ".saveContact";
+        }else if (serviceName == PHPServices.SAVE_STRATEGY) {
+            return ".saveStrategy";
         }
         return "";
     }
@@ -220,6 +224,8 @@ public class General {
         GET_SIDACALENDER,
         SUBMIT_SIDATEST,
         SHARE_STRATEGIES,
-        SAVE_HOPE_MEDIA
+        SAVE_HOPE_MEDIA,
+        SAVE_STRATEGY,
+        SAVE_CONTACT
     }
 }

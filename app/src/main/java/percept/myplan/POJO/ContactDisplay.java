@@ -1,10 +1,12 @@
 package percept.myplan.POJO;
 
+import java.io.Serializable;
+
 /**
  * Created by percept on 30/7/16.
  */
 
-public class ContactDisplay implements Comparable<ContactDisplay> {
+public class ContactDisplay implements Comparable<ContactDisplay>,Serializable {
 
     private String created_by;
     private String id;
@@ -19,6 +21,9 @@ public class ContactDisplay implements Comparable<ContactDisplay> {
     private String con_image;
     private String skype;
     private boolean isSelected = false;
+
+    public ContactDisplay() {
+    }
 
     public ContactDisplay(String created_by, String id, String first_name, String phone, String email,
                           String helplist, String state, String last_name, String ordering,

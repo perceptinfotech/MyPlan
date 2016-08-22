@@ -97,17 +97,18 @@ public class HelpListActivity extends AppCompatActivity {
                 startActivity(_intent);
             }
         });
-        getContacts();
+//        getContacts();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (fragmentContacts.GET_CONTACTS) {
+        /*if (fragmentContacts.GET_CONTACTS) {
             getContacts();
             fragmentContacts.GET_CONTACTS = false;
-        }
+        }*/
+        getContacts();
     }
 
     private void getContacts() {

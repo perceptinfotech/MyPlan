@@ -67,6 +67,7 @@ public class fragmentContacts extends Fragment {
     public static boolean GET_CONTACTS = false;
     private Utils UTILS;
     private CoordinatorLayout REL_COORDINATE;
+
     public fragmentContacts() {
         // Required empty public constructor
     }
@@ -96,8 +97,8 @@ public class fragmentContacts extends Fragment {
         HELP_CONTACT_NAME = new HashMap<>();
         UTILS = new Utils(getActivity());
 
+        GET_CONTACTS = true;
 
-        GetContacts();
         ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());

@@ -76,11 +76,8 @@ import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
-import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
 
-import static percept.myplan.Activities.AddStrategyToSymptomActivity.GET_STRATEGIES;
-import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
 
 public class SignUpActivity extends AppCompatActivity {
     private ImageView IMG_USER;
@@ -93,6 +90,7 @@ public class SignUpActivity extends AppCompatActivity {
     private ProgressBar PB;
     private static Uri IMG_URI;
     private static final int REQ_TAKE_PICTURE = 33;
+    private static final int TAKE_PICTURE_GALLERY = 34;
 
     private final static int MY_PERMISSIONS_REQUEST = 14;
 
@@ -285,7 +283,7 @@ public class SignUpActivity extends AppCompatActivity {
         params.put(Constant.PHONE, EDT_PHONENO.getText().toString().trim());
         params.put(Constant.DOB, YEAR.toString().trim());
         params.put(Constant.PASSWORD, EDT_PASSWORD.getText().toString().trim());
-        new MultiPartParsing(SignUpActivity.this, params, new AsyncTaskCompletedListener() {
+        new MultiPartParsing(SignUpActivity.this, params, General.PHPServices.REGISTER, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
                 PB.setVisibility(View.GONE);
@@ -430,7 +428,7 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (resultCode == RESULT_OK) {
-            if (requestCode == 1) {
+            if (requestCode == TAKE_PICTURE_GALLERY) {
                 Uri selectedImage = data.getData();
 
                 String[] filePath = {MediaStore.Images.Media.DATA};
@@ -589,7 +587,7 @@ public class SignUpActivity extends AppCompatActivity {
                 dismiss();
                 Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(pickPhoto, 1);
+                startActivityForResult(pickPhoto, TAKE_PICTURE_GALLERY);
             }
 
             @Override

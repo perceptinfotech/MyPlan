@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backcolor"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context="percept.myplan.Activities.AddContactActivity">
+
+    <include layout="@layout/app_toolbar"></include>
+
+    <TextView
+        android:id="@+id/tvEmergency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/actionBar"
+        android:background="@android:color/white"
+        android:drawableRight="@drawable/exclamation"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:text="@string/emergency"
+        android:textColor="@android:color/black" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="10dp"
+        android:background="@color/sidemenu_seperator" />
+
+    <TextView
+        android:id="@+id/tvHelp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvPhoneList"
+        android:background="@android:color/white"
+        android:drawableRight="@drawable/contact_msg"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:text="@string/help"
+        android:textColor="@android:color/black" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/sidemenu_seperator" />
+</LinearLayout>

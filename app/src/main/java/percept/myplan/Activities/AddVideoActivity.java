@@ -52,6 +52,7 @@ import java.util.Map;
 
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
@@ -352,7 +353,7 @@ public class AddVideoActivity extends AppCompatActivity {
         }
         PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
-        params.put(Constant.URL,getResources().getString(R.string.server_url) + ".saveHopemedia");
+//        params.put(Constant.URL,getResources().getString(R.string.server_url) + ".saveHopemedia");
         if (!TextUtils.isEmpty(vidpath)) {
             params.put("media", vidpath);
         }
@@ -364,7 +365,7 @@ public class AddVideoActivity extends AppCompatActivity {
         params.put(Constant.HOPE_TITLE, title);
         params.put(Constant.HOPE_TYPE, type);
 
-        new MultiPartParsing(AddVideoActivity.this, params, new AsyncTaskCompletedListener() {
+        new MultiPartParsing(AddVideoActivity.this, params, General.PHPServices.SAVE_HOPE_MEDIA, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
                 PB.setVisibility(View.GONE);

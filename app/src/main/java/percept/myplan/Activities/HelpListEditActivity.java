@@ -89,9 +89,7 @@ public class HelpListEditActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (fragmentContacts.GET_CONTACTS) {
             GetContacts();
-        }
     }
 
     private void GetContacts() {

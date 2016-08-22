@@ -66,6 +66,11 @@ public class Constant {
     public final static String SKYPE = "skype";
     public final static String HELPLIST = "helplist";
     public final static String NOTE = "note";
+    public final static String COMPANY_NAME = "company_name";
+    public final static String WEB_ADDRESS = "web_address";
+    public final static String RINGTONE = "ringtone";
+    public final static String ADDRESS = "address";
+
 
     //add Strategy
     public final static String CONTACTID = "contacts";

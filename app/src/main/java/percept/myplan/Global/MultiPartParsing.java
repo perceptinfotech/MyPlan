@@ -31,12 +31,14 @@ public class MultiPartParsing {
     private Context context;
     private HashMap<String, String> map;
     private AsyncTaskCompletedListener completedListener;
-//    private int serviceCode;
+    private General.PHPServices servicesName;
 
-    public MultiPartParsing(Context _context, HashMap<String, String> _map, AsyncTaskCompletedListener _completedListener) {
+    public MultiPartParsing(Context _context, HashMap<String, String> _map,
+                            General.PHPServices servicesName, AsyncTaskCompletedListener _completedListener) {
         this.context = _context;
         this.map = _map;
         this.completedListener = _completedListener;
+        this.servicesName = servicesName;
         new MultiPartAsyncTask().execute();
     }
 
@@ -57,9 +59,8 @@ public class MultiPartParsing {
             String responseString = null;
 
             HttpClient httpclient = new DefaultHttpClient();
-//        HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveStrategy");
-            HttpPost httppost = new HttpPost(map.get("url"));
-            map.remove("url");
+            String _strURL = context.getResources().getString(R.string.server_url) + new General().getServiceName(servicesName);
+            HttpPost httppost = new HttpPost(_strURL);
             try {
                 AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
                         new AndroidMultiPartEntity.ProgressListener() {

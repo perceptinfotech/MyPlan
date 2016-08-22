@@ -47,6 +47,7 @@ import java.util.Map;
 import me.crosswall.photo.pick.PickConfig;
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
@@ -352,7 +353,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         }
         PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
-        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopemedia");
+//        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopemedia");
         params.put("media", imgpath);
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -360,7 +361,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         params.put(Constant.HOPE_ID, hopeId);
         params.put(Constant.HOPE_TITLE, title);
         params.put(Constant.HOPE_TYPE, type);
-        new MultiPartParsing(this, params, new AsyncTaskCompletedListener() {
+        new MultiPartParsing(this, params, General.PHPServices.SAVE_HOPE_MEDIA, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
                 PB.setVisibility(View.GONE);

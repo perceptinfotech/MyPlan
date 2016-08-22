@@ -2,8 +2,6 @@ package percept.myplan.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -34,7 +32,12 @@ public class AddContactActivity extends AppCompatActivity {
         TV_NEWCONTACT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent _intent = new Intent(AddContactActivity.this, AddContactDetailActivity.class);
+                if (getIntent().hasExtra("ADD_TO_HELP")) {
+                    _intent.putExtra("ADD_TO_HELP", "true");
+                }
+                startActivity(_intent);
+                AddContactActivity.this.finish();
             }
         });
 

@@ -446,7 +446,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
 
         HashMap<String, String> map = new HashMap<>();
 
-        map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveContact");
+//        map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveContact");
         // Adding file data to http body
         if (IMG_FILE != null)
             map.put(Constant.CON_IMAGE, IMG_FILE.getAbsolutePath());
@@ -460,7 +460,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         map.put(Constant.EMAIL, EMAIL);
         map.put(Constant.HELPLIST, HELPLIST);
         map.put(Constant.NOTE, NOTE);
-        new MultiPartParsing(this, map, new AsyncTaskCompletedListener() {
+        new MultiPartParsing(this, map, General.PHPServices.SAVE_CONTACT, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
                 try {

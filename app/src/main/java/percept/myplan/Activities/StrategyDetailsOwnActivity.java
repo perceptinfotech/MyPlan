@@ -45,6 +45,7 @@ import percept.myplan.Global.General;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.Alarm;
+import percept.myplan.POJO.ContactDisplay;
 import percept.myplan.POJO.StrategyContact;
 import percept.myplan.POJO.StrategyDetails;
 import percept.myplan.R;
@@ -149,8 +150,6 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
         LIST_IMAGE = new ArrayList<>();
 
-        getStrategy();
-
         LST_STRATEGYCONTACT.addOnItemTouchListener(new RecyclerTouchListener(StrategyDetailsOwnActivity.this, LST_STRATEGYCONTACT, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -169,6 +168,27 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.d(":::::::: Response----", response.toString());
+
+                            try {
+                                ContactDisplay _contactDisplay = new Gson().fromJson(response.getJSONObject(Constant.DATA)
+                                        .toString(), new TypeToken<ContactDisplay>() {
+                                }.getType());
+                                Intent intent = new Intent(StrategyDetailsOwnActivity.this, AddContactDetailActivity.class);
+                                intent.putExtra("IS_FROM_STRATEGY", true);
+                                intent.putExtra("DATA", _contactDisplay);
+                                startActivity(intent);
+                                /*JSONObject _jsonContactDetail=response.getJSONObject(Constant.DATA);
+                               if (_jsonContactDetail!=null)
+                               {
+                                   ContactDisplay _contactDisplay=new ContactDisplay();
+                                   _contactDisplay.setCon_image(_jsonContactDetail.getString("con_image"));
+                                   _contactDisplay.setFirst_name(_jsonContactDetail.getString("first_name"));
+
+                               }*/
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
                         }
                     });
                 } catch (Exception e) {
@@ -203,9 +223,10 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (ADDED_STRATEGIES) {
+        /*if (ADDED_STRATEGIES) {
             getStrategy();
-        }
+        }*/
+        getStrategy();
     }
 
     private void getStrategy() {

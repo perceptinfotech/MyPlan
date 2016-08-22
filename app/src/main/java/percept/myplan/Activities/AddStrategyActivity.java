@@ -46,6 +46,7 @@ import java.util.List;
 
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
@@ -223,7 +224,7 @@ public class AddStrategyActivity extends AppCompatActivity {
 //                }
         // Extra parameters if you want to pass to server
 
-        map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveStrategy");
+     //   map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveStrategy");
         map.put("sid", Constant.SID);
         map.put("sname", Constant.SNAME);
         map.put("image_count", String.valueOf(LIST_IMG.size()));
@@ -235,7 +236,7 @@ public class AddStrategyActivity extends AppCompatActivity {
         map.put(Constant.LINK, STR_LINK);
 
 
-        new MultiPartParsing(this, map, new AsyncTaskCompletedListener() {
+        new MultiPartParsing(this, map, General.PHPServices.SHARE_STRATEGIES,new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
                 PB.setVisibility(View.GONE);

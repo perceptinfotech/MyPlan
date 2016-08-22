@@ -185,13 +185,13 @@ public class AddHopeBoxActivity extends AppCompatActivity {
             return;
         }
         HashMap<String, String> map = new HashMap<>();
-        map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopebox");
+//        map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopebox");
         map.put("cover", IMG_PATH);
         map.put("sid", Constant.SID);
         map.put("sname", Constant.SNAME);
         map.put(Constant.ID, "");
         map.put(Constant.TITLE, TITLE);
-        new MultiPartParsing(this, map, new AsyncTaskCompletedListener() {
+        new MultiPartParsing(this, map, General.PHPServices.ADD_HOPEBOX,new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
                 Log.d(":::::: ", response);

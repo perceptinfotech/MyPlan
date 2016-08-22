@@ -47,6 +47,7 @@ import java.util.List;
 
 import percept.myplan.Global.AndroidMultiPartEntity;
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
@@ -238,7 +239,7 @@ public class StrategyEditActivity extends AppCompatActivity {
         }
         PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
-        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveStrategy");
+//        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveStrategy");
         // Adding file data to http body
         if (listImg.size() > 0) {
             for (int i = 0; i < listImg.size(); i++) {
@@ -260,7 +261,7 @@ public class StrategyEditActivity extends AppCompatActivity {
         params.put(Constant.DESC, text);
         params.put(Constant.CONTACTID, STR_CONTACTID);
         params.put(Constant.LINK, STR_LINK);
-        new MultiPartParsing(StrategyEditActivity.this, params, new AsyncTaskCompletedListener() {
+        new MultiPartParsing(StrategyEditActivity.this, params, General.PHPServices.SAVE_STRATEGY, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
                 PB.setVisibility(View.GONE);
