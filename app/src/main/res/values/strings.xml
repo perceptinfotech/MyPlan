@@ -218,7 +218,16 @@
     <string name="click_to_exit">Please click back again to exit</string>
     <string name="location_update">Location Updated</string>
     <string name="hello">Hello</string>
-
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="change_password">Change Password</string>
+    <string name="add_alarm">Add Alarm</string>
+    <string name="action_change">Change</string>
+    <string name="required">Required</string>
+    <string name="toast_old_password_invalid">Please enter valid Old Password</string>
+    <string name="toast_new_password_invalid">Please enter valid New Password</string>
+    <string name="share_strategy_success">Successfully share your Strategy.</string>
+    <string name="note">Note</string>
 
     <string-array name="navigation_menu">
         <item>Symptoms</item>

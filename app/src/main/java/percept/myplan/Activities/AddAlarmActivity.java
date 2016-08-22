@@ -53,7 +53,7 @@ public class AddAlarmActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText("Add Alarm");
+        mTitle.setText(getString(R.string.add_alarm));
 
 
         TV_ALARMREPEAT = (TextView) findViewById(R.id.tvAlarmRepeat);

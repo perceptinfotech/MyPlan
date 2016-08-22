@@ -11,6 +11,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
@@ -105,7 +107,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         BTN_SHARESTRATEGY.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                shareStrategy();
             }
         });
 
@@ -117,7 +119,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
         String _strAlarm = UTILS.getPreference("ALARMLIST");
         try {
-            if (!_strAlarm.equals("") && !_strAlarm.equals("null")) {
+            if (!TextUtils.isEmpty(_strAlarm)) {
                 Type listType = new TypeToken<HashMap<String, List<Alarm>>>() {
 
                 }.getType();
@@ -153,6 +155,25 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             @Override
             public void onClick(View view, int position) {
                 Log.d("::::::::", LIST_STRATEGYCONTACT.get(position).getNAME());
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("sid", Constant.SID);
+                params.put("sname", Constant.SNAME);
+                params.put(Constant.ID, LIST_STRATEGYCONTACT.get(position).getID());
+                try {
+                    new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this, General.PHPServices.GET_CONTACT, params, true, false, true, new VolleyResponseListener() {
+                        @Override
+                        public void onError(VolleyError message) {
+
+                        }
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d(":::::::: Response----", response.toString());
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             }
 
@@ -330,5 +351,47 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
 
         }
+    }
+
+    private void shareStrategy() {
+        PB.setVisibility(View.VISIBLE);
+        HashMap<String, String> params = new HashMap<>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put("id", STRATEGY_ID);
+        try {
+            new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this,
+                    General.PHPServices.SHARE_STRATEGIES, params, true, false, true, new VolleyResponseListener() {
+
+                        @Override
+                        public void onError(VolleyError message) {
+                            PB.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            PB.setVisibility(View.GONE);
+                            Toast.makeText(StrategyDetailsOwnActivity.this, getString(R.string.share_strategy_success), Toast.LENGTH_LONG).show();
+                            Log.d("::::::share:::::", response.toString());
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            shareStrategy();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+
     }
 }

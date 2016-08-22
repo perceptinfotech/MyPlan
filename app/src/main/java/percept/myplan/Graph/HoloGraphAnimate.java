@@ -6,7 +6,7 @@ import android.view.animation.Interpolator;
 /**
  * Created by DouglasW on 6/8/2014.
  */
-public interface HoloGraphAnimate {
+public interface  HoloGraphAnimate {
 
     final int ANIMATE_NORMAL = 0;
     final int ANIMATE_INSERT = 1;

@@ -84,6 +84,8 @@ public class General {
             return ".submitSIDASTest";
         }else if (serviceName == PHPServices.SAVE_HOPE_MEDIA) {
             return ".saveHopemedia";
+        }else if (serviceName == PHPServices.SHARE_STRATEGIES) {
+            return ".shareStrategies";
         }
         return "";
     }
@@ -217,6 +219,7 @@ public class General {
         GET_SIDATEST,
         GET_SIDACALENDER,
         SUBMIT_SIDATEST,
+        SHARE_STRATEGIES,
         SAVE_HOPE_MEDIA
     }
 }

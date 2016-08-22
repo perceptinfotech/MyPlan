@@ -21,12 +21,16 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".Activities.LoginActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.HomeActivity"
             android:label="@string/title_activity_home"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Home" />
-        <activity android:name=".Activities.BaseActivity" />
+        <activity
+            android:name=".Activities.BaseActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -48,14 +52,17 @@
         <activity
             android:name=".Activities.AddContactActivity"
             android:label="@string/title_activity_add_contact"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.AddContactFromPhoneActivity"
             android:label="@string/title_activity_add_contact_from_phone"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SplashActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -65,12 +72,14 @@
         </activity>
         <activity
             android:name=".Activities.LoginActivity_1"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Activities.SignUpActivity"
             android:label="@string/myplan"
             android:parentActivityName=".Activities.LoginActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
             <meta-data
@@ -81,6 +90,7 @@
             android:name=".Activities.ForgetPwdActivity"
             android:label="@string/forgetpwdtitle"
             android:parentActivityName=".Activities.LoginActivity_1"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
             <meta-data
@@ -90,46 +100,57 @@
         <activity
             android:name=".Activities.QuickMessageDetailsActivity"
             android:label="@string/title_activity_quick_message_details"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.EmergencyContactActivity"
             android:label="@string/title_activity_emergency_contact"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.HelpListEditActivity"
             android:label="@string/title_activity_help_list"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.CreateQuickMsgActivity"
             android:label="@string/title_activity_create_quick_msg"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.SendMessageActivity"
             android:label="@string/title_activity_send_message"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.SettingProfileActivity"
             android:label="@string/title_activity_profile"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.SettingMoodRatingsActivity"
             android:label="@string/title_activity_moodratings"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.SettingGeoTrackingActivity"
             android:label="@string/title_activity_geotracking"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.SettingExportMyPlanActivity"
             android:label="@string/title_activity_exportplan"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.SettingNotificationActivity"
             android:label="@string/title_activity_notification"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.AddHopeBoxActivity"
             android:label="@string/title_activity_addhopebox"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="me.crosswall.photo.pick.PickPhotosActiviy"
@@ -138,54 +159,67 @@
         <activity
             android:name=".Activities.SymptomDetailsActivity"
             android:label="@string/title_activity_symptoms"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Activities.StrategyDetailsOwnActivity"
             android:label="@string/title_activity_strategy"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.StrategyDetailsOtherActivity"
             android:label="@string/title_activity_strategy_details_other"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.AddNewSymptomActivity"
             android:label="@string/title_activity_addsymptom"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.AddStrategyToSymptomActivity"
             android:label="@string/addastrategy"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.AddStrategyActivity"
             android:label="@string/addastrategy"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.CreateContactActivity"
             android:label="@string/addcontact"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.InspirationCategoryActivity"
             android:label="@string/inspiration"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.CategoryStrategyActivity"
             android:label="@string/inspiration"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.AlarmListActivity"
             android:label="@string/inspiration"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.AddAlarmActivity"
             android:label="@string/inspiration"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.AddStrategyContactActivity"
             android:label="@string/allcontact"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.AddStrategyImageActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.AddStrategyMusicActivity"
@@ -220,24 +254,35 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Activities.SidasActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.ImageDetailActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.MoodActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.MoodSummaryActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.SharePositionActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.SidaTestActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.StrategySubmittedDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.ChangePasswordActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

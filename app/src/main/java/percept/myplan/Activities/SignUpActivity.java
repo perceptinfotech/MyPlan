@@ -266,7 +266,6 @@ public class SignUpActivity extends AppCompatActivity {
 
             // Changing message text color
             snackbar.setActionTextColor(Color.RED);
-
             // Changing action button text color
             View sbView = snackbar.getView();
             TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
@@ -534,7 +533,11 @@ public class SignUpActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return false;
     }
 
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
