@@ -3,20 +3,28 @@ package percept.myplan.Activities;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ContentProviderOperation;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,8 +32,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
@@ -33,6 +43,7 @@ import com.squareup.picasso.Picasso;
 
 import org.apache.http.util.TextUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,6 +51,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import percept.myplan.AppController;
 import percept.myplan.Dialogs.dialogSelectPic;
@@ -61,7 +73,9 @@ public class AddContactDetailActivity extends AppCompatActivity {
 
     private final int REQUEST_CODE_RINGTONE = 12;
     private final int REQUEST_CODE_PRIORITY = 13;
+    private final int REQUEST_CODE_WRITE_CONTACT_PERMISSION = 123;
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
+
     private static final int REQ_TAKE_PICTURE = 33;
     private static final int TAKE_PICTURE_GALLERY = 34;
 
@@ -75,6 +89,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
     private String ADD_TO_HELP_LIST = "0";
     private int contact_priority = 0;
     private Utils UTILS;
+    private Ringtone ringtone = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -176,6 +191,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
                         });
             }
         }
+
     }
 
     @Override
@@ -202,7 +218,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
             case REQUEST_CODE_RINGTONE:
                 if (resultCode == RESULT_OK) {
                     final Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-                    final Ringtone ringtone = RingtoneManager.getRingtone(this, uri);
+                    ringtone = RingtoneManager.getRingtone(this, uri);
                     // Get your title here `ringtone.getTitle(this)
                     String Str = ringtone.getTitle(this);
 
@@ -276,6 +292,10 @@ public class AddContactDetailActivity extends AppCompatActivity {
     }
 
     private void saveContact() {
+        InputMethodManager inputManager = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow((null == getCurrentFocus())
+                ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         if (!UTILS.isNetConnected()) {
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
@@ -318,7 +338,11 @@ public class AddContactDetailActivity extends AppCompatActivity {
                 params.put(Constant.WEB_ADDRESS, edtAddUrl.getText().toString().trim());
                 params.put(Constant.COMPANY_NAME, edtCompany.getText().toString().trim());
                 params.put(Constant.ADDRESS, edtAddAddress.getText().toString().trim());
-                params.put(Constant.RINGTONE, tvAddRingTone.getText().toString());
+                if (ringtone != null)
+                    params.put(Constant.RINGTONE, tvAddRingTone.getText().toString());
+                else
+                    params.put(Constant.RINGTONE, "");
+                checkPermissionForContact();
                 new MultiPartParsing(AddContactDetailActivity.this, params, General.PHPServices.SAVE_CONTACT, new AsyncTaskCompletedListener() {
                     @Override
                     public void onTaskCompleted(String response) {
@@ -336,6 +360,131 @@ public class AddContactDetailActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    private void checkPermissionForContact() {
+        if (!getIntent().getBooleanExtra("IS_FROM_STRATEGY", false)) {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+                // Here, thisActivity is the current activity
+                if (ContextCompat.checkSelfPermission(AddContactDetailActivity.this,
+                        Manifest.permission.WRITE_CONTACTS)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(AddContactDetailActivity.this,
+                            Manifest.permission.WRITE_CONTACTS)) {
+                        // Show an expanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+                    } else {
+                        // No explanation needed, we can request the permission.
+                        ActivityCompat.requestPermissions(AddContactDetailActivity.this,
+                                new String[]{Manifest.permission.READ_CONTACTS},
+                                REQUEST_CODE_WRITE_CONTACT_PERMISSION);
+                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                        // app-defined int constant. The callback method gets the
+                        // result of the request.
+                    }
+                } else {
+                    saveContactInPhone();
+                }
+            } else {
+                saveContactInPhone();
+            }
+        }
+    }
+
+    private void saveContactInPhone() {
+        if (!getIntent().getBooleanExtra("IS_FROM_STRATEGY", false)) {
+
+
+            ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+
+            ops.add(ContentProviderOperation.newInsert(
+                    ContactsContract.RawContacts.CONTENT_URI)
+                    .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
+                    .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
+                    .build());
+
+            ops.add(ContentProviderOperation.newInsert(
+                    ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                    .withValue(
+                            ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
+                            edtFirstName.getText().toString().trim()).build());
+
+            ops.add(ContentProviderOperation.newInsert(
+                    ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                    .withValue(
+                            ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
+                            edtLastName.getText().toString().trim()).build());
+
+            ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Organization.COMPANY,
+                            edtCompany.getText().toString().trim()).build());
+
+            ops.add(ContentProviderOperation.
+                    newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER,
+                            edtAddPhoneNo.getText().toString().trim()).build());
+
+            ops.add(ContentProviderOperation.
+                    newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.Website.URL)
+                    .withValue(ContactsContract.CommonDataKinds.Website.URL,
+                            edtAddUrl.getText().toString().trim()).build());
+
+            ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Contacts.CUSTOM_RINGTONE, ringtone).build());
+
+            ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Email.DATA, edtAddEmail.getText().toString().trim())
+                    .build());
+
+            if (!TextUtils.isEmpty(FILE_PATH)) {
+                File image = new File(FILE_PATH);
+                BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+                Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
+                bitmap = Bitmap.createBitmap(bitmap);
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                if (bitmap != null) {    // If an image is selected successfully
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 75, stream);
+
+
+                    ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                            .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0).
+                                    withValue(ContactsContract.Data.IS_SUPER_PRIMARY, 1).
+                                    withValue(ContactsContract.Data.MIMETYPE,
+                                            ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
+                            .withValue(ContactsContract.CommonDataKinds.Photo.PHOTO, stream.toByteArray())
+                            .build());
+                }
+            }
+            // Asking the Contact provider to create a new contact
+            try {
+                getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(AddContactDetailActivity.this, "Exception: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void getPermission() {
@@ -420,6 +569,38 @@ public class AddContactDetailActivity extends AppCompatActivity {
                 .setNegativeButton(getString(R.string.cancel), null)
                 .create()
                 .show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS:
+                Map<String, Integer> perms = new HashMap<String, Integer>();
+                // Initial
+                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+                // Check for ACCESS_FINE_LOCATION
+                if (perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    // All Permissions Granted
+                    OpenDialog();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(AddContactDetailActivity.this, "Some Permission is Denied", Toast.LENGTH_SHORT)
+                            .show();
+                }
+
+                break;
+            case REQUEST_CODE_WRITE_CONTACT_PERMISSION:
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
 }

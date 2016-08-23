@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import org.apache.http.util.TextUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,18 +42,23 @@ public class StrategyContactAdapter extends BaseAdapter implements
 
     private int[] getSectionIndices() {
         ArrayList<Integer> sectionIndices = new ArrayList<Integer>();
-        char lastFirstChar = LIST_CONTACT.get(0).getFirst_name().charAt(0);
-        sectionIndices.add(0);
-        for (int i = 1; i < LIST_CONTACT.size(); i++) {
-            if (LIST_CONTACT.get(i).getFirst_name().charAt(0) != lastFirstChar) {
-                lastFirstChar = LIST_CONTACT.get(i).getFirst_name().charAt(0);
-                sectionIndices.add(i);
+        if (!TextUtils.isEmpty(LIST_CONTACT.get(0).getFirst_name())) {
+            char lastFirstChar = LIST_CONTACT.get(0).getFirst_name().charAt(0);
+            sectionIndices.add(0);
+            for (int i = 1; i < LIST_CONTACT.size(); i++) {
+                if (TextUtils.isEmpty(LIST_CONTACT.get(i).getFirst_name()))
+                    continue;
+                if (LIST_CONTACT.get(i).getFirst_name().charAt(0) != lastFirstChar) {
+                    lastFirstChar = LIST_CONTACT.get(i).getFirst_name().charAt(0);
+                    sectionIndices.add(i);
+                }
             }
         }
         int[] sections = new int[sectionIndices.size()];
         for (int i = 0; i < sectionIndices.size(); i++) {
             sections[i] = sectionIndices.get(i);
         }
+
         return sections;
     }
 
@@ -131,8 +138,11 @@ public class StrategyContactAdapter extends BaseAdapter implements
         }
 
         // set header text as first char in name
-        CharSequence headerChar = LIST_CONTACT.get(position).getFirst_name().subSequence(0, 1);
-        holder.text.setText(headerChar);
+        if (!TextUtils.isEmpty(LIST_CONTACT.get(position).getFirst_name())) {
+            CharSequence headerChar = LIST_CONTACT.get(position).getFirst_name().subSequence(0, 1);
+            holder.text.setText(headerChar);
+        }
+        else  holder.text.setText("#");
 
         return convertView;
     }
@@ -145,7 +155,9 @@ public class StrategyContactAdapter extends BaseAdapter implements
     public long getHeaderId(int position) {
         // return the first character of the country as ID because this is what
         // headers are based upon
-        return LIST_CONTACT.get(position).getFirst_name().subSequence(0, 1).charAt(0);
+        if (!TextUtils.isEmpty(LIST_CONTACT.get(position).getFirst_name()))
+            return LIST_CONTACT.get(position).getFirst_name().subSequence(0, 1).charAt(0);
+        else return "#".charAt(0);
     }
 
     @Override

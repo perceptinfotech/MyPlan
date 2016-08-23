@@ -9,6 +9,8 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.apache.http.util.TextUtils;
+
 import java.util.List;
 
 import percept.myplan.POJO.Contact;
@@ -24,11 +26,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     private boolean SINGLE_CHECK;
     private boolean onBind;
 
-    public class ContactViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener {
+    public class ContactViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView TV_CONTACTNAME;
-//        public CheckBox CHK_CONTACTSELECTION;
+        //        public CheckBox CHK_CONTACTSELECTION;
         public ImageView IMG_TICK;
+
         public ContactViewHolder(View itemView) {
             super(itemView);
             TV_CONTACTNAME = (TextView) itemView.findViewById(R.id.tvContactName);
@@ -86,7 +89,10 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     @Override
     public void onBindViewHolder(final ContactViewHolder holder, int position) {
         Contact _contact = LIST_CONTACT.get(position);
-        holder.TV_CONTACTNAME.setText(_contact.getContactName());
+        if (!TextUtils.isEmpty(_contact.getContactName()))
+            holder.TV_CONTACTNAME.setText(_contact.getContactName());
+        else
+            holder.TV_CONTACTNAME.setText(_contact.getPhoneNo());
         onBind = true;
 //        holder.CHK_CONTACTSELECTION.setChecked(_contact.isSelected());
         onBind = false;
