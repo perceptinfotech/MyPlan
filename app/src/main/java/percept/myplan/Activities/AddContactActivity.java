@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import percept.myplan.Global.Constant;
 import percept.myplan.R;
 
 public class AddContactActivity extends AppCompatActivity {
@@ -29,6 +30,8 @@ public class AddContactActivity extends AppCompatActivity {
         TV_NEWCONTACT = (TextView) findViewById(R.id.tvNewContact);
         TV_PHONELIST = (TextView) findViewById(R.id.tvPhoneList);
 
+
+
         TV_NEWCONTACT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -36,6 +39,8 @@ public class AddContactActivity extends AppCompatActivity {
                 if (getIntent().hasExtra("ADD_TO_HELP")) {
                     _intent.putExtra("ADD_TO_HELP", "true");
                 }
+                if (getIntent().hasExtra(Constant.HELP_COUNT))
+                    _intent.putExtra(Constant.HELP_COUNT,getIntent().getIntExtra(Constant.HELP_COUNT, 0));
                 startActivity(_intent);
                 AddContactActivity.this.finish();
             }
@@ -45,11 +50,13 @@ public class AddContactActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent _intent = new Intent(AddContactActivity.this, AddContactFromPhoneActivity.class);
+                if (getIntent().hasExtra(Constant.HELP_COUNT))
+                    _intent.putExtra(Constant.HELP_COUNT,getIntent().getIntExtra(Constant.HELP_COUNT, 0));
                 if (getIntent().hasExtra("ADD_TO_HELP")) {
                     _intent.putExtra("ADD_TO_HELP", "true");
                 }
-                if(getIntent().hasExtra("FROM_QUICKMSG"))
-                    _intent.putExtra("FROM_QUICKMSG",getIntent().getExtras().getString("FROM_QUICKMSG"));
+                if (getIntent().hasExtra("FROM_QUICKMSG"))
+                    _intent.putExtra("FROM_QUICKMSG", getIntent().getExtras().getString("FROM_QUICKMSG"));
                 startActivity(_intent);
                 AddContactActivity.this.finish();
             }

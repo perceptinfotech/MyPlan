@@ -35,11 +35,8 @@ import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.ContactDisplay;
 import percept.myplan.R;
 import percept.myplan.adapters.ContactHelpListAdapter;
-import percept.myplan.fragments.fragmentContacts;
 
-import static percept.myplan.fragments.fragmentContacts.CONTACT_NAME;
 import static percept.myplan.fragments.fragmentContacts.HELP_CONTACT_NAME;
-import static percept.myplan.fragments.fragmentContacts.LIST_CONTACTS;
 import static percept.myplan.fragments.fragmentContacts.LIST_HELPCONTACTS;
 
 public class HelpListActivity extends AppCompatActivity {
@@ -85,6 +82,7 @@ public class HelpListActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent _intent = new Intent(HelpListActivity.this, AddContactActivity.class);
                 _intent.putExtra("ADD_TO_HELP", "true");
+                _intent.putExtra(Constant.HELP_COUNT, LIST_HELPCONTACTS.size());
                 startActivity(_intent);
             }
         });
@@ -186,6 +184,7 @@ public class HelpListActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.action_add_editHelpList) {
             Intent _intent = new Intent(HelpListActivity.this, AddContactActivity.class);
             _intent.putExtra("ADD_TO_HELP", "true");
+            _intent.putExtra(Constant.HELP_COUNT, LIST_HELPCONTACTS.size());
             startActivity(_intent);
         }
         return false;

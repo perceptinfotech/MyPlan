@@ -1,6 +1,5 @@
 package percept.myplan.Activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,17 +19,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import percept.myplan.Dialogs.dialogAddStrategy;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
-import percept.myplan.POJO.InspirationWiseStrategy;
 import percept.myplan.POJO.Strategy;
 import percept.myplan.R;
-import percept.myplan.adapters.InspirationWiseStrategyAdapter;
 
 import static percept.myplan.Activities.AddStrategyToSymptomActivity.GET_STRATEGIES;
 import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;

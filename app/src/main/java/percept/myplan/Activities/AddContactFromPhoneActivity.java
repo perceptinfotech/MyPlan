@@ -20,6 +20,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
@@ -30,7 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.VolleyError;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,7 +42,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +52,6 @@ import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
-import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.Contact;
 import percept.myplan.R;
 import percept.myplan.adapters.ContactFromPhoneAdapter;
@@ -70,7 +69,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
     private boolean SINGLE_CHECK = false;
     private StickyListHeadersListView LST_CONTACT;
     private EditText EDT_SEARCHTEXT;
-    private int NO_COUNT = 0;
+    private int HELP_COUNT = 0;
     private int SAVED_NO_COUNT = 0;
     private ProgressBar PB_SAVECONTACT, PB_GETCONTACT;
 
@@ -94,6 +93,9 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         }
         if (getIntent().hasExtra("ADD_TO_HELP")) {
             ADD_TO_HELP_LIST = "1";
+        }
+        if (getIntent().hasExtra(Constant.HELP_COUNT)) {
+            HELP_COUNT = getIntent().getIntExtra(Constant.HELP_COUNT, 0);
         }
         if (getIntent().hasExtra("FROM_QUICKMSG")) {
 
@@ -233,7 +235,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             if (SINGLE_CHECK) {
                 for (Contact _obj : LIST_CONTACTS) {
                     if (_obj.isSelected()) {
-                        UTILS.setPreference("EMERGENCY_CONTACT_NAME", _obj.getContactName());
+                        UTILS.setPreference("EMERGENCY_CONTACT_NAME", _obj.getFirstName());
                         UTILS.setPreference("EMERGENCY_CONTACT_NO", _obj.getPhoneNo());
                     }
                 }
@@ -287,11 +289,64 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             snackbar.show();
             return;
         }
+        PB_SAVECONTACT.setVisibility(View.VISIBLE);
+        HashMap<String, String> params = new HashMap<>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        List<HashMap<String, String>> _tmpConList = addContactList();
+        for (int i = 0; i < _tmpConList.size(); i++) {
+            params.put("add_" + i, new Gson().toJson(_tmpConList.get(i)));
+        }
+        params.put("count", String.valueOf(_tmpConList.size()));
+        params.put("delete", deleteContactIds());
+        int img_count = 0;
         for (int i = 0; i < LIST_CONTACTS.size(); i++) {
+
+            if (LIST_CONTACTS.get(i).isSelected() && !LIST_CONTACTS.get(i).isOriginalSelection()) {
+                // Adding file data to http body
+                Contact _contact = LIST_CONTACTS.get(i);
+                if (_contact.getContactImgURI() != null) {
+                    String _filePath = getPathFromURI(_contact.getContactID());
+                    if (!TextUtils.isEmpty(_filePath)) {
+                        params.put(Constant.CON_IMAGE + "_" + img_count, _filePath);
+                        ++img_count;
+                    }
+                }
+            }
+        }
+
+
+        new MultiPartParsing(this, params, General.PHPServices.SAVE_CONTACTS, new AsyncTaskCompletedListener() {
+            @Override
+            public void onTaskCompleted(String response) {
+                try {
+                    Log.d(":::::: ", response);
+                    JSONObject _object = new JSONObject(response);
+                    JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
+//                    SAVED_NO_COUNT = SAVED_NO_COUNT + 1;
+//                    if (NO_COUNT == SAVED_NO_COUNT) {
+                    PB_SAVECONTACT.setVisibility(View.GONE);
+                    Toast.makeText(AddContactFromPhoneActivity.this,
+                            getResources().getString(R.string.contactsaved), Toast.LENGTH_SHORT).show();
+                    AddContactFromPhoneActivity.this.finish();
+                    fragmentContacts.GET_CONTACTS = true;
+//                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+       /* Gson gson = new Gson();
+        Log.d("JSON:::", "::" + gson.toJson(params));*/
+
+
+        /*for (int i = 0; i < LIST_CONTACTS.size(); i++) {
             if (LIST_CONTACTS.get(i).isSelected() && !LIST_CONTACTS.get(i).isOriginalSelection()) {
                 PB_SAVECONTACT.setVisibility(View.VISIBLE);
                 NO_COUNT = NO_COUNT + 1;
-                getContactInfoFromID(LIST_CONTACTS.get(i).getContactID(), LIST_CONTACTS.get(i).getPhoneNo());
+//                getContactInfoFromID(LIST_CONTACTS.get(i).getContactID(), LIST_CONTACTS.get(i).getPhoneNo());
+                addContactList(LIST_CONTACTS, ADD_TO_HELP_LIST);
 
             } else if (!LIST_CONTACTS.get(i).isSelected() && LIST_CONTACTS.get(i).isOriginalSelection()) {
                 Map<String, String> params = new HashMap<String, String>();
@@ -300,7 +355,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                 params.put(Constant.ID, LIST_CONTACTS.get(i).getWEB_ID());
                 PB_SAVECONTACT.setVisibility(View.VISIBLE);
                 NO_COUNT = NO_COUNT + 1;
-                try {
+                *//*try {
                     new General().getJSONContentFromInternetService(AddContactFromPhoneActivity.this,
                             General.PHPServices.DELETE_CONTACT, params, false, false, true, new VolleyResponseListener() {
                                 @Override
@@ -323,96 +378,197 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                             });
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
+                }*//*
             }
-        }
+        }*/
     }
 
-    private void getContactInfoFromID(String _contactID, String _phoneno) {
-        String _fname = "", _lname = "", _email = "", _note = "";
-        ContentResolver cr = getContentResolver();
-
-        String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Phone.NUMBER,
-                ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
-                ContactsContract.CommonDataKinds.Phone.CONTACT_ID,};
-        Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
-        //Get Email...
-        Cursor emailCur = cr.query(
-                ContactsContract.CommonDataKinds.Email.CONTENT_URI,
-                null,
-                ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
-                new String[]{_contactID}, null);
-        while (emailCur.moveToNext()) {
-            // This would allow you get several email addresses
-            // if the email addresses were stored in an array
-            _email = emailCur.getString(
-                    emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-            String emailType = emailCur.getString(
-                    emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
-
-            System.out.println("Email " + _email + " Email Type : " + emailType);
-        }
-        emailCur.close();
-
-        // Get note.......
-        String noteWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?";
-        String[] noteWhereParams = new String[]{_contactID,
-                ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE};
-        Cursor noteCur = cr.query(ContactsContract.Data.CONTENT_URI, null, noteWhere, noteWhereParams, null);
-        if (noteCur.moveToFirst()) {
-            _note = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
-            System.out.println("Note " + _note);
-        }
-        noteCur.close();
-
-        // Get firstname and all names
-        String whereName = ContactsContract.Data.MIMETYPE + " = ? AND " + ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID + " = ?";
-        String[] whereNameParams = new String[]{ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE, _contactID};
-        Cursor nameCur = cr.query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams, ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
-        while (nameCur.moveToNext()) {
-            _fname = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
-            _lname = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
-            String display = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME));
-            if (_lname == null || _lname.equals("null")) {
-                _lname = "";
-            }
-            System.out.println("Given " + _fname);
-            System.out.println("family " + _lname);
-            System.out.println("Display " + display);
-        }
-        nameCur.close();
-
-//        try {
-//            Cursor curPhoto = getContentResolver().query(
-//                    ContactsContract.Data.CONTENT_URI,
-//                    null,
-//                    ContactsContract.Data.CONTACT_ID + "=" + _contactID + " AND "
-//                            + ContactsContract.Data.MIMETYPE + "='"
-//                            + ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE + "'", null,
-//                    null);
-//            if (curPhoto != null) {
-//                if (!curPhoto.moveToFirst()) {
-//                    //return null; // no photo
-//                }
-//            } else {
-//                //return null; // error in cursor process
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            //return null;
-//        }
-//        Uri person = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long
-//                .parseLong(_contactID));
-//        Uri _imageURI = Uri.withAppendedPath(person, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+//    private void getContactInfoFromID(String _contactID, String _phoneno) {
+//        String _fname = "", _lname = "", _email = "", _note = "";
+//        ContentResolver cr = getContentResolver();
 //
-//        File _file = new File(_imageURI.getPath());
+//        String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+//                ContactsContract.CommonDataKinds.Phone.NUMBER,
+//                ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
+//                ContactsContract.CommonDataKinds.Phone.CONTACT_ID,};
+//        Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
+//        //Get Email...
+//        Cursor emailCur = cr.query(
+//                ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+//                null,
+//                ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+//                new String[]{_contactID}, null);
+//        while (emailCur.moveToNext()) {
+//            // This would allow you get several email addresses
+//            // if the email addresses were stored in an array
+//            _email = emailCur.getString(
+//                    emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+//            String emailType = emailCur.getString(
+//                    emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
+//
+//            System.out.println("Email " + _email + " Email Type : " + emailType);
+//        }
+//        emailCur.close();
+//
+//        // Get note.......
+//        String noteWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?";
+//        String[] noteWhereParams = new String[]{_contactID,
+//                ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE};
+//        Cursor noteCur = cr.query(ContactsContract.Data.CONTENT_URI, null, noteWhere, noteWhereParams, null);
+//        if (noteCur.moveToFirst()) {
+//            _note = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
+//            System.out.println("Note " + _note);
+//        }
+//        noteCur.close();
+//
+//        // Get firstname and all names
+//        String whereName = ContactsContract.Data.MIMETYPE + " = ? AND " + ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID + " = ?";
+//        String[] whereNameParams = new String[]{ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE, _contactID};
+//        Cursor nameCur = cr.query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams, ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+//        while (nameCur.moveToNext()) {
+//            _fname = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
+//            _lname = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
+//            String display = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME));
+//            if (_lname == null || _lname.equals("null")) {
+//                _lname = "";
+//            }
+//            System.out.println("Given " + _fname);
+//            System.out.println("family " + _lname);
+//            System.out.println("Display " + display);
+//        }
+//        nameCur.close();
+//
+////        try {
+////            Cursor curPhoto = getContentResolver().query(
+////                    ContactsContract.Data.CONTENT_URI,
+////                    null,
+////                    ContactsContract.Data.CONTACT_ID + "=" + _contactID + " AND "
+////                            + ContactsContract.Data.MIMETYPE + "='"
+////                            + ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE + "'", null,
+////                    null);
+////            if (curPhoto != null) {
+////                if (!curPhoto.moveToFirst()) {
+////                    //return null; // no photo
+////                }
+////            } else {
+////                //return null; // error in cursor process
+////            }
+////        } catch (Exception e) {
+////            e.printStackTrace();
+////            //return null;
+////        }
+////        Uri person = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long
+////                .parseLong(_contactID));
+////        Uri _imageURI = Uri.withAppendedPath(person, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+////
+////        File _file = new File(_imageURI.getPath());
+//
+//        Bitmap photo = null;
+//        File _file = null;
+//        try {
+//            InputStream inputStream = ContactsContract.Contacts.openContactPhotoInputStream(getContentResolver(),
+//                    ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, new Long(_contactID)));
+//
+//            if (inputStream != null) {
+//                photo = BitmapFactory.decodeStream(inputStream);
+//                _file = new File(getCacheDir(), "_temp.png");
+//                _file.createNewFile();
+//
+////Convert bitmap to byte array
+//                Bitmap bitmap = photo;
+//                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//                bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+//                byte[] bitmapdata = bos.toByteArray();
+//
+////write the bytes in file
+//                FileOutputStream fos = new FileOutputStream(_file);
+//                fos.write(bitmapdata);
+//                fos.flush();
+//                fos.close();
+//            }
+//
+//            if (inputStream != null)
+//                inputStream.close();
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
+    private List<HashMap<String, String>> addContactList() {
+
+        List<HashMap<String, String>> contactList = new ArrayList<>();
+        for (int i = 0; i < LIST_CONTACTS.size(); i++) {
+            if (LIST_CONTACTS.get(i).isSelected() && !LIST_CONTACTS.get(i).isOriginalSelection()) {
+                // Adding file data to http body
+                Contact _contact = LIST_CONTACTS.get(i);
+                HashMap<String, String> map = new HashMap<>();
+                /*if (_contact.getContactImgURI() != null) {
+                    String _filePath = getPathFromURI(_contact.getContactID());
+                    if (!TextUtils.isEmpty(_filePath))
+                        map.put(Constant.CON_IMAGE + "_" + i, _filePath);
+                }*/
+
+                map.put(Constant.ID, "");
+                map.put(Constant.FIRST_NAME, _contact.getFirstName());
+                map.put(Constant.LAST_NAME, _contact.getLastName());
+                map.put(Constant.PHONE, _contact.getPhoneNo());
+                map.put(Constant.SKYPE, _contact.getSkypeName());
+                map.put(Constant.EMAIL, _contact.getEmail());
+                map.put(Constant.HELPLIST, ADD_TO_HELP_LIST);
+                map.put(Constant.NOTE, _contact.getNote());
+                map.put(Constant.COMPANY_NAME, _contact.getOrgName());
+                map.put(Constant.RINGTONE, "");
+                map.put(Constant.WEB_ADDRESS, _contact.getWebURL());
+
+        /*new MultiPartParsing(this, map, General.PHPServices.SAVE_CONTACT, new AsyncTaskCompletedListener() {
+            @Override
+            public void onTaskCompleted(String response) {
+                try {
+                    Log.d(":::::: ", response);
+                    JSONObject _object = new JSONObject(response);
+                    JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
+                    SAVED_NO_COUNT = SAVED_NO_COUNT + 1;
+                    if (NO_COUNT == SAVED_NO_COUNT) {
+                        PB_SAVECONTACT.setVisibility(View.GONE);
+                        Toast.makeText(AddContactFromPhoneActivity.this,
+                                getResources().getString(R.string.contactsaved), Toast.LENGTH_SHORT).show();
+                        AddContactFromPhoneActivity.this.finish();
+                        fragmentContacts.GET_CONTACTS = true;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });*/
+                contactList.add(map);
+                Log.d("Position:::", "Added " + i);
+            }
+        }
+//        Gson gson = new Gson();
+//        Log.d("JSON:::", "::" + gson.toJson(contactList));
+        return contactList;
+    }
+
+    private String deleteContactIds() {
+        List<String> listContacts = new ArrayList<>();
+        for (int i = 0; i < LIST_CONTACTS.size(); i++) {
+            Contact _contact = LIST_CONTACTS.get(i);
+            if (!_contact.isSelected() && _contact.isOriginalSelection()) {
+                listContacts.add(_contact.getWEB_ID());
+            }
+
+        }
+        return TextUtils.join(",", listContacts);
+    }
+
+    public String getPathFromURI(String _contactID) {
         Bitmap photo = null;
         File _file = null;
         try {
             InputStream inputStream = ContactsContract.Contacts.openContactPhotoInputStream(getContentResolver(),
-                    ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, new Long(_contactID)));
+                    ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.parseLong(_contactID)));
 
             if (inputStream != null) {
                 photo = BitmapFactory.decodeStream(inputStream);
@@ -438,49 +594,12 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if (_file != null)
+            return _file.getAbsolutePath();
+        else return "";
 
-        saveContact(_fname, _lname, _email, _note, _phoneno, ADD_TO_HELP_LIST, _file);
     }
 
-    private void saveContact(String FNAME, String LNAME, String EMAIL, String NOTE, String PHONENO, String HELPLIST, File IMG_FILE) {
-
-        HashMap<String, String> map = new HashMap<>();
-
-//        map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveContact");
-        // Adding file data to http body
-        if (IMG_FILE != null)
-            map.put(Constant.CON_IMAGE, IMG_FILE.getAbsolutePath());
-        map.put("sid", Constant.SID);
-        map.put("sname", Constant.SNAME);
-        map.put(Constant.ID, "");
-        map.put(Constant.FIRST_NAME, FNAME);
-        map.put(Constant.LAST_NAME, LNAME);
-        map.put(Constant.PHONE, PHONENO);
-        map.put(Constant.SKYPE, "");
-        map.put(Constant.EMAIL, EMAIL);
-        map.put(Constant.HELPLIST, HELPLIST);
-        map.put(Constant.NOTE, NOTE);
-        new MultiPartParsing(this, map, General.PHPServices.SAVE_CONTACT, new AsyncTaskCompletedListener() {
-            @Override
-            public void onTaskCompleted(String response) {
-                try {
-                    Log.d(":::::: ", response);
-                    JSONObject _object = new JSONObject(response);
-                    JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
-                    SAVED_NO_COUNT = SAVED_NO_COUNT + 1;
-                    if (NO_COUNT == SAVED_NO_COUNT) {
-                        PB_SAVECONTACT.setVisibility(View.GONE);
-                        Toast.makeText(AddContactFromPhoneActivity.this,
-                                getResources().getString(R.string.contactsaved), Toast.LENGTH_SHORT).show();
-                        AddContactFromPhoneActivity.this.finish();
-                        fragmentContacts.GET_CONTACTS = true;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
 //    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
 //        private String FNAME, LNAME, EMAIL, NOTE, PHONENO, HELPLIST;
 //        private File IMG_FILE;
@@ -515,7 +634,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
 //            String responseString = null;
 //
 //            HttpClient httpclient = new DefaultHttpClient();
-//            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".saveContact");
+//            HttpPost httppost = new HttpPost(getResources().getString(R.string.server_url) + ".addContactList");
 //
 //            try {
 //                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
@@ -617,15 +736,21 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                 ContentResolver cr = getContentResolver();
 
                 String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                        ContactsContract.CommonDataKinds.Phone.NUMBER,
-                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID,};
-                Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null);
-                if (cur.moveToFirst()) {
-                    do {
-                        String name = cur.getString(cur.getColumnIndex(
+                        ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                        ContactsContract.Contacts.CUSTOM_RINGTONE
+                };
+                Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+                if (cur.getCount() > 0) {
+                    while (cur.moveToNext()) {
+                        String _firstName = cur.getString(cur.getColumnIndex(
                                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                        String phoneNo = cur.getString(cur.getColumnIndex(
+                        String _phoneNo = cur.getString(cur.getColumnIndex(
                                 ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        String _ringTone = cur.getString(cur.getColumnIndex(
+                                ContactsContract.Contacts.CUSTOM_RINGTONE));
+                        String _image = cur.getString(cur.getColumnIndex(
+                                ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
                         String _contactID = cur.getString(cur.getColumnIndex(
                                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
 
@@ -635,32 +760,143 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                         // Get firstname and all names
                         String whereName = ContactsContract.Data.MIMETYPE + " = ? AND " + ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID + " = ?";
                         String[] whereNameParams = new String[]{ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE, _contactID};
-                        Cursor nameCur = cr.query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams, ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
-                        while (nameCur.moveToNext()) {
-                            String _fname = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
+                        Cursor _fNameCur = cr.query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams, ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+                        Cursor _lNameCur = cr.query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams, ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
+                        String _fName = null, _lName = null;
+                        while (_lNameCur.moveToNext()) {
+                            _lName = _lNameCur.getString(_lNameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
+                        }
+                        _lNameCur.close();
+                        while (_fNameCur.moveToNext()) {
+                            _fName = _fNameCur.getString(_fNameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
 
                             if (!getIntent().hasExtra("FROM_SHARELOC")) {
                                 if (!SINGLE_CHECK) {
                                     if (ADD_TO_HELP_LIST.equals("1")) {
                                         ArrayList<String> lst = new ArrayList<String>(fragmentContacts.HELP_CONTACT_NAME.values());
-                                        if (lst.contains(_fname)) {
+                                        if (lst.contains(_fName)) {
                                             _hasContact = true;
-                                            _WEB_ID = getKey(fragmentContacts.HELP_CONTACT_NAME, _fname);
+                                            _WEB_ID = getKey(fragmentContacts.HELP_CONTACT_NAME, _fName);
                                         }
                                     } else {
                                         ArrayList<String> lst = new ArrayList<String>(fragmentContacts.CONTACT_NAME.values());
-                                        if (lst.contains(_fname)) {
+                                        if (lst.contains(_fName)) {
                                             _hasContact = true;
-                                            _WEB_ID = getKey(fragmentContacts.CONTACT_NAME, _fname);
+                                            _WEB_ID = getKey(fragmentContacts.CONTACT_NAME, _fName);
                                         }
                                     }
                                 }
                             }
                         }
-                        nameCur.close();
+                        _fNameCur.close();
+                        Cursor emailCur = cr.query(
+                                ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                                null,
+                                ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                                new String[]{_contactID}, null);
+                        String email = null;
+                        while (emailCur.moveToNext()) {
+                            // This would allow you get several email addresses
+                            // if the email addresses were stored in an array
+                            email = emailCur.getString(
+                                    emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                            String emailType = emailCur.getString(emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
+                            if (!TextUtils.isEmpty(email))
+                                break;
+                            System.out.println("Email " + email + " Email Type : " + emailType);
+                        }
+                        emailCur.close();
 
-                        LIST_CONTACTS.add(new Contact(name, phoneNo, _contactID, _hasContact, _hasContact, _WEB_ID));
-                    } while (cur.moveToNext());
+
+                        Cursor webURLCur = cr.query(
+                                ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                                null,
+                                ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                                new String[]{_contactID}, null);
+                        String _webURL = null;
+                        while (webURLCur.moveToNext()) {
+                            _webURL = webURLCur.getString(webURLCur.getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));
+                        }
+
+                        // Get note.......
+                        String noteWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?";
+                        String[] noteWhereParams = new String[]{_contactID,
+                                ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE};
+                        Cursor noteCur = cr.query(ContactsContract.Data.CONTENT_URI, null, noteWhere, noteWhereParams, null);
+                        String note = null;
+                        if (noteCur.moveToFirst()) {
+                            note = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
+                            System.out.println("Note " + note);
+                            if (!TextUtils.isEmpty(note))
+                                break;
+                        }
+                        noteCur.close();
+
+                        //Get Postal Address....
+
+                        String addrWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?";
+                        String[] addrWhereParams = new String[]{_contactID,
+                                ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE};
+                        Cursor addrCur = cr.query(ContactsContract.Data.CONTENT_URI,
+                                null, addrWhere, addrWhereParams, null);
+                        String _formatted_address = null;
+                        while (addrCur.moveToNext()) {
+                            _formatted_address = addrCur.getString(
+                                    addrCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS));
+                            if (!TextUtils.isEmpty(_formatted_address))
+                                break;
+                            // Do something with these....
+
+
+                        }
+                        addrCur.close();
+// Get Organizations.........
+
+                        String orgWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?";
+                        String[] orgWhereParams = new String[]{_contactID,
+                                ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE};
+                        Cursor orgCur = cr.query(ContactsContract.Data.CONTENT_URI,
+                                null, orgWhere, orgWhereParams, null);
+                        String orgName = null;
+                        if (orgCur.moveToFirst()) {
+                            orgName = orgCur.getString(orgCur.getColumnIndex(ContactsContract.CommonDataKinds.Organization.DATA));
+                            String title = orgCur.getString(orgCur.getColumnIndex(ContactsContract.CommonDataKinds.Organization.TITLE));
+                        }
+                        orgCur.close();
+
+                        // Get Instant Messenger.........
+                        String imWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?";
+                        String[] imWhereParams = new String[]{_contactID,
+                                ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE};
+                        Cursor imCur = cr.query(ContactsContract.Data.CONTENT_URI,
+                                null, imWhere, imWhereParams, null);
+                        String _skypeName = null;
+                        if (imCur.moveToFirst()) {
+                            int type = imCur
+                                    .getInt(imCur
+                                            .getColumnIndex(ContactsContract.CommonDataKinds.Im.PROTOCOL));
+                            String imName = imCur.getString(imCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Im.DATA));
+
+                            switch (type) {
+                                case ContactsContract.CommonDataKinds.Im.PROTOCOL_SKYPE:
+                                    _skypeName = imName;
+
+                                    break;
+
+                                default:
+
+                                    break;
+                            }
+                        }
+                        imCur.close();
+
+                        Log.d("Contact Details:", "FirstName : " + _fName + ", LastName : "
+                                + _lName + ",  Phone No: " + _phoneNo + ",  Email : " + email
+                                + ",  Note : " + note + ",  SkypeName : " + _skypeName + ", webURL" + _webURL + ", Address: " + _formatted_address);
+                        LIST_CONTACTS.add(new Contact(_fName, _lName, _phoneNo, email, _webURL, _image, _ringTone, note,
+                                _skypeName, _formatted_address, orgName, _contactID, _WEB_ID, _hasContact, _hasContact));
+                    }
                 }
                 Collections.sort(LIST_CONTACTS);
                 return null;
@@ -670,7 +906,11 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             protected void onPostExecute(Void aVoid) {
                 PB_GETCONTACT.setVisibility(View.GONE);
                 super.onPostExecute(aVoid);
-                ADAPTER = new ContactFromPhoneAdapter(AddContactFromPhoneActivity.this, LIST_CONTACTS, SINGLE_CHECK);
+                boolean _isFromHelp = false;
+                if (ADD_TO_HELP_LIST.equals("1"))
+                    _isFromHelp = true;
+                ADAPTER = new ContactFromPhoneAdapter(AddContactFromPhoneActivity.this,
+                        LIST_CONTACTS, SINGLE_CHECK, HELP_COUNT, _isFromHelp);
                 LST_CONTACT.setAdapter(ADAPTER);
             }
         }.execute();

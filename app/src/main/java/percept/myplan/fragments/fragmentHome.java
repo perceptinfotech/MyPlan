@@ -12,16 +12,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.Fragment.SavedState;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,10 +27,7 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
-import java.util.Calendar;
-
 import percept.myplan.Activities.HelpListActivity;
-import percept.myplan.Activities.HelpListEditActivity;
 import percept.myplan.AppController;
 import percept.myplan.Dialogs.fragmentAddNote;
 import percept.myplan.Dialogs.fragmentMoodSummary;

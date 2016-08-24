@@ -23,7 +23,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
@@ -137,7 +136,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.symptoms_details, menu);
+        getMenuInflater().inflate(R.menu.edit_save_details, menu);
         if (isEDIT) {
             menu.getItem(1).setVisible(true);
             menu.getItem(0).setVisible(false);
@@ -157,12 +156,12 @@ public class SymptomDetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             SymptomDetailsActivity.this.finish();
-        } else if (item.getItemId() == R.id.action_editSymptoms) {
+        } else if (item.getItemId() == R.id.action_edit) {
 //            Toast.makeText(SymptomDetailsActivity.this, "edit Called", Toast.LENGTH_SHORT).show();
             LAY_ADDSTRATEGY.setVisibility(View.VISIBLE);
             isEDIT = true;
             invalidateOptionsMenu();
-        } else if (item.getItemId() == R.id.action_saveSymptoms) {
+        } else if (item.getItemId() == R.id.action_save) {
 
             InputMethodManager inputManager = (InputMethodManager)
                     getSystemService(Context.INPUT_METHOD_SERVICE);

@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
-import percept.myplan.Activities.SignUpActivity;
-import percept.myplan.Activities.StrategyDetailsOtherActivity;
 import percept.myplan.R;
 
 

@@ -4,12 +4,10 @@ package percept.myplan.Activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -30,17 +28,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
 
 import org.json.JSONObject;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import percept.myplan.Global.Constant;
@@ -71,7 +65,7 @@ import com.google.android.gms.location.LocationServices;
 public class HomeActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
     // implements NavigationView.OnNavigationItemSelectedListener {
-    private Toolbar toolbar;
+    public Toolbar toolbar;
     private NavigationDrawerAdapter ADAPTER;
     private ListView LST_MENUITEMS;
     private Utils UTILS;

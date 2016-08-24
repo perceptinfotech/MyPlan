@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -41,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 
 import percept.myplan.Activities.AddHopeBoxActivity;
-import percept.myplan.Activities.AddNewSymptomActivity;
 import percept.myplan.Activities.HopeDetailsActivity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;

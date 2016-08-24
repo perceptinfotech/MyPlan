@@ -2,12 +2,14 @@ package percept.myplan.Global;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -16,7 +18,6 @@ import org.apache.http.util.TextUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
@@ -75,7 +76,9 @@ public class MultiPartParsing {
 //                    File sourceFile = new File(FILE_PATH);
 
                 // Adding file data to http body
+
                 for (String key : map.keySet()) {
+                    Log.d("Multi-part params",key+"->"+map.get(key));
                     if (key.contains("image") || key.contains("video") ||
                             key.contains("audio") || key.contains("cover") || key.contains("media")) {
                         if (key.equals("media_title")) {
@@ -88,7 +91,6 @@ public class MultiPartParsing {
                         }
                     } else
                         entity.addPart(key, new StringBody(map.get(key)));
-
                 }
 
 

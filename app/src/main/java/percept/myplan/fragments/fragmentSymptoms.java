@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -39,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 
 import percept.myplan.Activities.AddNewSymptomActivity;
-import percept.myplan.Activities.AddStrategyActivity;
 import percept.myplan.Activities.DangerSignalsActivity;
 import percept.myplan.Activities.SymptomDetailsActivity;
 import percept.myplan.POJO.Symptom;

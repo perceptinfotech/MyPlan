@@ -21,10 +21,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import percept.myplan.Activities.LoginActivity;
-import percept.myplan.Activities.LoginActivity_1;
 import percept.myplan.AppController;
 import percept.myplan.Interfaces.VolleyResponseListener;
-import percept.myplan.POJO.Contact;
 import percept.myplan.R;
 
 /**
@@ -82,14 +80,16 @@ public class General {
             return ".getSIDASCalendar";
         } else if (serviceName == PHPServices.SUBMIT_SIDATEST) {
             return ".submitSIDASTest";
-        }else if (serviceName == PHPServices.SAVE_HOPE_MEDIA) {
+        } else if (serviceName == PHPServices.SAVE_HOPE_MEDIA) {
             return ".saveHopemedia";
-        }else if (serviceName == PHPServices.SHARE_STRATEGIES) {
+        } else if (serviceName == PHPServices.SHARE_STRATEGIES) {
             return ".shareStrategies";
-        }else if (serviceName == PHPServices.SAVE_CONTACT) {
+        } else if (serviceName == PHPServices.SAVE_CONTACT) {
             return ".saveContact";
-        }else if (serviceName == PHPServices.SAVE_STRATEGY) {
+        } else if (serviceName == PHPServices.SAVE_STRATEGY) {
             return ".saveStrategy";
+        } else if (serviceName == PHPServices.SAVE_CONTACTS) {
+            return ".saveContacts";
         }
         return "";
     }
@@ -226,6 +226,7 @@ public class General {
         SHARE_STRATEGIES,
         SAVE_HOPE_MEDIA,
         SAVE_STRATEGY,
-        SAVE_CONTACT
+        SAVE_CONTACT,
+        SAVE_CONTACTS
     }
 }

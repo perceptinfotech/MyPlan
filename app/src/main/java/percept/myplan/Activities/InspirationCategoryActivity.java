@@ -35,10 +35,8 @@ import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.InspirationCategory;
-import percept.myplan.POJO.Strategy;
 import percept.myplan.R;
 import percept.myplan.adapters.InspirationCategoryAdapter;
-import percept.myplan.adapters.StrategyAdapter;
 
 import static percept.myplan.Activities.AddStrategyToSymptomActivity.GET_STRATEGIES;
 import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;

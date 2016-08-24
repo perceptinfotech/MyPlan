@@ -23,11 +23,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +31,8 @@ import java.util.Map;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
-import percept.myplan.POJO.Mood;
 import percept.myplan.POJO.SidaSummary;
 import percept.myplan.R;
-import percept.myplan.adapters.MoodSummaryAdapter;
 import percept.myplan.adapters.SidaSummaryAdapter;
 
 public class SidasActivity extends AppCompatActivity {

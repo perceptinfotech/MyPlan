@@ -5,8 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
@@ -16,7 +14,6 @@ import org.apache.http.util.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import percept.myplan.POJO.Contact;
 import percept.myplan.POJO.ContactDisplay;
 import percept.myplan.R;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;

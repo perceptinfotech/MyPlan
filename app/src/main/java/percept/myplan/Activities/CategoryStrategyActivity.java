@@ -34,10 +34,8 @@ import java.util.Map;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
-import percept.myplan.POJO.InspirationCategory;
 import percept.myplan.POJO.InspirationWiseStrategy;
 import percept.myplan.R;
-import percept.myplan.adapters.InspirationCategoryAdapter;
 import percept.myplan.adapters.InspirationWiseStrategyAdapter;
 
 import static percept.myplan.Activities.AddStrategyToSymptomActivity.GET_STRATEGIES;

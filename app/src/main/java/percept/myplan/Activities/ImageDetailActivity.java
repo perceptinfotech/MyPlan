@@ -11,7 +11,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
 import percept.myplan.AppController;
-import percept.myplan.Global.Constant;
 import percept.myplan.R;
 
 public class ImageDetailActivity extends AppCompatActivity {

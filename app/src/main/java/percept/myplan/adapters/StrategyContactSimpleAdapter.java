@@ -9,7 +9,6 @@ import android.widget.TextView;
 import java.util.List;
 
 import percept.myplan.POJO.StrategyContact;
-import percept.myplan.POJO.SymptomStrategy;
 import percept.myplan.R;
 
 /**

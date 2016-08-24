@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import percept.myplan.POJO.InspirationCategory;
 import percept.myplan.POJO.InspirationWiseStrategy;
 import percept.myplan.R;
 

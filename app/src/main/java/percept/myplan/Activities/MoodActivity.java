@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -47,7 +46,6 @@ import percept.myplan.Global.General;
 import percept.myplan.Interfaces.CustomEvent;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.Mood;
-import percept.myplan.POJO.Symptom;
 import percept.myplan.R;
 
 public class MoodActivity extends AppCompatActivity implements FlexibleCalendarView.OnMonthChangeListener,

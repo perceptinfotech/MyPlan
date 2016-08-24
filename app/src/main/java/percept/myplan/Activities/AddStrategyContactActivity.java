@@ -33,8 +33,6 @@ import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.ContactDisplay;
 import percept.myplan.POJO.StrategyContact;
 import percept.myplan.R;
-import percept.myplan.adapters.ContactHelpListAdapter;
-import percept.myplan.adapters.ContactFromPhoneAdapter;
 import percept.myplan.adapters.StrategyContactAdapter;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 

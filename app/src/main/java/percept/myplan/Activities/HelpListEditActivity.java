@@ -78,12 +78,31 @@ public class HelpListEditActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent _intent = new Intent(HelpListEditActivity.this, AddContactActivity.class);
                 _intent.putExtra("ADD_TO_HELP", "true");
+                _intent.putExtra(Constant.HELP_COUNT,LIST_HELPCONTACTS.size());
                 startActivity(_intent);
                 if (getIntent().hasExtra("FROM_HELP")) {
                     HelpListEditActivity.this.finish();
                 }
             }
         });
+
+        LST_HELP.addOnItemTouchListener(new fragmentContacts.RecyclerTouchListener(HelpListEditActivity.this, LST_HELP, new fragmentContacts.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+//                Toast.makeText(getActivity(), LIST_HELPCONTACTS.get(position).getFirst_name(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(HelpListEditActivity.this, AddContactDetailActivity.class);
+                intent.putExtra("IS_FOR_EDIT", true);
+                intent.putExtra(Constant.HELP_COUNT,LIST_HELPCONTACTS.size());
+                intent.putExtra("DATA", LIST_HELPCONTACTS.get(position));
+                startActivity(intent);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+
     }
 
     @Override
@@ -166,6 +185,7 @@ public class HelpListEditActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.action_add_editHelpList) {
             Intent _intent = new Intent(HelpListEditActivity.this, AddContactActivity.class);
             _intent.putExtra("ADD_TO_HELP", "true");
+            _intent.putExtra(Constant.HELP_COUNT,LIST_HELPCONTACTS.size());
             startActivity(_intent);
         }
         return false;

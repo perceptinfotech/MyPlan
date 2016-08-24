@@ -8,8 +8,6 @@ import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
-import org.w3c.dom.Text;
-
 import percept.myplan.AppController;
 import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;

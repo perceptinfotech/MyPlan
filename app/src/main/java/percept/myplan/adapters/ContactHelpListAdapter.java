@@ -1,6 +1,5 @@
 package percept.myplan.adapters;
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import org.apache.http.util.TextUtils;
 import java.util.List;
 
 import percept.myplan.AppController;
-import percept.myplan.POJO.Contact;
 import percept.myplan.POJO.ContactDisplay;
 import percept.myplan.R;
 import percept.myplan.customviews.RoundedImageView;

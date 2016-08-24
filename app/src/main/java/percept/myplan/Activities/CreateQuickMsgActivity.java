@@ -14,7 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,14 +36,12 @@ import java.util.Map;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
-import percept.myplan.POJO.Contact;
 import percept.myplan.POJO.ContactDisplay;
 import percept.myplan.R;
 import percept.myplan.adapters.ContactHelpListAdapter;
 import percept.myplan.fragments.fragmentContacts;
 
 import static percept.myplan.fragments.fragmentContacts.CONTACT_NAME;
-import static percept.myplan.fragments.fragmentContacts.HELP_CONTACT_NAME;
 import static percept.myplan.fragments.fragmentContacts.LIST_CONTACTS;
 import static percept.myplan.fragments.fragmentContacts.LIST_HELPCONTACTS;
 
@@ -104,6 +101,7 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent _intent = new Intent(CreateQuickMsgActivity.this, AddContactActivity.class);
                 _intent.putExtra("FROM_QUICKMSG", "FROM_QUICKMSG");
+                _intent.putExtra(Constant.HELP_COUNT, LIST_HELPCONTACTS.size());
                 startActivity(_intent);
             }
         });
@@ -167,6 +165,8 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == R.id.action_addContact) {
             Intent _intent = new Intent(CreateQuickMsgActivity.this, AddContactActivity.class);
+            if (getIntent().hasExtra(Constant.HELP_COUNT))
+                _intent.putExtra(Constant.HELP_COUNT,getIntent().getIntExtra(Constant.HELP_COUNT, 0));
             _intent.putExtra("FROM_QUICKMSG", "FROM_QUICKMSG");
             startActivity(_intent);
 

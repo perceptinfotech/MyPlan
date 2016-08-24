@@ -10,6 +10,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,10 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
     private Character[] mSectionLetters;
     private LayoutInflater mInflater;
     private boolean SINGLE_CHECK;
+    private int helpCount = 0;
+    private boolean isFromHelp;
 
-    public ContactFromPhoneAdapter(Context context, List<Contact> lstContact, boolean SINGLE_CHECK) {
+    public ContactFromPhoneAdapter(Context context, List<Contact> lstContact, boolean SINGLE_CHECK, int helpCount, boolean isFromHelp) {
         mContext = context;
         mInflater = LayoutInflater.from(context);
         LIST_CONTACT = lstContact;
@@ -37,15 +40,17 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
         mSectionLetters = getSectionLetters();
         this.SINGLE_CHECK = SINGLE_CHECK;
         LIST_FIX_CONTACT = new ArrayList<>(lstContact);
+        this.helpCount = helpCount;
+        this.isFromHelp = isFromHelp;
     }
 
     private int[] getSectionIndices() {
         ArrayList<Integer> sectionIndices = new ArrayList<Integer>();
-        char lastFirstChar = LIST_CONTACT.get(0).getContactName().charAt(0);
+        char lastFirstChar = LIST_CONTACT.get(0).getFirstName().charAt(0);
         sectionIndices.add(0);
         for (int i = 1; i < LIST_CONTACT.size(); i++) {
-            if (LIST_CONTACT.get(i).getContactName().charAt(0) != lastFirstChar) {
-                lastFirstChar = LIST_CONTACT.get(i).getContactName().charAt(0);
+            if (LIST_CONTACT.get(i).getFirstName().charAt(0) != lastFirstChar) {
+                lastFirstChar = LIST_CONTACT.get(i).getFirstName().charAt(0);
                 sectionIndices.add(i);
             }
         }
@@ -59,7 +64,7 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
     private Character[] getSectionLetters() {
         Character[] letters = new Character[mSectionIndices.length];
         for (int i = 0; i < mSectionIndices.length; i++) {
-            letters[i] = LIST_CONTACT.get(mSectionIndices[i]).getContactName().charAt(0);
+            letters[i] = LIST_CONTACT.get(mSectionIndices[i]).getFirstName().charAt(0);
         }
         return letters;
     }
@@ -97,8 +102,20 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
                         for (int i = 0; i < LIST_CONTACT.size(); i++) {
                             LIST_CONTACT.get(i).setSelected(false);
                         }
+                        LIST_CONTACT.get(_i).setSelected(true);
+                    } else {
+                        if (isFromHelp && (!LIST_CONTACT.get(_i).isSelected()) && (helpCount >= 10)) {
+                            Toast.makeText(mContext, "You can't select more than 10 contacts for Help!", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        LIST_CONTACT.get(_i).setSelected(!LIST_CONTACT.get(_i).isSelected());
+                        if (LIST_CONTACT.get(_i).isSelected())
+                            ++helpCount;
+                        else --helpCount;
                     }
-                    LIST_CONTACT.get(_i).setSelected(!LIST_CONTACT.get(_i).isSelected());
+
+
                     notifyDataSetChanged();
                 }
             });
@@ -107,7 +124,7 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.TV_CONTACTNAME.setText(LIST_CONTACT.get(position).getContactName());
+        holder.TV_CONTACTNAME.setText(LIST_CONTACT.get(position).getFirstName());
 
         if (LIST_CONTACT.get(position).isSelected()) {
             holder.IMG_CHK.setImageResource(R.drawable.tick);
@@ -132,7 +149,7 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
         }
 
         // set header text as first char in name
-        CharSequence headerChar = LIST_CONTACT.get(position).getContactName().subSequence(0, 1);
+        CharSequence headerChar = LIST_CONTACT.get(position).getFirstName().subSequence(0, 1);
         holder.text.setText(headerChar);
 
         return convertView;
@@ -146,7 +163,7 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
     public long getHeaderId(int position) {
         // return the first character of the country as ID because this is what
         // headers are based upon
-        return LIST_CONTACT.get(position).getContactName().subSequence(0, 1).charAt(0);
+        return LIST_CONTACT.get(position).getFirstName().subSequence(0, 1).charAt(0);
     }
 
     @Override
@@ -203,7 +220,7 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
                 List<Contact> nPlanetList = new ArrayList<Contact>();
 
                 for (Contact p : LIST_FIX_CONTACT) {
-                    if (p.getContactName().toString().trim().toUpperCase()
+                    if (p.getFirstName().toString().trim().toUpperCase()
                             .contains(constraint.toString().toUpperCase())) {
 
                         nPlanetList.add(p);

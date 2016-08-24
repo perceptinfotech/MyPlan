@@ -15,9 +15,9 @@ import android.graphics.Color;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -34,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,15 +91,26 @@ public class AddContactDetailActivity extends AppCompatActivity {
     private int contact_priority = 0;
     private Utils UTILS;
     private Ringtone ringtone = null;
+    private boolean isForEdit = false;
+    private boolean isEDIT = false;
+    private TextView mTitle;
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_detail);
-        if (getIntent().getBooleanExtra("IS_FROM_STRATEGY", false)) {
+        isForEdit = getIntent().getBooleanExtra("IS_FOR_EDIT", false);
+        isEDIT = isForEdit;
+        if (isForEdit) {
             _contactDisplay = (ContactDisplay) getIntent().getSerializableExtra("DATA");
             ADD_TO_HELP_LIST = _contactDisplay.getHelplist();
-        } else if (getIntent().hasExtra("ADD_TO_HELP")) {
+        }
+
+        if (getIntent().hasExtra("ADD_TO_HELP")) {
+            ADD_TO_HELP_LIST = "1";
+        }
+        if (getIntent().hasExtra(Constant.HELP_COUNT)) {
             ADD_TO_HELP_LIST = "1";
         }
         initializeComponent();
@@ -111,8 +123,8 @@ public class AddContactDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText(getString(R.string.addcontact));
+        mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+
         UTILS = new Utils(AddContactDetailActivity.this);
         imgContact = (RoundedImageView) findViewById(R.id.imgContact);
 
@@ -127,9 +139,14 @@ public class AddContactDetailActivity extends AppCompatActivity {
         edtAddEmail = (EditText) findViewById(R.id.edtAddEmail);
         edtAddUrl = (EditText) findViewById(R.id.edtAddUrl);
         edtAddAddress = (EditText) findViewById(R.id.edtAddAddress);
+
+        PB = (ProgressBar) findViewById(R.id.pbAddContact);
+
         imgContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!view.isEnabled())
+                    return;
                 getPermission();
             }
         });
@@ -137,25 +154,58 @@ public class AddContactDetailActivity extends AppCompatActivity {
         tvAssignPriority.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!view.isEnabled())
+                    return;
                 Intent intent = new Intent(AddContactDetailActivity.this, AssignPriorityActivity.class);
                 intent.putExtra("ADD_TO_HELP", ADD_TO_HELP_LIST);
+                if (getIntent().hasExtra(Constant.HELP_COUNT))
+                intent.putExtra(Constant.HELP_COUNT, getIntent().getIntExtra(Constant.HELP_COUNT, 0));
                 startActivityForResult(intent, REQUEST_CODE_PRIORITY);
             }
         });
 
         tvAddRingTone.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
-                final Intent ringtone = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
-                ringtone.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM);
-                ringtone.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
-                ringtone.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI,
-                        RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
-                startActivityForResult(ringtone, REQUEST_CODE_RINGTONE);
+                if (!view.isEnabled())
+                    return;
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                        PB.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        final Intent ringtone = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+                        ringtone.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM);
+                        ringtone.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+                        ringtone.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI,
+                                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
+                        startActivityForResult(ringtone, REQUEST_CODE_RINGTONE);
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        super.onPostExecute(aVoid);
+                        PB.setVisibility(View.GONE);
+                    }
+                }.execute();
+
+            }
+        });
+        edtAddPhoneNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                if (!view.isEnabled())
+                Toast.makeText(AddContactDetailActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
             }
         });
 
-        if (_contactDisplay != null) {
+        if (isForEdit) {
             edtFirstName.setText(_contactDisplay.getFirst_name());
             edtLastName.setText(_contactDisplay.getLast_name());
             edtAddPhoneNo.setText(_contactDisplay.getPhone());
@@ -190,14 +240,57 @@ public class AddContactDetailActivity extends AppCompatActivity {
                             }
                         });
             }
+            disableAllCompontent();
         }
 
     }
 
+    private void disableAllCompontent() {
+        InputMethodManager inputManager = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow((null == getCurrentFocus())
+                ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        edtFirstName.setEnabled(false);
+        edtLastName.setEnabled(false);
+        edtCompany.setEnabled(false);
+        edtAddAddress.setEnabled(false);
+        edtAddUrl.setEnabled(false);
+        edtAddEmail.setEnabled(false);
+        edtAddPhoneNo.setEnabled(false);
+        imgContact.setEnabled(false);
+        tvAddRingTone.setEnabled(false);
+        tvAssignPriority.setEnabled(false);
+    }
+
+    private void enableAllCompontent() {
+        edtFirstName.setEnabled(true);
+        edtLastName.setEnabled(true);
+        edtCompany.setEnabled(true);
+        edtAddAddress.setEnabled(true);
+        edtAddUrl.setEnabled(true);
+        edtAddEmail.setEnabled(true);
+        edtAddPhoneNo.setEnabled(true);
+        imgContact.setEnabled(true);
+        tvAddRingTone.setEnabled(true);
+        tvAssignPriority.setEnabled(true);
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInputFromWindow(edtFirstName.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.add_note, menu);
-        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.edit_save_details, menu);
+        if (isEDIT) {
+            menu.getItem(0).setVisible(true);
+            menu.getItem(1).setVisible(false);
+            isEDIT = false;
+            mTitle.setText(getString(R.string.editcontact));
+        } else {
+            menu.getItem(0).setVisible(false);
+            menu.getItem(1).setVisible(true);
+            mTitle.setText(getString(R.string.addcontact));
+        }
+        return true;
     }
 
     @Override
@@ -205,8 +298,13 @@ public class AddContactDetailActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
-        } else if (item.getItemId() == R.id.action_saveNote) {
+        } else if (item.getItemId() == R.id.action_save) {
             saveContact();
+            return true;
+        } else if (item.getItemId() == R.id.action_edit) {
+            enableAllCompontent();
+            invalidateOptionsMenu();
+
             return true;
         }
         return false;
@@ -315,9 +413,11 @@ public class AddContactDetailActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
+
         switch (contact_priority) {
             case 0:
             case 1:
+                PB.setVisibility(View.VISIBLE);
                 ADD_TO_HELP_LIST = String.valueOf(contact_priority);
                 HashMap<String, String> params = new HashMap<>();
                 // Adding file data to http body
@@ -347,6 +447,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
                     @Override
                     public void onTaskCompleted(String response) {
                         fragmentContacts.GET_CONTACTS = true;
+                        PB.setVisibility(View.GONE);
                         AddContactDetailActivity.this.finish();
                     }
                 });
@@ -363,7 +464,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
     }
 
     private void checkPermissionForContact() {
-        if (!getIntent().getBooleanExtra("IS_FROM_STRATEGY", false)) {
+        if (!getIntent().getBooleanExtra("IS_FOR_EDIT", false)) {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
                 // Here, thisActivity is the current activity
                 if (ContextCompat.checkSelfPermission(AddContactDetailActivity.this,
@@ -394,7 +495,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
     }
 
     private void saveContactInPhone() {
-        if (!getIntent().getBooleanExtra("IS_FROM_STRATEGY", false)) {
+        if (!getIntent().getBooleanExtra("IS_FOR_EDIT", false)) {
 
 
             ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
@@ -455,6 +556,13 @@ public class AddContactDetailActivity extends AppCompatActivity {
                     .withValue(ContactsContract.Data.MIMETYPE,
                             ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
                     .withValue(ContactsContract.CommonDataKinds.Email.DATA, edtAddEmail.getText().toString().trim())
+                    .build());
+
+            ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredPostal.DATA, edtAddAddress.getText().toString().trim())
                     .build());
 
             if (!TextUtils.isEmpty(FILE_PATH)) {

@@ -1,25 +1,20 @@
 package percept.myplan.Activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
@@ -40,7 +35,6 @@ import percept.myplan.R;
 import percept.myplan.adapters.Basic3Adapter;
 import percept.myplan.adapters.HopeDetailsAdapter;
 import percept.myplan.toro.Toro;
-import percept.myplan.widget.DividerItemDecoration;
 
 public class HopeDetailsActivity extends AppCompatActivity {
     Map<String, String> params;

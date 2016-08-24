@@ -53,8 +53,6 @@ import percept.myplan.adapters.ImageAdapter;
 import percept.myplan.adapters.StrategyAlarmAdapter;
 import percept.myplan.adapters.StrategyContactSimpleAdapter;
 
-import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
-
 public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
 
@@ -174,7 +172,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                                         .toString(), new TypeToken<ContactDisplay>() {
                                 }.getType());
                                 Intent intent = new Intent(StrategyDetailsOwnActivity.this, AddContactDetailActivity.class);
-                                intent.putExtra("IS_FROM_STRATEGY", true);
+                                intent.putExtra("IS_FOR_EDIT", true);
                                 intent.putExtra("DATA", _contactDisplay);
                                 startActivity(intent);
                                 /*JSONObject _jsonContactDetail=response.getJSONObject(Constant.DATA);

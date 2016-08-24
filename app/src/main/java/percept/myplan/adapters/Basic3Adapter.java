@@ -1,26 +1,17 @@
 package percept.myplan.adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.volley.toolbox.ImageLoader;
-
 import java.util.List;
 
 import percept.myplan.Activities.ImageDetailActivity;
-import percept.myplan.AppController;
 import percept.myplan.POJO.HopeDetail;
-import percept.myplan.R;
-import percept.myplan.data.SimpleObject;
-import percept.myplan.data.SimpleVideoObject;
-import percept.myplan.toro.Toro;
 
 /**
  * Created by percept on 5/8/16.

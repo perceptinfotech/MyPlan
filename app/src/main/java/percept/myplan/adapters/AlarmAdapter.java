@@ -6,19 +6,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 
 import java.util.Date;
 import java.util.List;
 
-import percept.myplan.AppController;
 import percept.myplan.POJO.Alarm;
-import percept.myplan.POJO.Hope;
 import percept.myplan.R;
 
 /**

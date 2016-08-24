@@ -17,9 +17,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:text="Toolbar Title"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+
+        <AutoCompleteTextView
+            android:id="@+id/edtLocationSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/search_background"
+            android:drawableLeft="@android:drawable/ic_menu_search"
+            android:drawablePadding="5dp"
+            android:hint="@string/search"
+            android:padding="5dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"
-            android:text="Toolbar Title" />
+            android:visibility="gone" />
     </android.support.v7.widget.Toolbar>
 
     <View

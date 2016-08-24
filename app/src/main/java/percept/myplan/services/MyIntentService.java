@@ -1,6 +1,5 @@
 package percept.myplan.services;
 
-import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;

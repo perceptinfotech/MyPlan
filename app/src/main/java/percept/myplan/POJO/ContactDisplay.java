@@ -6,41 +6,65 @@ import java.io.Serializable;
  * Created by percept on 30/7/16.
  */
 
-public class ContactDisplay implements Comparable<ContactDisplay>,Serializable {
+public class ContactDisplay implements Comparable<ContactDisplay>, Serializable {
+//    {
+//    "created_by": "721",
+//            "id": "172",
+//            "first_name": "By",
+//            "last_name": "Ttvm",
+//            "phone": "946497976494",
+//            "email": "jdjrjr@kfif.com",
+//            "helplist": "0",
+//            "state": "1",
+//            "ordering": "0",
+//            "note": "",
+//            "con_image": "",
+//            "skype": ""
+//            "web_address": "",
+//            "address": "",
+//            "company_name": "",
+//            "ringtone": "",
+//            "con_image_thumb": "",
+// },
 
-    private String created_by;
-    private String id;
+    private String created_by = "";
+    private String id = "";
     private String first_name = "";
-    private String phone;
-    private String email;
-    private String helplist;
-    private String state;
-    private String last_name;
-    private String ordering;
-    private String note;
-    private String con_image;
-    private String skype;
+    private String phone = "";
+    private String email = "";
+    private String helplist = "";
+    private String state = "";
+    private String last_name = "";
+    private String ordering = "";
+    private String note = "";
+    private String con_image = "";
+    private String skype = "";
+    private String web_address = "";
+    private String address = "";
+    private String company_name = "";
+    private String ringtone = "";
+    private String con_image_thumb = "";
     private boolean isSelected = false;
 
     public ContactDisplay() {
     }
 
-    public ContactDisplay(String created_by, String id, String first_name, String phone, String email,
-                          String helplist, String state, String last_name, String ordering,
-                          String note, String con_image, String skype) {
-        this.created_by = created_by;
-        this.id = id;
-        this.first_name = first_name;
-        this.phone = phone;
-        this.email = email;
-        this.helplist = helplist;
-        this.state = state;
-        this.last_name = last_name;
-        this.ordering = ordering;
-        this.note = note;
-        this.con_image = con_image;
-        this.skype = skype;
-    }
+//    public ContactDisplay(String created_by, String id, String first_name, String phone, String email,
+//                          String helplist, String state, String last_name, String ordering,
+//                          String note, String con_image, String skype) {
+//        this.created_by = created_by;
+//        this.id = id;
+//        this.first_name = first_name;
+//        this.phone = phone;
+//        this.email = email;
+//        this.helplist = helplist;
+//        this.state = state;
+//        this.last_name = last_name;
+//        this.ordering = ordering;
+//        this.note = note;
+//        this.con_image = con_image;
+//        this.skype = skype;
+//    }
 
 
     public boolean isSelected() {
@@ -147,6 +171,45 @@ public class ContactDisplay implements Comparable<ContactDisplay>,Serializable {
         this.created_by = created_by;
     }
 
+    public String getWeb_address() {
+        return web_address;
+    }
+
+    public void setWeb_address(String web_address) {
+        this.web_address = web_address;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCompany_name() {
+        return company_name;
+    }
+
+    public void setCompany_name(String company_name) {
+        this.company_name = company_name;
+    }
+
+    public String getRingtone() {
+        return ringtone;
+    }
+
+    public void setRingtone(String ringtone) {
+        this.ringtone = ringtone;
+    }
+
+    public String getCon_image_thumb() {
+        return con_image_thumb;
+    }
+
+    public void setCon_image_thumb(String con_image_thumb) {
+        this.con_image_thumb = con_image_thumb;
+    }
 
     @Override
     public int compareTo(ContactDisplay contactDisplay) {

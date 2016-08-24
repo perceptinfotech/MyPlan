@@ -4,10 +4,6 @@ package percept.myplan.POJO;
  * Created by percept on 4/8/16.
  */
 
-import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
-
 
 import com.google.gson.annotations.SerializedName;
 

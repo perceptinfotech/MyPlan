@@ -4,8 +4,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -89,8 +87,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     @Override
     public void onBindViewHolder(final ContactViewHolder holder, int position) {
         Contact _contact = LIST_CONTACT.get(position);
-        if (!TextUtils.isEmpty(_contact.getContactName()))
-            holder.TV_CONTACTNAME.setText(_contact.getContactName());
+        if (!TextUtils.isEmpty(_contact.getFirstName()))
+            holder.TV_CONTACTNAME.setText(_contact.getFirstName());
         else
             holder.TV_CONTACTNAME.setText(_contact.getPhoneNo());
         onBind = true;

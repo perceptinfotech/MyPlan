@@ -236,6 +236,8 @@
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
     <string name="add_photo">Add Photo</string>
+    <string name="nearest_emergency_room">Nearest Emergency Rooms</string>
+    <string name="editcontact">Edit Contact</string>
 
     <string-array name="navigation_menu">
         <item>Symptoms</item>

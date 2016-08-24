@@ -2,8 +2,6 @@ package percept.myplan.Activities;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -20,17 +18,10 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
-import java.sql.Time;
 import java.util.Calendar;
 
-import percept.myplan.POJO.SymptomStrategy;
 import percept.myplan.R;
-import percept.myplan.receivers.AlarmReceiver;
-
-import static percept.myplan.Activities.AddNewSymptomActivity.LIST_ADDSYMPTOMSTRATEGY;
-import static percept.myplan.Activities.SymptomDetailsActivity.LIST_SYMPTOMSTRATEGY;
 
 public class AddAlarmActivity extends AppCompatActivity {
 

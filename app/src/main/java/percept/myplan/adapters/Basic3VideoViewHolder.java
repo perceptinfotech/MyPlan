@@ -7,10 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import percept.myplan.POJO.Hope;
 import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
-import percept.myplan.data.SimpleVideoObject;
 import percept.myplan.media.Cineer;
 import percept.myplan.player.ExoVideo;
 

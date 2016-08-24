@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,8 +35,10 @@ import java.util.List;
 import java.util.Map;
 
 import percept.myplan.Activities.AddContactActivity;
+import percept.myplan.Activities.AddContactDetailActivity;
 import percept.myplan.Activities.EmergencyContactActivity;
 import percept.myplan.Activities.HelpListEditActivity;
+import percept.myplan.Activities.StrategyDetailsOwnActivity;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.Utils;
@@ -142,7 +143,12 @@ public class fragmentContacts extends Fragment {
         LST_HELP.addOnItemTouchListener(new fragmentContacts.RecyclerTouchListener(getActivity(), LST_HELP, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(getActivity(), LIST_ALLCONTACTS.get(position).getFirst_name(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), LIST_HELPCONTACTS.get(position).getFirst_name(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), AddContactDetailActivity.class);
+                intent.putExtra("IS_FOR_EDIT", true);
+                intent.putExtra(Constant.HELP_COUNT, LIST_HELPCONTACTS.size());
+                intent.putExtra("DATA", LIST_HELPCONTACTS.get(position));
+                startActivity(intent);
             }
 
             @Override
@@ -154,7 +160,12 @@ public class fragmentContacts extends Fragment {
         LST_CONTACTS.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), LST_CONTACTS, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(getActivity(), LIST_ALLCONTACTS.get(position).getFirst_name(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), LIST_CONTACTS.get(position).getFirst_name(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), AddContactDetailActivity.class);
+                intent.putExtra("IS_FOR_EDIT", true);
+                intent.putExtra("HELP_COUNT", LIST_HELPCONTACTS.size());
+                intent.putExtra("DATA", LIST_CONTACTS.get(position));
+                startActivity(intent);
             }
 
             @Override
@@ -206,7 +217,7 @@ public class fragmentContacts extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
             Snackbar snackbar = Snackbar
-                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_LONG)
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -261,6 +272,7 @@ public class fragmentContacts extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_addContact) {
             Intent _intent = new Intent(getActivity().getApplicationContext(), AddContactActivity.class);
+            _intent.putExtra("HELP_COUNT", LIST_HELPCONTACTS.size());
             startActivity(_intent);
 
             return true;

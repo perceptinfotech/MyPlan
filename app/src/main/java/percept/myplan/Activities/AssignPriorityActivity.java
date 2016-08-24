@@ -10,7 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import percept.myplan.Global.Constant;
 import percept.myplan.R;
 
 /**
@@ -19,6 +21,7 @@ import percept.myplan.R;
 public class AssignPriorityActivity extends AppCompatActivity {
     TextView tvHelp, tvEmergency;
     private int con_priority = 0; // 0: Default 1:Help  2:Emergency
+    int _count = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,7 +39,11 @@ public class AssignPriorityActivity extends AppCompatActivity {
         tvEmergency = (TextView) findViewById(R.id.tvEmergency);
         tvHelp = (TextView) findViewById(R.id.tvHelp);
 
-        if (getIntent().getStringExtra("ADD_TO_HELP").equals("1")) {
+        if (getIntent().hasExtra(Constant.HELP_COUNT)) {
+            _count = getIntent().getIntExtra(Constant.HELP_COUNT, 0);
+        }
+
+        if (_count < 10 && getIntent().getStringExtra("ADD_TO_HELP").equals("1")) {
             tvHelp.setBackgroundColor(getResources().getColor(R.color.sidemenu_seperator));
             tvEmergency.setBackgroundColor(getResources().getColor(android.R.color.white));
         }
@@ -53,6 +60,10 @@ public class AssignPriorityActivity extends AppCompatActivity {
         tvHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (_count >= 10) {
+                    Toast.makeText(AssignPriorityActivity.this, "You can't select more than 10 contacts for Help!", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 tvHelp.setBackgroundColor(getResources().getColor(R.color.sidemenu_seperator));
                 tvEmergency.setBackgroundColor(getResources().getColor(android.R.color.white));
                 con_priority = 1;

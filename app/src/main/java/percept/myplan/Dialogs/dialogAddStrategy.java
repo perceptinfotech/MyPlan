@@ -1,16 +1,13 @@
 package percept.myplan.Dialogs;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.TextView;
 
-import percept.myplan.Activities.StrategyDetailsOtherActivity;
 import percept.myplan.R;
 
 

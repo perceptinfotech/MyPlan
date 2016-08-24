@@ -7,14 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
-import percept.myplan.Activities.StrategyDetailsOtherActivity;
 import percept.myplan.AppController;
-import percept.myplan.Global.Constant;
 import percept.myplan.R;
 
 

@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import percept.myplan.Activities.SettingExportMyPlanActivity;
 import percept.myplan.Activities.SettingGeoTrackingActivity;
-import percept.myplan.Activities.MoodActivity;
 import percept.myplan.Activities.SettingMoodRatingsActivity;
 import percept.myplan.Activities.SettingNotificationActivity;
 import percept.myplan.Activities.SettingProfileActivity;

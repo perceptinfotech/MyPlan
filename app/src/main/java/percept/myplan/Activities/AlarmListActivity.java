@@ -16,8 +16,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
 import percept.myplan.POJO.Alarm;
 import percept.myplan.R;
 import percept.myplan.adapters.AlarmAdapter;

@@ -2,7 +2,6 @@ package me.crosswall.photo.pick.data.loader;
 
 import android.content.Context;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
 import android.support.v4.content.CursorLoader;
 

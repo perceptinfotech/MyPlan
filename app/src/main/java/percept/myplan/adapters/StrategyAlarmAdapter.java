@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import percept.myplan.POJO.Alarm;
-import percept.myplan.POJO.StrategyContact;
 import percept.myplan.R;
 
 /**
