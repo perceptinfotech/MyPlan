@@ -7,7 +7,9 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -37,24 +39,35 @@ public class LoginActivity_1 extends AppCompatActivity {
     private EditText EDT_EMAIL;
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
+    private PinEntryEditText pinEntry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_1);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        mTitle.setText(getResources().getString(R.string.app_name));
+
         UTILS = new Utils(LoginActivity_1.this);
         TV_FORGETPWD = (TextView) findViewById(R.id.tvForgotPwd);
         EDT_EMAIL = (EditText) findViewById(R.id.edtEmail);
-
+        pinEntry = (PinEntryEditText) findViewById(R.id.txt_pin_entry);
         PB = (ProgressBar) findViewById(R.id.progressBar);
 
         if (!UTILS.getPreference(Constant.PREF_EMAIL).equals("")) {
             EDT_EMAIL.setText(UTILS.getPreference(Constant.PREF_EMAIL));
+            pinEntry.requestFocus();
         }
 
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
-        final PinEntryEditText pinEntry = (PinEntryEditText) findViewById(R.id.txt_pin_entry);
+
         if (pinEntry != null) {
             pinEntry.setOnPinEnteredListener(new PinEntryEditText.OnPinEnteredListener() {
                 @Override
@@ -141,6 +154,7 @@ public class LoginActivity_1 extends AppCompatActivity {
                                 UTILS.setPreference(Constant.PREF_PROFILE_EMAIL, Constant.PROFILE_EMAIL);
                                 UTILS.setPreference(Constant.PREF_PROFILE_NAME, Constant.PROFILE_NAME);
                             } else {
+                                pinEntry.setText("", null);
                                 Toast.makeText(LoginActivity_1.this, "Login Error", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -167,6 +181,13 @@ public class LoginActivity_1 extends AppCompatActivity {
             textView.setTextColor(Color.YELLOW);
             snackbar.show();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home)
+            onBackPressed();
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

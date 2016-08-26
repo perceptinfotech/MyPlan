@@ -19,6 +19,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -34,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.android.volley.VolleyError;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -54,6 +56,7 @@ import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
+import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
 
 
@@ -155,7 +158,7 @@ public class SignUpActivity extends AppCompatActivity {
                         error = true;
                     } else if (EDT_PASSWORD.getText().toString().trim().equals("")) {
                         error = true;
-                    } else if (EDT_PHONENO.getText().toString().trim().equals("")) {
+                    } else if (EDT_PHONENO.getText().toString().trim().equals("") && EDT_PHONENO.getText().toString().length() < 8) {
                         error = true;
                     } else if (EDT_BIRTHDAY.getText().toString().trim().equals("")) {
                         error = true;
@@ -264,13 +267,14 @@ public class SignUpActivity extends AppCompatActivity {
         new MultiPartParsing(SignUpActivity.this, params, General.PHPServices.REGISTER, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
-                PB.setVisibility(View.GONE);
+
                 try {
                     JSONObject _object = new JSONObject(response);
                     JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
                     if (_ObjData.getString(Constant.STATUS).equals("Success")) {
-                        startActivity(new Intent(SignUpActivity.this, LoginActivity_1.class));
-                        SignUpActivity.this.finish();
+                        LoginCall();
+                       /* startActivity(new Intent(SignUpActivity.this, LoginActivity_1.class));
+                        SignUpActivity.this.finish();*/
                     } else {
                         Toast.makeText(SignUpActivity.this, getResources().getString(R.string.signuperror), Toast.LENGTH_SHORT).show();
                     }
@@ -280,6 +284,75 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    private void LoginCall() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(Constant.USER_NAME, EDT_EMAIL.getText().toString().trim());
+        params.put(Constant.PASSWORD, EDT_PASSWORD.getText().toString().trim());
+
+        try {
+            new General().getJSONContentFromInternetService(SignUpActivity.this, General.PHPServices.LOGIN, params, true, false, true, new VolleyResponseListener() {
+
+                @Override
+                public void onError(VolleyError message) {
+                    Log.d(":::::::::: ", message.toString());
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d(":::::::::: ", response.toString());
+                    PB.setVisibility(View.GONE);
+                    try {
+                        if (response.has(Constant.DATA)) {
+                            if (response.getJSONObject(Constant.DATA).getString(Constant.STATUS).equals("Success")) {
+                                Constant.SID = response.getJSONObject(Constant.DATA).getString("sid");
+                                Constant.SNAME = response.getJSONObject(Constant.DATA).getString("sname");
+                                Constant.PROFILE_IMG_LINK = response.getJSONObject(Constant.DATA).getString(Constant.PROFILE_IMAGE);
+                                Constant.PROFILE_EMAIL = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.EMAIL);
+                                Constant.PROFILE_USER_NAME = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.USER_NAME);
+                                Constant.PROFILE_NAME = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.NAME);
+
+                                UTILS.setPreference(Constant.PREF_EMAIL, EDT_EMAIL.getText().toString().trim());
+                                startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
+                                SignUpActivity.this.finish();
+                                UTILS.setPreference(Constant.PREF_LOGGEDIN, "true");
+                                UTILS.setPreference(Constant.PREF_SID, Constant.SID);
+                                UTILS.setPreference(Constant.PREF_SNAME, Constant.SNAME);
+                                UTILS.setPreference(Constant.PREF_PROFILE_IMG_LINK, Constant.PROFILE_IMG_LINK);
+                                UTILS.setPreference(Constant.PREF_PROFILE_USER_NAME, Constant.PROFILE_USER_NAME);
+                                UTILS.setPreference(Constant.PREF_PROFILE_EMAIL, Constant.PROFILE_EMAIL);
+                                UTILS.setPreference(Constant.PREF_PROFILE_NAME, Constant.PROFILE_NAME);
+//                            } else {
+//                                Toast.makeText(SignUpActivity.this, "Login Error", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        PB.setVisibility(View.GONE);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            LoginCall();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+    }
+
 //    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
 //        @Override
 //        protected void onPreExecute() {
@@ -500,6 +573,7 @@ public class SignUpActivity extends AppCompatActivity {
             TV_DONE.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    YEAR_PICKER.clearFocus();
                     YEAR = String.valueOf(YEAR_PICKER.getValue());
                     YearCalender.this.dismiss();
                 }
@@ -585,8 +659,8 @@ public class SignUpActivity extends AppCompatActivity {
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(SignUpActivity.this)
                 .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton(getString(R.string.ok), okListener)
+                .setNegativeButton(getString(R.string.cancel), null)
                 .create()
                 .show();
     }

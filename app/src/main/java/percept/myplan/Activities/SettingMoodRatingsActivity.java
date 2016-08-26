@@ -61,8 +61,13 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
         CHK_EVERYWEEK.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked)
+                deselectAll();
+                if (isChecked) {
                     CHK_EVERYWEEK.setTextColor(getResources().getColor(android.R.color.black));
+                    CHK_EVERYTHREEWEEK.setChecked(false);
+                    CHK_EVERYTWOWEEK.setChecked(false);
+                    CHK_ONCEAMONTH.setChecked(false);
+                }
                 else
                     CHK_EVERYWEEK.setTextColor(getResources().getColor(R.color.toobarbelow));
             }
@@ -71,8 +76,13 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
         CHK_EVERYTWOWEEK.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked)
+
+                if (isChecked) {
                     CHK_EVERYTWOWEEK.setTextColor(getResources().getColor(android.R.color.black));
+                    CHK_EVERYTHREEWEEK.setChecked(false);
+                    CHK_EVERYWEEK.setChecked(false);
+                    CHK_ONCEAMONTH.setChecked(false);
+                }
                 else
                     CHK_EVERYTWOWEEK.setTextColor(getResources().getColor(R.color.toobarbelow));
             }
@@ -81,8 +91,12 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
         CHK_EVERYTHREEWEEK.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked)
+                if (isChecked) {
                     CHK_EVERYTHREEWEEK.setTextColor(getResources().getColor(android.R.color.black));
+                    CHK_EVERYTWOWEEK.setChecked(false);
+                    CHK_EVERYWEEK.setChecked(false);
+                    CHK_ONCEAMONTH.setChecked(false);
+                }
                 else
                     CHK_EVERYTHREEWEEK.setTextColor(getResources().getColor(R.color.toobarbelow));
             }
@@ -90,15 +104,24 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
         CHK_ONCEAMONTH.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked)
+                if (isChecked) {
                     CHK_ONCEAMONTH.setTextColor(getResources().getColor(android.R.color.black));
+                    CHK_EVERYTWOWEEK.setChecked(false);
+                    CHK_EVERYWEEK.setChecked(false);
+                    CHK_EVERYTHREEWEEK.setChecked(false);
+                }
                 else
                     CHK_ONCEAMONTH.setTextColor(getResources().getColor(R.color.toobarbelow));
             }
         });
 
+
     }
 
+    private void deselectAll()
+    {
+
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
