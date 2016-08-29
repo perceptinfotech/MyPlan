@@ -40,6 +40,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/llBottomView"
         android:layout_below="@+id/viewSeperator"
         android:orientation="vertical">
 
@@ -60,13 +61,14 @@
             android:drawablePadding="10dp"
             android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:gravity="center_vertical"
-            android:visibility="gone"
             android:padding="5dp"
             android:text="@string/addnewcontact"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/llBottomView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -102,5 +104,5 @@
         android:layout_centerInParent="true"
         android:visibility="gone" />
 
-    <include layout="@layout/lay_internet_lost"/>
+    <include layout="@layout/lay_internet_lost" />
 </RelativeLayout>

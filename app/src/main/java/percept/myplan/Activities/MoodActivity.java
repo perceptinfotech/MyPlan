@@ -388,16 +388,13 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
     }
 
     private void MoodRatingAddNoteDialog(final String mood) {
-        fragmentAddNoteCalender _dialog = new fragmentAddNoteCalender(MoodActivity.this);
+        fragmentAddNoteCalender _dialog = new fragmentAddNoteCalender(MoodActivity.this, mood);
         _dialog.setCanceledOnTouchOutside(false);
         _dialog.show();
         _dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
-
                 SubmitTodayMood(mood);
-
-
             }
         });
     }
@@ -480,11 +477,13 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
 
         private EditText EDT_NOTE;
         private Button BTN_SAVENOTE;
+        private String mood;
         private Context CONTEXT;
 
-        public fragmentAddNoteCalender(Context context) {
+        public fragmentAddNoteCalender(Context context, String mood) {
             super(context, R.style.DialogTheme);
             CONTEXT = context;
+            this.mood = mood;
         }
 
         @Override
@@ -503,6 +502,12 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                     Log.d(":::: ", EDT_NOTE.getText().toString());
                     fragmentAddNoteCalender.this.dismiss();
                     STR_NOTE = EDT_NOTE.getText().toString().trim();
+                }
+            });
+            findViewById(R.id.imgCloseMoodRating).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    fragmentAddNoteCalender.this.dismiss();
                 }
             });
         }

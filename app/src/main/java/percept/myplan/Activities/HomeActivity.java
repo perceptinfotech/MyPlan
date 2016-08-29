@@ -35,6 +35,7 @@ import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import percept.myplan.Global.Constant;
@@ -169,9 +170,9 @@ public class HomeActivity extends AppCompatActivity implements
         toggle.syncState();
 
         TV_PROFILE_NAME = (TextView) findViewById(R.id.tvProfileName);
-        IMG_DRAWER= (ImageView) findViewById(R.id.imgDrawer);
+        IMG_DRAWER = (ImageView) findViewById(R.id.imgDrawer);
 
-        TV_PROFILE_NAME.setText(getResources().getString(R.string.hello)+" "+ UTILS.getPreference(Constant.PREF_PROFILE_NAME));
+        TV_PROFILE_NAME.setText(getResources().getString(R.string.hello) + " " + UTILS.getPreference(Constant.PREF_PROFILE_FNAME)+ " " + UTILS.getPreference(Constant.PREF_PROFILE_LNAME));
         LST_MENUITEMS.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -259,14 +260,21 @@ public class HomeActivity extends AppCompatActivity implements
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST: {
+            case MY_PERMISSIONS_REQUEST:
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     buildGoogleApiClient();
-                } else {
                 }
-                return;
-            }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                List<Fragment> fragments = getSupportFragmentManager().getFragments();
+                if (fragments != null) {
+                    for (Fragment fragment : fragments) {
+                        fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                    }
+                }
+                break;
         }
     }
 
@@ -573,7 +581,8 @@ public class HomeActivity extends AppCompatActivity implements
                 UTILS.setPreference(Constant.PREF_PROFILE_IMG_LINK, "");
                 UTILS.setPreference(Constant.PREF_PROFILE_USER_NAME, "");
                 UTILS.setPreference(Constant.PREF_PROFILE_EMAIL, "");
-                UTILS.setPreference(Constant.PREF_PROFILE_NAME, "");
+                UTILS.setPreference(Constant.PREF_PROFILE_FNAME, "");
+                UTILS.setPreference(Constant.PREF_PROFILE_LNAME, "");
                 startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                 HomeActivity.this.finish();
                 return;

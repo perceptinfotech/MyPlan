@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_marginTop="15dp"
             android:text="@string/editlist"
             android:textAllCaps="true" />
@@ -50,6 +50,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/llBottomView"
         android:layout_below="@+id/viewSeperator"
         android:orientation="vertical">
 
@@ -70,13 +71,14 @@
             android:drawablePadding="10dp"
             android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:gravity="center_vertical"
-            android:visibility="gone"
             android:padding="5dp"
             android:text="@string/addnewcontact"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/llBottomView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -102,6 +104,7 @@
             android:textColor="@android:color/black" />
 
     </LinearLayout>
+
     <ProgressBar
         android:id="@+id/pbHelpList"
         style="?android:attr/progressBarStyle"
@@ -110,5 +113,6 @@
         android:layout_below="@+id/view"
         android:layout_centerInParent="true"
         android:visibility="gone" />
-    <include layout="@layout/lay_internet_lost"/>
+
+    <include layout="@layout/lay_internet_lost" />
 </RelativeLayout>

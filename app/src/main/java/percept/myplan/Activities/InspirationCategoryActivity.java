@@ -103,7 +103,7 @@ public class InspirationCategoryActivity extends AppCompatActivity {
                 @Override
                 public void onError(VolleyError message) {
                     PB.setVisibility(View.GONE);
-                    Log.d("::::::::::: Error", message.getLocalizedMessage());
+                    Log.d("::::::::::: Error", message.getMessage()+"");
                 }
 
                 @Override

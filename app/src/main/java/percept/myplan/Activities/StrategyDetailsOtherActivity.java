@@ -98,7 +98,7 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
                             }
                             Log.d("::: Strategy Details", clsStrategy.getID());
                             TV_DESCRIPTION.setText(clsStrategy.getDescription());
-                            TV_USEDBY.setText("1234");
+                            TV_USEDBY.setText(clsStrategy.getUsedBy());
                             TV_SUBMITTEDBY.setText("ID " + clsStrategy.getCreatedBy());
 
                             if (getIntent().hasExtra("CATEGORY_NAME"))
@@ -161,7 +161,18 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
         TV_SUBMITTEDBY.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(StrategyDetailsOtherActivity.this, StrategySubmittedDetailActivity.class));
+                Intent intent = new Intent(StrategyDetailsOtherActivity.this, StrategySubmittedDetailActivity.class);
+                intent.putExtra(Constant.USER_ID, clsStrategy.getCreatedBy());
+                intent.putExtra(Constant.CREATED_BY_NAME, clsStrategy.getCreatedByName());
+                if (getIntent().hasExtra("FROM_SYMPTOM")) {
+                    intent.putExtra("FROM_SYMPTOM", getIntent().getExtras().getString("FROM_SYMPTOM"));
+                }
+                if (getIntent().hasExtra("FROM_SYMPTOM_INSPI")) {
+                    intent.putExtra("FROM_SYMPTOM_INSPI", getIntent().getExtras().getString("FROM_SYMPTOM_INSPI"));
+                }
+                startActivity(intent);
+
+
             }
         });
     }

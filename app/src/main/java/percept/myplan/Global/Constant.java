@@ -33,7 +33,8 @@ public class Constant {
     public final static String PREF_PROFILE_IMG_LINK = "profileImg";
     public final static String PREF_PROFILE_USER_NAME = "profileUSerName";
     public final static String PREF_PROFILE_EMAIL = "profileEmail";
-    public final static String PREF_PROFILE_NAME = "profileName";
+    public final static String PREF_PROFILE_FNAME = "firstName";
+    public final static String PREF_PROFILE_LNAME = "lastName";
 
     //Login Page
     public final static String USER_NAME = "username";
@@ -43,6 +44,8 @@ public class Constant {
     public final static String DATA = "data";
     public final static String USER = "user";
     public final static String NAME = "name";
+    public final static String USER_ID = "user_id";
+    public final static String CREATED_BY_NAME = "created_by_name";
 
     //Register Page
     public final static String FIRST_NAME = "first_name";

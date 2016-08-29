@@ -45,11 +45,11 @@
                 android:textSize="16sp" />
 
             <EditText
+                android:id="@+id/edtProfileFirstName"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/edt_register_border"
-                android:text="John"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -76,11 +76,11 @@
                 android:textSize="16sp" />
 
             <EditText
+                android:id="@+id/edtProfileLastName"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/edt_register_border"
-                android:text="Anderson"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -107,13 +107,13 @@
                 android:textSize="16sp" />
 
             <EditText
+                android:id="@+id/edtProfileEmail"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/edt_register_border"
                 android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
                 android:gravity="center_vertical"
-                android:text="John"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -148,7 +148,6 @@
                 android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
                 android:gravity="center_vertical"
                 android:inputType="numberPassword"
-                android:text="John"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -168,6 +167,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/linearLayout"
         android:layout_centerInParent="true"
-        android:visibility="gone"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:visibility="gone" />
 </RelativeLayout>

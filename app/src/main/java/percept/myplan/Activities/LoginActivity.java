@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
             Constant.PROFILE_IMG_LINK = UTILS.getPreference(Constant.PREF_PROFILE_IMG_LINK);
             Constant.PROFILE_EMAIL = UTILS.getPreference(Constant.PREF_PROFILE_EMAIL);
             Constant.PROFILE_USER_NAME = UTILS.getPreference(Constant.PREF_PROFILE_USER_NAME);
-            Constant.PROFILE_NAME = UTILS.getPreference(Constant.PREF_PROFILE_NAME);
+            Constant.PROFILE_NAME = UTILS.getPreference(Constant.PREF_PROFILE_FNAME) + " " + UTILS.getPreference(Constant.PREF_PROFILE_LNAME);
 
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             LoginActivity.this.finish();

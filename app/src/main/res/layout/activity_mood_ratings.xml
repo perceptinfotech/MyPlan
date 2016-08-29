@@ -6,21 +6,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backcolor"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
-    <include layout="@layout/app_toolbar"
-        android:id="@+id/include"></include>
+    <include
+        android:id="@+id/include"
+        layout="@layout/app_toolbar"></include>
 
-    <Switch
+    <!--<Switch-->
+    <!--android:id="@+id/switchSidas1"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="15dp"-->
+    <!--android:background="@android:color/white"-->
+    <!--android:padding="10dp"-->
+    <!--android:text="@string/sidas"-->
+    <!--style="@style/SCBSwitch"-->
+    <!--android:textSize="16sp" />-->
+
+    <android.support.v7.widget.SwitchCompat
         android:id="@+id/switchSidas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_marginTop="15dp"
         android:background="@android:color/white"
         android:padding="10dp"
         android:text="@string/sidas"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:theme="@style/SCBSwitch" />
 
     <LinearLayout
         android:id="@+id/laySidas"
@@ -34,7 +47,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:padding="10dp"
             android:text="@string/test_interval"
             android:textAllCaps="true" />
@@ -44,12 +56,16 @@
             android:layout_height="1dp"
             android:background="@color/sidemenu_seperator" />
 
-        <CheckBox
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rcvSidas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white" />
+        <!--<CheckBox
             android:id="@+id/chkEveryWeek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
-
             android:button="@null"
             android:checked="true"
             android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
@@ -110,11 +126,11 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/sidemenu_seperator" />
+            android:background="@color/sidemenu_seperator" />-->
 
     </LinearLayout>
 
-    <Switch
+    <android.support.v7.widget.SwitchCompat
         android:id="@+id/switchMood"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -123,6 +139,7 @@
         android:background="@android:color/white"
         android:padding="10dp"
         android:text="@string/mood"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:theme="@style/SCBSwitch" />
 
 </LinearLayout>

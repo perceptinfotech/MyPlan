@@ -73,7 +73,7 @@
     <string name="title_activity_emergency_contact">Emergency Contact</string>
     <string name="onlyoneemergencycontact">You can have maximum of 1 contact assigned to emergency</string>
     <string name="title_activity_help_list">Edit Help List</string>
-    <string name="edithelplistmsg">You can have maximum of 10 assigned contact listed in help.Please reassigned priority to one contact before adding a new.</string>
+    <string name="edithelplistmsg">You can have maximum of 10 assigned contact listed in help.Please reassign priority to one contact before adding a new.</string>
     <string name="title_activity_create_quick_msg">Choose recipient</string>
     <string name="title_activity_send_message">Send Message</string>
     <string name="notimsg">Notification Message</string>
@@ -238,6 +238,12 @@
     <string name="add_photo">Add Photo</string>
     <string name="nearest_emergency_room">Nearest Emergency Rooms</string>
     <string name="editcontact">Edit Contact</string>
+    <string name="submitted">Submitted</string>
+    <string name="user">User</string>
+    <string name="entries">entries</string>
+    <string name="entry">entry</string>
+    <string name="no_entry_submitted">No entry submitted</string>
+
 
     <string-array name="navigation_menu">
         <item>Symptoms</item>

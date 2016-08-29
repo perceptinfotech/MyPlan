@@ -19,6 +19,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -323,7 +324,11 @@ public class SignUpActivity extends AppCompatActivity {
                                 UTILS.setPreference(Constant.PREF_PROFILE_IMG_LINK, Constant.PROFILE_IMG_LINK);
                                 UTILS.setPreference(Constant.PREF_PROFILE_USER_NAME, Constant.PROFILE_USER_NAME);
                                 UTILS.setPreference(Constant.PREF_PROFILE_EMAIL, Constant.PROFILE_EMAIL);
-                                UTILS.setPreference(Constant.PREF_PROFILE_NAME, Constant.PROFILE_NAME);
+                                String names[] = TextUtils.split(Constant.PROFILE_NAME, " ");
+                                UTILS.setPreference(Constant.PREF_PROFILE_FNAME, names[0]);
+                                if (names.length > 1)
+                                    UTILS.setPreference(Constant.PREF_PROFILE_LNAME, names[1]);
+                                UTILS.setPreference(Constant.PASSWORD, EDT_PASSWORD.getText().toString().trim());
 //                            } else {
 //                                Toast.makeText(SignUpActivity.this, "Login Error", Toast.LENGTH_SHORT).show();
                             }

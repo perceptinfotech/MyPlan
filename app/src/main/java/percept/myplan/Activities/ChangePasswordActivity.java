@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -57,6 +58,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
             if (isValidate()) {
                 Intent intent = new Intent();
                 intent.putExtra("change_password", EDT_NEW_PASSWORD.getText().toString().trim());
+                intent.putExtra("old_password", EDT_OLD_PASSWORD.getText().toString().trim());
+                setResult(Activity.RESULT_OK,intent);
                 ChangePasswordActivity.this.finish();
                 return true;
             }

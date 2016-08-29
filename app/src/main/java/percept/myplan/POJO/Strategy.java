@@ -62,6 +62,9 @@ public class Strategy {
     @SerializedName("cat_name")
     private String CategoryName;
 
+    @SerializedName("used")
+    private String usedBy;
+
     public String getCategoryName() {
         return CategoryName;
     }
@@ -207,6 +210,13 @@ public class Strategy {
         CheckedOut = checkedOut;
     }
 
+    public String getUsedBy() {
+        return usedBy;
+    }
+
+    public void setUsedBy(String usedBy) {
+        this.usedBy = usedBy;
+    }
 
     private boolean isSelected = false;
 

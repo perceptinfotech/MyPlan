@@ -8,7 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
+import percept.myplan.Activities.StrategySubmittedDetailActivity;
 import percept.myplan.Dialogs.dialogAddStrategy;
+import percept.myplan.POJO.StrategyDetails;
 import percept.myplan.R;
 
 /**
@@ -16,20 +20,23 @@ import percept.myplan.R;
  */
 public class StrategySubmittedOthersAdapter extends RecyclerView.Adapter<StrategySubmittedOthersAdapter.StrategyAdapter> {
 
-    private Context context;
+    private StrategySubmittedDetailActivity activity;
+    private ArrayList<StrategyDetails> listStrategyDetail;
 
-    public StrategySubmittedOthersAdapter(Context context) {
-        this.context = context;
+    public StrategySubmittedOthersAdapter(StrategySubmittedDetailActivity activity, ArrayList<StrategyDetails> listStrategyDetail) {
+        this.activity = activity;
+        this.listStrategyDetail = listStrategyDetail;
     }
 
     public class StrategyAdapter extends RecyclerView.ViewHolder {
         public ImageView ivAddStrategy;
-        public TextView tvStrategyDetail;
+        public TextView tvStrategyDetail, tvStrategyTitle;
 
         public StrategyAdapter(View itemView) {
             super(itemView);
             ivAddStrategy = (ImageView) itemView.findViewById(R.id.ivAddStrategy);
             tvStrategyDetail = (TextView) itemView.findViewById(R.id.tvStrategyDetail);
+            tvStrategyTitle = (TextView) itemView.findViewById(R.id.tvStrategyTitle);
         }
 
         public void setOnItemClickListener(View.OnClickListener listener) {
@@ -58,22 +65,25 @@ public class StrategySubmittedOthersAdapter extends RecyclerView.Adapter<Strateg
 
     @Override
     public void onBindViewHolder(StrategyAdapter holder, int position) {
-        holder.tvStrategyDetail.setText(context.getString(R.string.description) + " " + position);
-        holder.tvStrategyDetail.setTag(position);
+        StrategyDetails details = listStrategyDetail.get(position);
+
+        holder.tvStrategyTitle.setText(details.getTitle());
+        holder.tvStrategyDetail.setText(details.getDescription());
+        holder.ivAddStrategy.setTag(position);
 
     }
 
     @Override
     public int getItemCount() {
-        return 5;
+        return listStrategyDetail.size();
     }
 
-    private void openConfimationDialog(int position)
-    {
-        dialogAddStrategy _dialog=new dialogAddStrategy(context) {
+    private void openConfimationDialog(final int position) {
+        dialogAddStrategy _dialog = new dialogAddStrategy(activity) {
             @Override
             public void onClickYes() {
                 dismiss();
+                activity.addMyStrategy(position);
             }
 
             @Override

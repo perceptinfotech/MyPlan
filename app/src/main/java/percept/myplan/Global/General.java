@@ -90,6 +90,10 @@ public class General {
             return ".saveStrategy";
         } else if (serviceName == PHPServices.SAVE_CONTACTS) {
             return ".saveContacts";
+        }else if (serviceName == PHPServices.GET_USER_STRATEGY) {
+            return ".getUserstrategy";
+        }else if (serviceName == PHPServices.PROFILE) {
+            return ".profile";
         }
         return "";
     }
@@ -134,7 +138,8 @@ public class General {
                                     _utils.setPreference(Constant.PREF_PROFILE_IMG_LINK, "");
                                     _utils.setPreference(Constant.PREF_PROFILE_USER_NAME, "");
                                     _utils.setPreference(Constant.PREF_PROFILE_EMAIL, "");
-                                    _utils.setPreference(Constant.PREF_PROFILE_NAME, "");
+                                    _utils.setPreference(Constant.PREF_PROFILE_FNAME, "");
+                                    _utils.setPreference(Constant.PREF_PROFILE_LNAME, "");
                                     ((AppCompatActivity) context).finish();
                                 }
                             }
@@ -227,6 +232,8 @@ public class General {
         SAVE_HOPE_MEDIA,
         SAVE_STRATEGY,
         SAVE_CONTACT,
-        SAVE_CONTACTS
+        SAVE_CONTACTS,
+        GET_USER_STRATEGY,
+        PROFILE
     }
 }
