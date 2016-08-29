@@ -12,7 +12,9 @@ import java.util.List;
 
 import percept.myplan.Activities.HopeDetailsActivity;
 import percept.myplan.Activities.ImageDetailActivity;
+import percept.myplan.Dialogs.dialogDeleteAlert;
 import percept.myplan.POJO.HopeDetail;
+import percept.myplan.R;
 
 /**
  * Created by percept on 5/8/16.
@@ -94,7 +96,17 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
             viewHolder.setOnItemLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    Snackbar.make(parent, "Long pressed to VIDEO", Snackbar.LENGTH_LONG).show();
+                    new dialogDeleteAlert(hopeDetailsActivity, hopeDetailsActivity.getString(R.string.delete_hope_element)) {
+                        @Override
+                        public void onClickYes() {
+                            dismiss();
+                        }
+
+                        @Override
+                        public void onClickNo() {
+                            dismiss();
+                        }
+                    }.show();
                     return true;
                 }
             });
@@ -138,12 +150,23 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
                 @Override
                 public boolean onLongClick(View view) {
                     Snackbar.make(parent, "Long pressed to IMAGE", Snackbar.LENGTH_LONG).show();
+                    new dialogDeleteAlert(hopeDetailsActivity, hopeDetailsActivity.getString(R.string.delete_hope_element)) {
+                        @Override
+                        public void onClickYes() {
+                            dismiss();
+                        }
+
+                        @Override
+                        public void onClickNo() {
+                            dismiss();
+                        }
+                    }.show();
                     return true;
                 }
             });
         }
 
-        if (viewHolder instanceof Basic3VideoViewHolder) {
+        if (viewHolder instanceof Basic3MediaViewHolder) {
             viewHolder.setOnItemClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -156,7 +179,18 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
             viewHolder.setOnItemLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    Snackbar.make(parent, "Long pressed to MEDIA", Snackbar.LENGTH_LONG).show();
+//                    Snackbar.make(parent, "Long pressed to MEDIA", Snackbar.LENGTH_LONG).show();
+                    new dialogDeleteAlert(hopeDetailsActivity, hopeDetailsActivity.getString(R.string.delete_hope_element)) {
+                        @Override
+                        public void onClickYes() {
+                            dismiss();
+                        }
+
+                        @Override
+                        public void onClickNo() {
+                            dismiss();
+                        }
+                    }.show();
                     return true;
                 }
             });
@@ -194,7 +228,7 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
             return Basic3ViewHolder.TYPE_VIDEO;
         } else if (LST_HOPE.get(position).getTYPE().equals("image")) {
             return Basic3ViewHolder.TYPE_IMAGE;
-        } else if (LST_HOPE.get(position).getTYPE().equals("music")){
+        } else if (LST_HOPE.get(position).getTYPE().equals("music")) {
             return Basic3ViewHolder.TYPE_AUDIO;
         }
         return 2;

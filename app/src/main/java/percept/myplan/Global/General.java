@@ -90,10 +90,14 @@ public class General {
             return ".saveStrategy";
         } else if (serviceName == PHPServices.SAVE_CONTACTS) {
             return ".saveContacts";
-        }else if (serviceName == PHPServices.GET_USER_STRATEGY) {
+        } else if (serviceName == PHPServices.GET_USER_STRATEGY) {
             return ".getUserstrategy";
-        }else if (serviceName == PHPServices.PROFILE) {
+        } else if (serviceName == PHPServices.PROFILE) {
             return ".profile";
+        } else if (serviceName == PHPServices.DELETE_HOPE_BOX) {
+            return ".deleteHopebox";
+        } else if (serviceName == PHPServices.DELETE_HOPE_MEDIA) {
+            return ".deleteHopemedia";
         }
         return "";
     }
@@ -234,6 +238,8 @@ public class General {
         SAVE_CONTACT,
         SAVE_CONTACTS,
         GET_USER_STRATEGY,
-        PROFILE
+        PROFILE,
+        DELETE_HOPE_BOX,
+        DELETE_HOPE_MEDIA
     }
 }

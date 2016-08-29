@@ -53,6 +53,9 @@ public class Basic3VideoViewHolder extends Basic3BaseVideoViewHolder {
         this.videoPlayer.setMedia(new ExoVideo(Uri.parse(this.video.getMEDIA()), this.video.getMEDIA_TITLE()));
         this.dummyView.setText(this.video.getMEDIA_TITLE());
         tvCardVideoEdit.setTag(posi);
+        videoView.setTag(posi);
+        dummyView.setTag(posi);
+
 
     }
 

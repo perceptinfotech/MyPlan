@@ -243,7 +243,8 @@
     <string name="entries">entries</string>
     <string name="entry">entry</string>
     <string name="no_entry_submitted">No entry submitted</string>
-
+    <string name="delete_hope_element">Are you sure you want to delete this hope media element?</string>
+    <string name="delete_hope_box">Are you sure you want to delete this entire hope box?</string>
 
     <string-array name="navigation_menu">
         <item>Symptoms</item>

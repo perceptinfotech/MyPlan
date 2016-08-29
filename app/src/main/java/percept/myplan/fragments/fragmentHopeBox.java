@@ -41,6 +41,7 @@ import java.util.Map;
 
 import percept.myplan.Activities.AddHopeBoxActivity;
 import percept.myplan.Activities.HopeDetailsActivity;
+import percept.myplan.Dialogs.dialogDeleteAlert;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
@@ -105,7 +106,17 @@ public class fragmentHopeBox extends Fragment {
 
             @Override
             public void onLongClick(View view, int position) {
+                new dialogDeleteAlert(getActivity(), getString(R.string.delete_hope_box)) {
+                    @Override
+                    public void onClickYes() {
+                        dismiss();
+                    }
 
+                    @Override
+                    public void onClickNo() {
+                        dismiss();
+                    }
+                }.show();
             }
         }));
         GetHopeBox();

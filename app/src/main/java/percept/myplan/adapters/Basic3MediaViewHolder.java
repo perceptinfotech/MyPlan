@@ -47,4 +47,9 @@ public class Basic3MediaViewHolder extends Basic3ViewHolder {
         tvCardImageEdit.setOnClickListener(listener);
         imgCardImage.setOnClickListener(listener);
     }
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener listener) {
+        super.setOnItemLongClickListener(listener);
+        imgCardImage.setOnLongClickListener(listener);
+    }
 }
