@@ -8,6 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import percept.myplan.Global.Constant;
+import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
 
 public class AddStrategyMusicActivity extends AppCompatActivity {
@@ -17,7 +19,7 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
-
+    private String HOPE_ELEMENT_ID = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,10 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
             FROM = getIntent().getExtras().getString("FROM_HOPE");
             HOPE_TITLE = getIntent().getExtras().getString("HOPE_TITLE");
             HOPE_ID = getIntent().getExtras().getString("HOPE_ID");
+            if (getIntent().hasExtra(Constant.DATA)) {
+                HopeDetail _Detail = (HopeDetail) getIntent().getExtras().getSerializable(Constant.DATA);
+                HOPE_ELEMENT_ID = _Detail.getID();
+            }
         }
 
         TV_CHOOSEFROMPHONE = (TextView) findViewById(R.id.tvChooseFromPhone);
@@ -59,6 +65,7 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
                     _intent.putExtra("HOPE_TITLE", HOPE_TITLE);
                     _intent.putExtra("FROM_HOPE", "FROM_HOPE");
                     _intent.putExtra("HOPE_ID", HOPE_ID);
+                    _intent.putExtra("HOPE_ELEMENT_ID", HOPE_ELEMENT_ID);
 
                 }
 

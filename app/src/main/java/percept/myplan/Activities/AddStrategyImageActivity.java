@@ -37,6 +37,7 @@ import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
+import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
 
 import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
@@ -50,6 +51,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
+    private String HOPE_ELEMENT_ID = "";
     private boolean FROM_EDIT = false;
     private ProgressBar PB;
     private Utils UTILS;
@@ -76,6 +78,10 @@ public class AddStrategyImageActivity extends AppCompatActivity {
             FROM = getIntent().getExtras().getString("FROM_HOPE");
             HOPE_TITLE = getIntent().getExtras().getString("HOPE_TITLE");
             HOPE_ID = getIntent().getExtras().getString("HOPE_ID");
+            if (getIntent().hasExtra(Constant.DATA)) {
+                HopeDetail _Detail = (HopeDetail) getIntent().getExtras().getSerializable(Constant.DATA);
+                HOPE_ELEMENT_ID = _Detail.getID();
+            }
         }
 
         if (getIntent().hasExtra("FROM_EDIT")) {
@@ -260,7 +266,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
             } else {
                 List<String> _LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
                 if (_LIST_IMG.size() > 0) {
-                    addHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _LIST_IMG.get(0), "image");
+                    addHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _LIST_IMG.get(0), HOPE_ELEMENT_ID, "image");
                 }
             }
         }
@@ -305,7 +311,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
                         AddStrategyImageActivity.this.finish();
                     }
                 } else {
-                    addHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _Path, "image");
+                    addHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _Path, HOPE_ELEMENT_ID, "image");
                 }
 
             } catch (NullPointerException e) {
@@ -314,7 +320,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         }
     }
 
-    private void addHopeBoxImageElement(final String title, final String hopeId, final String imgpath, final String type) {
+    private void addHopeBoxImageElement(final String title, final String hopeId, final String imgpath, final String hopeElementId, final String type) {
 
         if (!UTILS.isNetConnected()) {
             Snackbar snackbar = Snackbar
@@ -322,7 +328,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            addHopeBoxImageElement(title, hopeId, imgpath, type);
+                            addHopeBoxImageElement(title, hopeId, imgpath, hopeElementId, type);
                         }
                     });
 
@@ -343,7 +349,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         params.put("media", imgpath);
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
-        params.put(Constant.ID, "");
+        params.put(Constant.ID, HOPE_ELEMENT_ID);
         params.put(Constant.HOPE_ID, hopeId);
         params.put(Constant.HOPE_TITLE, title);
         params.put(Constant.HOPE_TYPE, type);

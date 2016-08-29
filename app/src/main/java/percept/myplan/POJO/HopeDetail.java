@@ -2,11 +2,13 @@ package percept.myplan.POJO;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by percept on 3/8/16.
  */
 
-public class HopeDetail {
+public class HopeDetail implements Serializable{
 
     @SerializedName("music")
     private String MUSIC;

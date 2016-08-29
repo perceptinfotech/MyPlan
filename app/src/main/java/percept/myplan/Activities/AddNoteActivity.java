@@ -27,6 +27,7 @@ import java.util.Map;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
+import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
 
 import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
@@ -39,6 +40,7 @@ public class AddNoteActivity extends AppCompatActivity {
     private String HOPE_ID = "";
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
+    private String HOPE_ELEMENT_ID = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,10 @@ public class AddNoteActivity extends AppCompatActivity {
             FROM = getIntent().getExtras().getString("FROM_HOPE");
             HOPE_TITLE = getIntent().getExtras().getString("HOPE_TITLE");
             HOPE_ID = getIntent().getExtras().getString("HOPE_ID");
+            if (getIntent().hasExtra(Constant.DATA)) {
+                HopeDetail _Detail = (HopeDetail) getIntent().getExtras().getSerializable(Constant.DATA);
+                HOPE_ELEMENT_ID = _Detail.getID();
+            }
         }
         ED_NOTE = (EditText) findViewById(R.id.edtNote);
         PB = (ProgressBar) findViewById(R.id.pbAddNote);
@@ -97,7 +103,7 @@ public class AddNoteActivity extends AppCompatActivity {
         Map<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
-        params.put(Constant.ID, "");
+        params.put(Constant.ID, HOPE_ELEMENT_ID);
         params.put("media", NOTE);
         params.put(Constant.HOPE_ID, HOPE_ID);
         params.put(Constant.HOPE_TITLE, HOPE_TITLE);
@@ -127,7 +133,7 @@ public class AddNoteActivity extends AppCompatActivity {
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            addHopeBoxNoteElement(NOTE,TYPE);
+                            addHopeBoxNoteElement(NOTE, TYPE);
                         }
                     });
             snackbar.setActionTextColor(Color.RED);

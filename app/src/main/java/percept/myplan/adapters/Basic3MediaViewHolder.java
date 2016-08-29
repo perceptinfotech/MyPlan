@@ -16,21 +16,19 @@ import percept.myplan.R;
  * Created by percept on 5/8/16.
  */
 
-public class Basic3ImageViewHolder extends Basic3ViewHolder {
+public class Basic3MediaViewHolder extends Basic3ViewHolder {
 
     public static final int LAYOUT_RES = R.layout.vh_image_view;
 
     private HopeDetail DETAILS;
     final ImageView imgCardImage;
     final TextView tvCardImage, tvCardImageEdit;
-    ImageLoader imageLoader;
 
-    public Basic3ImageViewHolder(View itemView) {
+    public Basic3MediaViewHolder(View itemView) {
         super(itemView);
         imgCardImage = (ImageView) itemView.findViewById(R.id.imgCardImage);
         tvCardImage = (TextView) itemView.findViewById(R.id.tvCardImage);
         tvCardImageEdit = (TextView) itemView.findViewById(R.id.tvCardImageEdit);
-        imageLoader = AppController.getInstance().getImageLoader();
     }
 
     @Override
@@ -40,21 +38,7 @@ public class Basic3ImageViewHolder extends Basic3ViewHolder {
         tvCardImage.setText(this.DETAILS.getMEDIA_TITLE());
         imgCardImage.setTag(posi);
         tvCardImageEdit.setTag(posi);
-        imageLoader.get(DETAILS.getMEDIA_THUMB(), new ImageLoader.ImageListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
-                if (response.getBitmap() != null) {
-                    // load image into imageview
-                    imgCardImage.setImageBitmap(response.getBitmap());
-                }
-            }
-        });
+        imgCardImage.setImageResource(R.drawable.media_hope);
     }
 
     @Override

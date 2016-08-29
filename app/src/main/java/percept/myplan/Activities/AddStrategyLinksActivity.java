@@ -26,6 +26,7 @@ import java.util.HashMap;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
+import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
 
 import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
@@ -40,6 +41,7 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
     private String HOPE_ID = "";
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
+    private String HOPE_ELEMENT_ID = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,10 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
             FROM = getIntent().getExtras().getString("FROM_HOPE");
             HOPE_TITLE = getIntent().getExtras().getString("HOPE_TITLE");
             HOPE_ID = getIntent().getExtras().getString("HOPE_ID");
+            if (getIntent().hasExtra(Constant.DATA)) {
+                HopeDetail _Detail = (HopeDetail) getIntent().getExtras().getSerializable(Constant.DATA);
+                HOPE_ELEMENT_ID = _Detail.getID();
+            }
         }
     }
 
@@ -107,7 +113,7 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
-        params.put(Constant.ID, "");
+        params.put(Constant.ID, HOPE_ELEMENT_ID);
         params.put("media", link);
         params.put(Constant.HOPE_ID, hopeId);
         params.put(Constant.HOPE_TITLE, title);
@@ -137,7 +143,7 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            addHopeBoxLinkElement(title,hopeId,link,type);
+                            addHopeBoxLinkElement(title, hopeId, link, type);
                         }
                     });
             snackbar.setActionTextColor(Color.RED);

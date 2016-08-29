@@ -39,6 +39,7 @@ import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
+import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
 
 import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
@@ -53,6 +54,7 @@ public class AddVideoActivity extends AppCompatActivity {
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
+    private String HOPE_ELEMENT_ID = "";
     private ProgressBar PB;
     private final static int MY_PERMISSIONS_REQUEST = 22;
     private boolean HAS_PERMISSION = true;
@@ -77,6 +79,10 @@ public class AddVideoActivity extends AppCompatActivity {
             FROM = getIntent().getExtras().getString("FROM_HOPE");
             HOPE_TITLE = getIntent().getExtras().getString("HOPE_TITLE");
             HOPE_ID = getIntent().getExtras().getString("HOPE_ID");
+            if (getIntent().hasExtra(Constant.DATA)) {
+                HopeDetail _Detail = (HopeDetail) getIntent().getExtras().getSerializable(Constant.DATA);
+                HOPE_ELEMENT_ID = _Detail.getID();
+            }
         }
 
         UTILS = new Utils(AddVideoActivity.this);
@@ -273,7 +279,7 @@ public class AddVideoActivity extends AppCompatActivity {
 //            if (success) {
 //                String _Path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + name;
 //                Log.d("::::::::::: ", _Path);
-            addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, videosPath, "video");
+            addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, HOPE_ELEMENT_ID, videosPath, "video");
 //            }
             //endregion
         } else if (requestCode == REQ_TAKE_VIDEO) {
@@ -307,11 +313,11 @@ public class AddVideoActivity extends AppCompatActivity {
 
             String _path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + name;
             Log.d("::::::::::: ", _path);
-            addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, _path, "video");
+            addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, HOPE_ELEMENT_ID, _path, "video");
         }
     }
 
-    public void addHopeBoxVideoElement(final String title,final String hopeId, final String vidpath,final String type) {
+    public void addHopeBoxVideoElement(final String title, final String hopeId, final String hopeElementId, final String vidpath, final String type) {
 
         if (!UTILS.isNetConnected()) {
             Snackbar snackbar = Snackbar
@@ -319,7 +325,7 @@ public class AddVideoActivity extends AppCompatActivity {
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            addHopeBoxVideoElement(title, hopeId, vidpath, type);
+                            addHopeBoxVideoElement(title, hopeId, hopeElementId, vidpath, type);
                         }
                     });
 
@@ -343,7 +349,7 @@ public class AddVideoActivity extends AppCompatActivity {
 
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
-        params.put(Constant.ID, "");
+        params.put(Constant.ID, hopeElementId);
         params.put(Constant.HOPE_ID, hopeId);
         params.put(Constant.HOPE_TITLE, title);
         params.put(Constant.HOPE_TYPE, type);

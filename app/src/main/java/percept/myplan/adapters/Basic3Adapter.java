@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import percept.myplan.Activities.HopeDetailsActivity;
 import percept.myplan.Activities.ImageDetailActivity;
 import percept.myplan.POJO.HopeDetail;
 
@@ -23,6 +24,7 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
 
     private List<HopeDetail> LST_HOPE;
     private String HOPE_TITLE;
+    private HopeDetailsActivity hopeDetailsActivity;
 
 
     public Basic3Adapter() {
@@ -30,10 +32,11 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
         setHasStableIds(true);  // MUST have this.
     }
 
-    public Basic3Adapter(Context mContext, List<HopeDetail> hopeList, String hopeTitle) {
+    public Basic3Adapter(HopeDetailsActivity hopeDetailsActivity, List<HopeDetail> hopeList, String hopeTitle) {
         this.LST_HOPE = hopeList;
         setHasStableIds(true);  // MUST have this.
         HOPE_TITLE = hopeTitle;
+        this.hopeDetailsActivity = hopeDetailsActivity;
     }
 
     @Override
@@ -48,6 +51,10 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(Basic3ImageViewHolder.LAYOUT_RES, parent, false);
             viewHolder = new Basic3ImageViewHolder(view);
+        } else if (viewType == Basic3ViewHolder.TYPE_AUDIO) {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(Basic3MediaViewHolder.LAYOUT_RES, parent, false);
+            viewHolder = new Basic3MediaViewHolder(view);
         } else {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(Basic3NormalViewHolder.LAYOUT_RES, parent, false);
@@ -77,7 +84,8 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
                     } else if (view == ((Basic3VideoViewHolder) viewHolder).dummyView) {
 //                        Snackbar.make(parent, "Clicked to TEXT", Snackbar.LENGTH_LONG).show();
                     } else if (view == ((Basic3VideoViewHolder) viewHolder).tvCardVideoEdit) {
-                        Snackbar.make(parent, "Clicked to Edit", Snackbar.LENGTH_LONG).show();
+//                        Snackbar.make(parent, "Clicked to Edit", Snackbar.LENGTH_LONG).show();
+                        hopeDetailsActivity.editHopeElement((Integer) view.getTag());
                     }
 
                 }
@@ -120,7 +128,8 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
                     } else if (view == ((Basic3ImageViewHolder) viewHolder).tvCardImage) {
 //                        Snackbar.make(parent, "Clicked to TEXT", Snackbar.LENGTH_LONG).show();
                     } else if (view == ((Basic3ImageViewHolder) viewHolder).tvCardImageEdit) {
-                        Snackbar.make(parent, "Clicked to Edit", Snackbar.LENGTH_LONG).show();
+//                        Snackbar.make(parent, "Clicked to Edit", Snackbar.LENGTH_LONG).show();
+                        hopeDetailsActivity.editHopeElement((Integer) view.getTag());
                     }
                 }
             });
@@ -128,11 +137,31 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
             viewHolder.setOnItemLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    Snackbar.make(parent, "Long pressed to VIDEO", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(parent, "Long pressed to IMAGE", Snackbar.LENGTH_LONG).show();
                     return true;
                 }
             });
         }
+
+        if (viewHolder instanceof Basic3VideoViewHolder) {
+            viewHolder.setOnItemClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (view == ((Basic3MediaViewHolder) viewHolder).tvCardImageEdit) {
+//                        Snackbar.make(parent, "Clicked to Edit", Snackbar.LENGTH_LONG).show();
+                        hopeDetailsActivity.editHopeElement((Integer) view.getTag());
+                    }
+                }
+            });
+            viewHolder.setOnItemLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    Snackbar.make(parent, "Long pressed to MEDIA", Snackbar.LENGTH_LONG).show();
+                    return true;
+                }
+            });
+        }
+
         return viewHolder;
     }
 
@@ -145,6 +174,8 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
         if (LST_HOPE.get(position).getTYPE().equals("video")) {
             return new HopeDetail(LST_HOPE.get(position));
         } else if (LST_HOPE.get(position).getTYPE().equals("image")) {
+            return new HopeDetail(LST_HOPE.get(position));
+        } else if (LST_HOPE.get(position).getTYPE().equals("music")) {
             return new HopeDetail(LST_HOPE.get(position));
         }
         return new HopeDetail(LST_HOPE.get(position));
@@ -163,6 +194,8 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
             return Basic3ViewHolder.TYPE_VIDEO;
         } else if (LST_HOPE.get(position).getTYPE().equals("image")) {
             return Basic3ViewHolder.TYPE_IMAGE;
+        } else if (LST_HOPE.get(position).getTYPE().equals("music")){
+            return Basic3ViewHolder.TYPE_AUDIO;
         }
         return 2;
 //        return position % 3 == 0 ? Basic3ViewHolder.TYPE_VIDEO : Basic3ViewHolder.TYPE_NORMAL;

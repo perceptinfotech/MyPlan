@@ -49,6 +49,7 @@ public class MusicListActivity extends AppCompatActivity {
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
+    private String HOPE_ELEMENT_ID = "";
     private boolean FROM_EDIT = false;
 
     private Utils UTILS;
@@ -71,6 +72,9 @@ public class MusicListActivity extends AppCompatActivity {
             FROM = getIntent().getExtras().getString("FROM_HOPE");
             HOPE_TITLE = getIntent().getExtras().getString("HOPE_TITLE");
             HOPE_ID = getIntent().getExtras().getString("HOPE_ID");
+            if (getIntent().hasExtra(HOPE_ELEMENT_ID)) {
+                HOPE_ELEMENT_ID = getIntent().getExtras().getString("HOPE_ELEMENT_ID");
+            }
         }
 
         if (getIntent().hasExtra("FROM_EDIT")) {
@@ -226,7 +230,7 @@ public class MusicListActivity extends AppCompatActivity {
 
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
-        params.put(Constant.ID, "");
+        params.put(Constant.ID, HOPE_ELEMENT_ID);
         params.put(Constant.HOPE_ID, hopeId);
         params.put(Constant.HOPE_TITLE, title);
         params.put(Constant.HOPE_TYPE, type);

@@ -51,6 +51,7 @@
                 android:layout_below="@id/imgCardImage"
                 android:gravity="left"
                 android:padding="@dimen/album_title_padding"
+                android:text=""
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/album_title" />
 

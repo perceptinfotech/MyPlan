@@ -138,7 +138,7 @@ public class fragmentHome extends Fragment {
 
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    tvCaptureImg.setVisibility(View.VISIBLE);
+
                 }
 
                 @Override

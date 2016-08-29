@@ -192,4 +192,13 @@ public class HopeDetailsActivity extends AppCompatActivity {
         }
         return false;
     }
+
+    public void editHopeElement(int position) {
+        Intent intent = new Intent(HopeDetailsActivity.this, HopeDetailsAddElementActivity.class);
+        intent.putExtra("IS_FOR_EDIT", true);
+        intent.putExtra(Constant.DATA, LIST_HOPEDETAILS.get(position));
+        intent.putExtra("HOPE_NAME", getIntent().getExtras().getString("HOPE_TITLE"));
+        intent.putExtra("HOPE_ID", getIntent().getExtras().getString("HOPE_ID"));
+        startActivity(intent);
+    }
 }
