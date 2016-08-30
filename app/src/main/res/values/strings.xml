@@ -264,4 +264,11 @@
         <item>Settings</item>
         <item>Logout</item>
     </string-array>
+
+    <string-array name="sidas_interval">
+        <item>Every Week</item>
+        <item>Every 2 Week</item>
+        <item>Every 3 Week</item>
+        <item>Once a month</item>
+    </string-array>
 </resources>

@@ -1,145 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_moodRatings"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/backcolor"
-    android:orientation="vertical">
-
-    <include
-        android:id="@+id/include"
-        layout="@layout/app_toolbar"></include>
-
-    <!--<Switch-->
-    <!--android:id="@+id/switchSidas1"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginTop="15dp"-->
-    <!--android:background="@android:color/white"-->
-    <!--android:padding="10dp"-->
-    <!--android:text="@string/sidas"-->
-    <!--style="@style/SCBSwitch"-->
-    <!--android:textSize="16sp" />-->
-
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/switchSidas"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="15dp"
-        android:background="@android:color/white"
-        android:padding="10dp"
-        android:text="@string/sidas"
-        android:textSize="16sp"
-        android:theme="@style/SCBSwitch" />
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/laySidas"
+        android:id="@+id/activity_moodRatings"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="25dp"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:layout_height="match_parent"
+        android:background="@color/backcolor"
+        android:orientation="vertical">
 
-        <TextView
+        <include
+            android:id="@+id/include"
+            layout="@layout/app_toolbar"></include>
+
+        <!--<Switch-->
+        <!--android:id="@+id/switchSidas1"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="15dp"-->
+        <!--android:background="@android:color/white"-->
+        <!--android:padding="10dp"-->
+        <!--android:text="@string/sidas"-->
+        <!--style="@style/SCBSwitch"-->
+        <!--android:textSize="16sp" />-->
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/switchSidas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/white"
             android:padding="10dp"
-            android:text="@string/test_interval"
-            android:textAllCaps="true" />
+            android:text="@string/sidas"
+            android:textSize="16sp"
+            android:theme="@style/SCBSwitch" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/sidemenu_seperator" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rcvSidas"
+        <LinearLayout
+            android:id="@+id/laySidas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white" />
-        <!--<CheckBox
-            android:id="@+id/chkEveryWeek"
+            android:layout_marginBottom="25dp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="@string/test_interval"
+                android:textAllCaps="true" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/sidemenu_seperator" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rcvSidas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white" />
+            <!--<CheckBox
+                android:id="@+id/chkEveryWeek"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:button="@null"
+                android:checked="true"
+                android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                android:paddingLeft="10dp"
+                android:text="@string/everyweek" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="10dp"
+                android:background="@color/sidemenu_seperator" />
+
+            <CheckBox
+                android:id="@+id/chkEveryTwoWeek"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:button="@null"
+                android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                android:paddingLeft="10dp"
+                android:text="@string/everytwoweek"
+                android:textColor="@color/toobarbelow" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="10dp"
+                android:background="@color/sidemenu_seperator" />
+
+            <CheckBox
+                android:id="@+id/chkEveryThreeWeek"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:button="@null"
+                android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                android:paddingLeft="10dp"
+                android:text="@string/everythreeweek"
+                android:textColor="@color/toobarbelow" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="10dp"
+                android:background="@color/sidemenu_seperator" />
+
+            <CheckBox
+                android:id="@+id/chkOnceAMonth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:button="@null"
+                android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                android:paddingLeft="10dp"
+                android:text="@string/onceamonth"
+                android:textColor="@color/toobarbelow" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/sidemenu_seperator" />-->
+
+        </LinearLayout>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/switchMood"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/switchSidas"
+            android:layout_marginTop="1dp"
             android:background="@android:color/white"
-            android:button="@null"
-            android:checked="true"
-            android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-            android:paddingLeft="10dp"
-            android:text="@string/everyweek" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="10dp"
-            android:background="@color/sidemenu_seperator" />
-
-        <CheckBox
-            android:id="@+id/chkEveryTwoWeek"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:button="@null"
-            android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-            android:paddingLeft="10dp"
-            android:text="@string/everytwoweek"
-            android:textColor="@color/toobarbelow" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="10dp"
-            android:background="@color/sidemenu_seperator" />
-
-        <CheckBox
-            android:id="@+id/chkEveryThreeWeek"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:button="@null"
-            android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-            android:paddingLeft="10dp"
-            android:text="@string/everythreeweek"
-            android:textColor="@color/toobarbelow" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="10dp"
-            android:background="@color/sidemenu_seperator" />
-
-        <CheckBox
-            android:id="@+id/chkOnceAMonth"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:button="@null"
-            android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-            android:paddingLeft="10dp"
-            android:text="@string/onceamonth"
-            android:textColor="@color/toobarbelow" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/sidemenu_seperator" />-->
+            android:padding="10dp"
+            android:text="@string/mood"
+            android:textSize="16sp"
+            android:theme="@style/SCBSwitch" />
 
     </LinearLayout>
 
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/switchMood"
-        android:layout_width="match_parent"
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/switchSidas"
-        android:layout_marginTop="1dp"
-        android:background="@android:color/white"
-        android:padding="10dp"
-        android:text="@string/mood"
-        android:textSize="16sp"
-        android:theme="@style/SCBSwitch" />
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone" />
 
-</LinearLayout>
+    <include layout="@layout/lay_internet_lost" />
+</RelativeLayout>

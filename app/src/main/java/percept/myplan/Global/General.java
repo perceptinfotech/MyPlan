@@ -112,6 +112,10 @@ public class General {
             return ".deleteHopemedia";
         } else if (serviceName == PHPServices.FORGOT_PASSWORD) {
             return ".forgotPassword";
+        } else if (serviceName == PHPServices.GET_SETTINGS) {
+            return ".getSettings";
+        } else if (serviceName == PHPServices.SAVE_SETTINGS) {
+            return ".SaveSettings";
         }
         return "";
     }
@@ -241,6 +245,6 @@ public class General {
         PROFILE,
         DELETE_HOPE_BOX,
         FORGOT_PASSWORD,
-        DELETE_HOPE_MEDIA
+        GET_SETTINGS, SAVE_SETTINGS, DELETE_HOPE_MEDIA
     }
 }
