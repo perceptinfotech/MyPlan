@@ -3,10 +3,10 @@ package percept.myplan.Activities;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,11 +26,11 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import percept.myplan.Global.General;
 import percept.myplan.Global.Constant;
-import percept.myplan.R;
+import percept.myplan.Global.General;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.VolleyResponseListener;
+import percept.myplan.R;
 import percept.myplan.customviews.PinEntryEditText;
 
 public class LoginActivity_1 extends AppCompatActivity {
@@ -160,7 +160,7 @@ public class LoginActivity_1 extends AppCompatActivity {
                                 UTILS.setPreference(Constant.PASSWORD, str.trim());
                             } else {
                                 pinEntry.setText("", null);
-                                Toast.makeText(LoginActivity_1.this, "Login Error", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity_1.this, getString(R.string.login_error), Toast.LENGTH_SHORT).show();
                             }
                         }
                     } catch (JSONException e) {

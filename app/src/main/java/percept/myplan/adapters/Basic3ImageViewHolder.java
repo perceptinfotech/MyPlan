@@ -38,6 +38,7 @@ public class Basic3ImageViewHolder extends Basic3ViewHolder {
 
         this.DETAILS = (HopeDetail) item;
         tvCardImage.setText(this.DETAILS.getMEDIA_TITLE());
+        tvCardImage.setTag(posi);
         imgCardImage.setTag(posi);
         tvCardImageEdit.setTag(posi);
         imageLoader.get(DETAILS.getMEDIA_THUMB(), new ImageLoader.ImageListener() {

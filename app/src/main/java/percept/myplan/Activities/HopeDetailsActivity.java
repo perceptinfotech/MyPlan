@@ -2,10 +2,10 @@ package percept.myplan.Activities;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
@@ -33,21 +34,18 @@ import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
 import percept.myplan.adapters.Basic3Adapter;
-import percept.myplan.adapters.HopeDetailsAdapter;
 import percept.myplan.toro.Toro;
 
 public class HopeDetailsActivity extends AppCompatActivity {
-    Map<String, String> params;
-    private List<HopeDetail> LIST_HOPEDETAILS;
-    private RecyclerView LST_HOPEDETAILS;
-    private HopeDetailsAdapter ADAPTER;
     public static boolean GET_HOPE_DETAILS = false;
-
     protected RecyclerView mRecyclerView;
     protected RecyclerView.Adapter mAdapter;
+    Map<String, String> params;
+    private List<HopeDetail> LIST_HOPEDETAILS;
     private ProgressBar PB;
     private String HOPE_TITLE;
     private CoordinatorLayout REL_COORDINATE;
+    private int deletePosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,5 +198,61 @@ public class HopeDetailsActivity extends AppCompatActivity {
         intent.putExtra("HOPE_NAME", getIntent().getExtras().getString("HOPE_TITLE"));
         intent.putExtra("HOPE_ID", getIntent().getExtras().getString("HOPE_ID"));
         startActivity(intent);
+    }
+
+    public void deleteHopeElement(int poition) {
+        params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put("id", LIST_HOPEDETAILS.get(poition).getID());
+        try {
+            PB.setVisibility(View.VISIBLE);
+            new General().getJSONContentFromInternetService(HopeDetailsActivity.this, General.PHPServices.DELETE_HOPE_MEDIA, params,
+                    true, false, false, new VolleyResponseListener() {
+                        @Override
+                        public void onError(VolleyError message) {
+                            PB.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            PB.setVisibility(View.GONE);
+                            try {
+                                if (response.has(Constant.DATA)) {
+
+                                    if (response.getJSONObject(Constant.DATA).getString(Constant.STATUS).equals("Success")) {
+                                        LIST_HOPEDETAILS.remove(deletePosition);
+                                        deletePosition = -1;
+                                        mAdapter.notifyDataSetChanged();
+                                        Toast.makeText(HopeDetailsActivity.this, getString(R.string.delete_hope_media_success), Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            final Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteHopeElement(deletePosition);
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+        }
     }
 }

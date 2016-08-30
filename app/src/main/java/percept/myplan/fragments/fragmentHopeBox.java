@@ -55,14 +55,14 @@ import percept.myplan.adapters.HopeAdapter;
 public class fragmentHopeBox extends Fragment {
 
     public static final int INDEX = 4;
-
+    public static boolean ADDED_HOPEBOX = false;
+    Map<String, String> params;
     private RecyclerView LST_HOPE;
     private HopeAdapter ADAPTER;
     private List<Hope> LIST_HOPE;
-    public static boolean ADDED_HOPEBOX = false;
-    Map<String, String> params;
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
+    private int deletePosition = -1;
 
     public fragmentHopeBox() {
         // Required empty public constructor
@@ -106,21 +106,83 @@ public class fragmentHopeBox extends Fragment {
 
             @Override
             public void onLongClick(View view, int position) {
+                deletePosition = position;
                 new dialogDeleteAlert(getActivity(), getString(R.string.delete_hope_box)) {
                     @Override
                     public void onClickYes() {
                         dismiss();
+                        deleteHopeBox(LIST_HOPE.get(deletePosition).getID());
+
+
                     }
 
                     @Override
                     public void onClickNo() {
                         dismiss();
+                        deletePosition = -1;
                     }
                 }.show();
             }
         }));
+
         GetHopeBox();
         return _View;
+    }
+
+    private void deleteHopeBox(String hopeBoxId) {
+        params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put("id", hopeBoxId);
+        try {
+            PB.setVisibility(View.VISIBLE);
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.DELETE_HOPE_BOX, params, true, false, false, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    PB.setVisibility(View.GONE);
+                    deletePosition = -1;
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    PB.setVisibility(View.GONE);
+                    try {
+                        if (response.has(Constant.DATA)) {
+
+                            if (response.getJSONObject(Constant.DATA).getString(Constant.STATUS).equals("Success")) {
+                                LIST_HOPE.remove(deletePosition);
+                                deletePosition = -1;
+                                ADAPTER.notifyDataSetChanged();
+                                Toast.makeText(getActivity(), getString(R.string.delete_hope_box_success), Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            final Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteHopeBox(LIST_HOPE.get(deletePosition).getID());
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+        }
     }
 
     private void GetHopeBox() {
@@ -204,44 +266,6 @@ public class fragmentHopeBox extends Fragment {
     }
 
     /**
-     * RecyclerView item decoration - give equal margin around grid item
-     */
-    public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
-
-        private int spanCount;
-        private int spacing;
-        private boolean includeEdge;
-
-        public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
-            this.spanCount = spanCount;
-            this.spacing = spacing;
-            this.includeEdge = includeEdge;
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            int position = parent.getChildAdapterPosition(view); // item position
-            int column = position % spanCount; // item column
-
-            if (includeEdge) {
-                outRect.left = spacing - column * spacing / spanCount; // spacing - column * ((1f / spanCount) * spacing)
-                outRect.right = (column + 1) * spacing / spanCount; // (column + 1) * ((1f / spanCount) * spacing)
-
-                if (position < spanCount) { // top edge
-                    outRect.top = spacing;
-                }
-                outRect.bottom = spacing; // item bottom
-            } else {
-                outRect.left = column * spacing / spanCount; // column * ((1f / spanCount) * spacing)
-                outRect.right = spacing - (column + 1) * spacing / spanCount; // spacing - (column + 1) * ((1f /    spanCount) * spacing)
-                if (position >= spanCount) {
-                    outRect.top = spacing; // item top
-                }
-            }
-        }
-    }
-
-    /**
      * Converting dp to pixel
      */
     private int dpToPx(int dp) {
@@ -295,6 +319,44 @@ public class fragmentHopeBox extends Fragment {
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
 
+        }
+    }
+
+    /**
+     * RecyclerView item decoration - give equal margin around grid item
+     */
+    public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
+
+        private int spanCount;
+        private int spacing;
+        private boolean includeEdge;
+
+        public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
+            this.spanCount = spanCount;
+            this.spacing = spacing;
+            this.includeEdge = includeEdge;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int position = parent.getChildAdapterPosition(view); // item position
+            int column = position % spanCount; // item column
+
+            if (includeEdge) {
+                outRect.left = spacing - column * spacing / spanCount; // spacing - column * ((1f / spanCount) * spacing)
+                outRect.right = (column + 1) * spacing / spanCount; // (column + 1) * ((1f / spanCount) * spacing)
+
+                if (position < spanCount) { // top edge
+                    outRect.top = spacing;
+                }
+                outRect.bottom = spacing; // item bottom
+            } else {
+                outRect.left = column * spacing / spanCount; // column * ((1f / spanCount) * spacing)
+                outRect.right = spacing - (column + 1) * spacing / spanCount; // spacing - (column + 1) * ((1f /    spanCount) * spacing)
+                if (position >= spanCount) {
+                    outRect.top = spacing; // item top
+                }
+            }
         }
     }
 

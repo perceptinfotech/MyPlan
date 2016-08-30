@@ -1,8 +1,6 @@
 package percept.myplan.adapters;
 
-import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +25,7 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
     private List<HopeDetail> LST_HOPE;
     private String HOPE_TITLE;
     private HopeDetailsActivity hopeDetailsActivity;
-
+    private int position = -1;
 
     public Basic3Adapter() {
         super();
@@ -96,10 +94,12 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
             viewHolder.setOnItemLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
+                    position = (int) view.getTag();
                     new dialogDeleteAlert(hopeDetailsActivity, hopeDetailsActivity.getString(R.string.delete_hope_element)) {
                         @Override
                         public void onClickYes() {
                             dismiss();
+                            hopeDetailsActivity.deleteHopeElement(position);
                         }
 
                         @Override
@@ -149,11 +149,13 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
             viewHolder.setOnItemLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    Snackbar.make(parent, "Long pressed to IMAGE", Snackbar.LENGTH_LONG).show();
+//                    Snackbar.make(parent, "Long pressed to IMAGE", Snackbar.LENGTH_LONG).show();
+                    position = (int) view.getTag();
                     new dialogDeleteAlert(hopeDetailsActivity, hopeDetailsActivity.getString(R.string.delete_hope_element)) {
                         @Override
                         public void onClickYes() {
                             dismiss();
+                            hopeDetailsActivity.deleteHopeElement(position);
                         }
 
                         @Override
@@ -170,7 +172,7 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
             viewHolder.setOnItemClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (view == ((Basic3MediaViewHolder) viewHolder).tvCardImageEdit) {
+                    if (view == ((Basic3MediaViewHolder) viewHolder).tvCardMusicEdit) {
 //                        Snackbar.make(parent, "Clicked to Edit", Snackbar.LENGTH_LONG).show();
                         hopeDetailsActivity.editHopeElement((Integer) view.getTag());
                     }
@@ -179,10 +181,12 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
             viewHolder.setOnItemLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
+                    position = (int) view.getTag();
 //                    Snackbar.make(parent, "Long pressed to MEDIA", Snackbar.LENGTH_LONG).show();
                     new dialogDeleteAlert(hopeDetailsActivity, hopeDetailsActivity.getString(R.string.delete_hope_element)) {
                         @Override
                         public void onClickYes() {
+                            hopeDetailsActivity.deleteHopeElement(position);
                             dismiss();
                         }
 

@@ -31,6 +31,18 @@ import percept.myplan.R;
 
 public class General {
 
+    public static boolean checkInternetConnection(Context context) {
+        ConnectivityManager _connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        boolean _isConnected = false;
+        NetworkInfo _activeNetwork = _connManager.getActiveNetworkInfo();
+        if (_activeNetwork != null) {
+            _isConnected = _activeNetwork.isConnectedOrConnecting();
+        }
+
+        return _isConnected;
+    }
+
     public String getServiceName(PHPServices serviceName) {
         if (serviceName == PHPServices.LOGIN) {
             return ".login";
@@ -98,10 +110,11 @@ public class General {
             return ".deleteHopebox";
         } else if (serviceName == PHPServices.DELETE_HOPE_MEDIA) {
             return ".deleteHopemedia";
+        } else if (serviceName == PHPServices.FORGOT_PASSWORD) {
+            return ".forgotPassword";
         }
         return "";
     }
-
 
     public String getJSONContentFromInternetService(final Context context, PHPServices servicesName,
                                                     Map<String, String> params,
@@ -194,19 +207,6 @@ public class General {
     }
 
 
-    public static boolean checkInternetConnection(Context context) {
-        ConnectivityManager _connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        boolean _isConnected = false;
-        NetworkInfo _activeNetwork = _connManager.getActiveNetworkInfo();
-        if (_activeNetwork != null) {
-            _isConnected = _activeNetwork.isConnectedOrConnecting();
-        }
-
-        return _isConnected;
-    }
-
-
     public enum PHPServices {
         LOGIN,
         REGISTER,
@@ -240,6 +240,7 @@ public class General {
         GET_USER_STRATEGY,
         PROFILE,
         DELETE_HOPE_BOX,
+        FORGOT_PASSWORD,
         DELETE_HOPE_MEDIA
     }
 }

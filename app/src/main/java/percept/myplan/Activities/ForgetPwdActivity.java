@@ -1,20 +1,41 @@
 package percept.myplan.Activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.VolleyError;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
+import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
 
 public class ForgetPwdActivity extends AppCompatActivity {
 
 
     private Button BTN_SEND;
+    private ProgressBar PB;
+    private CoordinatorLayout REL_COORDINATE;
+    private EditText edtForgotPwdEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +50,16 @@ public class ForgetPwdActivity extends AppCompatActivity {
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.forgetpwdtitle));
 
+        edtForgotPwdEmail = (EditText) findViewById(R.id.edtForgotPwdEmail);
+        PB = (ProgressBar) findViewById(R.id.progressBar);
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
+
         BTN_SEND = (Button) findViewById(R.id.btnSend);
 
         BTN_SEND.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent homeIntent = new Intent(ForgetPwdActivity.this, LoginActivity_1.class);
-                startActivity(homeIntent);
-                ForgetPwdActivity.this.finish();
+                forgotPassword();
             }
         });
     }
@@ -46,12 +69,66 @@ public class ForgetPwdActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent homeIntent = new Intent(this, LoginActivity_1.class);
+                Intent homeIntent = new Intent(this, LoginActivity.class);
                 startActivity(homeIntent);
-//                Toast.makeText(ForgetPwdActivity.this, "Hahahaha You are not going back", Toast.LENGTH_SHORT).show();
                 ForgetPwdActivity.this.finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void forgotPassword() {
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("email", edtForgotPwdEmail.getText().toString().trim());
+        PB.setVisibility(View.VISIBLE);
+        try {
+            new General().getJSONContentFromInternetService(ForgetPwdActivity.this,
+                    General.PHPServices.FORGOT_PASSWORD, params, true, false, true, new VolleyResponseListener() {
+
+                        @Override
+                        public void onError(VolleyError message) {
+                            Log.d(":::::::::: ", message.toString());
+                            PB.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d(":::::::::: ", response.toString());
+                            PB.setVisibility(View.GONE);
+                            try {
+                                if (response.has(Constant.DATA)) {
+                                    if (response.getJSONObject(Constant.DATA).getString(Constant.STATUS).equals("Success")) {
+                                        Toast.makeText(ForgetPwdActivity.this,
+                                                getString(R.string.forgot_success), Toast.LENGTH_LONG).show();
+                                        Intent homeIntent = new Intent(ForgetPwdActivity.this, LoginActivity.class);
+                                        startActivity(homeIntent);
+                                        ForgetPwdActivity.this.finish();
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                PB.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            forgotPassword();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+    }
+
 }
