@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/appBackColor"
-    tools:context="percept.myplan.Activities.LoginActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/appBackColor"
+                tools:context="percept.myplan.Activities.LoginActivity">
 
     <RelativeLayout
-        android:id="@+id/relMainLogin"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -19,7 +18,7 @@
             android:layout_above="@+id/tvWelcome"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
-            android:src="@drawable/img_logo_login" />
+            android:src="@drawable/img_logo_login"/>
 
         <TextView
             android:id="@+id/tvWelcome"
@@ -30,7 +29,7 @@
             android:layout_marginBottom="50dp"
             android:paddingTop="10dp"
             android:text="@string/welcome"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"/>
 
         <RelativeLayout
             android:id="@+id/layButton"
@@ -46,7 +45,7 @@
                 android:background="@color/login_btn_back"
                 android:text="@string/login"
                 android:textAllCaps="false"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"/>
 
             <Button
                 android:id="@+id/btnSignUp"
@@ -57,7 +56,7 @@
                 android:background="@color/login_btn_back"
                 android:text="@string/sign_up"
                 android:textAllCaps="false"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"/>
 
 
         </RelativeLayout>
@@ -70,128 +69,9 @@
             android:layout_centerHorizontal="true"
             android:padding="20dp"
             android:text="@string/forgetpwd"
-            android:textColor="@color/login_btn_back" />
+            android:textColor="@color/login_btn_back"/>
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="250dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnShowInfo"
-            android:layout_width="57dp"
-            android:layout_height="47dp"
-            android:background="@drawable/btn_info" />
-
-        <RelativeLayout
-            android:id="@+id/layInfo"
-            android:layout_width="300dp"
-            android:layout_height="250dp"
-            android:layout_marginLeft="-1dp"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/btnShowInfoInside"
-                android:layout_width="57dp"
-                android:layout_height="47dp"
-                android:layout_centerVertical="true"
-                android:background="@drawable/btn_info" />
-
-            <LinearLayout
-                android:layout_width="247dp"
-                android:layout_height="match_parent"
-                android:layout_toRightOf="@+id/btnShowInfoInside"
-                android:background="@drawable/info_border"
-                android:orientation="vertical"
-                android:padding="5dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginRight="5dp"
-                        android:src="@color/sidemenu_seperator" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/howtosignup" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginRight="5dp"
-                        android:src="@color/sidemenu_seperator" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/howtosignin" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginRight="5dp"
-                        android:src="@color/sidemenu_seperator" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/howtostartnewcontact" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginRight="5dp"
-                        android:src="@color/sidemenu_seperator" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/howtoaddhelp" />
-                </LinearLayout>
-
-            </LinearLayout>
-        </RelativeLayout>
-    </LinearLayout>
+    <include layout="@layout/lay_help_info"/>
 </RelativeLayout>

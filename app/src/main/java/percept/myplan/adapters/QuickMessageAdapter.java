@@ -1,6 +1,7 @@
 package percept.myplan.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,15 +21,6 @@ public class QuickMessageAdapter extends RecyclerView.Adapter<QuickMessageAdapte
 
     public List<QuickMessage> LST_QMSG;
 
-    public class QuickMessageHolder extends RecyclerView.ViewHolder {
-        public TextView TV_QUICKMSG;
-
-        public QuickMessageHolder(View itemView) {
-            super(itemView);
-            TV_QUICKMSG = (TextView) itemView.findViewById(R.id.tvQuickMsg);
-        }
-    }
-
     public QuickMessageAdapter(List<QuickMessage> quickMessageList) {
         this.LST_QMSG = quickMessageList;
     }
@@ -43,11 +35,26 @@ public class QuickMessageAdapter extends RecyclerView.Adapter<QuickMessageAdapte
     @Override
     public void onBindViewHolder(QuickMessageHolder holder, int position) {
         QuickMessage _contact = LST_QMSG.get(position);
-        holder.TV_QUICKMSG.setText(_contact.getMessage() + " " + _contact.getContactName());
+        if (TextUtils.isEmpty(_contact.getMessage()))
+            holder.TV_QUICKMSG.setText(_contact.getFirstName());
+        else {
+            String _msg = _contact.getMessage().split(" ")[0];
+            holder.TV_QUICKMSG.setText(_msg + " " + _contact.getFirstName());
+        }
+
     }
 
     @Override
     public int getItemCount() {
         return this.LST_QMSG.size();
+    }
+
+    public class QuickMessageHolder extends RecyclerView.ViewHolder {
+        public TextView TV_QUICKMSG;
+
+        public QuickMessageHolder(View itemView) {
+            super(itemView);
+            TV_QUICKMSG = (TextView) itemView.findViewById(R.id.tvQuickMsg);
+        }
     }
 }

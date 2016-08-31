@@ -459,7 +459,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         };
 
         /**
-         * Scan top down (by layout direction) of candidates, chose the first playable Video. But if
+         * Scan top down (by lay_help_info direction) of candidates, chose the first playable Video. But if
          * current player is still playable, but not on the top, we keep using it
          */
         public static final ToroStrategy FIRST_PLAYABLE_TOP_DOWN_KEEP_LAST = new ToroStrategy() {

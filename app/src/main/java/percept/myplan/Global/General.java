@@ -116,6 +116,12 @@ public class General {
             return ".getSettings";
         } else if (serviceName == PHPServices.SAVE_SETTINGS) {
             return ".SaveSettings";
+        } else if (serviceName == PHPServices.GET_MESSAGE) {
+            return ".getMessage";
+        } else if (serviceName == PHPServices.SAVE_MESSAGE) {
+            return ".SaveMessage";
+        } else if (serviceName == PHPServices.GET_HELP_INFO) {
+            return ".getHelpinfo";
         }
         return "";
     }
@@ -212,39 +218,13 @@ public class General {
 
 
     public enum PHPServices {
-        LOGIN,
-        REGISTER,
-        GET_SYMPTOMS,
-        GET_SYMPTOM,
-        GET_STRATEGIES,
-        GET_CONTACTS,
-        GET_CONTACT,
-        GET_SIDASCALENDER,
-        GET_MOODCALENDER,
-        GET_HOPEBOXES,
-        GET_HOPEBOX,
-        SAVE_SYMPTOM,
-        DELETE_CONTACT,
-        GET_CATEGORIES,
-        GET_CATEGORY_INSPIRATIONS,
-        GET_STRATEGY,
-        ADD_MYSTRATEGY,
-        ADD_HOPEBOX,
-        CHECK_LOGIN,
-        SAVE_PROFILE,
-        ADD_MOOD,
-        GET_SIDATEST,
-        GET_SIDACALENDER,
-        SUBMIT_SIDATEST,
-        SHARE_STRATEGIES,
-        SAVE_HOPE_MEDIA,
-        SAVE_STRATEGY,
-        SAVE_CONTACT,
-        SAVE_CONTACTS,
-        GET_USER_STRATEGY,
-        PROFILE,
-        DELETE_HOPE_BOX,
-        FORGOT_PASSWORD,
-        GET_SETTINGS, SAVE_SETTINGS, DELETE_HOPE_MEDIA
+        LOGIN, REGISTER, GET_SYMPTOMS, GET_SYMPTOM, GET_STRATEGIES, GET_CONTACTS, GET_CONTACT, GET_SIDASCALENDER,
+        GET_MOODCALENDER, GET_HOPEBOXES, GET_HOPEBOX, SAVE_SYMPTOM, DELETE_CONTACT, GET_CATEGORIES,
+        GET_CATEGORY_INSPIRATIONS, GET_STRATEGY, ADD_MYSTRATEGY,
+        ADD_HOPEBOX, CHECK_LOGIN, SAVE_PROFILE, ADD_MOOD, GET_SIDATEST,
+        GET_SIDACALENDER, SUBMIT_SIDATEST, SHARE_STRATEGIES,
+        SAVE_HOPE_MEDIA, SAVE_STRATEGY, SAVE_CONTACT, SAVE_CONTACTS,
+        GET_USER_STRATEGY, PROFILE, DELETE_HOPE_BOX, FORGOT_PASSWORD,
+        GET_SETTINGS, SAVE_SETTINGS, GET_MESSAGE, SAVE_MESSAGE, GET_HELP_INFO, DELETE_HOPE_MEDIA
     }
 }

@@ -1,9 +1,13 @@
 package percept.myplan.fragments;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -22,12 +26,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,29 +48,36 @@ import java.util.Map;
 import percept.myplan.Activities.AddNewSymptomActivity;
 import percept.myplan.Activities.DangerSignalsActivity;
 import percept.myplan.Activities.SymptomDetailsActivity;
-import percept.myplan.POJO.Symptom;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
+import percept.myplan.POJO.HelpVideos;
+import percept.myplan.POJO.Symptom;
 import percept.myplan.R;
 import percept.myplan.adapters.SymptomAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class fragmentSymptoms extends Fragment {
+public class fragmentSymptoms extends Fragment implements View.OnClickListener {
 
     public static final int INDEX = 1;
-
+    public static Boolean GET_STRATEGY = false;
     private RecyclerView LST_SYMPTOM;
     private List<Symptom> LIST_SYMPTOM;
     private SymptomAdapter ADAPTER;
     private Button BTN_DANGERSIGNAL;
     private TextView TV_ADDNEW_SYMPTOM;
-    public static Boolean GET_STRATEGY = false;
-
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
+    private RelativeLayout LAY_INFO;
+    private RelativeLayout REL_MAIN;
+    private Button BTN_INFO;
+    private Button BTN_SHOWINFOINSIDE;
+    private ProgressBar pbHelpVideo;
+    private ArrayList<HelpVideos> listHelpVideos;
+    private TextView tvTitle1, tvTitle2, tvTitle3, tvTitle4;
+    private ImageView ivThumb1, ivThumb2, ivThumb3, ivThumb4;
 
     public fragmentSymptoms() {
         // Required empty public constructor
@@ -72,7 +87,7 @@ public class fragmentSymptoms extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the lay_help_info for this fragment
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Symptoms");
         View _View = inflater.inflate(R.layout.fragment_symptoms, container, false);
         LST_SYMPTOM = (RecyclerView) _View.findViewById(R.id.lstSymptom);
@@ -120,6 +135,86 @@ public class fragmentSymptoms extends Fragment {
                 startActivity(new Intent(getActivity(), DangerSignalsActivity.class));
             }
         });
+
+
+        LAY_INFO = (RelativeLayout) _View.findViewById(R.id.layInfo);
+        REL_MAIN = (RelativeLayout) _View.findViewById(R.id.relMainLogin);
+
+        LAY_INFO.setVisibility(View.GONE);
+        pbHelpVideo = (ProgressBar) _View.findViewById(R.id.pbHelpVideo);
+
+        BTN_INFO = (Button) _View.findViewById(R.id.btnShowInfo);
+        BTN_SHOWINFOINSIDE = (Button) _View.findViewById(R.id.btnShowInfoInside);
+        tvTitle1 = (TextView) _View.findViewById(R.id.tvTitle1);
+        tvTitle2 = (TextView) _View.findViewById(R.id.tvTitle2);
+        tvTitle3 = (TextView) _View.findViewById(R.id.tvTitle3);
+        tvTitle4 = (TextView) _View.findViewById(R.id.tvTitle4);
+        ivThumb1 = (ImageView) _View.findViewById(R.id.ivThumb1);
+        ivThumb2 = (ImageView) _View.findViewById(R.id.ivThumb2);
+        ivThumb3 = (ImageView) _View.findViewById(R.id.ivThumb3);
+        ivThumb4 = (ImageView) _View.findViewById(R.id.ivThumb4);
+        //android:background="#55000000"
+        BTN_INFO.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BTN_INFO.setVisibility(View.INVISIBLE);
+                if (LAY_INFO.getVisibility() == View.GONE) {
+                    REL_MAIN.setBackgroundColor(getResources().getColor(R.color.shadowback));
+                    LAY_INFO.requestLayout();
+                    LAY_INFO.setVisibility(View.VISIBLE);
+                    LAY_INFO.animate()
+                            .translationX(0)
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    super.onAnimationEnd(animation);
+                                    LAY_INFO.setVisibility(View.VISIBLE);
+                                    if (listHelpVideos == null)
+                                        getHelpinfo();
+                                }
+                            });
+
+                } else {
+//                    LAY_INFO.setVisibility(View.GONE);
+                    LAY_INFO.animate()
+                            .translationX(LAY_INFO.getWidth())
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    super.onAnimationEnd(animation);
+                                    LAY_INFO.setVisibility(View.GONE);
+
+                                }
+                            });
+                }
+            }
+        });
+
+        BTN_SHOWINFOINSIDE.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                LAY_INFO.animate()
+                        .translationX(LAY_INFO.getWidth())
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                LAY_INFO.setVisibility(View.GONE);
+                                BTN_INFO.setVisibility(View.VISIBLE);
+                                REL_MAIN.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+                            }
+                        });
+            }
+        });
+        tvTitle1.setOnClickListener(this);
+        tvTitle2.setOnClickListener(this);
+        tvTitle3.setOnClickListener(this);
+        tvTitle4.setOnClickListener(this);
+        ivThumb1.setOnClickListener(this);
+        ivThumb2.setOnClickListener(this);
+        ivThumb3.setOnClickListener(this);
+        ivThumb4.setOnClickListener(this);
         return _View;
     }
 
@@ -198,6 +293,94 @@ public class fragmentSymptoms extends Fragment {
         if (GET_STRATEGY) {
             GetSymptom();
             GET_STRATEGY = false;
+        }
+    }
+
+    private void getHelpinfo() {
+        pbHelpVideo.setVisibility(View.VISIBLE);
+        try {
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_HELP_INFO, new HashMap<String, String>(), true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    pbHelpVideo.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.i(":::Help Videos", "" + response);
+                    try {
+                        listHelpVideos = new Gson().fromJson(response.getJSONArray(Constant.DATA).toString(), new TypeToken<ArrayList<HelpVideos>>() {
+                        }.getType());
+                        tvTitle1.setText(listHelpVideos.get(0).getVideoTitle());
+                        tvTitle2.setText(listHelpVideos.get(1).getVideoTitle());
+                        tvTitle3.setText(listHelpVideos.get(2).getVideoTitle());
+                        tvTitle4.setText(listHelpVideos.get(3).getVideoTitle());
+                        Picasso.with(getActivity())
+                                .load("http://img.youtube.com/vi/" + listHelpVideos.get(0).getVideoLink() + "/1.jpg")
+                                .into(ivThumb1);
+                        Picasso.with(getActivity())
+                                .load("http://img.youtube.com/vi/" + listHelpVideos.get(1).getVideoLink() + "/1.jpg")
+                                .into(ivThumb2);
+                        Picasso.with(getActivity())
+                                .load("http://img.youtube.com/vi/" + listHelpVideos.get(2).getVideoLink() + "/1.jpg")
+                                .into(ivThumb3);
+                        Picasso.with(getActivity())
+                                .load("http://img.youtube.com/vi/" + listHelpVideos.get(3).getVideoLink() + "/1.jpg")
+                                .into(ivThumb4);
+                        pbHelpVideo.setVisibility(View.GONE);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void watchVideoOnYouTube(String videoName) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoName));
+            startActivity(intent);
+        } catch (ActivityNotFoundException ex) {
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://www.youtube.com/watch?v=" + videoName));
+            startActivity(intent);
+        }
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.tvTitle1:
+            case R.id.ivThumb1:
+                if (listHelpVideos != null && listHelpVideos.size() > 0) {
+                    watchVideoOnYouTube(listHelpVideos.get(0).getVideoLink());
+
+                }
+                break;
+            case R.id.tvTitle2:
+            case R.id.ivThumb2:
+                if (listHelpVideos != null && listHelpVideos.size() > 1) {
+                    watchVideoOnYouTube(listHelpVideos.get(1).getVideoLink());
+
+                }
+                break;
+            case R.id.tvTitle3:
+            case R.id.ivThumb3:
+                if (listHelpVideos != null && listHelpVideos.size() > 2) {
+                    watchVideoOnYouTube(listHelpVideos.get(2).getVideoLink());
+
+                }
+                break;
+            case R.id.tvTitle4:
+            case R.id.ivThumb4:
+                if (listHelpVideos != null && listHelpVideos.size() > 3) {
+                    watchVideoOnYouTube(listHelpVideos.get(3).getVideoLink());
+
+                }
+                break;
         }
     }
 

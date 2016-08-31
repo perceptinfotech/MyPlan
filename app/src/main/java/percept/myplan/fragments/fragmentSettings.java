@@ -33,7 +33,7 @@ public class fragmentSettings extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the lay_help_info for this fragment
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Settings");
         View _View = inflater.inflate(R.layout.fragment_settings, container, false);
         TV_PROFILE = (TextView) _View.findViewById(R.id.tvProfile);

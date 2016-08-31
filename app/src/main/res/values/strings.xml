@@ -249,6 +249,8 @@
     <string name="delete_hope_media_success">Hope media element deleted successfully</string>
     <string name="login_error">Login Error</string>
     <string name="forgot_success">Mail sent successfully. Please check your mail for resetting your password.</string>
+    <string name="quick_msg">Quick Message</string>
+    <string name="details">Details</string>
 
     <string-array name="navigation_menu">
         <item>Symptoms</item>

@@ -201,6 +201,7 @@ public class HopeDetailsActivity extends AppCompatActivity {
     }
 
     public void deleteHopeElement(int poition) {
+        deletePosition = poition;
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);

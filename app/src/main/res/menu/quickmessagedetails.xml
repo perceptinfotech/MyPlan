@@ -4,7 +4,6 @@
     <item
         android:id="@+id/action_Quickmsg_details"
         android:orderInCategory="100"
-        android:icon="@drawable/toolbar_add"
-        android:title="@string/action_settings"
+        android:title="@string/details"
         app:showAsAction="always" />
 </menu>

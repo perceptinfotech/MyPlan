@@ -189,11 +189,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activities.CreateContactActivity"
-            android:label="@string/addcontact"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".Activities.InspirationCategoryActivity"
             android:label="@string/inspiration"
             android:screenOrientation="portrait"

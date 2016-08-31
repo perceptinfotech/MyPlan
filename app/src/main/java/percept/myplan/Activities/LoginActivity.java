@@ -2,24 +2,48 @@ package percept.myplan.Activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
 import percept.myplan.Global.Utils;
+import percept.myplan.Interfaces.VolleyResponseListener;
+import percept.myplan.POJO.HelpVideos;
 import percept.myplan.R;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button BTN_LOGIN, BTN_SIGNUP, BTN_INFO, BTN_SHOWINFOINSIDE;
     private TextView TV_FORGOTPWD;
     private RelativeLayout LAY_INFO, REL_MAIN;
     private Utils UTILS;
+
+    private ProgressBar pbHelpVideo;
+    private ArrayList<HelpVideos> listHelpVideos;
+    private TextView tvTitle1, tvTitle2, tvTitle3, tvTitle4;
+    private ImageView ivThumb1, ivThumb2, ivThumb3, ivThumb4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +72,25 @@ public class LoginActivity extends AppCompatActivity {
         BTN_LOGIN = (Button) findViewById(R.id.btnLogin);
         BTN_INFO = (Button) findViewById(R.id.btnShowInfo);
         BTN_SHOWINFOINSIDE = (Button) findViewById(R.id.btnShowInfoInside);
+
+        tvTitle1 = (TextView) findViewById(R.id.tvTitle1);
+        tvTitle2 = (TextView) findViewById(R.id.tvTitle2);
+        tvTitle3 = (TextView) findViewById(R.id.tvTitle3);
+        tvTitle4 = (TextView) findViewById(R.id.tvTitle4);
+        ivThumb1 = (ImageView) findViewById(R.id.ivThumb1);
+        ivThumb2 = (ImageView) findViewById(R.id.ivThumb2);
+        ivThumb3 = (ImageView) findViewById(R.id.ivThumb3);
+        ivThumb4 = (ImageView) findViewById(R.id.ivThumb4);
+        pbHelpVideo = (ProgressBar) findViewById(R.id.pbHelpVideo);
+        tvTitle1.setOnClickListener(this);
+        tvTitle2.setOnClickListener(this);
+        tvTitle3.setOnClickListener(this);
+        tvTitle4.setOnClickListener(this);
+        ivThumb1.setOnClickListener(this);
+        ivThumb2.setOnClickListener(this);
+        ivThumb3.setOnClickListener(this);
+        ivThumb4.setOnClickListener(this);
+
         //android:background="#55000000"
         BTN_INFO.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +107,7 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onAnimationEnd(Animator animation) {
                                     super.onAnimationEnd(animation);
                                     LAY_INFO.setVisibility(View.VISIBLE);
+                                    getHelpinfo();
                                 }
                             });
 
@@ -127,5 +171,93 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void getHelpinfo() {
+        pbHelpVideo.setVisibility(View.VISIBLE);
+        try {
+            new General().getJSONContentFromInternetService(LoginActivity.this, General.PHPServices.GET_HELP_INFO, new HashMap<String, String>(), true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    pbHelpVideo.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.i(":::Help Videos", "" + response);
+                    try {
+                        listHelpVideos = new Gson().fromJson(response.getJSONArray(Constant.DATA).toString(), new TypeToken<ArrayList<HelpVideos>>() {
+                        }.getType());
+                        tvTitle1.setText(listHelpVideos.get(0).getVideoTitle());
+                        tvTitle2.setText(listHelpVideos.get(1).getVideoTitle());
+                        tvTitle3.setText(listHelpVideos.get(2).getVideoTitle());
+                        tvTitle4.setText(listHelpVideos.get(3).getVideoTitle());
+                        Picasso.with(LoginActivity.this)
+                                .load("http://img.youtube.com/vi/" + listHelpVideos.get(0).getVideoLink() + "/1.jpg")
+                                .into(ivThumb1);
+                        Picasso.with(LoginActivity.this)
+                                .load("http://img.youtube.com/vi/" + listHelpVideos.get(1).getVideoLink() + "/1.jpg")
+                                .into(ivThumb2);
+                        Picasso.with(LoginActivity.this)
+                                .load("http://img.youtube.com/vi/" + listHelpVideos.get(2).getVideoLink() + "/1.jpg")
+                                .into(ivThumb3);
+                        Picasso.with(LoginActivity.this)
+                                .load("http://img.youtube.com/vi/" + listHelpVideos.get(3).getVideoLink() + "/1.jpg")
+                                .into(ivThumb4);
+                        pbHelpVideo.setVisibility(View.GONE);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void watchVideoOnYouTube(String videoName) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoName));
+            startActivity(intent);
+        } catch (ActivityNotFoundException ex) {
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://www.youtube.com/watch?v=" + videoName));
+            startActivity(intent);
+        }
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.tvTitle1:
+            case R.id.ivThumb1:
+                if (listHelpVideos != null && listHelpVideos.size() > 0) {
+                    watchVideoOnYouTube(listHelpVideos.get(0).getVideoLink());
+
+                }
+                break;
+            case R.id.tvTitle2:
+            case R.id.ivThumb2:
+                if (listHelpVideos != null && listHelpVideos.size() > 1) {
+                    watchVideoOnYouTube(listHelpVideos.get(1).getVideoLink());
+
+                }
+                break;
+            case R.id.tvTitle3:
+            case R.id.ivThumb3:
+                if (listHelpVideos != null && listHelpVideos.size() > 2) {
+                    watchVideoOnYouTube(listHelpVideos.get(2).getVideoLink());
+
+                }
+                break;
+            case R.id.tvTitle4:
+            case R.id.ivThumb4:
+                if (listHelpVideos != null && listHelpVideos.size() > 3) {
+                    watchVideoOnYouTube(listHelpVideos.get(3).getVideoLink());
+
+                }
+                break;
+        }
     }
 }

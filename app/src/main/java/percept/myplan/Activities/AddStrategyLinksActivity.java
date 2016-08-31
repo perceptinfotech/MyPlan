@@ -3,10 +3,10 @@ package percept.myplan.Activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -17,15 +17,13 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
-
-import org.json.JSONObject;
-
 import java.util.HashMap;
 
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
-import percept.myplan.Interfaces.VolleyResponseListener;
+import percept.myplan.Global.MultiPartParsing;
+import percept.myplan.Global.Utils;
+import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
 
@@ -109,6 +107,27 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
     }
 
     private void addHopeBoxLinkElement(final String title, final String hopeId, final String link, final String type) {
+        if (!new Utils(AddStrategyLinksActivity.this).isNetConnected()) {
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            addHopeBoxLinkElement(title, hopeId, link, type);
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+            return;
+        }
         PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
@@ -119,14 +138,9 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
         params.put(Constant.HOPE_TITLE, title);
         params.put(Constant.HOPE_TYPE, type);
         try {
-            new General().getJSONContentFromInternetService(AddStrategyLinksActivity.this, General.PHPServices.SAVE_HOPE_MEDIA, params, true, false, true, new VolleyResponseListener() {
+            new MultiPartParsing(AddStrategyLinksActivity.this, params, General.PHPServices.SAVE_HOPE_MEDIA, new AsyncTaskCompletedListener() {
                 @Override
-                public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onResponse(JSONObject response) {
+                public void onTaskCompleted(String response) {
                     PB.setVisibility(View.GONE);
                     Log.d(":::::: ", response.toString());
                     if (getIntent().hasExtra("FROM_HOPE")) {
@@ -135,6 +149,7 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
                     AddStrategyLinksActivity.this.finish();
                 }
             });
+
         } catch (Exception e) {
             e.printStackTrace();
             PB.setVisibility(View.GONE);

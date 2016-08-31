@@ -34,12 +34,13 @@ import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
 
 public class StrategyDetailsOtherActivity extends AppCompatActivity {
 
+    private final int REQUEST_CODE_DETAIL_ACTIVITY = 1003;
+    Map<String, String> params;
     private String STRATEGY_ID;
     private ProgressBar PB;
     private Strategy clsStrategy;
     private TextView TV_DESCRIPTION, TV_USEDBY, TV_SUBMITTEDBY, TV_CATEGORY;
     private Button BTN_ADDTOMYSTRATEGIES;
-    Map<String, String> params;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,7 +171,7 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
                 if (getIntent().hasExtra("FROM_SYMPTOM_INSPI")) {
                     intent.putExtra("FROM_SYMPTOM_INSPI", getIntent().getExtras().getString("FROM_SYMPTOM_INSPI"));
                 }
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE_DETAIL_ACTIVITY);
 
 
             }
@@ -184,5 +185,16 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_DETAIL_ACTIVITY:
+                if (resultCode == RESULT_OK)
+                    StrategyDetailsOtherActivity.this.finish();
+                break;
+        }
     }
 }

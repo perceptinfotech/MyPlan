@@ -28,7 +28,7 @@ import percept.myplan.R;
  * <p/>
  * SectioningAdapter manages four types of items: TYPE_HEADER, TYPE_ITEM, TYPE_FOOTER and TYPE_GHOST_HEADER.
  * Headers are the optional first item in a section. A section then has some number of items in it,
- * and an optional footer. The ghost header is a special item used for layout mechanics. It can
+ * and an optional footer. The ghost header is a special item used for lay_help_info mechanics. It can
  * be ignored by SectioningAdapter subclasses - but it is made externally accessible just in case.
  */
 @SuppressWarnings("unused")
@@ -1296,7 +1296,7 @@ public class SectioningAdapter extends RecyclerView.Adapter<SectioningAdapter.Vi
         holder.setSection(section);
         holder.setNumberOfItemsInSection(getNumberOfItemsInSection(section));
 
-        // tag the viewHolder's item so as to make it possible to track in layout manager
+        // tag the viewHolder's item so as to make it possible to track in lay_help_info manager
         tagViewHolderItemView(holder, section, adapterPosition);
 
         int baseType = unmaskBaseViewType(holder.getItemViewType());
@@ -1327,7 +1327,7 @@ public class SectioningAdapter extends RecyclerView.Adapter<SectioningAdapter.Vi
     }
 
     /**
-     * Tag the itemView of the view holder with information needed for the layout to do its sticky positioning.
+     * Tag the itemView of the view holder with information needed for the lay_help_info to do its sticky positioning.
      * Specifically, it tags R.id.sectioning_adapter_tag_key_view_type to the item type, R.id.sectioning_adapter_tag_key_view_section
      * to the item's section, and R.id.sectioning_adapter_tag_key_view_adapter_position which is the adapter position of the view
      *

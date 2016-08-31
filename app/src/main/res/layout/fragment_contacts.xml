@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context="percept.myplan.fragments.fragmentContacts">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- TODO: Update blank fragment lay_help_info -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

@@ -2,24 +2,42 @@ package percept.myplan.fragments;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import percept.myplan.Activities.CreateQuickMsgActivity;
+import percept.myplan.Activities.QuickMessageDetailsActivity;
+import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
+import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.QuickMessage;
 import percept.myplan.R;
 import percept.myplan.adapters.QuickMessageAdapter;
@@ -30,12 +48,14 @@ import percept.myplan.adapters.QuickMessageAdapter;
 public class fragmentQuickMessage extends Fragment {
 
     public static final int INDEX = 7;
-
+    public static List<QuickMessage> LIST_QUICKMSG = new ArrayList<>();
     private RecyclerView LSTQUICKMSG;
-    private List<QuickMessage> LIST_QUICKMSG;
     private QuickMessageAdapter ADAPTER;
 
     private TextView TV_ADDNEWMSG;
+    private ProgressBar PB;
+    private CoordinatorLayout REL_COORDINATE;
+
 
     public fragmentQuickMessage() {
         // Required empty public constructor
@@ -45,37 +65,54 @@ public class fragmentQuickMessage extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Quick Message");
+        // Inflate the lay_help_info for this fragment
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.quick_msg));
 
         View _view = inflater.inflate(R.layout.fragment_quick_message, container, false);
 
-        TV_ADDNEWMSG= (TextView) _view.findViewById(R.id.tvAddNewMessage);
+        TV_ADDNEWMSG = (TextView) _view.findViewById(R.id.tvAddNewMessage);
 
         LSTQUICKMSG = (RecyclerView) _view.findViewById(R.id.lstQuickMsg);
-        LIST_QUICKMSG = new ArrayList<>();
-        LIST_QUICKMSG.add(new QuickMessage("Message 1", "Mom"));
-        LIST_QUICKMSG.add(new QuickMessage("Message 2", "Dad"));
-        LIST_QUICKMSG.add(new QuickMessage("Message 3", "Bro"));
-        ADAPTER = new QuickMessageAdapter(LIST_QUICKMSG);
+        PB = (ProgressBar) _view.findViewById(R.id.pbMsgList);
+        REL_COORDINATE = (CoordinatorLayout) _view.findViewById(R.id.snakeBar);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         LSTQUICKMSG.setLayoutManager(mLayoutManager);
         LSTQUICKMSG.setItemAnimator(new DefaultItemAnimator());
-        LSTQUICKMSG.setAdapter(ADAPTER);
+
         setHasOptionsMenu(true);
 
         TV_ADDNEWMSG.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            Intent _intent = new Intent(getActivity().getApplicationContext(), CreateQuickMsgActivity.class);
-            startActivity(_intent);
+                Intent _intent = new Intent(getActivity().getApplicationContext(), CreateQuickMsgActivity.class);
+                startActivity(_intent);
 
             }
         });
+        LSTQUICKMSG.addOnItemTouchListener(new fragmentContacts.RecyclerTouchListener(getActivity(), LSTQUICKMSG, new fragmentContacts.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Intent intent = new Intent(getActivity(), QuickMessageDetailsActivity.class);
+                intent.putExtra("QUICK_MSG", LIST_QUICKMSG.get(position));
+                startActivity(intent);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
         return _view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getMessages();
+
+
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -92,5 +129,50 @@ public class fragmentQuickMessage extends Fragment {
             return true;
         }
         return false;
+    }
+
+    private void getMessages() {
+        PB.setVisibility(View.VISIBLE);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        try {
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_MESSAGE, params, true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.e("::::", response.toString());
+                    PB.setVisibility(View.GONE);
+                    try {
+                        LIST_QUICKMSG = new Gson().fromJson(response.getJSONArray(Constant.DATA).toString(), new TypeToken<List<QuickMessage>>() {
+                        }.getType());
+                        ADAPTER = new QuickMessageAdapter(LIST_QUICKMSG);
+                        LSTQUICKMSG.setAdapter(ADAPTER);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            getMessages();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
     }
 }

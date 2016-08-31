@@ -9,7 +9,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -78,7 +77,7 @@ public class MultiPartParsing {
                 // Adding file data to http body
 
                 for (String key : map.keySet()) {
-                    Log.d("Multi-part params",key+"->"+map.get(key));
+                    Log.d("Multi-part params", key + "->" + map.get(key));
                     if (key.contains("image") || key.contains("video") ||
                             key.contains("audio") || key.contains("cover") || key.contains("media")) {
                         if (key.equals("media_title")) {
@@ -86,8 +85,15 @@ public class MultiPartParsing {
                         } else if (Pattern.matches("[0-9]+", map.get(key)))
                             entity.addPart(key, new StringBody(map.get(key)));
                         else if (!TextUtils.isEmpty(map.get(key))) {
-                            File _f = new File(map.get(key));
-                            entity.addPart(key, new FileBody(_f));
+                            try {
+                                File _f = new File(map.get(key));
+                                if (_f.exists())
+                                    entity.addPart(key, new FileBody(_f));
+                                else
+                                    entity.addPart(key, new StringBody(map.get(key)));
+                            } catch (Exception e) {
+                                entity.addPart(key, new StringBody(map.get(key)));
+                            }
                         }
                     } else
                         entity.addPart(key, new StringBody(map.get(key)));

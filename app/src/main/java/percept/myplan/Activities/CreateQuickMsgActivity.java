@@ -19,7 +19,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
@@ -37,6 +36,7 @@ import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.ContactDisplay;
+import percept.myplan.POJO.QuickMessage;
 import percept.myplan.R;
 import percept.myplan.adapters.ContactHelpListAdapter;
 import percept.myplan.fragments.fragmentContacts;
@@ -109,10 +109,13 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
         LST_HELP.addOnItemTouchListener(new RecyclerTouchListener(CreateQuickMsgActivity.this, LST_HELP, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                LIST_HELPCONTACTS.get(position);
-                Toast.makeText(CreateQuickMsgActivity.this, LIST_HELPCONTACTS.get(position).getFirst_name(), Toast.LENGTH_SHORT).show();
 
-                startActivity(new Intent(CreateQuickMsgActivity.this, SendMessageActivity.class));
+                Intent _intent = new Intent(CreateQuickMsgActivity.this, SendMessageActivity.class);
+                ContactDisplay _ContactDisplay = LIST_HELPCONTACTS.get(position);
+                QuickMessage _Message = new QuickMessage(_ContactDisplay.getId(), _ContactDisplay.getFirst_name(),
+                        _ContactDisplay.getLast_name(), _ContactDisplay.getPhone(), "", "");
+                _intent.putExtra("MSG_CONTACT", _Message);
+                startActivity(_intent);
                 CreateQuickMsgActivity.this.finish();
             }
 
@@ -125,10 +128,12 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
         LST_CONTACTS.addOnItemTouchListener(new RecyclerTouchListener(CreateQuickMsgActivity.this, LST_HELP, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                LIST_CONTACTS.get(position);
-                Toast.makeText(CreateQuickMsgActivity.this, LIST_CONTACTS.get(position).getFirst_name(), Toast.LENGTH_SHORT).show();
-
-                startActivity(new Intent(CreateQuickMsgActivity.this, SendMessageActivity.class));
+                Intent _intent = new Intent(CreateQuickMsgActivity.this, SendMessageActivity.class);
+                ContactDisplay _ContactDisplay = LIST_CONTACTS.get(position);
+                QuickMessage _Message = new QuickMessage(_ContactDisplay.getId(), _ContactDisplay.getFirst_name(),
+                        _ContactDisplay.getLast_name(), _ContactDisplay.getPhone(), "", "");
+                _intent.putExtra("MSG_CONTACT", _Message);
+                startActivity(_intent);
                 CreateQuickMsgActivity.this.finish();
             }
 
@@ -166,19 +171,13 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.action_addContact) {
             Intent _intent = new Intent(CreateQuickMsgActivity.this, AddContactActivity.class);
             if (getIntent().hasExtra(Constant.HELP_COUNT))
-                _intent.putExtra(Constant.HELP_COUNT,getIntent().getIntExtra(Constant.HELP_COUNT, 0));
+                _intent.putExtra(Constant.HELP_COUNT, getIntent().getIntExtra(Constant.HELP_COUNT, 0));
             _intent.putExtra("FROM_QUICKMSG", "FROM_QUICKMSG");
             startActivity(_intent);
 
             return true;
         }
         return false;
-    }
-
-    public interface ClickListener {
-        void onClick(View view, int position);
-
-        void onLongClick(View view, int position);
     }
 
     private void getContacts() {
@@ -243,6 +242,12 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
             textView.setTextColor(Color.YELLOW);
             snackbar.show();
         }
+    }
+
+    public interface ClickListener {
+        void onClick(View view, int position);
+
+        void onLongClick(View view, int position);
     }
 
     public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {

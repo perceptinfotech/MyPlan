@@ -200,6 +200,29 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
             });
         }
 
+        if (viewHolder instanceof Basic3NormalViewHolder){
+            viewHolder.setOnItemLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    position = (int) view.getTag();
+//                    Snackbar.make(parent, "Long pressed to MEDIA", Snackbar.LENGTH_LONG).show();
+                    new dialogDeleteAlert(hopeDetailsActivity, hopeDetailsActivity.getString(R.string.delete_hope_element)) {
+                        @Override
+                        public void onClickYes() {
+                            hopeDetailsActivity.deleteHopeElement(position);
+                            dismiss();
+                        }
+
+                        @Override
+                        public void onClickNo() {
+                            dismiss();
+                        }
+                    }.show();
+                    return true;
+                }
+            });
+        }
+
         return viewHolder;
     }
 

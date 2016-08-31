@@ -44,7 +44,7 @@ public class fragmentMoodRatings extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the lay_help_info for this fragment
         View _View = inflater.inflate(R.layout.fragment_mood_ratings, container, false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Mood Ratings");
 

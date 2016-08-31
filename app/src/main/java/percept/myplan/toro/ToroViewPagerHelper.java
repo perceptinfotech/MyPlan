@@ -34,7 +34,7 @@ import android.support.v4.view.ViewPager;
  * }
  * </code>
  *
- * Gives us a clue that on very first layout pass,
+ * Gives us a clue that on very first lay_help_info pass,
  * {@link ViewPager.OnPageChangeListener#onPageScrolled(int, float, int)} will be triggered.
  */
 public class ToroViewPagerHelper extends ViewPager.SimpleOnPageChangeListener

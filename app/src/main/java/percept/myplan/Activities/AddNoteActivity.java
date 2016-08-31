@@ -2,10 +2,10 @@ package percept.myplan.Activities;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -17,16 +17,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.VolleyError;
-
-import org.json.JSONObject;
-
 import java.util.HashMap;
-import java.util.Map;
 
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
-import percept.myplan.Interfaces.VolleyResponseListener;
+import percept.myplan.Global.MultiPartParsing;
+import percept.myplan.Global.Utils;
+import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
 
@@ -99,8 +96,30 @@ public class AddNoteActivity extends AppCompatActivity {
     }
 
     private void addHopeBoxNoteElement(final String NOTE, final String TYPE) {
+
+        if (!new Utils(AddNoteActivity.this).isNetConnected()) {
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            addHopeBoxNoteElement(NOTE, TYPE);
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+            return;
+        }
         PB.setVisibility(View.VISIBLE);
-        Map<String, String> params = new HashMap<>();
+        HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         params.put(Constant.ID, HOPE_ELEMENT_ID);
@@ -109,14 +128,9 @@ public class AddNoteActivity extends AppCompatActivity {
         params.put(Constant.HOPE_TITLE, HOPE_TITLE);
         params.put(Constant.HOPE_TYPE, TYPE);
         try {
-            new General().getJSONContentFromInternetService(AddNoteActivity.this, General.PHPServices.SAVE_HOPE_MEDIA, params, true, false, true, new VolleyResponseListener() {
+            new MultiPartParsing(AddNoteActivity.this, params, General.PHPServices.SAVE_HOPE_MEDIA, new AsyncTaskCompletedListener() {
                 @Override
-                public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onResponse(JSONObject response) {
+                public void onTaskCompleted(String response) {
                     PB.setVisibility(View.GONE);
                     Log.d(":::::: ", response.toString());
                     if (getIntent().hasExtra("FROM_HOPE")) {
@@ -125,6 +139,7 @@ public class AddNoteActivity extends AppCompatActivity {
                     AddNoteActivity.this.finish();
                 }
             });
+
         } catch (Exception e) {
             e.printStackTrace();
             PB.setVisibility(View.GONE);

@@ -72,7 +72,7 @@ public class fragmentHopeBox extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the lay_help_info for this fragment
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Hope Box");
         View _View = inflater.inflate(R.layout.fragment_hope_box, container, false);
         REL_COORDINATE = (CoordinatorLayout) _View.findViewById(R.id.snakeBar);

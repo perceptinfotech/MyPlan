@@ -689,7 +689,7 @@ public class StickyHeaderLayoutManager extends RecyclerView.LayoutManager {
      * Updates firstViewAdapterPosition to the adapter position  of the highest item in the list - e.g., the
      * adapter position of the item with lowest y value in the list
      *
-     * @return the y value of the topmost view in the layout, or paddingTop if empty
+     * @return the y value of the topmost view in the lay_help_info, or paddingTop if empty
      */
     int updateFirstAdapterPosition() {
 

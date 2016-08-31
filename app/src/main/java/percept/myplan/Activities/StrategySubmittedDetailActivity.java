@@ -150,6 +150,8 @@ public class StrategySubmittedDetailActivity extends AppCompatActivity {
                             if (getIntent().hasExtra("FROM_SYMPTOM_INSPI")) {
                                 GET_STRATEGIES = true;
                             }
+                            setResult(RESULT_OK);
+                            StrategySubmittedDetailActivity.this.finish();
 
                         }
                     });
