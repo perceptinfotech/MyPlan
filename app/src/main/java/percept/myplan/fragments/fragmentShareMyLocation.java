@@ -18,10 +18,13 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-import percept.myplan.Activities.AddContactFromPhoneActivity;
+import percept.myplan.Activities.AddStrategyContactActivity;
 import percept.myplan.Activities.HomeActivity;
 import percept.myplan.R;
 
@@ -30,13 +33,11 @@ import percept.myplan.R;
  */
 public class fragmentShareMyLocation extends Fragment {
 
+    public static final int INDEX = 8;
     MapView mMapView;
     private GoogleMap googleMap;
-
-
-    public static final int INDEX = 8;
-
     private Button BTN_SHARELOC;
+    private LatLng _CurrentPos;
 
     public fragmentShareMyLocation() {
         // Required empty public constructor
@@ -77,14 +78,17 @@ public class fragmentShareMyLocation extends Fragment {
                     // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
-                googleMap.setMyLocationEnabled(true);
+                googleMap.setMyLocationEnabled(false);
 
                 // For dropping a marker at a point on the Map
-                LatLng _CurrentPos = new LatLng(HomeActivity.CURRENT_LAT, HomeActivity.CURRENT_LONG);
+                _CurrentPos = new LatLng(HomeActivity.CURRENT_LAT, HomeActivity.CURRENT_LONG);
 //                googleMap.addMarker(new MarkerOptions().position(_CurrentPos).title("Marker Title").snippet("Marker Description"));
 
                 // For zooming automatically to the location of the marker
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(_CurrentPos).zoom(12).build();
+                Marker marker = googleMap.addMarker(new MarkerOptions()
+                        .position(_CurrentPos)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         });
@@ -92,8 +96,9 @@ public class fragmentShareMyLocation extends Fragment {
         BTN_SHARELOC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent _intent = new Intent(getActivity(), AddContactFromPhoneActivity.class);
+                Intent _intent = new Intent(getActivity(), AddStrategyContactActivity.class);
                 _intent.putExtra("FROM_SHARELOC", "True");
+                _intent.putExtra("CURRENT_LOCATION", _CurrentPos);
                 startActivity(_intent);
             }
         });

@@ -251,7 +251,8 @@
     <string name="forgot_success">Mail sent successfully. Please check your mail for resetting your password.</string>
     <string name="quick_msg">Quick Message</string>
     <string name="details">Details</string>
-
+    <string name="share_with">Share With</string>
+    <string name="share_location_msg">This is my current location. Click the following URL to see it on map</string>
     <string-array name="navigation_menu">
         <item>Symptoms</item>
         <item>Strategies</item>

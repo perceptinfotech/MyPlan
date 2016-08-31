@@ -77,7 +77,6 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
     private Utils UTILS;
     private final static int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 13;
 
-    public static boolean SENT = false;
     private CoordinatorLayout REL_COORDINATE;
 
     @Override
@@ -179,12 +178,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        if (getIntent().hasExtra("FROM_SHARELOC")) {
-            if (SENT) {
-                AddContactFromPhoneActivity.this.finish();
-                SENT = false;
-            }
-        }
+
     }
 
     @Override

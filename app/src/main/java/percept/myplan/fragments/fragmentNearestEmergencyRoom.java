@@ -37,6 +37,7 @@ public class fragmentNearestEmergencyRoom extends Fragment {
     MapView mMapView;
     private GoogleMap googleMap;
     private HomeActivity activity;
+    private AutoCompleteTextView edtLocationSearch;
 
     public fragmentNearestEmergencyRoom() {
         // Required empty public constructor
@@ -56,7 +57,7 @@ public class fragmentNearestEmergencyRoom extends Fragment {
         activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setVisibility(View.GONE);
-        AutoCompleteTextView edtLocationSearch = (AutoCompleteTextView) toolbar.findViewById(R.id.edtLocationSearch);
+        edtLocationSearch = (AutoCompleteTextView) toolbar.findViewById(R.id.edtLocationSearch);
         edtLocationSearch.setVisibility(View.VISIBLE);
 
         mMapView = (MapView) _view.findViewById(R.id.mapView);
@@ -76,7 +77,6 @@ public class fragmentNearestEmergencyRoom extends Fragment {
 
                 // For showing a move to my location button
                 if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
                     //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -115,6 +115,7 @@ public class fragmentNearestEmergencyRoom extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
+        edtLocationSearch.setVisibility(View.GONE);
     }
 
     @Override
