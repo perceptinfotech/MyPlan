@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,8 +15,9 @@ import percept.myplan.R;
 
 public class AddStrategyMusicActivity extends AppCompatActivity {
 
-    private TextView TV_CHOOSEFROMPHONE, TV_CHOOSEFROMLINK;
     public static boolean CLOSE_PAGE = false;
+    private final int SET_LINK = 25;
+    private TextView TV_CHOOSEFROMPHONE, TV_CHOOSEFROMLINK;
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
@@ -80,7 +82,7 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
         TV_CHOOSEFROMLINK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivityForResult(new Intent(AddStrategyMusicActivity.this, AddStrategyLinksActivity.class), SET_LINK);
             }
         });
 
@@ -98,9 +100,17 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK) {
-            return;
+        switch (requestCode) {
+            case SET_LINK:
+                if (resultCode == RESULT_OK) {
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("LINK", data.getStringExtra("LINK"));
+                    setResult(Activity.RESULT_OK, returnIntent);
+                    AddStrategyMusicActivity.this.finish();
+                }
+                break;
         }
+
     }
 
     @Override

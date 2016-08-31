@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -44,9 +44,6 @@ import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
 
 public class AddStrategyActivity extends AppCompatActivity {
 
-    private EditText EDT_TITLE, EDT_TEXT;
-    private TextView TV_ALARM, TV_IMAGES, TV_LINKS, TV_NETWORK, TV_MUSIC;
-
     public static List<Alarm> LIST_ALARM;
     public static List<String> LIST_IMG;
     public static List<String> LIST_MUSIC;
@@ -55,6 +52,8 @@ public class AddStrategyActivity extends AppCompatActivity {
     private final int SET_IMAGE = 21;
     private final int SET_MUSIC = 24;
     private final int SET_LINK = 25;
+    private EditText EDT_TITLE, EDT_TEXT;
+    private TextView TV_ALARM, TV_IMAGES, TV_LINKS, TV_NETWORK, TV_MUSIC;
     private String STR_LINK = "", STR_CONTACTID = "";
     private HashMap<String, List<Alarm>> MAP_ALARM;
     private Utils UTILS;
@@ -208,7 +207,7 @@ public class AddStrategyActivity extends AppCompatActivity {
 //                }
         // Extra parameters if you want to pass to server
 
-     //   map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveStrategy");
+        //   map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveStrategy");
         map.put("sid", Constant.SID);
         map.put("sname", Constant.SNAME);
         map.put("image_count", String.valueOf(LIST_IMG.size()));
@@ -220,7 +219,7 @@ public class AddStrategyActivity extends AppCompatActivity {
         map.put(Constant.LINK, STR_LINK);
 
 
-        new MultiPartParsing(this, map, General.PHPServices.SHARE_STRATEGIES,new AsyncTaskCompletedListener() {
+        new MultiPartParsing(this, map, General.PHPServices.SHARE_STRATEGIES, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
                 PB.setVisibility(View.GONE);
@@ -396,10 +395,11 @@ public class AddStrategyActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == SET_ALARM) {
-            if (resultCode == Activity.RESULT_OK) {
-                String _strAlarm = data.getStringExtra("ALARMS");
-                Log.d(":::::: ", _strAlarm);
+        switch (requestCode) {
+            case SET_ALARM:
+                if (resultCode == Activity.RESULT_OK) {
+                    String _strAlarm = data.getStringExtra("ALARMS");
+                    Log.d(":::::: ", _strAlarm);
 //
 //                try {
 //                    if (!_strAlarm.equals("") && !_strAlarm.equals("null")) {
@@ -417,27 +417,39 @@ public class AddStrategyActivity extends AppCompatActivity {
 //                } catch (Exception ex) {
 //
 //                }
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
-        } else if (requestCode == SET_CONTACT) {
-            if (resultCode == Activity.RESULT_OK) {
-                STR_CONTACTID = data.getStringExtra("CONTACT_ID");
-                Log.d(":::::: ", STR_CONTACTID);
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
-        } else if (requestCode == SET_LINK) {
-            if (resultCode == Activity.RESULT_OK) {
-                STR_LINK = data.getStringExtra("LINK");
-                Log.d(":::::: ", STR_LINK);
+                }
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    //Write your code if there's no result
+                }
+                break;
+            case SET_CONTACT:
+                if (resultCode == Activity.RESULT_OK) {
+                    STR_CONTACTID = data.getStringExtra("CONTACT_ID");
+                    Log.d(":::::: ", STR_CONTACTID);
+                }
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    //Write your code if there's no result
+                }
+                break;
+            case SET_LINK:
+                if (resultCode == Activity.RESULT_OK) {
+                    STR_LINK = data.getStringExtra("LINK");
+                    Log.d(":::::: ", STR_LINK);
 
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
+                }
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    //Write your code if there's no result
+                }
+                break;
+            case SET_MUSIC:
+                if (data.hasExtra("LINK")) {
+                    if (resultCode == Activity.RESULT_OK) {
+                        STR_LINK = data.getStringExtra("LINK");
+                        Log.d(":::::: ", STR_LINK);
+
+                    }
+                }
+                break;
         }
     }
 }

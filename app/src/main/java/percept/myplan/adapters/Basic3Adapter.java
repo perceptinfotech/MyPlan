@@ -95,18 +95,7 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
                 @Override
                 public boolean onLongClick(View view) {
                     position = (int) view.getTag();
-                    new dialogDeleteAlert(hopeDetailsActivity, hopeDetailsActivity.getString(R.string.delete_hope_element)) {
-                        @Override
-                        public void onClickYes() {
-                            dismiss();
-                            hopeDetailsActivity.deleteHopeElement(position);
-                        }
-
-                        @Override
-                        public void onClickNo() {
-                            dismiss();
-                        }
-                    }.show();
+                    showDeleteConfirmDialog(position);
                     return true;
                 }
             });
@@ -118,20 +107,6 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
                 public void onClick(View view) {
                     // Do this for for videoView only.
                     if (view == ((Basic3ImageViewHolder) viewHolder).imgCardImage) {
-//                        // 1. Temporary disable the playback.
-//                        Toro.rest(true);
-//                        new AlertDialog.Builder(parent.getContext()).setTitle(R.string.app_name)
-//                                .setMessage("Sample")
-//                                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                                    @Override
-//                                    public void onDismiss(DialogInterface dialogInterface) {
-//                                        // 2. Resume the playback.
-//                                        Toro.rest(false);
-//                                    }
-//                                })
-//                                .create()
-//                                .show();
-//                        Snackbar.make(parent, "Clicked to VIDEO", Snackbar.LENGTH_LONG).show();
                         int _pos = (int) ((Basic3ImageViewHolder) viewHolder).imgCardImage.getTag();
                         Intent _intent = new Intent(parent.getContext(), ImageDetailActivity.class);
                         _intent.putExtra("IMG_LINK", LST_HOPE.get(_pos).getMEDIA());
@@ -149,20 +124,8 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
             viewHolder.setOnItemLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-//                    Snackbar.make(parent, "Long pressed to IMAGE", Snackbar.LENGTH_LONG).show();
                     position = (int) view.getTag();
-                    new dialogDeleteAlert(hopeDetailsActivity, hopeDetailsActivity.getString(R.string.delete_hope_element)) {
-                        @Override
-                        public void onClickYes() {
-                            dismiss();
-                            hopeDetailsActivity.deleteHopeElement(position);
-                        }
-
-                        @Override
-                        public void onClickNo() {
-                            dismiss();
-                        }
-                    }.show();
+                    showDeleteConfirmDialog(position);
                     return true;
                 }
             });
@@ -173,7 +136,6 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
                 @Override
                 public void onClick(View view) {
                     if (view == ((Basic3MediaViewHolder) viewHolder).tvCardMusicEdit) {
-//                        Snackbar.make(parent, "Clicked to Edit", Snackbar.LENGTH_LONG).show();
                         hopeDetailsActivity.editHopeElement((Integer) view.getTag());
                     }
                 }
@@ -182,42 +144,26 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
                 @Override
                 public boolean onLongClick(View view) {
                     position = (int) view.getTag();
-//                    Snackbar.make(parent, "Long pressed to MEDIA", Snackbar.LENGTH_LONG).show();
-                    new dialogDeleteAlert(hopeDetailsActivity, hopeDetailsActivity.getString(R.string.delete_hope_element)) {
-                        @Override
-                        public void onClickYes() {
-                            hopeDetailsActivity.deleteHopeElement(position);
-                            dismiss();
-                        }
-
-                        @Override
-                        public void onClickNo() {
-                            dismiss();
-                        }
-                    }.show();
+                    showDeleteConfirmDialog(position);
                     return true;
                 }
             });
         }
 
-        if (viewHolder instanceof Basic3NormalViewHolder){
+        if (viewHolder instanceof Basic3NormalViewHolder) {
+            viewHolder.setOnItemClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (view == ((Basic3NormalViewHolder) viewHolder).TV_EDIT) {
+                        hopeDetailsActivity.editHopeElement((Integer) view.getTag());
+                    }
+                }
+            });
             viewHolder.setOnItemLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     position = (int) view.getTag();
-//                    Snackbar.make(parent, "Long pressed to MEDIA", Snackbar.LENGTH_LONG).show();
-                    new dialogDeleteAlert(hopeDetailsActivity, hopeDetailsActivity.getString(R.string.delete_hope_element)) {
-                        @Override
-                        public void onClickYes() {
-                            hopeDetailsActivity.deleteHopeElement(position);
-                            dismiss();
-                        }
-
-                        @Override
-                        public void onClickNo() {
-                            dismiss();
-                        }
-                    }.show();
+                    showDeleteConfirmDialog(position);
                     return true;
                 }
             });
@@ -271,5 +217,21 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
     @Override
     public long getItemId(int position) {
         return position;
+    }
+
+    private void showDeleteConfirmDialog(final int position)
+    {
+        new dialogDeleteAlert(hopeDetailsActivity, hopeDetailsActivity.getString(R.string.delete_hope_element)) {
+            @Override
+            public void onClickYes() {
+                hopeDetailsActivity.deleteHopeElement(position);
+                dismiss();
+            }
+
+            @Override
+            public void onClickNo() {
+                dismiss();
+            }
+        }.show();
     }
 }

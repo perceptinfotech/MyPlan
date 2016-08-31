@@ -10,12 +10,12 @@ import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -46,21 +46,21 @@ import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
 
 public class AddVideoActivity extends AppCompatActivity {
 
-    private TextView TV_CHOOSEVIDEO, TV_RECORDVIDEO, TV_CHOOSEVIDLINK;
-
     private final static int REQ_PICK_VID_GALLERY = 10;
     private final static int REQ_TAKE_VIDEO = 11;
+    private final static int MY_PERMISSIONS_REQUEST = 22;
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
+    private TextView TV_CHOOSEVIDEO, TV_RECORDVIDEO, TV_CHOOSEVIDLINK;
     private Uri videFileUri;
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
     private String HOPE_ELEMENT_ID = "";
     private ProgressBar PB;
-    private final static int MY_PERMISSIONS_REQUEST = 22;
     private boolean HAS_PERMISSION = true;
-
     private Utils UTILS;
     private CoordinatorLayout REL_COORDINATE;
+    private HopeDetail hopeDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +80,8 @@ public class AddVideoActivity extends AppCompatActivity {
             HOPE_TITLE = getIntent().getExtras().getString("HOPE_TITLE");
             HOPE_ID = getIntent().getExtras().getString("HOPE_ID");
             if (getIntent().hasExtra(Constant.DATA)) {
-                HopeDetail _Detail = (HopeDetail) getIntent().getExtras().getSerializable(Constant.DATA);
-                HOPE_ELEMENT_ID = _Detail.getID();
+                hopeDetail = (HopeDetail) getIntent().getExtras().getSerializable(Constant.DATA);
+                HOPE_ELEMENT_ID = hopeDetail.getID();
             }
         }
 
@@ -102,7 +102,7 @@ public class AddVideoActivity extends AppCompatActivity {
         TV_CHOOSEVIDEO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (HAS_PERMISSION) {
+                if (!HAS_PERMISSION) {
                     Toast.makeText(AddVideoActivity.this, R.string.requiredpermissionn, Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -130,13 +130,17 @@ public class AddVideoActivity extends AppCompatActivity {
         TV_CHOOSEVIDLINK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent _intent = new Intent(AddVideoActivity.this, AddVideoActivity.class);
+                _intent.putExtra("HOPE_TITLE", HOPE_TITLE);
+                _intent.putExtra("FROM_HOPE", "FROM_HOPE");
+                _intent.putExtra("HOPE_ID", HOPE_ID);
+                if (hopeDetail != null)
+                    _intent.putExtra(Constant.DATA, hopeDetail);
+                startActivity(_intent);
+                AddVideoActivity.this.finish();
             }
         });
     }
-
-
-    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
     private void insertDummyPermissionWrapper() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

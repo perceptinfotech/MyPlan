@@ -15,7 +15,8 @@ public class Basic3NormalViewHolder extends Basic3ViewHolder {
 
     public static final int LAYOUT_RES = R.layout.vh_normal_view;
     private HopeDetail DETAILS;
-    private TextView TV_TEXTVIEW, TV_EDIT, tvTitle;
+    private TextView TV_TEXTVIEW,  tvTitle;
+    public TextView TV_EDIT;
 
 
     public Basic3NormalViewHolder(View itemView) {
