@@ -91,6 +91,11 @@ public class fragmentSettings extends Fragment {
             @Override
             public void onClick(View view) {
 
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.app_name));
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getString(R.string.share_body));
+                startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_on)));
             }
         });
         return _View;

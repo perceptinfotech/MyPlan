@@ -256,6 +256,7 @@
     <string name="share_location_msg">This is my current location. Click the following URL to see it on map</string>
     <string name="month_of">Month of</string>
     <string name="week_of">Week of</string>
+    <string name="share_on">Share On..</string>
     <string-array name="navigation_menu">
         <item>Symptoms</item>
         <item>Strategies</item>
@@ -295,4 +296,8 @@
     &lt;b&gt;HELP&lt;/b&gt; or &lt;b&gt;EMERGENCY&lt;/b&gt; buttons in &lt;font color="#47c1b6"&gt;MYPLan&lt;/font&gt;
 </string>
     <string name="test_result_less_15">&lt;br/&gt;&lt;br/&gt;&lt;h2&gt;Congratulation!&lt;/h2&gt;&lt;br/&gt;&lt;br/&gt;</string>
+
+    <string name="share_body">I want to tell you about the app MyPlan, which is an electronic crisis plan.
+                        Download MyPlan from &lt;a href="http://itunes.apple.com"&gt; AppStore &lt;/a&gt; or
+     &lt;a href="http://play.google.com"&gt;Google Play&lt;/a&gt;. It's completely free</string>
 </resources>
