@@ -39,6 +39,7 @@ import percept.myplan.adapters.SidaSummaryAdapter;
 
 public class SidasActivity extends AppCompatActivity {
 
+    private final int REQ_CODE_TEST = 23;
     SidaSummaryAdapter ADAPTER;
     Map<String, String> params;
     private Button BTN_TAKETEST;
@@ -73,7 +74,7 @@ public class SidasActivity extends AppCompatActivity {
         BTN_TAKETEST.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(SidasActivity.this, SidaTestActivity.class));
+                startActivityForResult(new Intent(SidasActivity.this, SidaTestActivity.class), REQ_CODE_TEST);
             }
         });
 
@@ -157,5 +158,20 @@ public class SidasActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .create()
                 .show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQ_CODE_TEST:
+                if (resultCode == RESULT_OK) {
+                    Intent _iIntent=new Intent();
+                    _iIntent.putExtra("SIDAS_OPEN_STRATEGIES",true);
+                    setResult(RESULT_OK,_iIntent);
+                    SidasActivity.this.finish();
+                }
+                break;
+        }
     }
 }

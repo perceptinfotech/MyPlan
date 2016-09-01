@@ -1,6 +1,7 @@
 package percept.myplan.fragments;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import percept.myplan.Activities.HomeActivity;
 import percept.myplan.Activities.MoodActivity;
 import percept.myplan.Activities.SidasActivity;
 import percept.myplan.Graph.Bar;
@@ -29,6 +31,7 @@ public class fragmentMoodRatings extends Fragment {
 
 
     public static final int INDEX = 5;
+    private final int REQ_CODE_SIDAS = 23;
     BarGraph BAR_GRAPH;
     PieGraph PIE_GRAPH;
     ArrayList<PieSlice> LST_PIEDATA;
@@ -61,7 +64,7 @@ public class fragmentMoodRatings extends Fragment {
         TV_SIDAS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), SidasActivity.class));
+                startActivityForResult(new Intent(getActivity(), SidasActivity.class), REQ_CODE_SIDAS);
             }
         });
 
@@ -158,4 +161,14 @@ public class fragmentMoodRatings extends Fragment {
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQ_CODE_SIDAS:
+                if (resultCode == Activity.RESULT_OK)
+                    ((HomeActivity) getActivity()).selectItem(fragmentStrategies.INDEX);
+                break;
+        }
+    }
 }

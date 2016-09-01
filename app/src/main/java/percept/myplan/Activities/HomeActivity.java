@@ -465,7 +465,7 @@ public class HomeActivity extends AppCompatActivity implements
     }
 
 
-    private void selectItem(int position) {
+    public void selectItem(int position) {
         // Create a new fragment and specify the planet to show based on position
         Fragment fragment = null;
         FragmentManager fragmentManager = getSupportFragmentManager();

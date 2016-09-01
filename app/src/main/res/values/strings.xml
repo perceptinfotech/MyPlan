@@ -207,9 +207,9 @@
     <string name="nextques">Next question</string>
     <string name="done">Done</string>
     <string name="nointernet">No internet connection!</string>
-    <!--<string name="sidastart">"<b>" + "Sidas" + "</b>" + "consist of 5 questions" + "<br />" +
-                    "You can use" + "<b>" + "SIDAS" + "</b>" + "to measure your suicidal thoughts." + "<br />" +
-                    "<b>" + "IMPORTANT " + "</b>" + "if you have a high score, you will get an automate " +
+    <!--<string name="sidastart">"&lt;b&gt;" + "Sidas" + "&lt;/b&gt;" + "consist of 5 questions" + "<br />" +
+                    "You can use" + "&lt;b&gt;" + "SIDAS" + "&lt;/b&gt;" + "to measure your suicidal thoughts." + "<br />" +
+                    "&lt;b&gt;" + "IMPORTANT " + "&lt;/b&gt;" + "if you have a high score, you will get an automate " +
                     "notification to seek help" + "<br />" + "It is important that you act and follow your crisis plan"</string>-->
 
 
@@ -274,4 +274,22 @@
         <item>Every 3 Week</item>
         <item>Once a month</item>
     </string-array>
+
+    <string name="test_start_warning_msg">
+    &lt;b&gt;SIDAS&lt;/b&gt; consist of 5 questions&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
+    You can use&lt;b&gt; SIDAS &lt;/b&gt;to measure your suicidal thoughts.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;IMPORTANT &lt;/b&gt;if you have a high score, you will get an automate notification to seek help&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
+    It is important that you act and follow your crisis plan
+    </string>
+    
+    <string name="test_result_btwn_15to21"> Your answers show that you are having a difficult time right now.
+      Use your strategies for help and/or contact your network.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
+      If you need ideas for an effective strategy, please view the inspiration ban here.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
+      Remember that you always can use the HELP button in &lt;font color="#47c1b6"&gt;MyPlan&lt;/font&gt;
+</string>
+<string name="test_result_greater_21">Your answers show that you are having a crisis.It is important that you seek help now!
+    &lt;br/&gt;&lt;br/&gt;&lt;br/&gt; Follow your crisis plan, involve your networkog/or use
+    &lt;b&gt;HELP&lt;/b&gt; or &lt;b&gt;EMERGENCY&lt;/b&gt; buttons in &lt;font color="#47c1b6"&gt;MYPLan&lt;/font&gt;
+</string>
+    <string name="test_result_less_15">&lt;br/&gt;&lt;br/&gt;&lt;h2&gt;Congratulation!&lt;/h2&gt;&lt;br/&gt;&lt;br/&gt;</string>
 </resources>

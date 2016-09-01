@@ -1,14 +1,24 @@
 package percept.myplan.Activities;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -30,14 +40,16 @@ import java.util.Map;
 
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
+import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.SidaQuestion;
 import percept.myplan.R;
 
 public class SidaTestActivity extends AppCompatActivity {
 
-    private TextView TV_TESTQUESTION, TV_TESTANSWER;
+    final private int REQUEST_CODE_CALL_PERMISSIONS = 123;
     Map<String, String> params;
+    private TextView TV_TESTQUESTION, TV_TESTANSWER;
     private List<SidaQuestion> LST_SIDAQUES;
     private SeekBar SEEK_SIDA;
     private Button BTN_NEXT_QUES;
@@ -85,9 +97,11 @@ public class SidaTestActivity extends AppCompatActivity {
             }
         });
 
-        InfoDialog _dialog = new InfoDialog(SidaTestActivity.this);
+        InfoDialog _dialog = new InfoDialog(SidaTestActivity.this,
+                getString(R.string.test_start_warning_msg), getString(R.string.cont), "");
         _dialog.setCanceledOnTouchOutside(true);
         _dialog.show();
+
 
         GetSidaTest();
 
@@ -124,8 +138,65 @@ public class SidaTestActivity extends AppCompatActivity {
 
                 @Override
                 public void onResponse(JSONObject response) {
+                    Log.i(":::SidasTest::", response.toString());
                     PB.setVisibility(View.GONE);
-                    SidaTestActivity.this.finish();
+                    try {
+                        int score = response.getJSONObject(Constant.DATA).getInt("score");
+                        if (score > 15 && score <= 21) {
+                            new InfoDialog(SidaTestActivity.this, getString(R.string.test_result_btwn_15to21),
+                                    getString(R.string.help), getString(R.string.inspiration)) {
+
+                                @Override
+                                public void onClickFirstButton() {
+                                    Intent _intent = new Intent(SidaTestActivity.this, HelpListActivity.class);
+                                    startActivity(_intent);
+                                    SidaTestActivity.this.finish();
+                                }
+
+                                @Override
+                                public void onClickSecondButton() {
+                                    Intent _iIntent=new Intent();
+                                    _iIntent.putExtra("SIDAS_OPEN_STRATEGIES",true);
+                                    setResult(RESULT_OK,_iIntent);
+                                    SidaTestActivity.this.finish();
+                                }
+                            }.show();
+                        } else if (score > 21) {
+                            new InfoDialog(SidaTestActivity.this, getString(R.string.test_result_greater_21),
+                                    getString(R.string.help), getString(R.string.emergency)) {
+
+                                @Override
+                                public void onClickFirstButton() {
+
+                                    Intent _intent = new Intent(SidaTestActivity.this, HelpListActivity.class);
+                                    startActivity(_intent);
+                                    SidaTestActivity.this.finish();
+                                }
+
+                                @Override
+                                public void onClickSecondButton() {
+                                    SidaTestActivity.this.finish();
+                                    emergencyCall();
+                                }
+                            }.show();
+                        } else {
+                            new InfoDialog(SidaTestActivity.this, getString(R.string.test_result_less_15),
+                                    getString(R.string.ok), "") {
+                                @Override
+                                public void onClickFirstButton() {
+                                    super.onClickFirstButton();
+                                    SidaTestActivity.this.finish();
+                                }
+                            }.show();
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+//                    SidaTestActivity.this.finish();
                 }
             });
         } catch (Exception e) {
@@ -206,15 +277,51 @@ public class SidaTestActivity extends AppCompatActivity {
         return false;
     }
 
+    public void emergencyCall() {
+        int permissionCheck = ContextCompat.checkSelfPermission(SidaTestActivity.this, Manifest.permission.CALL_PHONE);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(SidaTestActivity.this,
+                    new String[]{Manifest.permission.CALL_PHONE},
+                    REQUEST_CODE_CALL_PERMISSIONS);
+        } else {
+            if (TextUtils.isEmpty(new Utils(SidaTestActivity.this).getPreference("EMERGENCY_CONTACT_NAME"))) {
+                Intent phoneIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "112"));
+                phoneIntent.setPackage("com.android.phone");
+                startActivity(phoneIntent);
+            } else {
+                String _phoneNo = new Utils(SidaTestActivity.this).getPreference("EMERGENCY_CONTACT_NO");
+                Intent phoneIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + _phoneNo));
+                phoneIntent.setPackage("com.android.phone");
+                startActivity(phoneIntent);
+
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_CALL_PERMISSIONS:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    emergencyCall();
+                break;
+        }
+    }
+
     public class InfoDialog extends Dialog {
 
-        private TextView TV_NOTE, TV_CONTINUE;
-        private String NOTE;
-        private Context CONTEXT;
+        private TextView TV_NOTE, tvInfoBtn1;
+        private String note, strFistTitle, strSecondTitle;
+        private TextView tvInfoBtn2;
 
-        public InfoDialog(Context context) {
+        public InfoDialog(Context context, String note, String strFistTitle, String strSecondTitle) {
             super(context, R.style.DialogTheme);
-            CONTEXT = context;
+            this.note = note;
+            this.strFistTitle = strFistTitle;
+            this.strSecondTitle = strSecondTitle;
         }
 
         @Override
@@ -224,22 +331,49 @@ public class SidaTestActivity extends AppCompatActivity {
             setContentView(R.layout.lay_info);
 
             TV_NOTE = (TextView) findViewById(R.id.tvNote);
-            TV_CONTINUE = (TextView) findViewById(R.id.tvContinue);
-            TV_NOTE.setText(NOTE);
+            tvInfoBtn1 = (TextView) findViewById(R.id.tvInfoBtn1);
+            tvInfoBtn2 = (TextView) findViewById(R.id.tvInfoBtn2);
+            View viewSeperator = findViewById(R.id.viewSeperator);
+            TV_NOTE.setText(Html.fromHtml(note));
+            tvInfoBtn1.setText(strFistTitle);
+            if (TextUtils.isEmpty(strSecondTitle)) {
+                tvInfoBtn2.setVisibility(View.GONE);
+                viewSeperator.setVisibility(View.GONE);
+            } else {
+                tvInfoBtn2.setVisibility(View.VISIBLE);
+                viewSeperator.setVisibility(View.VISIBLE);
+            }
+            tvInfoBtn2.setText(strSecondTitle);
 
-            TV_NOTE.setText(Html.fromHtml("<b>" + "Sidas" + "</b>" + "consist of 5 questions"
-                    + "<br />" + "<br />" + "<br />" + "You can use" + "<b>" + " SIDAS " + "</b>"
-                    + "to measure your suicidal thoughts." + "<br />" + "<br />" + "<br />" +
-                    "<b>" + "IMPORTANT " + "</b>" + "if you have a high score, you will get an automate " +
-                    "notification to seek help" + "<br />" + "<br />" + "<br />"
-                    + "It is important that you act and follow your crisis plan"));
+            TV_NOTE.setMovementMethod(LinkMovementMethod.getInstance());
+//            TV_NOTE.setText(Html.fromHtml("<b>" + "SIDAS" + "</b>" + " consist of 5 questions"
+//                    + "<br />" + "<br />" + "<br />" + "You can use" + "<b>" + " SIDAS " + "</b>"
+//                    + "to measure your suicidal thoughts." + "<br />" + "<br />" + "<br />" +
+//                    "<b>" + "IMPORTANT " + "</b>" + "if you have a high note, you will get an automate " +
+//                    "notification to seek help" + "<br />" + "<br />" + "<br />"
+//                    + "It is important that you act and follow your crisis plan"));
 
-            TV_CONTINUE.setOnClickListener(new View.OnClickListener() {
+
+            tvInfoBtn1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    InfoDialog.this.dismiss();
+                    dismiss();
+                    onClickFirstButton();
                 }
             });
+            tvInfoBtn2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dismiss();
+                    onClickSecondButton();
+                }
+            });
+        }
+
+        public void onClickFirstButton() {
+        }
+
+        public void onClickSecondButton() {
         }
     }
 }
