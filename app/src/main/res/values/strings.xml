@@ -257,6 +257,8 @@
     <string name="month_of">Month of</string>
     <string name="week_of">Week of</string>
     <string name="share_on">Share On..</string>
+    <string name="subject">Subject</string>
+    <string name="give_ur_feedback">Give your Feedback</string>
     <string-array name="navigation_menu">
         <item>Symptoms</item>
         <item>Strategies</item>
@@ -299,5 +301,9 @@
 
     <string name="share_body">I want to tell you about the app MyPlan, which is an electronic crisis plan.
                         Download MyPlan from &lt;a href="http://itunes.apple.com"&gt; AppStore &lt;/a&gt; or
-     &lt;a href="http://play.google.com"&gt;Google Play&lt;/a&gt;. It's completely free</string>
+     &lt;a href="http://play.google.com"&gt;Google Play&lt;/a&gt;. It\'s completely free</string>
+    <string name="title_activity_feedback">FeedbackActivity</string>
+    <string name="validate_email">Please enter valid Email Address</string>
+    <string name="validate_subject">Please enter Subject for feedback</string>
+    <string name="validate_detail_feedback">Please give few words for feedback</string>
 </resources>

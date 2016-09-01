@@ -122,6 +122,8 @@ public class General {
             return ".SaveMessage";
         } else if (serviceName == PHPServices.GET_HELP_INFO) {
             return ".getHelpinfo";
+        }else if (serviceName == PHPServices.GIVE_FEEDBACK) {
+            return ".giveFeedback";
         }
         return "";
     }
@@ -225,6 +227,6 @@ public class General {
         GET_SIDACALENDER, SUBMIT_SIDATEST, SHARE_STRATEGIES,
         SAVE_HOPE_MEDIA, SAVE_STRATEGY, SAVE_CONTACT, SAVE_CONTACTS,
         GET_USER_STRATEGY, PROFILE, DELETE_HOPE_BOX, FORGOT_PASSWORD,
-        GET_SETTINGS, SAVE_SETTINGS, GET_MESSAGE, SAVE_MESSAGE, GET_HELP_INFO, DELETE_HOPE_MEDIA
+        GET_SETTINGS, SAVE_SETTINGS, GET_MESSAGE, SAVE_MESSAGE, GET_HELP_INFO, GIVE_FEEDBACK, DELETE_HOPE_MEDIA
     }
 }
