@@ -1,11 +1,13 @@
 package percept.myplan.Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,11 +39,11 @@ import percept.myplan.adapters.SidaSummaryAdapter;
 
 public class SidasActivity extends AppCompatActivity {
 
+    SidaSummaryAdapter ADAPTER;
+    Map<String, String> params;
     private Button BTN_TAKETEST;
     private RecyclerView LST_SIDASUMMARY;
-    SidaSummaryAdapter ADAPTER;
     private List<SidaSummary> LIST_SIDA;
-    Map<String, String> params;
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
 
@@ -94,8 +96,14 @@ public class SidasActivity extends AppCompatActivity {
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    Gson gson = new Gson();
                     try {
+                        if (response.get(Constant.DATA) instanceof JSONObject
+                                || response.get(Constant.DATA) instanceof String) {
+                            showMessageOK(response.getString(Constant.DATA));
+                            return;
+                        }
+                        Gson gson = new Gson();
+
                         LIST_SIDA = gson.fromJson(response.getJSONArray(Constant.DATA)
                                 .toString(), new TypeToken<List<SidaSummary>>() {
                         }.getType());
@@ -133,5 +141,21 @@ public class SidasActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    private void showMessageOK(String message) {
+        new AlertDialog.Builder(SidasActivity.this)
+                .setMessage(message)
+                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        SidasActivity.this.finish();
+
+                    }
+                })
+                .setCancelable(false)
+                .create()
+                .show();
     }
 }

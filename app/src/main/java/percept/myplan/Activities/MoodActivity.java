@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -51,11 +52,11 @@ import percept.myplan.R;
 public class MoodActivity extends AppCompatActivity implements FlexibleCalendarView.OnMonthChangeListener,
         FlexibleCalendarView.OnDateClickListener {
 
+    Map<String, String> params;
     private FlexibleCalendarView calendarView;
     private TextView TV_CALENDERMONTH, TV_CALENDERYEAR;
     private Map<Integer, List<CustomEvent>> eventMap;
     private ImageView IMG_VSAD, IMG_SAD, IMG_OK, IMG_HAPPY, IMG_VHAPPY;
-    Map<String, String> params;
     private String STR_NOTE = "";
     private List<Mood> LIST_MOOD;
     private Button BTN_SEEALLNOTE;
@@ -226,6 +227,11 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                 public void onResponse(JSONObject response) {
                     Gson gson = new Gson();
                     try {
+                        if (response.get(Constant.DATA) instanceof JSONObject ||
+                                response.get(Constant.DATA) instanceof String) {
+                            showMessageOK(response.getString(Constant.DATA));
+                            return;
+                        }
                         LIST_MOOD = gson.fromJson(response.getJSONArray(Constant.DATA)
                                 .toString(), new TypeToken<List<Mood>>() {
                         }.getType());
@@ -472,6 +478,20 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
 //                this.getResources().getConfiguration().locale) + " " + year);
     }
 
+    private void showMessageOK(String message) {
+        new AlertDialog.Builder(MoodActivity.this)
+                .setMessage(message)
+                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        MoodActivity.this.finish();
+                    }
+                })
+                .setCancelable(false)
+                .create()
+                .show();
+    }
 
     public class fragmentAddNoteCalender extends Dialog {
 
