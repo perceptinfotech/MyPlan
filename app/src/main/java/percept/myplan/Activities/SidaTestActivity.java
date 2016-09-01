@@ -111,8 +111,12 @@ public class SidaTestActivity extends AppCompatActivity {
                 if (CURR_QUES + 1 < TOTAL_QUES) {
                     CURR_QUES = CURR_QUES + 1;
                     TV_TESTQUESTION.setText(LST_SIDAQUES.get(CURR_QUES - 1).getQuestion());
-                    BTN_NEXT_QUES.setText(getResources().getString(R.string.nextques) +
-                            "(" + String.valueOf(CURR_QUES + 1) + "/" + String.valueOf(TOTAL_QUES) + ")");
+                    if (CURR_QUES + 1 == TOTAL_QUES)
+                        BTN_NEXT_QUES.setText(getString(R.string.submit) +
+                                " (" + String.valueOf(CURR_QUES + 1) + "/" + String.valueOf(TOTAL_QUES) + ")");
+                    else
+                        BTN_NEXT_QUES.setText(getResources().getString(R.string.nextques) +
+                                " (" + String.valueOf(CURR_QUES + 1) + "/" + String.valueOf(TOTAL_QUES) + ")");
                     if (STRANSWER.equals(""))
                         STRANSWER = TV_TESTANSWER.getText().toString();
                     else
@@ -155,9 +159,9 @@ public class SidaTestActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onClickSecondButton() {
-                                    Intent _iIntent=new Intent();
-                                    _iIntent.putExtra("SIDAS_OPEN_STRATEGIES",true);
-                                    setResult(RESULT_OK,_iIntent);
+                                    Intent _iIntent = new Intent();
+                                    _iIntent.putExtra("SIDAS_OPEN_STRATEGIES", true);
+                                    setResult(RESULT_OK, _iIntent);
                                     SidaTestActivity.this.finish();
                                 }
                             }.show();
@@ -219,7 +223,7 @@ public class SidaTestActivity extends AppCompatActivity {
     }
 
     private void GetSidaTest() {
-        params = new HashMap<String, String>();
+        params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         try {
@@ -317,7 +321,7 @@ public class SidaTestActivity extends AppCompatActivity {
         private String note, strFistTitle, strSecondTitle;
         private TextView tvInfoBtn2;
 
-        public InfoDialog(Context context, String note, String strFistTitle, String strSecondTitle) {
+        InfoDialog(Context context, String note, String strFistTitle, String strSecondTitle) {
             super(context, R.style.DialogTheme);
             this.note = note;
             this.strFistTitle = strFistTitle;

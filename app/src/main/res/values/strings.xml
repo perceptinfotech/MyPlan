@@ -60,7 +60,7 @@
     <string name="wouldliketoaddnote">Would you like to add a note</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
-    <string name="addnotetotodaymoodrating">Add note to todays mood rating</string>
+    <string name="addnotetotodaymoodrating">Add note to today\'s mood rating</string>
     <string name="savenote">Save Note</string>
     <string name="never">Never</string>
     <string name="always">Always</string>
@@ -233,12 +233,13 @@
     <string name="add_address">Add new address</string>
     <string name="assign_priority">Assign Priority</string>
     <string name="company">Company</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="add_photo">Add Photo</string>
     <string name="nearest_emergency_room">Nearest Emergency Rooms</string>
     <string name="editcontact">Edit Contact</string>
     <string name="submitted">Submitted</string>
+    <string name="submit">Submit</string>
     <string name="user">User</string>
     <string name="entries">entries</string>
     <string name="entry">entry</string>
@@ -253,17 +254,19 @@
     <string name="details">Details</string>
     <string name="share_with">Share With</string>
     <string name="share_location_msg">This is my current location. Click the following URL to see it on map</string>
+    <string name="month_of">Month of</string>
+    <string name="week_of">Week of</string>
     <string-array name="navigation_menu">
         <item>Symptoms</item>
         <item>Strategies</item>
         <item>Contacts</item>
         <item>Hope Box</item>
         <item>Mood Ratings</item>
-        <item></item>
+        <item/>
         <item>Quick Messages</item>
         <item>Share my location</item>
         <item>Nearest emergency room</item>
-        <item></item>
+        <item/>
         <item>Settings</item>
         <item>Logout</item>
     </string-array>

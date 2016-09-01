@@ -2,19 +2,21 @@ package percept.myplan.POJO;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by percept on 16/8/16.
- */
-
 public class SidaSummary {
     @SerializedName("week_number")
     private String Week_Number;
     @SerializedName("avg_score")
     private String Avg_Score;
+    @SerializedName("month_number")
+    private String monthNumber;
+    @SerializedName("year")
+    private String year;
 
-    public SidaSummary(String week_Number, String avg_Score) {
+    public SidaSummary(String week_Number, String avg_Score, String monthNumber, String year) {
         Week_Number = week_Number;
         Avg_Score = avg_Score;
+        this.monthNumber = monthNumber;
+        this.year = year;
     }
 
     public String getWeek_Number() {
@@ -31,5 +33,21 @@ public class SidaSummary {
 
     public void setAvg_Score(String avg_Score) {
         Avg_Score = avg_Score;
+    }
+
+    public String getMonthNumber() {
+        return monthNumber;
+    }
+
+    public void setMonthNumber(String monthNumber) {
+        this.monthNumber = monthNumber;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
     }
 }

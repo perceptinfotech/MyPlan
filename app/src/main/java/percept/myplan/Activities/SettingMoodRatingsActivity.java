@@ -101,10 +101,10 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
     private void saveSetting() {
         int _sidas = SWITCH_SIDAS.isChecked() ? 1 : 0;
         int _mood = SWITCH_MOOD.isChecked() ? 1 : 0;
-        int _interval = 0;
+        int _interval = 1;
         for (int i = 0; i < listSidasSchedule.size(); i++) {
             if (listSidasSchedule.get(i).isSelected()) {
-                _interval = i;
+                _interval = i + 1;
                 break;
             }
         }
@@ -175,13 +175,13 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
                                     if (jsonObject.getInt("sidas") == 1)
                                         SWITCH_SIDAS.setChecked(true);
                                     else SWITCH_SIDAS.setChecked(false);
-                                    int _interval = 0;
+                                    int _interval = 1;
                                     if (jsonObject.has("interval"))
                                         _interval = jsonObject.getInt("interval");
 
                                     String _sidasInterval[] = getResources().getStringArray(R.array.sidas_interval);
                                     for (int i = 0; i < _sidasInterval.length; i++) {
-                                        if (i == _interval)
+                                        if (i == (_interval - 1))
                                             listSidasSchedule.add(new SidaSchedule(_sidasInterval[i], true));
                                         else
                                             listSidasSchedule.add(new SidaSchedule(_sidasInterval[i], false));

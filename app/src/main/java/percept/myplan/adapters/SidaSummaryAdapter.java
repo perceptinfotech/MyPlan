@@ -2,6 +2,7 @@ package percept.myplan.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,24 +27,6 @@ public class SidaSummaryAdapter extends RecyclerView.Adapter<SidaSummaryAdapter.
     private TextView TV_MOODSUMTITLE;
     private PieGraph SIDA_PIE_GRAPH;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-
-        public MyViewHolder(View view) {
-            super(view);
-
-            TV_MOODSUMTITLE = (TextView) view.findViewById(R.id.tvMoodSymmaryTime);
-            SIDA_PIE_GRAPH = (PieGraph) view.findViewById(R.id.pieSidagraph);
-        }
-
-        @Override
-        public void onClick(View view) {
-            int i = (int) view.getTag();
-            Log.d(":::: Pressed on ", String.valueOf(i));
-        }
-    }
-
-
     public SidaSummaryAdapter(Context mContext, List<SidaSummary> hopeList) {
         this.CONTEXT = mContext;
         this.LST_MOOD = hopeList;
@@ -62,7 +45,10 @@ public class SidaSummaryAdapter extends RecyclerView.Adapter<SidaSummaryAdapter.
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         SidaSummary _mood = LST_MOOD.get(position);
 //        holder.TV_ALARMTITLE.setText(album.getAlarmName());
-        TV_MOODSUMTITLE.setText(_mood.getWeek_Number() + " Week of 2016");
+        if (TextUtils.isEmpty(_mood.getWeek_Number()))
+            TV_MOODSUMTITLE.setText(_mood.getMonthNumber() + " " + CONTEXT.getString(R.string.month_of) + " " + _mood.getYear());
+        else
+            TV_MOODSUMTITLE.setText(_mood.getWeek_Number() + " " + CONTEXT.getString(R.string.week_of) + " " + _mood.getYear());
         ArrayList<PieSlice> LST_PIEDATA = new ArrayList<>();
         PieSlice slice = new PieSlice();
         slice.setColor(CONTEXT.getResources().getColor(R.color.pie_color1));
@@ -83,5 +69,22 @@ public class SidaSummaryAdapter extends RecyclerView.Adapter<SidaSummaryAdapter.
     @Override
     public int getItemCount() {
         return LST_MOOD.size();
+    }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+
+        public MyViewHolder(View view) {
+            super(view);
+
+            TV_MOODSUMTITLE = (TextView) view.findViewById(R.id.tvMoodSymmaryTime);
+            SIDA_PIE_GRAPH = (PieGraph) view.findViewById(R.id.pieSidagraph);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int i = (int) view.getTag();
+            Log.d(":::: Pressed on ", String.valueOf(i));
+        }
     }
 }
