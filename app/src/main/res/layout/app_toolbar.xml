@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:theme="@style/AppTheme.AppBarOverlay">
+                                            xmlns:app="http://schemas.android.com/apk/res-auto"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:theme="@style/AppTheme.AppBarOverlay">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -19,28 +19,29 @@
             android:layout_gravity="center"
             android:text="Toolbar Title"
             android:textColor="@android:color/black"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
 
-        <AutoCompleteTextView
+        <percept.myplan.customviews.CleanableAutoCompleteTextView
             android:id="@+id/edtLocationSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginRight="30dp"
             android:background="@drawable/search_background"
-            android:drawableLeft="@android:drawable/ic_menu_search"
+            android:drawableLeft="@drawable/ic_search_small"
             android:drawablePadding="5dp"
             android:hint="@string/search"
             android:padding="5dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"
-            android:visibility="gone" />
+            android:visibility="gone"/>
     </android.support.v7.widget.Toolbar>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/toobarbelow" />
+        android:background="@color/toobarbelow"/>
 
 </android.support.design.widget.AppBarLayout>
 

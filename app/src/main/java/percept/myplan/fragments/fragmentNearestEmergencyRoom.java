@@ -2,31 +2,55 @@ package percept.myplan.fragments;
 
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import percept.myplan.Activities.EmergencyRoomDetailActivity;
 import percept.myplan.Activities.HomeActivity;
+import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
+import percept.myplan.Interfaces.VolleyResponseListener;
+import percept.myplan.POJO.NearestEmergencyRoom;
 import percept.myplan.R;
+import percept.myplan.adapters.AutoCompleteLocalSearchAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,6 +62,10 @@ public class fragmentNearestEmergencyRoom extends Fragment {
     private GoogleMap googleMap;
     private HomeActivity activity;
     private AutoCompleteTextView edtLocationSearch;
+    private TextView mTitle;
+    private ArrayList<NearestEmergencyRoom> listNearestEmergencyRoom = new ArrayList<>();
+    private TextView tvNearestDistance;
+    private AutoCompleteLocalSearchAdapter adapter;
 
     public fragmentNearestEmergencyRoom() {
         // Required empty public constructor
@@ -55,20 +83,50 @@ public class fragmentNearestEmergencyRoom extends Fragment {
 
         Toolbar toolbar = activity.toolbar;
         activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
-        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setVisibility(View.GONE);
         edtLocationSearch = (AutoCompleteTextView) toolbar.findViewById(R.id.edtLocationSearch);
         edtLocationSearch.setVisibility(View.VISIBLE);
 
         mMapView = (MapView) _view.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
-
+        tvNearestDistance = (TextView) _view.findViewById(R.id.tvNearestDistance);
         mMapView.onResume(); // needed to get the map to display immediately
         try {
             MapsInitializer.initialize(activity);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        edtLocationSearch.setText("");
+        setHasOptionsMenu(true);
+        tvNearestDistance.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputMethodManager inputManager = (InputMethodManager)
+                        getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow((null == getActivity().getCurrentFocus())
+                        ? null : getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                Intent _intent = new Intent(getActivity(), EmergencyRoomDetailActivity.class);
+                _intent.putExtra("EMERGENCY_ROOM_DETAIL", listNearestEmergencyRoom.get(0));
+                startActivity(_intent);
+            }
+        });
+        adapter = new AutoCompleteLocalSearchAdapter(getActivity(), listNearestEmergencyRoom);
+        edtLocationSearch.setAdapter(adapter);
+        edtLocationSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.i(":::::::Info", "Position of AutoComplete:" + i + " Name of Array:" +
+                        ((NearestEmergencyRoom) adapter.getItem(i)).getRoomName());
+                InputMethodManager inputManager = (InputMethodManager)
+                        getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow((null == getActivity().getCurrentFocus())
+                        ? null : getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                Intent _intent = new Intent(getActivity(), EmergencyRoomDetailActivity.class);
+                _intent.putExtra("EMERGENCY_ROOM_DETAIL", adapter.getItem(i));
+                startActivity(_intent);
+            }
+        });
 
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -88,12 +146,12 @@ public class fragmentNearestEmergencyRoom extends Fragment {
                 googleMap.setMyLocationEnabled(true);
 
                 // For dropping a marker at a point on the Map
-                LatLng _CurrentPos = new LatLng(HomeActivity.CURRENT_LAT, HomeActivity.CURRENT_LONG);
+
 //                googleMap.addMarker(new MarkerOptions().position(_CurrentPos).title("Marker Title").snippet("Marker Description"));
 
                 // For zooming automatically to the location of the marker
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(_CurrentPos).zoom(12).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                getNearestEmergencyRoom();
             }
         });
         return _view;
@@ -115,7 +173,9 @@ public class fragmentNearestEmergencyRoom extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
+        mTitle.setVisibility(View.VISIBLE);
         edtLocationSearch.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -138,5 +198,83 @@ public class fragmentNearestEmergencyRoom extends Fragment {
             return true;
         }
         return false;
+    }
+
+    private void getNearestEmergencyRoom() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put("lat", String.valueOf(HomeActivity.CURRENT_LAT));
+        params.put("long", String.valueOf(HomeActivity.CURRENT_LONG));
+        try {
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_EMERGENCY_ROOMS,
+                    params, true, false, true, new VolleyResponseListener() {
+                        @Override
+                        public void onError(VolleyError message) {
+
+                        }
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.e(":::Nearest Room::", response.toString());
+                            Gson gson = new Gson();
+                            try {
+                                listNearestEmergencyRoom = gson.fromJson(response.getJSONArray(Constant.DATA).toString(),
+                                        new TypeToken<ArrayList<NearestEmergencyRoom>>() {
+                                        }.getType());
+                                if (listNearestEmergencyRoom.size() > 0) {
+                                    addMarkersOnMap();
+                                    adapter = new AutoCompleteLocalSearchAdapter(getActivity(), listNearestEmergencyRoom);
+                                    edtLocationSearch.setAdapter(adapter);
+                                    adapter.notifyDataSetChanged();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addMarkersOnMap() {
+        if (listNearestEmergencyRoom.size() > 0) {
+//            if (Double.parseDouble(listNearestEmergencyRoom.get(0).getDistance()) > 0)
+//                tvNearestDistance.setText(getString(R.string.distance_nearest) + new DecimalFormat("0.00").
+//                        format(Double.parseDouble(listNearestEmergencyRoom.get(0).getDistance())) + " " + getString(R.string.km));
+//            else if (listNearestEmergencyRoom.size() > 1)
+//                tvNearestDistance.setText(getString(R.string.distance_nearest) + new DecimalFormat("0.00").
+//                        format(Double.parseDouble(listNearestEmergencyRoom.get(1).getDistance())) + " " + getString(R.string.km));
+//            else
+//                tvNearestDistance.setText(getString(R.string.nearest_emergency));
+            tvNearestDistance.setText(getString(R.string.distance_nearest) +
+                    new DecimalFormat("0.00").format(Double.parseDouble(listNearestEmergencyRoom.get(0).
+                            getDistance())) + " " + getString(R.string.km));
+//            Collections.sort(listNearestEmergencyRoom, new Comparator<NearestEmergencyRoom>() {
+//                @Override
+//                public int compare(NearestEmergencyRoom nearestEmergencyRoom, NearestEmergencyRoom nearestEmergencyRoom1) {
+//                    return nearestEmergencyRoom1.getDistance().compareTo(nearestEmergencyRoom.getDistance());
+//                }
+//            });
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(Double.parseDouble(listNearestEmergencyRoom.get(0).getLatitude()),
+                    Double.parseDouble(listNearestEmergencyRoom.get(0).getLongitude()))).zoom(12).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            for (NearestEmergencyRoom emergencyRoom : listNearestEmergencyRoom) {
+                LatLng latLng = new LatLng(Double.parseDouble(emergencyRoom.getLatitude()),
+                        Double.parseDouble(emergencyRoom.getLongitude()));
+                Marker marker = googleMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
+
+            }
+
+        } else {
+            LatLng _CurrentPos = new LatLng(HomeActivity.CURRENT_LAT, HomeActivity.CURRENT_LONG);
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(_CurrentPos).zoom(12).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            tvNearestDistance.setText(getString(R.string.no_emergency_room));
+        }
     }
 }

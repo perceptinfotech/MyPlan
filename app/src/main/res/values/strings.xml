@@ -306,4 +306,8 @@
     <string name="validate_email">Please enter valid Email Address</string>
     <string name="validate_subject">Please enter Subject for feedback</string>
     <string name="validate_detail_feedback">Please give few words for feedback</string>
+    <string name="distance_nearest">Distance to nearest:</string>
+    <string name="km">KM</string>
+    <string name="nearest_emergency">You are at your nearest emergency room</string>
+    <string name="no_emergency_room">You have no emergency room</string>
 </resources>
