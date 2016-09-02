@@ -35,7 +35,7 @@ public class EmergencyRoomDetailActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText(getResources().getString(R.string.title_activity_add_contact));
+
 
         ivRoomImage = (ImageView) findViewById(R.id.ivRoomImage);
         tvPhoneNo = (TextView) findViewById(R.id.tvPhoneNo);
@@ -48,8 +48,9 @@ public class EmergencyRoomDetailActivity extends AppCompatActivity {
 
         if (getIntent().hasExtra("EMERGENCY_ROOM_DETAIL")) {
 
-            Picasso.with(EmergencyRoomDetailActivity.this).load(emergencyRoom.getImage()).into(ivRoomImage);
             emergencyRoom = (NearestEmergencyRoom) getIntent().getSerializableExtra("EMERGENCY_ROOM_DETAIL");
+            mTitle.setText(emergencyRoom.getRoomName());
+            Picasso.with(EmergencyRoomDetailActivity.this).load(emergencyRoom.getImage()).into(ivRoomImage);
             tvRoomTitle.setText(emergencyRoom.getRoomName());
             tvDistance.setText(new DecimalFormat("0.00").format(Double.parseDouble(
                     emergencyRoom.getDistance())) + getString(R.string.km));
