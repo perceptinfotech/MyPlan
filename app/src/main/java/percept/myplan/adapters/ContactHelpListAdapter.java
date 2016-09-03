@@ -29,31 +29,11 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
     ImageLoader imageLoader;
     private String TYPE;
 
-    public class ContactHelpListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView TV_HELPCONTACT, TV_CONTACTCHAR;
-        public RoundedImageView IMG_CONTACT, IMG_MSG_CONTACT;
-
-        public ContactHelpListHolder(View itemView) {
-            super(itemView);
-            TV_HELPCONTACT = (TextView) itemView.findViewById(R.id.tvContactName);
-            TV_CONTACTCHAR = (TextView) itemView.findViewById(R.id.tvContactChar);
-
-            IMG_CONTACT = (RoundedImageView) itemView.findViewById(R.id.imgContact);
-            IMG_MSG_CONTACT = (RoundedImageView) itemView.findViewById(R.id.imgMsgContact);
-        }
-
-        @Override
-        public void onClick(View view) {
-
-        }
-    }
-
     public ContactHelpListAdapter(List<ContactDisplay> helpContactList, String type) {
         this.LIST_HELPCONTACT = helpContactList;
         imageLoader = AppController.getInstance().getImageLoader();
         this.TYPE = type;
     }
-
 
     @Override
     public ContactHelpListHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -74,15 +54,24 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
         if (TYPE.equals("HELP")) {
             holder.IMG_CONTACT.setVisibility(View.GONE);
             holder.IMG_MSG_CONTACT.setVisibility(View.VISIBLE);
+            holder.imgBgContact.setVisibility(View.VISIBLE);
+            holder.IMG_MSG_CONTACT.setImageResource(R.drawable.img_help);
+            holder.TV_CONTACTCHAR.setVisibility(View.GONE);
+        } else if (TYPE.equals("HELP_LIST")) {
+            holder.IMG_CONTACT.setVisibility(View.GONE);
+            holder.IMG_MSG_CONTACT.setImageResource(R.drawable.img_call);
+            holder.IMG_MSG_CONTACT.setVisibility(View.VISIBLE);
+            holder.imgBgContact.setVisibility(View.VISIBLE);
             holder.TV_CONTACTCHAR.setVisibility(View.GONE);
         } else {
             holder.IMG_CONTACT.setVisibility(View.VISIBLE);
             holder.TV_CONTACTCHAR.setVisibility(View.VISIBLE);
             holder.IMG_MSG_CONTACT.setVisibility(View.GONE);
+            holder.imgBgContact.setVisibility(View.GONE);
         }
 
         if (_contact.getCon_image().equals("")) {
-            if (TYPE.equals("HELP"))
+            if (TYPE.equals("HELP") || TYPE.equals("HELP_LIST"))
                 holder.TV_CONTACTCHAR.setVisibility(View.GONE);
             else
                 holder.TV_CONTACTCHAR.setVisibility(View.VISIBLE);
@@ -106,7 +95,7 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
                 public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
                     if (response.getBitmap() != null) {
                         // load image into imageview
-                        if (TYPE.equals("HELP")) {
+                        if (TYPE.equals("HELP") || TYPE.equals("HELP_LIST")) {
                             holder.IMG_MSG_CONTACT.setImageBitmap(response.getBitmap());
                         } else {
                             holder.IMG_CONTACT.setImageBitmap(response.getBitmap());
@@ -122,5 +111,25 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
     @Override
     public int getItemCount() {
         return this.LIST_HELPCONTACT.size();
+    }
+
+    public class ContactHelpListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public TextView TV_HELPCONTACT, TV_CONTACTCHAR;
+        public RoundedImageView IMG_CONTACT, IMG_MSG_CONTACT,imgBgContact;
+
+        public ContactHelpListHolder(View itemView) {
+            super(itemView);
+            TV_HELPCONTACT = (TextView) itemView.findViewById(R.id.tvContactName);
+            TV_CONTACTCHAR = (TextView) itemView.findViewById(R.id.tvContactChar);
+
+            IMG_CONTACT = (RoundedImageView) itemView.findViewById(R.id.imgContact);
+            IMG_MSG_CONTACT = (RoundedImageView) itemView.findViewById(R.id.imgMsgContact);
+            imgBgContact = (RoundedImageView) itemView.findViewById(R.id.imgBgContact);
+        }
+
+        @Override
+        public void onClick(View view) {
+
+        }
     }
 }

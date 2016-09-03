@@ -185,7 +185,7 @@ public class HelpListActivity extends AppCompatActivity {
                         }
                     }
 
-                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
+                    ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP_LIST");
                     LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
 
                 }

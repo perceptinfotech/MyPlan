@@ -20,11 +20,19 @@
             android:src="@drawable/contact_noimage" />
 
         <percept.myplan.customviews.RoundedImageView
+            android:id="@+id/imgBgContact"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/contact_help_img"
+            android:visibility="gone" />
+
+        <percept.myplan.customviews.RoundedImageView
             android:id="@+id/imgMsgContact"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_margin="5dp"
-            android:src="@drawable/contact_msg"
+            android:src="@drawable/img_help"
             android:visibility="gone" />
 
         <TextView
