@@ -201,7 +201,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 //                if (!view.isEnabled())
-                Toast.makeText(AddContactDetailActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(AddContactDetailActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
             }
         });
 

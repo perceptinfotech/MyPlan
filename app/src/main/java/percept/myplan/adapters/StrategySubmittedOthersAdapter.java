@@ -1,6 +1,5 @@
 package percept.myplan.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import percept.myplan.Activities.StrategySubmittedDetailActivity;
-import percept.myplan.Dialogs.dialogAddStrategy;
+import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.POJO.StrategyDetails;
 import percept.myplan.R;
 
@@ -79,7 +78,7 @@ public class StrategySubmittedOthersAdapter extends RecyclerView.Adapter<Strateg
     }
 
     private void openConfimationDialog(final int position) {
-        dialogAddStrategy _dialog = new dialogAddStrategy(activity) {
+        dialogYesNoOption _dialog = new dialogYesNoOption(activity) {
             @Override
             public void onClickYes() {
                 dismiss();

@@ -310,4 +310,9 @@
     <string name="km">KM</string>
     <string name="nearest_emergency">You are at your nearest emergency room</string>
     <string name="no_emergency_room">You have no emergency room</string>
+    <string name="emergency_room_name">Enter Emergency Room Name</string>
+    <string name="address">Enter Address</string>
+    <string name="postcode">Post Code</string>
+    <string name="add_room">Add Emergency Room</string>
+    <string name="open_google_maps">Will you open the route in Google Maps?</string>
 </resources>

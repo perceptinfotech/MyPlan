@@ -21,7 +21,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import percept.myplan.Dialogs.dialogAddStrategy;
+import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
@@ -116,7 +116,7 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                dialogAddStrategy _dialogDate = new dialogAddStrategy(StrategyDetailsOtherActivity.this) {
+                dialogYesNoOption _dialogDate = new dialogYesNoOption(StrategyDetailsOtherActivity.this) {
                     @Override
                     public void onClickYes() {
                         dismiss();

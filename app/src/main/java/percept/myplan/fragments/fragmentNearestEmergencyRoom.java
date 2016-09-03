@@ -20,7 +20,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,6 +42,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import percept.myplan.Activities.AddEmergencyRoomActivity;
 import percept.myplan.Activities.EmergencyRoomDetailActivity;
 import percept.myplan.Activities.HomeActivity;
 import percept.myplan.Global.Constant;
@@ -66,6 +66,9 @@ public class fragmentNearestEmergencyRoom extends Fragment {
     private ArrayList<NearestEmergencyRoom> listNearestEmergencyRoom = new ArrayList<>();
     private TextView tvNearestDistance;
     private AutoCompleteLocalSearchAdapter adapter;
+
+    private final int REQ_CODE_ADD_ROOM=392;
+
 
     public fragmentNearestEmergencyRoom() {
         // Required empty public constructor
@@ -150,8 +153,8 @@ public class fragmentNearestEmergencyRoom extends Fragment {
 //                googleMap.addMarker(new MarkerOptions().position(_CurrentPos).title("Marker Title").snippet("Marker Description"));
 
                 // For zooming automatically to the location of the marker
-
                 getNearestEmergencyRoom();
+
             }
         });
         return _view;
@@ -161,6 +164,7 @@ public class fragmentNearestEmergencyRoom extends Fragment {
     public void onResume() {
         super.onResume();
         mMapView.onResume();
+
     }
 
     @Override
@@ -193,7 +197,7 @@ public class fragmentNearestEmergencyRoom extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_addContact) {
-            Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show();
+            startActivityForResult(new Intent(getActivity(), AddEmergencyRoomActivity.class),REQ_CODE_ADD_ROOM);
 
             return true;
         }
@@ -275,6 +279,18 @@ public class fragmentNearestEmergencyRoom extends Fragment {
             CameraPosition cameraPosition = new CameraPosition.Builder().target(_CurrentPos).zoom(12).build();
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             tvNearestDistance.setText(getString(R.string.no_emergency_room));
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode)
+        {
+            case REQ_CODE_ADD_ROOM:
+                getNearestEmergencyRoom();
+                break;
+
         }
     }
 }

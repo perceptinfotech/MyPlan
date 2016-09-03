@@ -14,17 +14,17 @@ import percept.myplan.R;
 /**
  * Created by percept on 2/5/15.
  */
-public abstract class dialogAddStrategy extends Dialog implements View.OnClickListener {
+public abstract class dialogYesNoOption extends Dialog implements View.OnClickListener {
     private Context CONTEXT;
     private TextView TV_YES, TV_NO, TV_DIALOGMSG;
     private String dialogMsg;
 
-    public dialogAddStrategy(Context context) {
+    public dialogYesNoOption(Context context) {
         super(context, R.style.DialogTheme);
         this.CONTEXT = context;
     }
 
-    public dialogAddStrategy(Context context, String dialogMsg) {
+    public dialogYesNoOption(Context context, String dialogMsg) {
 
         super(context, R.style.DialogTheme);
         this.CONTEXT = context;
