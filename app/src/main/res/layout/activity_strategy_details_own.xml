@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_strategy_details_own"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/backcolor"
-    android:orientation="vertical"
-    tools:context="percept.myplan.Activities.StrategyDetailsOwnActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/activity_strategy_details_own"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/backcolor"
+                android:orientation="vertical"
+                tools:context="percept.myplan.Activities.StrategyDetailsOwnActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/app_toolbar" />
+        <include layout="@layout/app_toolbar"/>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -41,7 +40,7 @@
                         android:paddingTop="5dp"
                         android:text="@string/title"
                         android:textColor="@android:color/black"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"/>
 
                     <EditText
                         android:id="@+id/edtStrategyTitle"
@@ -54,13 +53,13 @@
                         android:padding="5dp"
                         android:text="@string/title"
                         android:textColor="@color/appBackColor"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"/>
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/sidemenu_seperator" />
+                    android:background="@color/sidemenu_seperator"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -71,7 +70,7 @@
                     android:paddingTop="25dp"
                     android:text="@string/text"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
                 <EditText
                     android:id="@+id/edtStrategyDesc"
@@ -81,9 +80,10 @@
                     android:paddingBottom="25dp"
                     android:paddingLeft="15dp"
                     android:paddingTop="5dp"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
                 <TextView
+                    android:id="@+id/tvAlarms"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="10dp"
@@ -91,12 +91,13 @@
                     android:paddingTop="25dp"
                     android:text="@string/alarms"
                     android:textAllCaps="true"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:visibility="gone"/>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/sidemenu_seperator" />
+                    android:background="@color/sidemenu_seperator"/>
 
 
                 <LinearLayout
@@ -109,34 +110,35 @@
                         android:id="@+id/lstStrategyAlarm"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@android:color/white" />
+                        android:background="@android:color/white"/>
 
-                 <!--   <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="start"
-                        android:paddingBottom="5dp"
-                        android:paddingLeft="15dp"
-                        android:paddingTop="5dp"
-                        android:text="@string/morning"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp" />
+                    <!--   <TextView
+                           android:layout_width="0dp"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="1"
+                           android:gravity="start"
+                           android:paddingBottom="5dp"
+                           android:paddingLeft="15dp"
+                           android:paddingTop="5dp"
+                           android:text="@string/morning"
+                           android:textColor="@android:color/black"
+                           android:textSize="16sp" />
 
-                    <TextView
-                        android:id="@+id/tvAlarmTime"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
-                        android:gravity="end|center_vertical"
-                        android:padding="5dp"
-                        android:text="9:30"
-                        android:textColor="@color/appBackColor"
-                        android:textSize="16sp" />-->
+                       <TextView
+                           android:id="@+id/tvAlarmTime"
+                           android:layout_width="0dp"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="1"
+                           android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
+                           android:gravity="end|center_vertical"
+                           android:padding="5dp"
+                           android:text="9:30"
+                           android:textColor="@color/appBackColor"
+                           android:textSize="16sp" />-->
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tvNetwork"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="10dp"
@@ -144,21 +146,23 @@
                     android:paddingTop="25dp"
                     android:text="@string/network"
                     android:textAllCaps="true"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:visibility="gone"/>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/sidemenu_seperator" />
+                    android:background="@color/sidemenu_seperator"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/lstStrategyContacts"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white" />
+                    android:background="@android:color/white"/>
 
 
                 <TextView
+                    android:id="@+id/tvImages"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="10dp"
@@ -166,12 +170,13 @@
                     android:paddingTop="25dp"
                     android:text="@string/images"
                     android:textAllCaps="true"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:visibility="gone"/>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/sidemenu_seperator" />
+                    android:background="@color/sidemenu_seperator"/>
 
 
                 <android.support.v7.widget.RecyclerView
@@ -180,12 +185,12 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/white"
                     android:orientation="horizontal"
-                    android:paddingLeft="10dp" />
+                    android:paddingLeft="10dp"/>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/sidemenu_seperator" />
+                    android:background="@color/sidemenu_seperator"/>
 
 
                 <Button
@@ -200,7 +205,7 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/btn_register_border"
                     android:text="@string/sharestrategyanno"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"/>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
@@ -212,7 +217,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/view"
         android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <include layout="@layout/lay_internet_lost"/>
 </RelativeLayout>

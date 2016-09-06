@@ -35,7 +35,6 @@ import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.R;
 
-import static percept.myplan.Activities.AddStrategyMusicActivity.CLOSE_PAGE;
 import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
 
 public class MusicListActivity extends AppCompatActivity {
@@ -160,25 +159,25 @@ public class MusicListActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.action_AddStrategyMusic) {
             final int len = thumbnailsselection.length;
 
-            String selectImages = "";
+//            String selectImages = "";
             if (FROM.equals("") || FROM_EDIT) {
                 if (FROM_EDIT) {
                     for (int i = 0; i < len; i++) {
                         if (thumbnailsselection[i]) {
-                            selectImages = selectImages + arrPath[i] + "|";
+//                            selectImages = selectImages + arrPath[i] + "|";
                             StrategyEditActivity.LIST_MUSIC.add(arrPath[i]);
                         }
                     }
-                    CLOSE_PAGE = true;
+                    setResult(RESULT_OK);
                     MusicListActivity.this.finish();
                 } else {
                     for (int i = 0; i < len; i++) {
                         if (thumbnailsselection[i]) {
-                            selectImages = selectImages + arrPath[i] + "|";
+//                            selectImages = selectImages + arrPath[i] + "|";
                             AddStrategyActivity.LIST_MUSIC.add(arrPath[i]);
                         }
                     }
-                    CLOSE_PAGE = true;
+                    setResult(RESULT_OK);
                     MusicListActivity.this.finish();
                 }
             } else {
@@ -241,7 +240,6 @@ public class MusicListActivity extends AppCompatActivity {
                     GET_HOPE_DETAILS = true;
                 }
                 Log.d(":::::: ", response);
-                CLOSE_PAGE = true;
                 MusicListActivity.this.finish();
             }
         });
@@ -385,7 +383,6 @@ public class MusicListActivity extends AppCompatActivity {
             holder.checkbox.setOnClickListener(new View.OnClickListener() {
 
                 public void onClick(View v) {
-                    // TODO Auto-generated method stub
                     CheckBox cb = (CheckBox) v;
                     int id = cb.getId();
                     if (!FROM.equals("")) {
@@ -405,7 +402,6 @@ public class MusicListActivity extends AppCompatActivity {
             holder.imageview.setOnClickListener(new View.OnClickListener() {
 
                 public void onClick(View v) {
-                    // TODO Auto-generated method stub
                     int id = v.getId();
                     Intent intent = new Intent();
                     intent.setAction(Intent.ACTION_VIEW);

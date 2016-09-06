@@ -317,4 +317,6 @@
     <string name="open_google_maps">Will you open the route in Google Maps?</string>
     <string name="max_10_images">You can only select a maximum of 10 images</string>
     <string name="selected_images">Your selected images</string>
+    <string name="selected_music">Your selected music</string>
+    <string name="max_5_music_files">You can only select a maximum of 5 Music files</string>
 </resources>

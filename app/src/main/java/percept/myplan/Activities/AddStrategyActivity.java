@@ -442,7 +442,8 @@ public class AddStrategyActivity extends AppCompatActivity {
                 }
                 break;
             case SET_MUSIC:
-                if (data.hasExtra("LINK")) {
+
+                if (data!=null && data.hasExtra("LINK")) {
                     if (resultCode == Activity.RESULT_OK) {
                         STR_LINK = data.getStringExtra("LINK");
                         Log.d(":::::: ", STR_LINK);

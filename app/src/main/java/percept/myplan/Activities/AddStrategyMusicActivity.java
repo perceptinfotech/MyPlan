@@ -3,11 +3,21 @@ package percept.myplan.Activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.File;
+import java.util.List;
 
 import percept.myplan.Global.Constant;
 import percept.myplan.POJO.HopeDetail;
@@ -15,13 +25,15 @@ import percept.myplan.R;
 
 public class AddStrategyMusicActivity extends AppCompatActivity {
 
-    public static boolean CLOSE_PAGE = false;
-    private final int SET_LINK = 25;
+    private final int SET_LINK = 25, REQ_CODE_MUSIC_LIST = 789;
     private TextView TV_CHOOSEFROMPHONE, TV_CHOOSEFROMLINK;
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
     private String HOPE_ELEMENT_ID = "";
+    private boolean FROM_EDIT = false;
+    private RecyclerView rvMusic;
+    private SelectedMusicListAdapter selectedMusicListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +58,13 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
                 HOPE_ELEMENT_ID = _Detail.getID();
             }
         }
-
+        if (getIntent().hasExtra("FROM_EDIT")) {
+            FROM_EDIT = true;
+        }
+        rvMusic = (RecyclerView) findViewById(R.id.rvMusic);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(AddStrategyMusicActivity.this);
+        rvMusic.setLayoutManager(mLayoutManager);
+        rvMusic.setItemAnimator(new DefaultItemAnimator());
         TV_CHOOSEFROMPHONE = (TextView) findViewById(R.id.tvChooseFromPhone);
         TV_CHOOSEFROMLINK = (TextView) findViewById(R.id.tvChooseFromLink);
         TV_CHOOSEFROMPHONE.setOnClickListener(new View.OnClickListener() {
@@ -70,12 +88,11 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
                     _intent.putExtra("HOPE_ELEMENT_ID", HOPE_ELEMENT_ID);
 
                 }
-
-                if (getIntent().hasExtra("FROM_EDIT")) {
+                if (getIntent().hasExtra("FROM_EDIT"))
                     _intent.putExtra("FROM_EDIT", "TRUE");
-                }
 
-                startActivity(_intent);
+
+                startActivityForResult(_intent, REQ_CODE_MUSIC_LIST);
             }
         });
 
@@ -91,10 +108,7 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (CLOSE_PAGE) {
-            AddStrategyMusicActivity.this.finish();
-            CLOSE_PAGE = false;
-        }
+
     }
 
     @Override
@@ -107,7 +121,24 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
                     returnIntent.putExtra("LINK", data.getStringExtra("LINK"));
                     setResult(Activity.RESULT_OK, returnIntent);
                     AddStrategyMusicActivity.this.finish();
-                }
+                } else AddStrategyMusicActivity.this.finish();
+                break;
+            case REQ_CODE_MUSIC_LIST:
+                if (resultCode == RESULT_OK) {
+                    if (FROM.equals("") || FROM_EDIT) {
+                        if (FROM_EDIT) {
+                            selectedMusicListAdapter = new SelectedMusicListAdapter(StrategyEditActivity.LIST_MUSIC);
+                            rvMusic.setAdapter(selectedMusicListAdapter);
+                        } else {
+                            selectedMusicListAdapter = new SelectedMusicListAdapter(AddStrategyActivity.LIST_MUSIC);
+                            rvMusic.setAdapter(selectedMusicListAdapter);
+                        }
+                    }
+
+                } else AddStrategyMusicActivity.this.finish();
+                break;
+            default:
+                AddStrategyMusicActivity.this.finish();
                 break;
         }
 
@@ -116,9 +147,69 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            AddStrategyMusicActivity.this.finish();
+            if (FROM.equals("") || FROM_EDIT) {
+                if (FROM_EDIT) {
+                    if (StrategyEditActivity.LIST_MUSIC.size() > 10) {
+                        Snackbar.make(getWindow().getDecorView(), getString(R.string.max_5_music_files), Snackbar.LENGTH_LONG).show();
+                    } else AddStrategyMusicActivity.this.finish();
+                } else {
+                    if (AddStrategyActivity.LIST_MUSIC.size() > 10) {
+                        Snackbar.make(getWindow().getDecorView(), getString(R.string.max_5_music_files), Snackbar.LENGTH_LONG).show();
+                    } else AddStrategyMusicActivity.this.finish();
+                }
+
+            } else
+
+                AddStrategyMusicActivity.this.finish();
             return true;
         }
         return false;
+    }
+
+    private class SelectedMusicListAdapter extends RecyclerView.Adapter<SelectedMusicListAdapter.MusicViewHolder> {
+        List<String> listMusic;
+
+        public SelectedMusicListAdapter(List<String> listMusic) {
+            this.listMusic = listMusic;
+        }
+
+        @Override
+        public MusicViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_selected_music, parent, false);
+            return new MusicViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(MusicViewHolder holder, int position) {
+            holder.itemMusicName.setText(new File(listMusic.get(position)).getName());
+            holder.itemRemove.setTag(position);
+        }
+
+        @Override
+        public int getItemCount() {
+            return listMusic.size();
+        }
+
+        class MusicViewHolder extends RecyclerView.ViewHolder {
+            public TextView itemMusicName;
+            public ImageView itemRemove;
+
+            public MusicViewHolder(View itemView) {
+                super(itemView);
+                itemMusicName = (TextView) itemView.findViewById(R.id.itemMusicName);
+                itemRemove = (ImageView) itemView.findViewById(R.id.itemRemove);
+                itemRemove.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int positon = (int) view.getTag();
+                        listMusic.remove(positon);
+                        notifyDataSetChanged();
+                    }
+                });
+            }
+        }
+
+
     }
 }

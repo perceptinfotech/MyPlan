@@ -73,6 +73,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
     private List<Alarm> LIST_ALARM;
+    private TextView tvImages, tvNetwork, tvAlarms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +90,10 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             STRATEGY_ID = getIntent().getExtras().getString("STRATEGY_ID");
             mTitle.setText(getIntent().getExtras().getString("STRATEGY_NAME"));
         }
+        tvAlarms = (TextView) findViewById(R.id.tvAlarms);
+        tvNetwork = (TextView) findViewById(R.id.tvNetwork);
+        tvImages = (TextView) findViewById(R.id.tvImages);
+
         LST_OWNSTRATEGYIMG = (RecyclerView) findViewById(R.id.lstOwnStrategyImage);
         LST_STRATEGYCONTACT = (RecyclerView) findViewById(R.id.lstStrategyContacts);
         LST_STRATEGYALARM = (RecyclerView) findViewById(R.id.lstStrategyAlarm);
@@ -257,16 +262,20 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    ADAPTER = new StrategyContactSimpleAdapter(LIST_STRATEGYCONTACT);
-                    LST_STRATEGYCONTACT.setAdapter(ADAPTER);
 
+                    if (LIST_STRATEGYCONTACT != null && LIST_STRATEGYCONTACT.size() > 0) {
+                        ADAPTER = new StrategyContactSimpleAdapter(LIST_STRATEGYCONTACT);
+                        LST_STRATEGYCONTACT.setAdapter(ADAPTER);
+                        tvNetwork.setVisibility(View.VISIBLE);
+                    } else tvNetwork.setVisibility(View.GONE);
                     EDT_STRATEGYDESC.setText(clsStrategy.getDescription());
                     LIST_ALARM = MAP_ALARM.get(STRATEGY_ID);
 
                     if (LIST_ALARM != null && LIST_ALARM.size() > 0) {
                         ADAPTER_ALARM = new StrategyAlarmAdapter(LIST_ALARM);
                         LST_STRATEGYALARM.setAdapter(ADAPTER_ALARM);
-                    }
+                        tvAlarms.setVisibility(View.VISIBLE);
+                    } else tvAlarms.setVisibility(View.GONE);
                     if (!TextUtils.isEmpty(clsStrategy.getImage())) {
                         String _images = clsStrategy.getImage();
                         String[] _arrImg = _images.split(",");
@@ -278,8 +287,9 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                         if (LIST_IMAGE != null && LIST_IMAGE.size() > 0) {
                             ADAPTER_IMG = new ImageAdapter(StrategyDetailsOwnActivity.this, LIST_IMAGE);
                             LST_OWNSTRATEGYIMG.setAdapter(ADAPTER_IMG);
+                            tvAlarms.setVisibility(View.VISIBLE);
                         }
-                    }
+                    } else tvImages.setVisibility(View.GONE);
                     PB.setVisibility(View.GONE);
                 }
             });

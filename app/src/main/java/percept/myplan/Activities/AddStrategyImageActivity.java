@@ -98,7 +98,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         TV_CHOOSEEXISTING = (TextView) findViewById(R.id.tvChooseExisting);
         TV_TAKENEW = (TextView) findViewById(R.id.tvTakeNew);
         PB = (ProgressBar) findViewById(R.id.pbAddImage);
-        tvSelectedText= (TextView) findViewById(R.id.tvSelectedText);
+        tvSelectedText = (TextView) findViewById(R.id.tvSelectedText);
 
         rvPhotos = (RecyclerView) findViewById(R.id.rvPhotos);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(AddStrategyImageActivity.this, 3);
@@ -202,10 +202,11 @@ public class AddStrategyImageActivity extends AppCompatActivity {
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(AddStrategyImageActivity.this)
                 .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton(getString(R.string.ok), okListener)
+                .setNegativeButton(getString(R.string.cancel), null)
                 .create()
                 .show();
+
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -222,7 +223,20 @@ public class AddStrategyImageActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            AddStrategyImageActivity.this.finish();
+            if (FROM.equals("") || FROM_EDIT) {
+                if (FROM_EDIT) {
+                    if (StrategyEditActivity.LIST_IMG.size() > 10) {
+                        Snackbar.make(getWindow().getDecorView(), getString(R.string.max_10_images), Snackbar.LENGTH_LONG).show();
+                    } else AddStrategyImageActivity.this.finish();
+                } else {
+                    if (AddStrategyActivity.LIST_IMG.size() > 10) {
+                        Snackbar.make(getWindow().getDecorView(), getString(R.string.max_10_images), Snackbar.LENGTH_LONG).show();
+                    } else AddStrategyImageActivity.this.finish();
+                }
+
+            } else
+
+                AddStrategyImageActivity.this.finish();
             return true;
         }
         return false;
