@@ -71,7 +71,7 @@ public class HopeAdapter extends RecyclerView.Adapter<HopeAdapter.MyViewHolder> 
         } else {
             holder.IMG_ADDHOPE.setVisibility(View.GONE);
             holder.TV_TITLE.setText(album.getTITLE());
-//            Picasso.with(CONTEXT).load(album.getIMG_COVER()).into(holder.IMG_COVER);
+//            Picasso.with(CONTEXT).load(album.getIMG_COVER()).into(holder.ivSelectedImg);
             imageLoader.get(album.getTHUMB_COVER(), new ImageLoader.ImageListener() {
 
                 @Override

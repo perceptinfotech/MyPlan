@@ -56,16 +56,16 @@ import percept.myplan.adapters.StrategyContactSimpleAdapter;
 public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
 
+    public static List<StrategyContact> LIST_STRATEGYCONTACT;
+    Map<String, String> params;
     private RecyclerView LST_OWNSTRATEGYIMG;
     private List<String> LIST_IMAGE;
     private ImageAdapter ADAPTER_IMG;
-    Map<String, String> params;
     private String STRATEGY_ID;
     private Utils UTILS;
     private HashMap<String, List<Alarm>> MAP_ALARM;
     private StrategyDetails clsStrategy;
     private EditText EDT_STRATEGYTITLE, EDT_STRATEGYDESC;
-    public static List<StrategyContact> LIST_STRATEGYCONTACT;
     private StrategyContactSimpleAdapter ADAPTER;
     private StrategyAlarmAdapter ADAPTER_ALARM;
     private RecyclerView LST_STRATEGYCONTACT, LST_STRATEGYALARM;
@@ -205,7 +205,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             @Override
             public void onClick(View view, int position) {
                 Log.d("::::::::", LIST_IMAGE.get(position));
-                dialogStrategyImg _dialog = new dialogStrategyImg(StrategyDetailsOwnActivity.this, LIST_IMAGE.get(position));
+                dialogStrategyImg _dialog = new dialogStrategyImg(StrategyDetailsOwnActivity.this, LIST_IMAGE);
                 _dialog.setCanceledOnTouchOutside(true);
                 _dialog.show();
 
@@ -267,18 +267,20 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                         ADAPTER_ALARM = new StrategyAlarmAdapter(LIST_ALARM);
                         LST_STRATEGYALARM.setAdapter(ADAPTER_ALARM);
                     }
+                    if (!TextUtils.isEmpty(clsStrategy.getImage())) {
+                        String _images = clsStrategy.getImage();
+                        String[] _arrImg = _images.split(",");
+                        for (int i = 0; i < _arrImg.length; i++) {
+                            LIST_IMAGE.add(_arrImg[i]);
+                        }
 
-                    String _images = clsStrategy.getImage();
-                    String[] _arrImg = _images.split(",");
-                    for (int i = 0; i < _arrImg.length; i++) {
-                        LIST_IMAGE.add(_arrImg[i]);
+
+                        if (LIST_IMAGE != null && LIST_IMAGE.size() > 0) {
+                            ADAPTER_IMG = new ImageAdapter(StrategyDetailsOwnActivity.this, LIST_IMAGE);
+                            LST_OWNSTRATEGYIMG.setAdapter(ADAPTER_IMG);
+                        }
                     }
                     PB.setVisibility(View.GONE);
-
-                    if (LIST_IMAGE != null && LIST_IMAGE.size() > 0) {
-                        ADAPTER_IMG = new ImageAdapter(StrategyDetailsOwnActivity.this, LIST_IMAGE);
-                        LST_OWNSTRATEGYIMG.setAdapter(ADAPTER_IMG);
-                    }
                 }
             });
         } catch (Exception e) {
@@ -321,6 +323,48 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 //            Toast.makeText(StrategyDetailsOwnActivity.this, "Edit Strategy called", Toast.LENGTH_SHORT).show();
         }
         return false;
+    }
+
+    private void shareStrategy() {
+        PB.setVisibility(View.VISIBLE);
+        HashMap<String, String> params = new HashMap<>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put("id", STRATEGY_ID);
+        try {
+            new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this,
+                    General.PHPServices.SHARE_STRATEGIES, params, true, false, true, new VolleyResponseListener() {
+
+                        @Override
+                        public void onError(VolleyError message) {
+                            PB.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            PB.setVisibility(View.GONE);
+                            Toast.makeText(StrategyDetailsOwnActivity.this, getString(R.string.share_strategy_success), Toast.LENGTH_LONG).show();
+                            Log.d("::::::share:::::", response.toString());
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            shareStrategy();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+
     }
 
     public interface ClickListener {
@@ -370,47 +414,5 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
 
         }
-    }
-
-    private void shareStrategy() {
-        PB.setVisibility(View.VISIBLE);
-        HashMap<String, String> params = new HashMap<>();
-        params.put("sid", Constant.SID);
-        params.put("sname", Constant.SNAME);
-        params.put("id", STRATEGY_ID);
-        try {
-            new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this,
-                    General.PHPServices.SHARE_STRATEGIES, params, true, false, true, new VolleyResponseListener() {
-
-                        @Override
-                        public void onError(VolleyError message) {
-                            PB.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            PB.setVisibility(View.GONE);
-                            Toast.makeText(StrategyDetailsOwnActivity.this, getString(R.string.share_strategy_success), Toast.LENGTH_LONG).show();
-                            Log.d("::::::share:::::", response.toString());
-                        }
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
-            PB.setVisibility(View.GONE);
-            Snackbar snackbar = Snackbar
-                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
-                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            shareStrategy();
-                        }
-                    });
-            snackbar.setActionTextColor(Color.RED);
-            View sbView = snackbar.getView();
-            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-            textView.setTextColor(Color.YELLOW);
-            snackbar.show();
-        }
-
     }
 }

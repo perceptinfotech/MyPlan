@@ -8,12 +8,15 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -39,15 +42,18 @@ import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
+import percept.myplan.adapters.ImageDeleteAdapter;
 
 import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
 
 
 public class AddStrategyImageActivity extends AppCompatActivity {
 
-    private TextView TV_CHOOSEEXISTING, TV_TAKENEW;
-    private static Uri IMG_URI;
     private static final int REQ_TAKE_PICTURE = 33;
+    private final static int MY_PERMISSIONS_REQUEST = 22;
+    private static Uri IMG_URI;
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
+    private TextView TV_CHOOSEEXISTING, TV_TAKENEW;
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
@@ -56,9 +62,10 @@ public class AddStrategyImageActivity extends AppCompatActivity {
     private ProgressBar PB;
     private Utils UTILS;
     private CoordinatorLayout REL_COORDINATE;
-
-    private final static int MY_PERMISSIONS_REQUEST = 22;
+    private RecyclerView rvPhotos;
     private boolean HAS_PERMISSION = true;
+    private ImageDeleteAdapter imageAdapter;
+    private TextView tvSelectedText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,16 +91,24 @@ public class AddStrategyImageActivity extends AppCompatActivity {
             }
         }
 
-        if (getIntent().hasExtra("FROM_EDIT")) {
-            FROM_EDIT = true;
-        }
+
         UTILS = new Utils(AddStrategyImageActivity.this);
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         TV_CHOOSEEXISTING = (TextView) findViewById(R.id.tvChooseExisting);
         TV_TAKENEW = (TextView) findViewById(R.id.tvTakeNew);
         PB = (ProgressBar) findViewById(R.id.pbAddImage);
+        tvSelectedText= (TextView) findViewById(R.id.tvSelectedText);
 
+        rvPhotos = (RecyclerView) findViewById(R.id.rvPhotos);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(AddStrategyImageActivity.this, 3);
+        rvPhotos.setLayoutManager(mLayoutManager);
+        rvPhotos.setItemAnimator(new DefaultItemAnimator());
+
+        if (getIntent().hasExtra("FROM_EDIT")) {
+            FROM_EDIT = true;
+            tvSelectedText.setVisibility(View.GONE);
+        }
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             insertDummyPermissionWrapper();
         }
@@ -145,8 +160,6 @@ public class AddStrategyImageActivity extends AppCompatActivity {
             }
         });
     }
-
-    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
     private void insertDummyPermissionWrapper() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -256,13 +269,20 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         if (requestCode == PickConfig.PICK_REQUEST_CODE) {
             if (FROM.equals("") || FROM_EDIT) {
                 if (FROM_EDIT) {
-                    StrategyEditActivity.LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
-                    AddStrategyImageActivity.this.finish();
+                    StrategyEditActivity.LIST_IMG.addAll(data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST));
+//                    AddStrategyImageActivity.this.finish();
+                    tvSelectedText.setVisibility(View.VISIBLE);
+                    imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, StrategyEditActivity.LIST_IMG);
+                    rvPhotos.setAdapter(imageAdapter);
                 } else {
-                    AddStrategyActivity.LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
-                    AddStrategyImageActivity.this.finish();
+                    AddStrategyActivity.LIST_IMG.addAll(data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST));
+//                    AddStrategyImageActivity.this.finish();
+                    imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, AddStrategyActivity.LIST_IMG);
+                    rvPhotos.setAdapter(imageAdapter);
                 }
 
+
+                imageAdapter.notifyDataSetChanged();
             } else {
                 List<String> _LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
                 if (_LIST_IMG.size() > 0) {
@@ -305,11 +325,17 @@ public class AddStrategyImageActivity extends AppCompatActivity {
                 if (FROM.equals("") || FROM_EDIT) {
                     if (FROM_EDIT) {
                         StrategyEditActivity.LIST_IMG.add(_Path);
-                        AddStrategyImageActivity.this.finish();
+                        tvSelectedText.setVisibility(View.VISIBLE);
+                        imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, StrategyEditActivity.LIST_IMG);
+                        rvPhotos.setAdapter(imageAdapter);
+//                        AddStrategyImageActivity.this.finish();
                     } else {
                         AddStrategyActivity.LIST_IMG.add(_Path);
-                        AddStrategyImageActivity.this.finish();
+                        imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, AddStrategyActivity.LIST_IMG);
+                        rvPhotos.setAdapter(imageAdapter);
+//                        AddStrategyImageActivity.this.finish();
                     }
+                    imageAdapter.notifyDataSetChanged();
                 } else {
                     addHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _Path, HOPE_ELEMENT_ID, "image");
                 }

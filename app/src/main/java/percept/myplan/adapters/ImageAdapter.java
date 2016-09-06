@@ -51,7 +51,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
 
-//        Picasso.with(CONTEXT).load(LST_IMG.get(position)).into(holder.IMG_COVER);
+//        Picasso.with(CONTEXT).load(LST_IMG.get(position)).into(holder.ivSelectedImg);
 
 
         imageLoader.get(LST_IMG.get(position), new ImageLoader.ImageListener() {

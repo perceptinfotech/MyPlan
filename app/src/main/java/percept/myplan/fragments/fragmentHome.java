@@ -184,7 +184,6 @@ public class fragmentHome extends Fragment {
         LAY_HELP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Toast.makeText(getActivity(), "Home Called", Toast.LENGTH_SHORT).show();
                 Intent _intent = new Intent(getActivity(), HelpListActivity.class);
                 startActivity(_intent);
             }

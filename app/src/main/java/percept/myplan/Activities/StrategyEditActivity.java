@@ -46,17 +46,16 @@ import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
 
 public class StrategyEditActivity extends AppCompatActivity {
 
-    private EditText EDT_TITLE, EDT_TEXT;
-    private TextView TV_ALARM, TV_IMAGES, TV_LINKS, TV_NETWORK, TV_MUSIC;
-
-    public static List<Alarm> LIST_ALARM;
-    public static List<String> LIST_IMG;
-    public static List<String> LIST_MUSIC;
+    public static List<Alarm> LIST_ALARM = new ArrayList<>();
+    public static List<String> LIST_IMG = new ArrayList<>();
+    public static List<String> LIST_MUSIC = new ArrayList<>();
     private final int SET_ALARM = 15;
     private final int SET_CONTACT = 18;
     private final int SET_IMAGE = 21;
     private final int SET_MUSIC = 24;
     private final int SET_LINK = 25;
+    private EditText EDT_TITLE, EDT_TEXT;
+    private TextView TV_ALARM, TV_IMAGES, TV_LINKS, TV_NETWORK, TV_MUSIC;
     private String STR_LINK = "", STR_CONTACTID = "";
     private HashMap<String, List<Alarm>> MAP_ALARM;
     private Utils UTILS;
