@@ -50,6 +50,7 @@ import percept.myplan.POJO.StrategyContact;
 import percept.myplan.POJO.StrategyDetails;
 import percept.myplan.R;
 import percept.myplan.adapters.ImageAdapter;
+import percept.myplan.adapters.ImageDeleteAdapter;
 import percept.myplan.adapters.StrategyAlarmAdapter;
 import percept.myplan.adapters.StrategyContactSimpleAdapter;
 
@@ -206,21 +207,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             }
         }));
 
-        LST_OWNSTRATEGYIMG.addOnItemTouchListener(new RecyclerTouchListener(StrategyDetailsOwnActivity.this, LST_STRATEGYCONTACT, new ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                Log.d("::::::::", LIST_IMAGE.get(position));
-                dialogStrategyImg _dialog = new dialogStrategyImg(StrategyDetailsOwnActivity.this, LIST_IMAGE);
-                _dialog.setCanceledOnTouchOutside(true);
-                _dialog.show();
 
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
     }
 
     @Override
@@ -375,6 +362,48 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             snackbar.show();
         }
 
+    }
+
+    public void deleteImages(final int position) {
+        PB.setVisibility(View.VISIBLE);
+        HashMap<String, String> params = new HashMap<>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put("id", STRATEGY_ID);
+        params.put("images", LIST_IMAGE.get(position).substring(LIST_IMAGE.get(position).lastIndexOf('/') + 1));
+        try {
+            new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this,
+                    General.PHPServices.DELETE_STRATEGY_IMAGES, params, true, false, true, new VolleyResponseListener() {
+
+                        @Override
+                        public void onError(VolleyError message) {
+                            PB.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            PB.setVisibility(View.GONE);
+                            LIST_IMAGE.remove(position);
+                            ADAPTER_IMG.notifyDataSetChanged();
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteImages(position);
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
     }
 
     public interface ClickListener {

@@ -1,6 +1,5 @@
 package percept.myplan.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,9 @@ import com.android.volley.toolbox.ImageLoader;
 
 import java.util.List;
 
+import percept.myplan.Activities.StrategyDetailsOwnActivity;
 import percept.myplan.AppController;
+import percept.myplan.Dialogs.dialogStrategyImg;
 import percept.myplan.R;
 
 /**
@@ -20,22 +21,12 @@ import percept.myplan.R;
  */
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder> {
 
-    private Context CONTEXT;
-    private List<String> LST_IMG;
     ImageLoader imageLoader;
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public ImageView IMG_COVER;
+    private StrategyDetailsOwnActivity activity;
+    private List<String> LST_IMG;
 
-        public MyViewHolder(View view) {
-            super(view);
-            IMG_COVER = (ImageView) view.findViewById(R.id.imgImg);
-
-        }
-    }
-
-
-    public ImageAdapter(Context mContext, List<String> hopeList) {
-        this.CONTEXT = mContext;
+    public ImageAdapter(StrategyDetailsOwnActivity mContext, List<String> hopeList) {
+        this.activity = mContext;
         this.LST_IMG = hopeList;
         imageLoader = AppController.getInstance().getImageLoader();
     }
@@ -51,9 +42,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
 
-//        Picasso.with(CONTEXT).load(LST_IMG.get(position)).into(holder.ivSelectedImg);
+//        Picasso.with(activity).load(LST_IMG.get(position)).into(holder.ivSelectedImg);
 
-
+        holder.ivDelete.setTag(position);
         imageLoader.get(LST_IMG.get(position), new ImageLoader.ImageListener() {
 
             @Override
@@ -74,5 +65,31 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
     @Override
     public int getItemCount() {
         return LST_IMG.size();
+    }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        public ImageView IMG_COVER, ivDelete;
+
+        public MyViewHolder(View view) {
+            super(view);
+            IMG_COVER = (ImageView) view.findViewById(R.id.imgImg);
+            ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
+            ivDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    activity.deleteImages((Integer) view.getTag());
+                }
+            });
+            IMG_COVER.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialogStrategyImg _dialog = new dialogStrategyImg(activity, LST_IMG);
+                    _dialog.setCanceledOnTouchOutside(true);
+                    _dialog.show();
+                }
+            });
+
+
+        }
     }
 }

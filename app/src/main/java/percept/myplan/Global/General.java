@@ -128,6 +128,8 @@ public class General {
             return ".getEmergencyrooms";
         } else if (serviceName == PHPServices.SAVE_EMERGENCY_ROOM) {
             return ".saveEmergencyroom";
+        } else if (serviceName == PHPServices.DELETE_STRATEGY_IMAGES) {
+            return ".DeleteStrategyimages";
         }
         return "";
     }
@@ -231,6 +233,6 @@ public class General {
         GET_SIDACALENDER, SUBMIT_SIDATEST, SHARE_STRATEGIES,
         SAVE_HOPE_MEDIA, SAVE_STRATEGY, SAVE_CONTACT, SAVE_CONTACTS,
         GET_USER_STRATEGY, PROFILE, DELETE_HOPE_BOX, FORGOT_PASSWORD,
-        GET_SETTINGS, SAVE_SETTINGS, GET_MESSAGE, SAVE_MESSAGE, GET_HELP_INFO, GIVE_FEEDBACK, GET_EMERGENCY_ROOMS, SAVE_EMERGENCY_ROOM, DELETE_HOPE_MEDIA
+        GET_SETTINGS, SAVE_SETTINGS, GET_MESSAGE, SAVE_MESSAGE, GET_HELP_INFO, GIVE_FEEDBACK, GET_EMERGENCY_ROOMS, SAVE_EMERGENCY_ROOM, DELETE_STRATEGY_IMAGES, DELETE_HOPE_MEDIA
     }
 }
