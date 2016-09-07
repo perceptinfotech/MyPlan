@@ -12,6 +12,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 
 import percept.myplan.Activities.HomeActivity;
@@ -26,10 +27,10 @@ import percept.myplan.R;
  */
 public class MyIntentService extends IntentService {
 
+    private static int NOTIFICATION_ID = 1;
+    Notification NOTI;
     private NotificationManager NOTI_MANAGER;
     private PendingIntent PENDING_INTENT;
-    Notification NOTI;
-    private static int NOTIFICATION_ID = 1;
 
     public MyIntentService() {
         super("MyIntentService");
@@ -40,8 +41,11 @@ public class MyIntentService extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             Bundle _bundle = intent.getExtras();
-            String _URI = _bundle .getString("ALARM_SOUND");
-            Uri _uri = Uri.parse(_URI);
+            String _URI = _bundle.getString("ALARM_SOUND");
+            Uri _uri;
+            if (!TextUtils.isEmpty(_URI))
+                _uri = Uri.parse(_URI);
+            else _uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
 
             Context context = this.getApplicationContext();
@@ -54,8 +58,8 @@ public class MyIntentService extends IntentService {
             PENDING_INTENT = PendingIntent.getActivity(context, 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             Resources res = this.getResources();
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-            Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+//            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+//            Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
             NOTI = new NotificationCompat.Builder(this)
                     .setContentIntent(PENDING_INTENT)
                     .setSmallIcon(R.mipmap.ic_launcher)
@@ -73,6 +77,7 @@ public class MyIntentService extends IntentService {
             NOTI.ledOffMS = 1000;
             NOTI_MANAGER = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             NOTI_MANAGER.notify(NOTIFICATION_ID, NOTI);
+
             Log.i("notif", "Notifications sent.");
 
         }

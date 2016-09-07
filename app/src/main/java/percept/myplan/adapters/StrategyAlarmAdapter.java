@@ -6,8 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import percept.myplan.POJO.Alarm;
 import percept.myplan.R;
@@ -20,17 +21,6 @@ public class StrategyAlarmAdapter extends RecyclerView.Adapter<StrategyAlarmAdap
 
 
     public List<Alarm> LIST_SYMPTOMSTRATEGY;
-
-    public class SymptomHolder extends RecyclerView.ViewHolder {
-        public TextView TV_STRATEGYALARMNAME;
-        public TextView TV_STRATEGYALARMTIME;
-
-        public SymptomHolder(View itemView) {
-            super(itemView);
-            TV_STRATEGYALARMNAME = (TextView) itemView.findViewById(R.id.tvAlarmNameStrategy);
-            TV_STRATEGYALARMTIME= (TextView) itemView.findViewById(R.id.tvAlarmTimeStrategy);
-        }
-    }
 
     public StrategyAlarmAdapter(List<Alarm> quickMessageList) {
         this.LIST_SYMPTOMSTRATEGY = quickMessageList;
@@ -46,9 +36,9 @@ public class StrategyAlarmAdapter extends RecyclerView.Adapter<StrategyAlarmAdap
     @Override
     public void onBindViewHolder(SymptomHolder holder, int position) {
         Alarm _symptom = LIST_SYMPTOMSTRATEGY.get(position);
-        String hm = String.format("%02d:%02d", TimeUnit.MILLISECONDS.toHours(Long.parseLong(_symptom.getAlarmTime())),
-                TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(_symptom.getAlarmTime())) % TimeUnit.HOURS.toMinutes(1));
-
+//        String hm = String.format("%02d:%02d", TimeUnit.MILLISECONDS.toHours(Long.parseLong(_symptom.getAlarmTime())),
+//                TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(_symptom.getAlarmTime())) % TimeUnit.HOURS.toMinutes(1));
+        String hm = new SimpleDateFormat("HH:mm").format(new Date(Long.parseLong(_symptom.getAlarmTime())));
         holder.TV_STRATEGYALARMNAME.setText(_symptom.getAlarmName());
         holder.TV_STRATEGYALARMTIME.setText(hm);
     }
@@ -56,5 +46,16 @@ public class StrategyAlarmAdapter extends RecyclerView.Adapter<StrategyAlarmAdap
     @Override
     public int getItemCount() {
         return this.LIST_SYMPTOMSTRATEGY.size();
+    }
+
+    public class SymptomHolder extends RecyclerView.ViewHolder {
+        public TextView TV_STRATEGYALARMNAME;
+        public TextView TV_STRATEGYALARMTIME;
+
+        public SymptomHolder(View itemView) {
+            super(itemView);
+            TV_STRATEGYALARMNAME = (TextView) itemView.findViewById(R.id.tvAlarmNameStrategy);
+            TV_STRATEGYALARMTIME = (TextView) itemView.findViewById(R.id.tvAlarmTimeStrategy);
+        }
     }
 }

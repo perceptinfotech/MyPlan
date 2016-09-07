@@ -1,6 +1,8 @@
 package percept.myplan.Activities;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,15 +21,64 @@ import android.widget.TextView;
 import percept.myplan.POJO.Alarm;
 import percept.myplan.R;
 import percept.myplan.adapters.AlarmAdapter;
+import percept.myplan.receivers.AlarmReceiver;
 
+
+interface ClickListener {
+    void onClick(View view, int position);
+
+    void onLongClick(View view, int position);
+}
+
+class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+
+    private GestureDetector gestureDetector;
+    private ClickListener clickListener;
+
+    public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ClickListener clickListener) {
+        this.clickListener = clickListener;
+        gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                if (child != null && clickListener != null) {
+                    clickListener.onLongClick(child, recyclerView.getChildPosition(child));
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+
+        View child = rv.findChildViewUnder(e.getX(), e.getY());
+        if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
+            clickListener.onClick(child, rv.getChildPosition(child));
+        }
+        return false;
+    }
+
+    @Override
+    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+    }
+
+    @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+    }
+}
 
 public class AlarmListActivity extends AppCompatActivity {
 
-    private RecyclerView LST_STRATEGYALARM;
-    private AlarmAdapter ADAPTER;
-
     private static final int ADDALARM = 9;
     private static final int EDITALARM = 34;
+    private RecyclerView LST_STRATEGYALARM;
+    private AlarmAdapter ADAPTER;
     private String STR_ALARM;
     private boolean FROM_EDIT = false;
     private int POSITION = 0;
@@ -61,32 +112,27 @@ public class AlarmListActivity extends AppCompatActivity {
             LST_STRATEGYALARM.setAdapter(ADAPTER);
         }
 //        ADAPTER = new AlarmAdapter(AlarmListActivity.this,)
-        LST_STRATEGYALARM.addOnItemTouchListener(new RecyclerTouchListener(AlarmListActivity.this, LST_STRATEGYALARM, new ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                Alarm _objAlarm;
-                if (FROM_EDIT) {
-                    _objAlarm = StrategyEditActivity.LIST_ALARM.get(position);
-                } else {
-                    _objAlarm = AddStrategyActivity.LIST_ALARM.get(position);
-                }
-                Intent _intent = new Intent(AlarmListActivity.this, AddAlarmActivity.class);
-                _intent.putExtra("EDIT_ALARM", "EDIT_ALARM");
-                _intent.putExtra("ALARM_NAME", _objAlarm.getAlarmName());
-                _intent.putExtra("ALARM_REPEAT", _objAlarm.getAlarmRepeat());
-                _intent.putExtra("ALARM_TIME", _objAlarm.getAlarmTime());
-                _intent.putExtra("ALARM_TUNE", _objAlarm.getAlarmTuneName());
-                _intent.putExtra("ALARM_STATUS", String.valueOf(_objAlarm.isStatus()));
-                POSITION = position;
-                startActivityForResult(_intent, ADDALARM);
-            }
 
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
     }
+
+    public void editAlarm(int position) {
+        Alarm _objAlarm;
+        if (FROM_EDIT) {
+            _objAlarm = StrategyEditActivity.LIST_ALARM.get(position);
+        } else {
+            _objAlarm = AddStrategyActivity.LIST_ALARM.get(position);
+        }
+        Intent _intent = new Intent(AlarmListActivity.this, AddAlarmActivity.class);
+        _intent.putExtra("EDIT_ALARM", "EDIT_ALARM");
+        _intent.putExtra("ALARM_NAME", _objAlarm.getAlarmName());
+        _intent.putExtra("ALARM_REPEAT", _objAlarm.getAlarmRepeat());
+        _intent.putExtra("ALARM_TIME", _objAlarm.getAlarmTime());
+        _intent.putExtra("ALARM_TUNE", _objAlarm.getAlarmTuneName());
+        _intent.putExtra("ALARM_STATUS", String.valueOf(_objAlarm.isStatus()));
+        POSITION = position;
+        startActivityForResult(_intent, ADDALARM);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -154,6 +200,17 @@ public class AlarmListActivity extends AppCompatActivity {
                         ADAPTER = new AlarmAdapter(AlarmListActivity.this, AddStrategyActivity.LIST_ALARM);
                     }
                 }
+
+//                Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putString("ALARM_SOUND", data.getStringExtra("ALARM_SOUND"));
+//                intent.putExtras(bundle);
+//                PendingIntent pendingIntent = PendingIntent.getBroadcast(
+//                        getBaseContext(), 11, intent, 0);
+//                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Long.parseLong(data.getStringExtra("ALARM_TIME")), AlarmManager.INTERVAL_DAY,
+//                        pendingIntent);
+
                 LST_STRATEGYALARM.setAdapter(ADAPTER);
 
 
@@ -164,55 +221,6 @@ public class AlarmListActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
             }
-        }
-    }
-
-    public interface ClickListener {
-        void onClick(View view, int position);
-
-        void onLongClick(View view, int position);
-    }
-
-    public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
-
-        private GestureDetector gestureDetector;
-        private ClickListener clickListener;
-
-        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ClickListener clickListener) {
-            this.clickListener = clickListener;
-            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
-                @Override
-                public boolean onSingleTapUp(MotionEvent e) {
-                    return true;
-                }
-
-                @Override
-                public void onLongPress(MotionEvent e) {
-                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
-                    if (child != null && clickListener != null) {
-                        clickListener.onLongClick(child, recyclerView.getChildPosition(child));
-                    }
-                }
-            });
-        }
-
-        @Override
-        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-
-            View child = rv.findChildViewUnder(e.getX(), e.getY());
-            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
-                clickListener.onClick(child, rv.getChildPosition(child));
-            }
-            return false;
-        }
-
-        @Override
-        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-        }
-
-        @Override
-        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
         }
     }
 

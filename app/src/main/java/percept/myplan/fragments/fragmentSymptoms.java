@@ -53,6 +53,7 @@ import java.util.Map;
 import percept.myplan.Activities.AddNewSymptomActivity;
 import percept.myplan.Activities.DangerSignalsActivity;
 import percept.myplan.Activities.SymptomDetailsActivity;
+import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
@@ -401,15 +402,59 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
-
+                final int position = viewHolder.getAdapterPosition();
 //                if (direction == ItemTouchHelper.LEFT){
 //                    adapter.removeItem(position);
 //                } else {
-                LIST_SYMPTOM.remove(position);
-                ADAPTER.notifyDataSetChanged();
-               // Snackbar.make(getView(), "Swipe Right", Snackbar.LENGTH_LONG).show();
+                // Snackbar.make(getView(), "Swipe Right", Snackbar.LENGTH_LONG).show();
 //                }
+                dialogYesNoOption _dialog = new dialogYesNoOption(getActivity(), getString(R.string.delete_symptom)) {
+
+                    @Override
+                    public void onClickYes() {
+                        HashMap<String, String> params = new HashMap<>();
+                        params.put("sid",Constant.SID);
+                        params.put("sname",Constant.SNAME);
+                        params.put("id",LIST_SYMPTOM.get(position).getId());
+
+                        try {
+                            PB.setVisibility(View.VISIBLE);
+                            dismiss();
+                            new General().getJSONContentFromInternetService(getActivity(),
+                                    General.PHPServices.DELETE_SYMPTOM, params,
+                                    true, false, true, new VolleyResponseListener() {
+
+                                        @Override
+                                        public void onError(VolleyError message) {
+                                            PB.setVisibility(View.GONE);
+                                            ADAPTER.notifyDataSetChanged();
+                                        }
+
+                                        @Override
+                                        public void onResponse(JSONObject response) {
+                                            PB.setVisibility(View.GONE);
+                                            LIST_SYMPTOM.remove(position);
+                                            ADAPTER.notifyDataSetChanged();
+                                        }
+                                    });
+                        } catch (Exception e) {
+                            PB.setVisibility(View.GONE);
+                            e.printStackTrace();
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onClickNo() {
+                        ADAPTER.notifyDataSetChanged();
+                        dismiss();
+                    }
+                };
+                _dialog.setCancelable(false);
+                _dialog.setCanceledOnTouchOutside(false);
+                _dialog.show();
+
             }
 
             @Override
@@ -430,7 +475,7 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
 //                        RectF icon_dest = new RectF((float) itemView.getLeft() + width ,(float) itemView.getTop() + width,(float) itemView.getLeft()+ 2*width,(float)itemView.getBottom() - width);
 //                        c.drawBitmap(icon,null,icon_dest,p);
 //                    } else {
-//                    p.setColor(Color.parseColor("#D32F2F"));
+                    p.setColor(getResources().getColor(android.R.color.white));
                     RectF background = new RectF((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom());
                     c.drawRect(background, p);
                     icon = BitmapFactory.decodeResource(getResources(), R.drawable.icon_delete);

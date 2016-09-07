@@ -122,23 +122,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
         UTILS = new Utils(StrategyDetailsOwnActivity.this);
 
-        String _strAlarm = UTILS.getPreference("ALARMLIST");
-        try {
-            if (!TextUtils.isEmpty(_strAlarm)) {
-                Type listType = new TypeToken<HashMap<String, List<Alarm>>>() {
 
-                }.getType();
-                try {
-                    MAP_ALARM = new Gson().fromJson(_strAlarm, listType);
-                } catch (JsonSyntaxException ex) {
-                    MAP_ALARM = new HashMap<>();
-                }
-            } else {
-                MAP_ALARM = new HashMap<>();
-            }
-        } catch (Exception ex) {
-
-        }
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         LST_OWNSTRATEGYIMG.setLayoutManager(mLayoutManager);
@@ -256,6 +240,25 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                         tvNetwork.setVisibility(View.VISIBLE);
                     } else tvNetwork.setVisibility(View.GONE);
                     EDT_STRATEGYDESC.setText(clsStrategy.getDescription());
+
+                    String _strAlarm = UTILS.getPreference("ALARMLIST");
+                    try {
+                        if (!TextUtils.isEmpty(_strAlarm)) {
+                            Type listType = new TypeToken<HashMap<String, List<Alarm>>>() {
+
+                            }.getType();
+                            try {
+                                MAP_ALARM = new Gson().fromJson(_strAlarm, listType);
+                            } catch (JsonSyntaxException ex) {
+                                MAP_ALARM = new HashMap<>();
+                            }
+                        } else {
+                            MAP_ALARM = new HashMap<>();
+                        }
+                    } catch (Exception ex) {
+
+                    }
+
                     LIST_ALARM = MAP_ALARM.get(STRATEGY_ID);
 
                     if (LIST_ALARM != null && LIST_ALARM.size() > 0) {

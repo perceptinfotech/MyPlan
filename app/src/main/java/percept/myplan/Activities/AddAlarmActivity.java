@@ -2,18 +2,19 @@ package percept.myplan.Activities;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -30,7 +31,7 @@ public class AddAlarmActivity extends AppCompatActivity {
     private EditText EDT_ALARMLABLE;
     private AlarmManager ALARM_MANAGER;
     private String ALARM_SOUND, ALARM_SOUND_NAME, ALARM_NAME, ALARM_REPEAT, ALARM_TIME;
-    private DatePicker DATE_PICKER;
+    //    private DatePicker DATE_PICKER;
     private TimePicker TIME_PICKER;
 
     @Override
@@ -51,7 +52,7 @@ public class AddAlarmActivity extends AppCompatActivity {
         TV_ALARMSOUND = (TextView) findViewById(R.id.tvAlarmSound);
         SWITCH_ALARMSNOOZE = (Switch) findViewById(R.id.switchAlarmSnooze);
         EDT_ALARMLABLE = (EditText) findViewById(R.id.edtAlarmLable);
-        DATE_PICKER = (DatePicker) findViewById(R.id.datePicker);
+//        DATE_PICKER = (DatePicker) findViewById(R.id.datePicker);
         TIME_PICKER = (TimePicker) findViewById(R.id.timePicker);
 
         if (getIntent().hasExtra("EDIT_ALARM")) {
@@ -66,7 +67,7 @@ public class AddAlarmActivity extends AppCompatActivity {
             calendar2.setTimeInMillis(Long.valueOf(getIntent().getExtras().getString("ALARM_TIME")));
             TIME_PICKER.setCurrentHour(calendar2.get(Calendar.HOUR_OF_DAY)); // or Calendar.HOUR for 12 hour format
             TIME_PICKER.setCurrentMinute(calendar2.get(Calendar.MINUTE));
-            DATE_PICKER.updateDate(calendar2.get(Calendar.YEAR), calendar2.get(Calendar.MONTH), calendar2.get(Calendar.DAY_OF_MONTH));
+//            DATE_PICKER.updateDate(calendar2.get(Calendar.YEAR), calendar2.get(Calendar.MONTH), calendar2.get(Calendar.DAY_OF_MONTH));
         }
 
 
@@ -79,6 +80,12 @@ public class AddAlarmActivity extends AppCompatActivity {
                 ringtone.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI,
                         RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
                 startActivityForResult(ringtone, 12);
+            }
+        });
+        TV_ALARMREPEAT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showRepeatDialog();
             }
         });
     }
@@ -98,12 +105,8 @@ public class AddAlarmActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.action_SaveProfile) {
 
             Calendar cal = Calendar.getInstance();
-            cal.set(DATE_PICKER.getYear(),
-                    DATE_PICKER.getMonth(),
-                    DATE_PICKER.getDayOfMonth(),
-                    TIME_PICKER.getCurrentHour(),
-                    TIME_PICKER.getCurrentMinute(),
-                    00);
+            cal.set(Calendar.HOUR_OF_DAY, TIME_PICKER.getCurrentHour());
+            cal.set(Calendar.MINUTE, TIME_PICKER.getCurrentMinute());
 
             Long _Alarmtime = cal.getTimeInMillis();
 
@@ -153,5 +156,16 @@ public class AddAlarmActivity extends AppCompatActivity {
 //            manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000, _pendingIntent);
 //            Toast.makeText(AddAlarmActivity.this, "Alarm Set", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void showRepeatDialog() {
+        AlertDialog.Builder build = new AlertDialog.Builder(AddAlarmActivity.this);
+        build.setItems(getResources().getStringArray(R.array.alarm_repeat), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //do stuff....
+                TV_ALARMREPEAT.setText(getResources().getStringArray(R.array.alarm_repeat)[which]);
+            }
+        }).create().show();
     }
 }

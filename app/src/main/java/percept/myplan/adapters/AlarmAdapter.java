@@ -1,6 +1,5 @@
 package percept.myplan.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 import java.util.Date;
 import java.util.List;
 
+import percept.myplan.Activities.AlarmListActivity;
 import percept.myplan.POJO.Alarm;
 import percept.myplan.R;
 
@@ -20,10 +20,10 @@ import percept.myplan.R;
  */
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.MyViewHolder> {
 
-    private Context CONTEXT;
+    private AlarmListActivity activity;
     private List<Alarm> LST_HOPE;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView TV_ALARMTITLE, TV_ALARMEDIT, TV_ALARMTIME;
         public Switch SWITCH_STATUS;
 
@@ -34,19 +34,20 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.MyViewHolder
             TV_ALARMTITLE = (TextView) view.findViewById(R.id.tvAlarmTitle);
             TV_ALARMEDIT = (TextView) view.findViewById(R.id.tvAlarmEdit);
             TV_ALARMTIME = (TextView) view.findViewById(R.id.tvAlarmTime);
-            TV_ALARMEDIT.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            int i = (int) view.getTag();
-            Log.d(":::: Pressed on ", String.valueOf(i));
+            TV_ALARMEDIT.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = (int) view.getTag();
+                    Log.d(":::: Pressed on ", String.valueOf(position));
+                    activity.editAlarm(position);
+                }
+            });
         }
     }
 
 
-    public AlarmAdapter(Context mContext, List<Alarm> hopeList) {
-        this.CONTEXT = mContext;
+    public AlarmAdapter(AlarmListActivity activity, List<Alarm> hopeList) {
+        this.activity = activity;
         this.LST_HOPE = hopeList;
 
     }

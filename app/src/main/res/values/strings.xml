@@ -281,6 +281,14 @@
         <item>Once a month</item>
     </string-array>
 
+    <string-array name="alarm_repeat">
+        <item>Once</item>
+        <item>Every Week</item>
+        <item>Every 2 Week</item>
+        <item>Every 3 Week</item>
+        <item>Once a month</item>
+    </string-array>
+
     <string name="test_start_warning_msg">
     &lt;b&gt;SIDAS&lt;/b&gt; consist of 5 questions&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
     You can use&lt;b&gt; SIDAS &lt;/b&gt;to measure your suicidal thoughts.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
@@ -319,4 +327,6 @@
     <string name="selected_images">Your selected images</string>
     <string name="selected_music">Your selected music</string>
     <string name="max_5_music_files">You can only select a maximum of 5 Music files</string>
+    <string name="delete_symptom">Are you sure you want to delete this Symptom?</string>
+    <string name="delete">Delete</string>
 </resources>

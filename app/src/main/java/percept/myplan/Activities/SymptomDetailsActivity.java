@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -36,20 +37,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import percept.myplan.POJO.SymptomStrategy;
+import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
+import percept.myplan.POJO.SymptomStrategy;
 import percept.myplan.R;
 import percept.myplan.adapters.SymptomStrategyAdapter;
-import percept.myplan.fragments.fragmentSymptoms;
+
+import static percept.myplan.fragments.fragmentSymptoms.GET_STRATEGY;
 
 public class SymptomDetailsActivity extends AppCompatActivity {
 
+    private static final int ADDSTRATEGY = 6;
+    public static List<SymptomStrategy> LIST_SYMPTOMSTRATEGY;
     private String SYMPTOM_ID;
     private EditText TV_TITLE, TV_TEXT;
     private RecyclerView LST_SYMPTOMSTRATEGY;
-    public static List<SymptomStrategy> LIST_SYMPTOMSTRATEGY;
     private SymptomStrategyAdapter ADAPTER;
     private LinearLayout LAY_ADDSTRATEGY;
     private TextView TV_ADDSTRATEGY;
@@ -57,8 +61,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
     private String STR_STRATEGYID = "";
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
-
-    private static final int ADDSTRATEGY = 6;
+    private Button btnDeleteSymptom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +121,58 @@ public class SymptomDetailsActivity extends AppCompatActivity {
 
             }
         }));
+        btnDeleteSymptom = (Button) findViewById(R.id.btnDeleteSymptom);
+        btnDeleteSymptom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogYesNoOption _dialog = new dialogYesNoOption(SymptomDetailsActivity.this, getString(R.string.delete_symptom)) {
+
+                    @Override
+                    public void onClickYes() {
+                        HashMap<String, String> params = new HashMap<>();
+                        params.put("sid", Constant.SID);
+                        params.put("sname", Constant.SNAME);
+                        params.put("id", SYMPTOM_ID);
+
+                        try {
+                            PB.setVisibility(View.VISIBLE);
+                            dismiss();
+                            new General().getJSONContentFromInternetService(SymptomDetailsActivity.this,
+                                    General.PHPServices.DELETE_SYMPTOM, params,
+                                    true, false, true, new VolleyResponseListener() {
+
+                                        @Override
+                                        public void onError(VolleyError message) {
+                                            PB.setVisibility(View.GONE);
+                                        }
+
+                                        @Override
+                                        public void onResponse(JSONObject response) {
+                                            PB.setVisibility(View.GONE);
+                                            GET_STRATEGY = true;
+                                            SymptomDetailsActivity.this.finish();
+                                        }
+                                    });
+                        } catch (Exception e) {
+                            PB.setVisibility(View.GONE);
+                            e.printStackTrace();
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onClickNo() {
+                        ADAPTER.notifyDataSetChanged();
+                        dismiss();
+                    }
+                };
+                _dialog.setCancelable(false);
+                _dialog.setCanceledOnTouchOutside(false);
+                _dialog.show();
+
+            }
+        });
     }
 
     @Override
@@ -143,11 +198,13 @@ public class SymptomDetailsActivity extends AppCompatActivity {
             TV_TITLE.setEnabled(true);
             TV_TEXT.setEnabled(true);
             isEDIT = false;
+            btnDeleteSymptom.setVisibility(View.GONE);
         } else {
             menu.getItem(0).setVisible(true);
             menu.getItem(1).setVisible(false);
             TV_TITLE.setEnabled(false);
             TV_TEXT.setEnabled(false);
+            btnDeleteSymptom.setVisibility(View.VISIBLE);
         }
         return true;
     }
@@ -200,7 +257,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(JSONObject response) {
                     PB.setVisibility(View.GONE);
-                    fragmentSymptoms.GET_STRATEGY = true;
+                    GET_STRATEGY = true;
                     Log.d(":::::", response.toString());
                     SymptomDetailsActivity.this.finish();
                 }

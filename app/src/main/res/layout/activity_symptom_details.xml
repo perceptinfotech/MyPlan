@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_symptom_details"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/backcolor"
-    android:orientation="vertical"
-    tools:context="percept.myplan.Activities.SymptomDetailsActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/activity_symptom_details"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/backcolor"
+                android:orientation="vertical"
+                tools:context="percept.myplan.Activities.SymptomDetailsActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/app_toolbar" />
+        <include layout="@layout/app_toolbar"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,7 +29,7 @@
                 android:padding="5dp"
                 android:text="@string/title"
                 android:textColor="@android:color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
             <EditText
                 android:id="@+id/tvTitle"
@@ -41,14 +40,14 @@
                 android:gravity="right"
                 android:padding="5dp"
                 android:textColor="@color/appBackColor"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/sidemenu_seperator" />
+            android:background="@color/sidemenu_seperator"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -58,7 +57,7 @@
             android:padding="10dp"
             android:text="@string/text"
             android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            android:textSize="18sp"/>
 
         <EditText
             android:id="@+id/tvText"
@@ -68,12 +67,12 @@
             android:gravity="center_vertical"
             android:minLines="3"
             android:padding="10dp"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/sidemenu_seperator" />
+            android:background="@color/sidemenu_seperator"/>
 
         <LinearLayout
             android:id="@+id/layAddStrategy"
@@ -94,21 +93,37 @@
                 android:paddingRight="10dp"
                 android:paddingTop="10dp"
                 android:text="@string/addstrategy"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginLeft="15dp"
-                android:background="@color/sidemenu_seperator" />
+                android:background="@color/sidemenu_seperator"/>
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/lstSymptomStrategy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white" />
+            android:background="@android:color/white"/>
 
+        <Button
+            android:id="@+id/btnDeleteSymptom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:text="@string/delete"
+            android:textSize="16sp"
+            android:padding="10dp"
+            android:gravity="left|center_vertical"
+            android:textColor="@color/red"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+
+            android:background="@color/sidemenu_seperator"/>
 
     </LinearLayout>
 
@@ -119,7 +134,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/view"
         android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
-    <include layout="@layout/lay_internet_lost" />
+    <include layout="@layout/lay_internet_lost"/>
 </RelativeLayout>

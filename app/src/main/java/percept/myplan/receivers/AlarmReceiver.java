@@ -15,7 +15,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
         // an Intent broadcast.
-        Log.d(":::::::::::::::: ", "BroadCast received.");
+        Log.d(":::::::::::::::: Alarm ", "BroadCast received.");
 
         Intent _service = new Intent(context, MyIntentService.class);
         _service.putExtra("ALARM_SOUND", intent.getExtras().getString("ALARM_SOUND"));
