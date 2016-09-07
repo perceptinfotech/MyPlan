@@ -1,9 +1,6 @@
 package percept.myplan.Activities;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,67 +8,64 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.TextView;
 
 import percept.myplan.POJO.Alarm;
 import percept.myplan.R;
 import percept.myplan.adapters.AlarmAdapter;
-import percept.myplan.receivers.AlarmReceiver;
 
 
-interface ClickListener {
-    void onClick(View view, int position);
+//interface ClickListener {
+//    void onClick(View view, int position);
+//
+//    void onLongClick(View view, int position);
+//}
+//
+//class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+//
+//    private GestureDetector gestureDetector;
+//    private ClickListener clickListener;
+//
+//    public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ClickListener clickListener) {
+//        this.clickListener = clickListener;
+//        gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+//            @Override
+//            public boolean onSingleTapUp(MotionEvent e) {
+//                return true;
+//            }
+//
+//            @Override
+//            public void onLongPress(MotionEvent e) {
+//                View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+//                if (child != null && clickListener != null) {
+//                    clickListener.onLongClick(child, recyclerView.getChildPosition(child));
+//                }
+//            }
+//        });
+//    }
+//
+//    @Override
+//    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+//
+//        View child = rv.findChildViewUnder(e.getX(), e.getY());
+//        if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
+//            clickListener.onClick(child, rv.getChildPosition(child));
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+//    }
+//
+//    @Override
+//    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+//
+//    }
+//}
 
-    void onLongClick(View view, int position);
-}
-
-class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
-
-    private GestureDetector gestureDetector;
-    private ClickListener clickListener;
-
-    public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ClickListener clickListener) {
-        this.clickListener = clickListener;
-        gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onSingleTapUp(MotionEvent e) {
-                return true;
-            }
-
-            @Override
-            public void onLongPress(MotionEvent e) {
-                View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
-                if (child != null && clickListener != null) {
-                    clickListener.onLongClick(child, recyclerView.getChildPosition(child));
-                }
-            }
-        });
-    }
-
-    @Override
-    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-
-        View child = rv.findChildViewUnder(e.getX(), e.getY());
-        if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
-            clickListener.onClick(child, rv.getChildPosition(child));
-        }
-        return false;
-    }
-
-    @Override
-    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-    }
-
-    @Override
-    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-    }
-}
 
 public class AlarmListActivity extends AppCompatActivity {
 

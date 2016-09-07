@@ -293,14 +293,17 @@
             android:name=".Activities.FeedbackActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
-
-        <activity android:name=".Activities.EmergencyRoomDetailActivity"
+        <activity
+            android:name=".Activities.EmergencyRoomDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".Activities.AddEmergencyRoomActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".Activities.WebViewActivity"
                   android:screenOrientation="portrait"
                   android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".Activities.AddEmergencyRoomActivity"
-                  android:screenOrientation="portrait"
-                  android:theme="@style/AppTheme.NoActionBar"/>
-
     </application>
 
 </manifest>

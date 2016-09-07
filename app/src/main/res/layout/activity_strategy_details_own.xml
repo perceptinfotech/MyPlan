@@ -186,7 +186,31 @@
                     android:background="@android:color/white"
                     android:orientation="horizontal"
                     android:paddingLeft="10dp"/>
+                <TextView
+                    android:id="@+id/tvMusic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="25dp"
+                    android:text="@string/music"
+                    android:textAllCaps="true"
+                    android:textSize="14sp"
+                    android:visibility="gone"/>
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/sidemenu_seperator"/>
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/lstOwnStrategyMusic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp"/>
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"

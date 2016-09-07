@@ -2,7 +2,12 @@ package percept.myplan.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -11,6 +16,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -39,7 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import percept.myplan.Dialogs.dialogStrategyImg;
+import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.Utils;
@@ -50,9 +56,9 @@ import percept.myplan.POJO.StrategyContact;
 import percept.myplan.POJO.StrategyDetails;
 import percept.myplan.R;
 import percept.myplan.adapters.ImageAdapter;
-import percept.myplan.adapters.ImageDeleteAdapter;
 import percept.myplan.adapters.StrategyAlarmAdapter;
 import percept.myplan.adapters.StrategyContactSimpleAdapter;
+import percept.myplan.adapters.StrategyMusicAdapter;
 
 public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
@@ -60,7 +66,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     public static List<StrategyContact> LIST_STRATEGYCONTACT;
     Map<String, String> params;
     private RecyclerView LST_OWNSTRATEGYIMG;
-    private List<String> LIST_IMAGE;
+    private List<String> LIST_IMAGE, listMusic;
     private ImageAdapter ADAPTER_IMG;
     private String STRATEGY_ID;
     private Utils UTILS;
@@ -69,12 +75,13 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     private EditText EDT_STRATEGYTITLE, EDT_STRATEGYDESC;
     private StrategyContactSimpleAdapter ADAPTER;
     private StrategyAlarmAdapter ADAPTER_ALARM;
-    private RecyclerView LST_STRATEGYCONTACT, LST_STRATEGYALARM;
+    private StrategyMusicAdapter musicAdapter;
+    private RecyclerView LST_STRATEGYCONTACT, LST_STRATEGYALARM, lstOwnStrategyMusic;
     private Button BTN_SHARESTRATEGY;
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
     private List<Alarm> LIST_ALARM;
-    private TextView tvImages, tvNetwork, tvAlarms;
+    private TextView tvImages, tvNetwork, tvAlarms, tvMusic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +101,10 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         tvAlarms = (TextView) findViewById(R.id.tvAlarms);
         tvNetwork = (TextView) findViewById(R.id.tvNetwork);
         tvImages = (TextView) findViewById(R.id.tvImages);
+        tvMusic = (TextView) findViewById(R.id.tvMusic);
 
         LST_OWNSTRATEGYIMG = (RecyclerView) findViewById(R.id.lstOwnStrategyImage);
+        lstOwnStrategyMusic = (RecyclerView) findViewById(R.id.lstOwnStrategyMusic);
         LST_STRATEGYCONTACT = (RecyclerView) findViewById(R.id.lstStrategyContacts);
         LST_STRATEGYALARM = (RecyclerView) findViewById(R.id.lstStrategyAlarm);
 
@@ -123,7 +132,6 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         UTILS = new Utils(StrategyDetailsOwnActivity.this);
 
 
-
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         LST_OWNSTRATEGYIMG.setLayoutManager(mLayoutManager);
         LST_OWNSTRATEGYIMG.setItemAnimator(new DefaultItemAnimator());
@@ -132,11 +140,16 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         LST_STRATEGYCONTACT.setLayoutManager(_mLayoutManager);
         LST_STRATEGYCONTACT.setItemAnimator(new DefaultItemAnimator());
 
+        RecyclerView.LayoutManager _mLayoutManagerMusic = new LinearLayoutManager(StrategyDetailsOwnActivity.this);
+        lstOwnStrategyMusic.setLayoutManager(_mLayoutManagerMusic);
+        lstOwnStrategyMusic.setItemAnimator(new DefaultItemAnimator());
+
         RecyclerView.LayoutManager _mLayoutManagerAlarm = new LinearLayoutManager(StrategyDetailsOwnActivity.this);
         LST_STRATEGYALARM.setLayoutManager(_mLayoutManagerAlarm);
         LST_STRATEGYALARM.setItemAnimator(new DefaultItemAnimator());
 
         LIST_IMAGE = new ArrayList<>();
+        listMusic = new ArrayList<>();
 
         LST_STRATEGYCONTACT.addOnItemTouchListener(new RecyclerTouchListener(StrategyDetailsOwnActivity.this, LST_STRATEGYCONTACT, new ClickListener() {
             @Override
@@ -191,7 +204,81 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             }
         }));
 
+        lstOwnStrategyMusic.addOnItemTouchListener(new RecyclerTouchListener(StrategyDetailsOwnActivity.this,
+                lstOwnStrategyMusic, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Intent intent = new Intent(StrategyDetailsOwnActivity.this, WebViewActivity.class);
+                intent.putExtra("URL_MUSIC", listMusic.get(position));
+                startActivity(intent);
+            }
 
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+//        initSwipe(LST_STRATEGYCONTACT);
+//        initSwipe(LST_STRATEGYALARM);
+
+    }
+
+
+    private void initSwipe(final RecyclerView recyclerView) {
+        final Paint p = new Paint();
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+//                if (direction == ItemTouchHelper.LEFT){
+//                    adapter.removeItem(position);
+//                } else {
+                // Snackbar.make(getView(), "Swipe Right", Snackbar.LENGTH_LONG).show();
+//                }
+                if (recyclerView == LST_STRATEGYALARM)
+                    deleteAlarms(position);
+                else if (recyclerView == LST_STRATEGYCONTACT)
+                    deleteContacts(position);
+
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                Bitmap icon;
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+
+                    View itemView = viewHolder.itemView;
+                    float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                    float width = height / 3;
+
+//                    if(dX > 0){
+//                        p.setColor(Color.parseColor("#388E3C"));
+//                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX,(float) itemView.getBottom());
+//                        c.drawRect(background,p);
+//                        icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_edit_white);
+//                        RectF icon_dest = new RectF((float) itemView.getLeft() + width ,(float) itemView.getTop() + width,(float) itemView.getLeft()+ 2*width,(float)itemView.getBottom() - width);
+//                        c.drawBitmap(icon,null,icon_dest,p);
+//                    } else {
+                    p.setColor(getResources().getColor(android.R.color.white));
+                    RectF background = new RectF((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom());
+                    c.drawRect(background, p);
+                    icon = BitmapFactory.decodeResource(getResources(), R.drawable.icon_delete);
+                    RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width, (float) itemView.getTop() + width, (float) itemView.getRight() - width, (float) itemView.getBottom() - width);
+                    c.drawBitmap(icon, null, icon_dest, p);
+//                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
@@ -203,6 +290,57 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         getStrategy();
     }
 
+    private void deleteContacts(final int position) {
+        dialogYesNoOption _dialog = new dialogYesNoOption(StrategyDetailsOwnActivity.this, getString(R.string.delete_contact)) {
+
+            @Override
+            public void onClickYes() {
+                HashMap<String, String> params = new HashMap<>();
+                params.put("sid", Constant.SID);
+                params.put("sname", Constant.SNAME);
+                dismiss();
+                LIST_STRATEGYCONTACT.remove(position);
+                ADAPTER.notifyDataSetChanged();
+
+                findViewById(android.R.id.content).invalidate();
+            }
+
+            @Override
+            public void onClickNo() {
+
+                dismiss();
+            }
+        };
+        _dialog.setCancelable(false);
+        _dialog.setCanceledOnTouchOutside(false);
+        _dialog.show();
+    }
+
+    private void deleteAlarms(final int position) {
+        dialogYesNoOption _dialog = new dialogYesNoOption(StrategyDetailsOwnActivity.this, getString(R.string.delete_alarm)) {
+
+            @Override
+            public void onClickYes() {
+                dismiss();
+                HashMap<String, String> params = new HashMap<>();
+                params.put("sid", Constant.SID);
+                params.put("sname", Constant.SNAME);
+                LIST_ALARM.remove(position);
+                ADAPTER_ALARM.notifyDataSetChanged();
+                getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
+            }
+
+            @Override
+            public void onClickNo() {
+
+                dismiss();
+            }
+        };
+        _dialog.setCancelable(false);
+        _dialog.setCanceledOnTouchOutside(false);
+        _dialog.show();
+    }
+
     private void getStrategy() {
         PB.setVisibility(View.VISIBLE);
         params = new HashMap<String, String>();
@@ -212,6 +350,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         try {
             LIST_IMAGE.clear();
             LIST_STRATEGYCONTACT.clear();
+            listMusic.clear();
             new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this, General.PHPServices.GET_STRATEGY, params, false, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
@@ -280,6 +419,24 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                             tvAlarms.setVisibility(View.VISIBLE);
                         }
                     } else tvImages.setVisibility(View.GONE);
+
+
+                    if (!TextUtils.isEmpty(clsStrategy.getVideos())) {
+                        String _images = clsStrategy.getVideos();
+                        String[] _arrImg = _images.split(",");
+                        for (int i = 0; i < _arrImg.length; i++) {
+                            listMusic.add(_arrImg[i]);
+                        }
+
+
+                        if (listMusic != null && listMusic.size() > 0) {
+                            musicAdapter = new StrategyMusicAdapter(listMusic);
+                            lstOwnStrategyMusic.setAdapter(musicAdapter);
+                            tvMusic.setVisibility(View.VISIBLE);
+                        }
+                    } else tvMusic.setVisibility(View.GONE);
+
+
                     PB.setVisibility(View.GONE);
                 }
             });

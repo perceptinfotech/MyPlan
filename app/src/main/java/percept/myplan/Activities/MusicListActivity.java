@@ -1,16 +1,22 @@
 package percept.myplan.Activities;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,10 +29,14 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.util.TextUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
@@ -38,19 +48,18 @@ import percept.myplan.R;
 import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
 
 public class MusicListActivity extends AppCompatActivity {
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
     private int count;
     private Bitmap[] thumbnails;
     private boolean[] thumbnailsselection;
     private String[] arrPath;
     private String[] nameFile;
     private ImageAdapter imageAdapter;
-
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
     private String HOPE_ELEMENT_ID = "";
     private boolean FROM_EDIT = false;
-
     private Utils UTILS;
     private CoordinatorLayout REL_COORDINATE;
 
@@ -82,7 +91,128 @@ public class MusicListActivity extends AppCompatActivity {
 
         UTILS = new Utils(MusicListActivity.this);
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            checkPermission();
+        } else getMusicList();
 
+//        final Button selectBtn = (Button) findViewById(R.id.selectBtn);
+//        selectBtn.setOnClickListener(new View.OnClickListener() {
+//
+//            public void onClick(View v) {
+//                // TODO Auto-generated method stub
+//                final int len = thumbnailsselection.length;
+//                int cnt = 0;
+//                String selectImages = "";
+//                for (int i = 0; i < len; i++) {
+//                    if (thumbnailsselection[i]) {
+//                        cnt++;
+//                        selectImages = selectImages + arrPath[i] + "|";
+//                    }
+//                }
+//                if (cnt == 0) {
+//                    Toast.makeText(getApplicationContext(),
+//                            "Please select at least one image",
+//                            Toast.LENGTH_LONG).show();
+//                } else {
+//                    Toast.makeText(getApplicationContext(),
+//                            "You've selected Total " + cnt + " image(s).",
+//                            Toast.LENGTH_LONG).show();
+//                    Log.d("SelectedImages", selectImages);
+//                }
+//            }
+//        });
+    }
+
+    private void checkPermission() {
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            List<String> permissionsNeeded = new ArrayList<String>();
+
+            final List<String> permissionsList = new ArrayList<String>();
+
+            if (!addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                permissionsNeeded.add("Write Storage");
+            if (!addPermission(permissionsList, Manifest.permission.READ_EXTERNAL_STORAGE))
+                permissionsNeeded.add("Read Storage");
+
+            if (permissionsList.size() > 0) {
+                if (permissionsNeeded.size() > 0) {
+                    // Need Rationale
+                    String message = "You need to grant access to " + permissionsNeeded.get(0);
+                    for (int i = 1; i < permissionsNeeded.size(); i++)
+                        message = message + ", " + permissionsNeeded.get(i);
+                    showMessageOKCancel(message,
+                            new DialogInterface.OnClickListener() {
+                                @TargetApi(Build.VERSION_CODES.M)
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                                            REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+                                }
+                            });
+                    return;
+                }
+
+                requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                        REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
+                Map<String, Integer> params = new HashMap<String, Integer>();
+                // Initial
+
+                params.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                params.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    params.put(permissions[i], grantResults[i]);
+                if (params.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && params.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    // All Permissions Granted
+                    getMusicList();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(MusicListActivity.this, "Some Permission is Denied", Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+            break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(MusicListActivity.this)
+                .setMessage(message)
+                .setPositiveButton(getString(R.string.ok), okListener)
+                .setNegativeButton(getString(R.string.cancel), null)
+                .create()
+                .show();
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean addPermission(List<String> permissionsList, String permission) {
+        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            permissionsList.add(permission);
+            // Check for Rationale Option
+            if (!shouldShowRequestPermissionRationale(permission))
+                return false;
+        }
+        return true;
+    }
+
+
+    private void getMusicList() {
         final String[] columns = {MediaStore.Images.Media.DATA, MediaStore.Audio.Media._ID};
         final String orderBy = MediaStore.Images.Media._ID;
         Cursor imagecursor = managedQuery(
@@ -116,33 +246,6 @@ public class MusicListActivity extends AppCompatActivity {
         imageAdapter = new ImageAdapter();
         imagegrid.setAdapter(imageAdapter);
         imagecursor.close();
-
-//        final Button selectBtn = (Button) findViewById(R.id.selectBtn);
-//        selectBtn.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View v) {
-//                // TODO Auto-generated method stub
-//                final int len = thumbnailsselection.length;
-//                int cnt = 0;
-//                String selectImages = "";
-//                for (int i = 0; i < len; i++) {
-//                    if (thumbnailsselection[i]) {
-//                        cnt++;
-//                        selectImages = selectImages + arrPath[i] + "|";
-//                    }
-//                }
-//                if (cnt == 0) {
-//                    Toast.makeText(getApplicationContext(),
-//                            "Please select at least one image",
-//                            Toast.LENGTH_LONG).show();
-//                } else {
-//                    Toast.makeText(getApplicationContext(),
-//                            "You've selected Total " + cnt + " image(s).",
-//                            Toast.LENGTH_LONG).show();
-//                    Log.d("SelectedImages", selectImages);
-//                }
-//            }
-//        });
     }
 
     @Override

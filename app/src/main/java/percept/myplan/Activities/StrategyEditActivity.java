@@ -168,6 +168,7 @@ public class StrategyEditActivity extends AppCompatActivity {
         TV_MUSIC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent _intent = new Intent(StrategyEditActivity.this, AddStrategyMusicActivity.class);
                 _intent.putExtra("FROM_EDIT", "TRUE");
                 startActivityForResult(_intent, SET_MUSIC);

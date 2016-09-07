@@ -328,5 +328,7 @@
     <string name="selected_music">Your selected music</string>
     <string name="max_5_music_files">You can only select a maximum of 5 Music files</string>
     <string name="delete_symptom">Are you sure you want to delete this Symptom?</string>
+    <string name="delete_contact">Are you sure you want to delete this Contact?</string>
+    <string name="delete_alarm">Are you sure you want to delete this Alarm?</string>
     <string name="delete">Delete</string>
 </resources>
