@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,8 +46,10 @@ public class SidaSummaryAdapter extends RecyclerView.Adapter<SidaSummaryAdapter.
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         SidaSummary _mood = LST_MOOD.get(position);
 //        holder.TV_ALARMTITLE.setText(album.getAlarmName());
+
         if (TextUtils.isEmpty(_mood.getWeek_Number()))
-            TV_MOODSUMTITLE.setText(_mood.getMonthNumber() + " " + CONTEXT.getString(R.string.month_of) + " " + _mood.getYear());
+            TV_MOODSUMTITLE.setText(new DateFormatSymbols().getMonths()[Integer.parseInt(_mood.getMonthNumber())-1]+ " " + _mood.getYear());
+//            TV_MOODSUMTITLE.setText(_mood.getMonthNumber() + " " + CONTEXT.getString(R.string.month_of) + " " + _mood.getYear());
         else
             TV_MOODSUMTITLE.setText(_mood.getWeek_Number() + " " + CONTEXT.getString(R.string.week_of) + " " + _mood.getYear());
         ArrayList<PieSlice> LST_PIEDATA = new ArrayList<>();

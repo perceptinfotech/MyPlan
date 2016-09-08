@@ -87,7 +87,7 @@ public class NavigationDrawerAdapter extends BaseAdapter {
                 break;
             case 4:
                 //Mood Ratings
-                _holder.IMG_ICON.setImageResource(R.drawable.menu_icon_moodrating);
+                _holder.IMG_ICON.setImageResource(R.drawable.setting_moodrating_new);
                 break;
             case 5:
                 //Blank Row

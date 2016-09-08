@@ -2,6 +2,7 @@ package percept.myplan.Activities;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -47,7 +48,7 @@ public class SettingExportMyPlanActivity extends AppCompatActivity {
         btnExportPDF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-             //   startDownload();
+                startActivity(new Intent(SettingExportMyPlanActivity.this, ExportMyPlanPasswordActivity.class));
             }
         });
 

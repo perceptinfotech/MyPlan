@@ -132,6 +132,8 @@ public class General {
             return ".DeleteStrategyimages";
         } else if (serviceName == PHPServices.DELETE_SYMPTOM) {
             return ".DeleteSymptom";
+        } else if (serviceName == PHPServices.GET_EXPORT_PDF) {
+            return ".getExportpdf";
         }
         return "";
     }
@@ -236,6 +238,6 @@ public class General {
         SAVE_HOPE_MEDIA, SAVE_STRATEGY, SAVE_CONTACT, SAVE_CONTACTS,
         GET_USER_STRATEGY, PROFILE, DELETE_HOPE_BOX, FORGOT_PASSWORD,
         GET_SETTINGS, SAVE_SETTINGS, GET_MESSAGE, SAVE_MESSAGE, GET_HELP_INFO, GIVE_FEEDBACK,
-        GET_EMERGENCY_ROOMS, SAVE_EMERGENCY_ROOM, DELETE_STRATEGY_IMAGES, DELETE_SYMPTOM, DELETE_HOPE_MEDIA,
+        GET_EMERGENCY_ROOMS, SAVE_EMERGENCY_ROOM, DELETE_STRATEGY_IMAGES, DELETE_SYMPTOM, DELETE_HOPE_MEDIA, GET_EXPORT_PDF,
     }
 }
