@@ -334,4 +334,7 @@
     <string name="export_myplan_pdf">Export MyPlan to PDF</string>
     <string name="pdf_password">Please add a 4 digit\ncode to the PDF</string>
     <string name="mail_success_msg">Your Plan has been sent to mail successfully</string>
+    <string name="help_contact_validate">You can\'t select more than 10 contacts for Help!</string>
+    <string name="share_strategy_confirm">Are you sure you want to share you strategy title and text anonymously with MyPlan users. No media will be shared, and an Administrator will check for anonymization purposes.</string>
+    <string name="strategyadd_failed">Strategy Adding Failed. Please try again later</string>
 </resources>

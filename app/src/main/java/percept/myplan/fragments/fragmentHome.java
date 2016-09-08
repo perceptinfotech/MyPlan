@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -56,8 +57,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import percept.myplan.Activities.HelpListActivity;
-import percept.myplan.Activities.SettingProfileActivity;
-import percept.myplan.Activities.SignUpActivity;
 import percept.myplan.AppController;
 import percept.myplan.Dialogs.dialogSelectPic;
 import percept.myplan.Dialogs.fragmentAddNote;
@@ -78,25 +77,19 @@ public class fragmentHome extends Fragment {
 
 
     public static final int INDEX = 0;
-
-    private ImageView IMG_MOODRATING_CLOSE;
-    private LinearLayout LAY_HELP, LAY_EMERGENCY, LAY_MOODRATING;
-
-    private ImageView IMG_USERPROFILE;
-
-    private TextView tvCaptureImg;
-
-    private AlarmManager ALARM_MANAGER;
     public static final int DIALOG_ADDNOTE = 1;
-
-    final private int REQUEST_CODE_CALL_PERMISSIONS = 123;
     private static final int REQ_TAKE_PICTURE = 33;
     private static final int TAKE_PICTURE_GALLERY = 34;
-
     private static Uri IMG_URI;
+    final private int REQUEST_CODE_CALL_PERMISSIONS = 123;
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
+    private ImageView IMG_MOODRATING_CLOSE;
+    private LinearLayout LAY_HELP, LAY_EMERGENCY, LAY_MOODRATING;
+    private ImageView IMG_USERPROFILE;
+    private TextView tvCaptureImg;
+    private AlarmManager ALARM_MANAGER;
     private String FILE_PATH = "";
     private Utils utils;
-
     private CoordinatorLayout REL_COORDINATE;
     private ProgressBar PB;
 
@@ -212,16 +205,21 @@ public class fragmentHome extends Fragment {
                     new String[]{Manifest.permission.CALL_PHONE},
                     REQUEST_CODE_CALL_PERMISSIONS);
         } else {
-            if (TextUtils.isEmpty(new Utils(getActivity()).getPreference("EMERGENCY_CONTACT_NAME"))) {
-                Intent phoneIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "112"));
-                phoneIntent.setPackage("com.android.phone");
-                startActivity(phoneIntent);
-            } else {
-                String _phoneNo = new Utils(getActivity()).getPreference("EMERGENCY_CONTACT_NO");
+            String _phoneNo = "112";
+            if (!TextUtils.isEmpty(new Utils(getActivity()).getPreference("EMERGENCY_CONTACT_NAME"))) {
+                _phoneNo = new Utils(getActivity()).getPreference("EMERGENCY_CONTACT_NO");
+            }
+            try {
                 Intent phoneIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + _phoneNo));
-                phoneIntent.setPackage("com.android.phone");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                    phoneIntent.setPackage("com.android.server.telecom");
+                else
+                    phoneIntent.setPackage("com.android.phone");
                 startActivity(phoneIntent);
 
+            } catch (ActivityNotFoundException e) {
+                Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + _phoneNo));
+                startActivity(phoneIntent);
             }
         }
     }
@@ -281,8 +279,6 @@ public class fragmentHome extends Fragment {
             }
         });
     }
-
-    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
     private void getPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

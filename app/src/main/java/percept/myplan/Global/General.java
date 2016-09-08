@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.android.volley.Cache;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -200,6 +201,10 @@ public class General {
 
         });
 
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
+                5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         forceNetwork = true;
         if (forceNetwork) {
             AppController.getInstance().addToRequestQueue(jsonObjReq, "tag_json_obj");
@@ -238,6 +243,7 @@ public class General {
         SAVE_HOPE_MEDIA, SAVE_STRATEGY, SAVE_CONTACT, SAVE_CONTACTS,
         GET_USER_STRATEGY, PROFILE, DELETE_HOPE_BOX, FORGOT_PASSWORD,
         GET_SETTINGS, SAVE_SETTINGS, GET_MESSAGE, SAVE_MESSAGE, GET_HELP_INFO, GIVE_FEEDBACK,
-        GET_EMERGENCY_ROOMS, SAVE_EMERGENCY_ROOM, DELETE_STRATEGY_IMAGES, DELETE_SYMPTOM, DELETE_HOPE_MEDIA, GET_EXPORT_PDF,
+        GET_EMERGENCY_ROOMS, SAVE_EMERGENCY_ROOM, DELETE_STRATEGY_IMAGES, DELETE_SYMPTOM, DELETE_HOPE_MEDIA,
+        GET_EXPORT_PDF,
     }
 }

@@ -75,11 +75,17 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
         LST_CONTACTS.setAreHeadersSticky(true);
 
 
-        AddStrategyContacts();
+
 
     }
 
-    private void AddStrategyContacts() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getStrategyContacts();
+    }
+
+    private void getStrategyContacts() {
 
         PB.setVisibility(View.VISIBLE);
         Map<String, String> params = new HashMap<String, String>();
@@ -131,7 +137,7 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            AddStrategyContacts();
+                            getStrategyContacts();
                         }
                     });
             snackbar.setActionTextColor(Color.RED);
@@ -168,10 +174,6 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            AddStrategyContactActivity.this.finish();
-            return true;
-        } else if (item.getItemId() == R.id.action_AddStrategyContact) {
-
             for (ContactDisplay _obj : LIST_ALLCONTACTS) {
                 if (_obj.isSelected()) {
                     if (STR_CONTACTID.equals("")) {
@@ -186,6 +188,10 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
             returnIntent.putExtra("CONTACT_ID", STR_CONTACTID);
             setResult(Activity.RESULT_OK, returnIntent);
             AddStrategyContactActivity.this.finish();
+            return true;
+        } else if (item.getItemId() == R.id.action_AddStrategyContact) {
+            Intent _intent = new Intent(AddStrategyContactActivity.this, AddContactActivity.class);
+            startActivity(_intent);
             return true;
         } else if (item.getItemId() == R.id.action_Next) {
             String strContactNos = "";

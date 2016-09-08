@@ -229,7 +229,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                     try {
                         if (response.get(Constant.DATA) instanceof JSONObject ||
                                 response.get(Constant.DATA) instanceof String) {
-                            showMessageOK(response.getString(Constant.DATA));
+//                            showMessageOK(response.getString(Constant.DATA));
                             return;
                         }
                         LIST_MOOD = gson.fromJson(response.getJSONArray(Constant.DATA)

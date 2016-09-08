@@ -158,7 +158,7 @@ public class MusicListActivity extends AppCompatActivity {
                         REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
 
                 return;
-            }
+            } else getMusicList();
         }
     }
 
@@ -260,31 +260,33 @@ public class MusicListActivity extends AppCompatActivity {
             MusicListActivity.this.finish();
             return true;
         } else if (item.getItemId() == R.id.action_AddStrategyMusic) {
-            final int len = thumbnailsselection.length;
+            if (thumbnailsselection != null) {
+                final int len = thumbnailsselection.length;
 
 //            String selectImages = "";
-            if (FROM.equals("") || FROM_EDIT) {
-                if (FROM_EDIT) {
-                    for (int i = 0; i < len; i++) {
-                        if (thumbnailsselection[i]) {
+                if (FROM.equals("") || FROM_EDIT) {
+                    if (FROM_EDIT) {
+                        for (int i = 0; i < len; i++) {
+                            if (thumbnailsselection[i]) {
 //                            selectImages = selectImages + arrPath[i] + "|";
-                            StrategyEditActivity.LIST_MUSIC.add(arrPath[i]);
+                                StrategyEditActivity.LIST_MUSIC.add(arrPath[i]);
+                            }
                         }
+                        setResult(RESULT_OK);
+                        MusicListActivity.this.finish();
+                    } else {
+                        for (int i = 0; i < len; i++) {
+                            if (thumbnailsselection[i]) {
+//                            selectImages = selectImages + arrPath[i] + "|";
+                                AddStrategyActivity.LIST_MUSIC.add(arrPath[i]);
+                            }
+                        }
+                        setResult(RESULT_OK);
+                        MusicListActivity.this.finish();
                     }
-                    setResult(RESULT_OK);
-                    MusicListActivity.this.finish();
                 } else {
-                    for (int i = 0; i < len; i++) {
-                        if (thumbnailsselection[i]) {
-//                            selectImages = selectImages + arrPath[i] + "|";
-                            AddStrategyActivity.LIST_MUSIC.add(arrPath[i]);
-                        }
-                    }
-                    setResult(RESULT_OK);
-                    MusicListActivity.this.finish();
+                    AddMusicElement(len);
                 }
-            } else {
-                AddMusicElement(len);
             }
 
             return true;

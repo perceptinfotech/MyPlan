@@ -8,7 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,9 +20,10 @@ import percept.myplan.R;
  * Created by percept on 22/8/16.
  */
 public class AssignPriorityActivity extends AppCompatActivity {
-    TextView tvHelp, tvEmergency;
+    private TextView tvHelp, tvEmergency;
     private int con_priority = 0; // 0: Default 1:Help  2:Emergency
-    int _count = 0;
+    private int _count = 0;
+    private CheckBox imgTickHelp, imgTickEmergency;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,35 +40,60 @@ public class AssignPriorityActivity extends AppCompatActivity {
 
         tvEmergency = (TextView) findViewById(R.id.tvEmergency);
         tvHelp = (TextView) findViewById(R.id.tvHelp);
+        imgTickHelp = (CheckBox) findViewById(R.id.imgTickHelp);
+        imgTickEmergency = (CheckBox) findViewById(R.id.imgTickEmergency);
 
         if (getIntent().hasExtra(Constant.HELP_COUNT)) {
             _count = getIntent().getIntExtra(Constant.HELP_COUNT, 0);
         }
 
         if (_count < 10 && getIntent().getStringExtra("ADD_TO_HELP").equals("1")) {
-            tvHelp.setBackgroundColor(getResources().getColor(R.color.sidemenu_seperator));
-            tvEmergency.setBackgroundColor(getResources().getColor(android.R.color.white));
+            imgTickHelp.setChecked(true);
         }
 
-        tvEmergency.setOnClickListener(new View.OnClickListener() {
+//        tvEmergency.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                tvEmergency.setBackgroundColor(getResources().getColor(R.color.sidemenu_seperator));
+//                tvHelp.setBackgroundColor(getResources().getColor(android.R.color.white));
+////                con_priority = 2;
+//            }
+//        });
+//
+//        tvHelp.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (_count >= 10) {
+//                    Toast.makeText(AssignPriorityActivity.this, getString(R.string.help_contact_validate), Toast.LENGTH_LONG).show();
+//                    return;
+//                }
+//                tvHelp.setBackgroundColor(getResources().getColor(R.color.sidemenu_seperator));
+//                tvEmergency.setBackgroundColor(getResources().getColor(android.R.color.white));
+////                con_priority = 1;
+//            }
+//        });
+        imgTickHelp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                tvEmergency.setBackgroundColor(getResources().getColor(R.color.sidemenu_seperator));
-                tvHelp.setBackgroundColor(getResources().getColor(android.R.color.white));
-                con_priority = 2;
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isSelect) {
+                if (_count >= 10) {
+                    Toast.makeText(AssignPriorityActivity.this, getString(R.string.help_contact_validate), Toast.LENGTH_LONG).show();
+                    compoundButton.setChecked(false);
+                    return;
+                } else if (isSelect)
+                    imgTickEmergency.setChecked(false);
+                else
+                    imgTickEmergency.setChecked(true);
             }
         });
-
-        tvHelp.setOnClickListener(new View.OnClickListener() {
+        imgTickEmergency.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                if (_count >= 10) {
-                    Toast.makeText(AssignPriorityActivity.this, "You can't select more than 10 contacts for Help!", Toast.LENGTH_LONG).show();
-                    return;
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isSelect) {
+                if (isSelect)
+                    imgTickHelp.setChecked(false);
+                else {
+                    if (_count < 10)
+                        imgTickHelp.setChecked(true);
                 }
-                tvHelp.setBackgroundColor(getResources().getColor(R.color.sidemenu_seperator));
-                tvEmergency.setBackgroundColor(getResources().getColor(android.R.color.white));
-                con_priority = 1;
             }
         });
     }
@@ -84,6 +111,9 @@ public class AssignPriorityActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == R.id.action_saveNote) {
             Intent intent = new Intent();
+            if (imgTickEmergency.isSelected())
+                con_priority = 2;
+            else con_priority = 1;
             intent.putExtra("FROM_PRIORITY", con_priority);
             setResult(Activity.RESULT_OK, intent);
             AssignPriorityActivity.this.finish();

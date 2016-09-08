@@ -245,6 +245,16 @@ public class AddStrategyActivity extends AppCompatActivity {
                     AddStrategyActivity.this.finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(AddStrategyActivity.this,
+                            getResources().getString(R.string.strategyadd_failed), Toast.LENGTH_SHORT).show();
+
+
+                    if (getIntent().hasExtra("FROM_SYMPTOM")) {
+                        GET_STRATEGIES = true;
+                    } else {
+                        ADDED_STRATEGIES = true;
+                    }
+                    AddStrategyActivity.this.finish();
                 }
 
             }
@@ -443,7 +453,7 @@ public class AddStrategyActivity extends AppCompatActivity {
                 break;
             case SET_MUSIC:
 
-                if (data!=null && data.hasExtra("LINK")) {
+                if (data != null && data.hasExtra("LINK")) {
                     if (resultCode == Activity.RESULT_OK) {
                         STR_LINK = data.getStringExtra("LINK");
                         Log.d(":::::: ", STR_LINK);

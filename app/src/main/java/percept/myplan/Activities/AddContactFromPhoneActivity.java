@@ -61,6 +61,7 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 public class AddContactFromPhoneActivity extends AppCompatActivity implements
         StickyListHeadersListView.OnStickyHeaderOffsetChangedListener,
         StickyListHeadersListView.OnStickyHeaderChangedListener {
+    private final static int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 13;
     //    private RecyclerView LST_CONTACT;
     private List<Contact> LIST_CONTACTS;
     //    private ContactAdapter ADAPTER;
@@ -72,11 +73,8 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
     private int HELP_COUNT = 0;
     private int SAVED_NO_COUNT = 0;
     private ProgressBar PB_SAVECONTACT, PB_GETCONTACT;
-
     private String ADD_TO_HELP_LIST = "0";
     private Utils UTILS;
-    private final static int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 13;
-
     private CoordinatorLayout REL_COORDINATE;
 
     @Override
@@ -283,11 +281,14 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             snackbar.show();
             return;
         }
-        PB_SAVECONTACT.setVisibility(View.VISIBLE);
+
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         List<HashMap<String, String>> _tmpConList = addContactList();
+        if (_tmpConList.size() <= 0)
+            return;
+        PB_SAVECONTACT.setVisibility(View.VISIBLE);
         for (int i = 0; i < _tmpConList.size(); i++) {
             params.put("add_" + i, new Gson().toJson(_tmpConList.get(i)));
         }

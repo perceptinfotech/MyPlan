@@ -77,7 +77,11 @@ public class ExportMyPlanPasswordActivity extends AppCompatActivity {
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
-        params.put("password", pdfPassword);
+        params.put("password", pdfPassword.toString().trim());
+
+        for (String str : params.keySet()) {
+            Log.i(":::", str + "->" + params.get(str));
+        }
         try {
             new General().getJSONContentFromInternetService(ExportMyPlanPasswordActivity.this, General.PHPServices.GET_EXPORT_PDF, params, true, false, true, new VolleyResponseListener() {
                 @Override

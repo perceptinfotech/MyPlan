@@ -4,8 +4,7 @@
     <item
         android:id="@+id/action_InsertContact"
         android:orderInCategory="100"
-        android:icon="@drawable/toolbar_add"
-        android:title="@string/action_settings"
+        android:title="@string/action_add"
         app:showAsAction="always" />
 
     <item

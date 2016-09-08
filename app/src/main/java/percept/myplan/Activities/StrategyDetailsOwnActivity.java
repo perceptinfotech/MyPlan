@@ -81,7 +81,8 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
     private List<Alarm> LIST_ALARM;
-    private TextView tvImages, tvNetwork, tvAlarms, tvMusic;
+    private TextView tvImages, tvNetwork, tvAlarms, tvMusic, tvLink;
+    private View vImages, vNetwork, vAlarms, vMusic, vLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +103,13 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         tvNetwork = (TextView) findViewById(R.id.tvNetwork);
         tvImages = (TextView) findViewById(R.id.tvImages);
         tvMusic = (TextView) findViewById(R.id.tvMusic);
+        tvLink = (TextView) findViewById(R.id.tvLink);
+
+        vAlarms = findViewById(R.id.vAlarm);
+        vNetwork = findViewById(R.id.vNetwork);
+        vImages =  findViewById(R.id.vImage);
+        vMusic =  findViewById(R.id.vMusic);
+        vLink =  findViewById(R.id.vLink);
 
         LST_OWNSTRATEGYIMG = (RecyclerView) findViewById(R.id.lstOwnStrategyImage);
         lstOwnStrategyMusic = (RecyclerView) findViewById(R.id.lstOwnStrategyMusic);
@@ -121,7 +129,20 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         BTN_SHARESTRATEGY.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shareStrategy();
+                new dialogYesNoOption(
+                        StrategyDetailsOwnActivity.this, getString(R.string.share_strategy_confirm)) {
+                    @Override
+                    public void onClickYes() {
+                        dismiss();
+                        shareStrategy();
+                    }
+
+                    @Override
+                    public void onClickNo() {
+                        dismiss();
+                    }
+                }.show();
+
             }
         });
 
@@ -377,7 +398,11 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                         ADAPTER = new StrategyContactSimpleAdapter(LIST_STRATEGYCONTACT);
                         LST_STRATEGYCONTACT.setAdapter(ADAPTER);
                         tvNetwork.setVisibility(View.VISIBLE);
-                    } else tvNetwork.setVisibility(View.GONE);
+                        vNetwork.setVisibility(View.VISIBLE);
+                    } else {
+                        tvNetwork.setVisibility(View.GONE);
+                        vNetwork.setVisibility(View.GONE);
+                    }
                     EDT_STRATEGYDESC.setText(clsStrategy.getDescription());
 
                     String _strAlarm = UTILS.getPreference("ALARMLIST");
@@ -416,9 +441,13 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                         if (LIST_IMAGE != null && LIST_IMAGE.size() > 0) {
                             ADAPTER_IMG = new ImageAdapter(StrategyDetailsOwnActivity.this, LIST_IMAGE);
                             LST_OWNSTRATEGYIMG.setAdapter(ADAPTER_IMG);
-                            tvAlarms.setVisibility(View.VISIBLE);
+                            tvImages.setVisibility(View.VISIBLE);
+                            vImages.setVisibility(View.VISIBLE);
                         }
-                    } else tvImages.setVisibility(View.GONE);
+                    } else {
+                        tvImages.setVisibility(View.GONE);
+                        vImages.setVisibility(View.GONE);
+                    }
 
 
                     if (!TextUtils.isEmpty(clsStrategy.getVideos())) {
@@ -433,8 +462,12 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                             musicAdapter = new StrategyMusicAdapter(listMusic);
                             lstOwnStrategyMusic.setAdapter(musicAdapter);
                             tvMusic.setVisibility(View.VISIBLE);
+                            vMusic.setVisibility(View.VISIBLE);
                         }
-                    } else tvMusic.setVisibility(View.GONE);
+                    } else {
+                        tvMusic.setVisibility(View.GONE);
+                        vMusic.setVisibility(View.GONE);
+                    }
 
 
                     PB.setVisibility(View.GONE);
@@ -470,13 +503,14 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             StrategyDetailsOwnActivity.this.finish();
         } else if (item.getItemId() == R.id.action_editStrategy) {
-
-            Intent _intent = new Intent(StrategyDetailsOwnActivity.this, StrategyEditActivity.class);
-            _intent.putExtra("STRATEGY_ID", STRATEGY_ID);
-            _intent.putExtra("STRATEGY_TITLE", EDT_STRATEGYTITLE.getText().toString());
-            _intent.putExtra("STRATEGY_DESC", EDT_STRATEGYDESC.getText().toString());
-            _intent.putExtra("STR_LINK", clsStrategy.getLink());
-            startActivity(_intent);
+            if (clsStrategy != null) {
+                Intent _intent = new Intent(StrategyDetailsOwnActivity.this, StrategyEditActivity.class);
+                _intent.putExtra("STRATEGY_ID", STRATEGY_ID);
+                _intent.putExtra("STRATEGY_TITLE", EDT_STRATEGYTITLE.getText().toString());
+                _intent.putExtra("STRATEGY_DESC", EDT_STRATEGYDESC.getText().toString());
+                _intent.putExtra("STR_LINK", clsStrategy.getLink());
+                startActivity(_intent);
+            }
 //            Toast.makeText(StrategyDetailsOwnActivity.this, "Edit Strategy called", Toast.LENGTH_SHORT).show();
         }
         return false;

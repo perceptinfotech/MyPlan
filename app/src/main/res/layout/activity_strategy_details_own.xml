@@ -88,13 +88,14 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="10dp"
                     android:paddingLeft="15dp"
-                    android:paddingTop="25dp"
+                    android:paddingTop="15dp"
                     android:text="@string/alarms"
                     android:textAllCaps="true"
                     android:textSize="14sp"
                     android:visibility="gone"/>
 
                 <View
+                    android:id="@+id/vAlarm"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/sidemenu_seperator"/>
@@ -150,6 +151,7 @@
                     android:visibility="gone"/>
 
                 <View
+                    android:id="@+id/vNetwork"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/sidemenu_seperator"/>
@@ -174,6 +176,7 @@
                     android:visibility="gone"/>
 
                 <View
+                    android:id="@+id/vImage"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/sidemenu_seperator"/>
@@ -186,6 +189,7 @@
                     android:background="@android:color/white"
                     android:orientation="horizontal"
                     android:paddingLeft="10dp"/>
+
                 <TextView
                     android:id="@+id/tvMusic"
                     android:layout_width="match_parent"
@@ -199,6 +203,7 @@
                     android:visibility="gone"/>
 
                 <View
+                    android:id="@+id/vMusic"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/sidemenu_seperator"/>
@@ -210,7 +215,33 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/white"
                     android:orientation="horizontal"
-                    android:paddingLeft="10dp"/>
+                    />
+
+                <TextView
+                    android:id="@+id/tvLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="25dp"
+                    android:text="@string/links"
+                    android:textAllCaps="true"
+                    android:textSize="14sp"
+                    android:visibility="gone"/>
+
+                <View
+                    android:id="@+id/vLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/sidemenu_seperator"/>
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/lstOwnStrategyLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"/>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"

@@ -198,13 +198,13 @@ public class SymptomDetailsActivity extends AppCompatActivity {
             TV_TITLE.setEnabled(true);
             TV_TEXT.setEnabled(true);
             isEDIT = false;
-            btnDeleteSymptom.setVisibility(View.GONE);
+            btnDeleteSymptom.setVisibility(View.VISIBLE);
         } else {
             menu.getItem(0).setVisible(true);
             menu.getItem(1).setVisible(false);
             TV_TITLE.setEnabled(false);
             TV_TEXT.setEnabled(false);
-            btnDeleteSymptom.setVisibility(View.VISIBLE);
+            btnDeleteSymptom.setVisibility(View.GONE);
         }
         return true;
     }

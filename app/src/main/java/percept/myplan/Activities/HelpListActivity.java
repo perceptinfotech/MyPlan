@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -132,7 +133,10 @@ public class HelpListActivity extends AppCompatActivity {
                     REQUEST_CODE_CALL_PERMISSIONS);
         } else {
             Intent phoneIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNo));
-            phoneIntent.setPackage("com.android.phone");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                phoneIntent.setPackage("com.android.server.telecom");
+            else
+                phoneIntent.setPackage("com.android.phone");
             startActivity(phoneIntent);
 
         }

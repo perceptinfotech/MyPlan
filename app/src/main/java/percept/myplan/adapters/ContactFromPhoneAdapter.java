@@ -45,23 +45,28 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
     }
 
     private int[] getSectionIndices() {
-        ArrayList<Integer> sectionIndices = new ArrayList<Integer>();
-        char lastFirstChar = LIST_CONTACT.get(0).getFirstName().charAt(0);
-        sectionIndices.add(0);
-        for (int i = 1; i < LIST_CONTACT.size(); i++) {
-            if (LIST_CONTACT.get(i).getFirstName().charAt(0) != lastFirstChar) {
-                lastFirstChar = LIST_CONTACT.get(i).getFirstName().charAt(0);
-                sectionIndices.add(i);
+        if (LIST_CONTACT.size() > 0) {
+            ArrayList<Integer> sectionIndices = new ArrayList<Integer>();
+            char lastFirstChar = LIST_CONTACT.get(0).getFirstName().charAt(0);
+            sectionIndices.add(0);
+            for (int i = 1; i < LIST_CONTACT.size(); i++) {
+                if (LIST_CONTACT.get(i).getFirstName().charAt(0) != lastFirstChar) {
+                    lastFirstChar = LIST_CONTACT.get(i).getFirstName().charAt(0);
+                    sectionIndices.add(i);
+                }
             }
+            int[] sections = new int[sectionIndices.size()];
+            for (int i = 0; i < sectionIndices.size(); i++) {
+                sections[i] = sectionIndices.get(i);
+            }
+            return sections;
         }
-        int[] sections = new int[sectionIndices.size()];
-        for (int i = 0; i < sectionIndices.size(); i++) {
-            sections[i] = sectionIndices.get(i);
-        }
-        return sections;
+        return null;
     }
 
     private Character[] getSectionLetters() {
+        if (mSectionIndices == null)
+            return null;
         Character[] letters = new Character[mSectionIndices.length];
         for (int i = 0; i < mSectionIndices.length; i++) {
             letters[i] = LIST_CONTACT.get(mSectionIndices[i]).getFirstName().charAt(0);
