@@ -152,6 +152,8 @@ public class fragmentHopeBox extends Fragment {
                             if (response.getJSONObject(Constant.DATA).getString(Constant.STATUS).equals("Success")) {
                                 LIST_HOPE.remove(deletePosition);
                                 deletePosition = -1;
+                                ADAPTER = new HopeAdapter(getActivity(), LIST_HOPE);
+                                LST_HOPE.setAdapter(ADAPTER);
                                 ADAPTER.notifyDataSetChanged();
                                 Toast.makeText(getActivity(), getString(R.string.delete_hope_box_success), Toast.LENGTH_LONG).show();
                             }

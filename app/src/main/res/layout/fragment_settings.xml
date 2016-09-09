@@ -49,7 +49,7 @@
                 android:id="@+id/imgMoodRatings"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/setting_moodrating" />
+                android:src="@drawable/setting_moodrating_new" />
 
             <TextView
                 android:id="@+id/tvMoodRatings"

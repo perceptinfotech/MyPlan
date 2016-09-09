@@ -80,7 +80,7 @@ public class MusicListActivity extends AppCompatActivity {
             FROM = getIntent().getExtras().getString("FROM_HOPE");
             HOPE_TITLE = getIntent().getExtras().getString("HOPE_TITLE");
             HOPE_ID = getIntent().getExtras().getString("HOPE_ID");
-            if (getIntent().hasExtra(HOPE_ELEMENT_ID)) {
+            if (getIntent().hasExtra("HOPE_ELEMENT_ID")) {
                 HOPE_ELEMENT_ID = getIntent().getExtras().getString("HOPE_ELEMENT_ID");
             }
         }

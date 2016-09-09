@@ -29,22 +29,10 @@ import percept.myplan.R;
  */
 public class HopeAdapter extends RecyclerView.Adapter<HopeAdapter.MyViewHolder> {
 
+    ImageLoader imageLoader;
     private Context CONTEXT;
     private List<Hope> LST_HOPE;
-    ImageLoader imageLoader;
-
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView TV_TITLE;
-        public ImageView IMG_COVER,IMG_ADDHOPE;
-
-        public MyViewHolder(View view) {
-            super(view);
-            TV_TITLE = (TextView) view.findViewById(R.id.title);
-            IMG_COVER = (ImageView) view.findViewById(R.id.thumbnail);
-            IMG_ADDHOPE = (ImageView) view.findViewById(R.id.imgAddHope);
-        }
-    }
-
+    private MyViewHolder holder;
 
     public HopeAdapter(Context mContext, List<Hope> hopeList) {
         this.CONTEXT = mContext;
@@ -136,5 +124,17 @@ public class HopeAdapter extends RecyclerView.Adapter<HopeAdapter.MyViewHolder> 
     @Override
     public int getItemCount() {
         return LST_HOPE.size();
+    }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView TV_TITLE;
+        public ImageView IMG_COVER, IMG_ADDHOPE;
+
+        public MyViewHolder(View view) {
+            super(view);
+            TV_TITLE = (TextView) view.findViewById(R.id.title);
+            IMG_COVER = (ImageView) view.findViewById(R.id.thumbnail);
+            IMG_ADDHOPE = (ImageView) view.findViewById(R.id.imgAddHope);
+        }
     }
 }

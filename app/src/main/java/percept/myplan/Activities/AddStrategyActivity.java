@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -201,7 +202,7 @@ public class AddStrategyActivity extends AppCompatActivity {
         }
         if (LIST_MUSIC.size() > 0) {
             for (int i = 0; i < LIST_MUSIC.size(); i++) {
-                map.put("video" + (i + 1), LIST_IMG.get(i));
+                map.put("video" + (i + 1), LIST_MUSIC.get(i));
             }
         }
 //                }
@@ -219,7 +220,7 @@ public class AddStrategyActivity extends AppCompatActivity {
         map.put(Constant.LINK, STR_LINK);
 
 
-        new MultiPartParsing(this, map, General.PHPServices.SHARE_STRATEGIES, new AsyncTaskCompletedListener() {
+        new MultiPartParsing(this, map, General.PHPServices.SAVE_STRATEGY, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
                 PB.setVisibility(View.GONE);
@@ -227,6 +228,7 @@ public class AddStrategyActivity extends AppCompatActivity {
                     Log.d(":::::: ", response);
                     String _id = "";
                     JSONObject _object = new JSONObject(response);
+//                    if (_object.get(Constant.DATA) instanceof JSONArray)
                     JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
                     _id = _ObjData.getString(Constant.ID);
                     MAP_ALARM.put(_id, LIST_ALARM);

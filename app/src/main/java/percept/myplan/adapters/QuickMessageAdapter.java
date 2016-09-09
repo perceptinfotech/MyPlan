@@ -35,12 +35,12 @@ public class QuickMessageAdapter extends RecyclerView.Adapter<QuickMessageAdapte
     @Override
     public void onBindViewHolder(QuickMessageHolder holder, int position) {
         QuickMessage _contact = LST_QMSG.get(position);
-        if (TextUtils.isEmpty(_contact.getMessage()))
+//        if (TextUtils.isEmpty(_contact.getMessage()))
             holder.TV_QUICKMSG.setText(_contact.getFirstName());
-        else {
-            String _msg = _contact.getMessage().split(" ")[0];
-            holder.TV_QUICKMSG.setText(_msg + " " + _contact.getFirstName());
-        }
+//        else {
+//            String _msg = _contact.getMessage().split(" ")[0];
+//            holder.TV_QUICKMSG.setText(_msg + " " + _contact.getFirstName());
+//        }
 
     }
 

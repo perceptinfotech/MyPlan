@@ -204,7 +204,7 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
                     }
                 }
             }
-            if (TextUtils.isEmpty(strContactNos)) {
+            if (!TextUtils.isEmpty(strContactNos)) {
                 Intent intent = new Intent(AddStrategyContactActivity.this, SharePositionActivity.class);
                 intent.putExtra("CONTACT_NOs", strContactNos);
                 intent.putExtra("CURRENT_LOCATION", getIntent().getParcelableExtra("CURRENT_LOCATION"));

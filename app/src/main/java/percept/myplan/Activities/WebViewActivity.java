@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
@@ -32,7 +33,8 @@ public class WebViewActivity extends AppCompatActivity {
         mWebView = (WebView) findViewById(R.id.webView1);
         mWebView.setWebViewClient(new HelloWebViewClient());
         mWebView.getSettings().setJavaScriptEnabled(true);
-//        mWebView.getSettings().setPluginsEnabled(true);
+        mWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        mWebView.getSettings().setPluginState(WebSettings.PluginState.ON);
         mWebView.getSettings().setAllowFileAccess(true);
         mWebView.loadUrl(getIntent().getStringExtra("URL_MUSIC"));
     }

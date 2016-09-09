@@ -92,7 +92,7 @@ public class SignUpActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText(getResources().getString(R.string.myplan));
+        mTitle.setText(getResources().getString(R.string.app_name));
 
         UTILS = new Utils(SignUpActivity.this);
         PB = (ProgressBar) findViewById(R.id.progressBar);

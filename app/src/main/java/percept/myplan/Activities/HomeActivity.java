@@ -478,7 +478,7 @@ public class HomeActivity extends AppCompatActivity implements
                 if (fragment == null) {
                     fragment = new fragmentHome();
                 }
-                mTitle.setText(getResources().getString(R.string.myplan));
+                mTitle.setText(getResources().getString(R.string.app_name));
                 Constant.CURRENT_FRAGMENT = fragmentHome.INDEX;
 
                 break;
@@ -592,7 +592,7 @@ public class HomeActivity extends AppCompatActivity implements
                 if (fragment == null) {
                     fragment = new fragmentHome();
                 }
-                mTitle.setText(getResources().getString(R.string.myplan));
+                mTitle.setText(getResources().getString(R.string.app_name));
                 Constant.CURRENT_FRAGMENT = 0;
 
         }

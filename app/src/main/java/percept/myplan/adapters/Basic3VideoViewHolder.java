@@ -11,6 +11,7 @@ import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
 import percept.myplan.media.Cineer;
 import percept.myplan.player.ExoVideo;
+import percept.myplan.player.widget.ToroVideoView;
 
 /**
  * Created by percept on 5/8/16.
@@ -25,17 +26,18 @@ public class Basic3VideoViewHolder extends Basic3BaseVideoViewHolder {
     private HopeDetail video;
     private final Cineer.Player videoPlayer;
     /* package */
-    final View videoView; // package private so Adapter can judge the clicked View.
+    final ToroVideoView videoView; // package private so Adapter can judge the clicked View.
     final TextView dummyView, tvCardVideoEdit;
 
 
     public Basic3VideoViewHolder(View itemView) {
         super(itemView);
         dummyView = (TextView) itemView.findViewById(R.id.text);
-        videoView = itemView.findViewById(R.id.video);
+        videoView = (ToroVideoView) itemView.findViewById(R.id.video);
         tvCardVideoEdit = (TextView) itemView.findViewById(R.id.tvCardVideoEdit);
         if (getPlayerView() instanceof Cineer.Player) {
             videoPlayer = (Cineer.Player) getPlayerView();
+
         } else {
             throw new IllegalArgumentException("Illegal Video player widget. Requires a Cineer.Player");
         }

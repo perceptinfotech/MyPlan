@@ -67,6 +67,7 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
                 public void onClick(View view) {
                     // Do this for for videoView only.
                     if (view == ((Basic3VideoViewHolder) viewHolder).videoView) {
+                        hopeDetailsActivity.playMusicHopeElement((Integer) view.getTag());
 //                        // 1. Temporary disable the playback.
 //                        Toro.rest(true);
 //                        new AlertDialog.Builder(parent.getContext()).setTitle(R.string.app_name)
@@ -135,8 +136,10 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
             viewHolder.setOnItemClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (view == ((Basic3MediaViewHolder) viewHolder).tvCardMusicEdit) {
+                    if (view.getId() == R.id.tvCardImageEdit) {
                         hopeDetailsActivity.editHopeElement((Integer) view.getTag());
+                    } else if (view.getId() == R.id.imgCardImage) {
+                        hopeDetailsActivity.playMusicHopeElement((Integer) view.getTag());
                     }
                 }
             });
@@ -219,8 +222,7 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
         return position;
     }
 
-    private void showDeleteConfirmDialog(final int position)
-    {
+    private void showDeleteConfirmDialog(final int position) {
         new dialogDeleteAlert(hopeDetailsActivity, hopeDetailsActivity.getString(R.string.delete_hope_element)) {
             @Override
             public void onClickYes() {

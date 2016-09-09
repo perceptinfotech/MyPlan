@@ -199,6 +199,12 @@ public class HopeDetailsActivity extends AppCompatActivity {
         intent.putExtra("HOPE_ID", getIntent().getExtras().getString("HOPE_ID"));
         startActivity(intent);
     }
+    public void playMusicHopeElement(int position) {
+        Intent intent = new Intent(HopeDetailsActivity.this, WebViewActivity.class);
+        intent.putExtra("URL_MUSIC", LIST_HOPEDETAILS.get(position).getMEDIA());
+        intent.putExtra(Constant.DATA, LIST_HOPEDETAILS.get(position));
+        startActivity(intent);
+    }
 
     public void deleteHopeElement(int poition) {
         deletePosition = poition;

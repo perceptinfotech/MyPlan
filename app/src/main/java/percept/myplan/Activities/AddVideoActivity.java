@@ -18,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -123,6 +124,7 @@ public class AddVideoActivity extends AppCompatActivity {
                 Intent intents = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 intents.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 20);
                 intents.putExtra(MediaStore.EXTRA_OUTPUT, videFileUri);
+                intents.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
                 startActivityForResult(intents, REQ_TAKE_VIDEO);
             }
         });
@@ -232,39 +234,48 @@ public class AddVideoActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home)
+            AddVideoActivity.this.finish();
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Calendar cal = Calendar.getInstance();
-        int seconds = cal.get(Calendar.SECOND);
-        int hour = cal.get(Calendar.HOUR);
-        int min = cal.get(Calendar.MINUTE);
-        String currentDateTimeString = new SimpleDateFormat("ddMMMyyyy").format(new Date());
-        if (requestCode == REQ_PICK_VID_GALLERY) {
-            //region PICK_VID_GALLERY
-            Uri selectedVideos = data.getData();
-            String[] videoFilePath = {MediaStore.Video.Media.DATA};
-            Cursor c = getContentResolver().query(selectedVideos, videoFilePath,
-                    null, null, null);
-            c.moveToFirst();
-            int columnIndex = c.getColumnIndex(videoFilePath[0]);
-            String videosPath = c.getString(columnIndex);
-            c.close();
+        if (data != null && data.getData() != null) {
+            Calendar cal = Calendar.getInstance();
 
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(videosPath);
-            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            long _timeInmillisec = Long.parseLong(time);
-            long _duration = _timeInmillisec / 1000;
-            long _hours = _duration / 3600;
-            long _minutes = (_duration - _hours * 3600) / 60;
-            long _seconds = _duration - (_hours * 3600);
+            int seconds = cal.get(Calendar.SECOND);
+            int hour = cal.get(Calendar.HOUR);
+            int min = cal.get(Calendar.MINUTE);
+            String currentDateTimeString = new SimpleDateFormat("ddMMMyyyy").format(new Date());
+            if (requestCode == REQ_PICK_VID_GALLERY) {
+                //region PICK_VID_GALLERY
+                Uri selectedVideos = data.getData();
+                String[] videoFilePath = {MediaStore.Video.Media.DATA};
+                Cursor c = getContentResolver().query(selectedVideos, videoFilePath,
+                        null, null, null);
+                c.moveToFirst();
+                int columnIndex = c.getColumnIndex(videoFilePath[0]);
+                String videosPath = c.getString(columnIndex);
+                c.close();
 
-            if (_duration > 20) {
-                Toast.makeText(AddVideoActivity.this, R.string.pickagainwithlesstime, Toast.LENGTH_SHORT).show();
-                return;
-            }
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(videosPath);
+                String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                long _timeInmillisec = Long.parseLong(time);
+                long _duration = _timeInmillisec / 1000;
+                long _hours = _duration / 3600;
+                long _minutes = (_duration - _hours * 3600) / 60;
+                long _seconds = _duration - (_hours * 3600);
+
+                if (_duration > 20) {
+                    Toast.makeText(AddVideoActivity.this, R.string.pickagainwithlesstime, Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
 
-            int end = videosPath.toString().lastIndexOf("/");
+                int end = videosPath.toString().lastIndexOf("/");
 //            String str2 = videosPath.toString().substring(end + 1, videosPath.length());
 //
 //            String name = "VID_" + currentDateTimeString + seconds + hour + min + ".mp4";
@@ -283,41 +294,42 @@ public class AddVideoActivity extends AppCompatActivity {
 //            if (success) {
 //                String _Path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + name;
 //                Log.d("::::::::::: ", _Path);
-            addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, HOPE_ELEMENT_ID, videosPath, "video");
+                addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, HOPE_ELEMENT_ID, videosPath, "video");
 //            }
-            //endregion
-        } else if (requestCode == REQ_TAKE_VIDEO) {
-            //region VIDEO_CAPTURE
-            Uri videoUris = data.getData();
-            String[] filePaths = {MediaStore.Video.Media.DATA};
-            Cursor cu = getContentResolver().query(videoUris, filePaths, null, null, null);
-            cu.moveToFirst();
-            int columnIndex = cu.getColumnIndex(filePaths[0]);
-            String picturePaths = cu.getString(columnIndex);
-            cu.close();
-            int end = picturePaths.toString().lastIndexOf("/");
-            String str2 = picturePaths.toString().substring(end + 1, picturePaths.length());
-            File mediaStorageDir = new File(Constant.APP_MEDIA_PATH + File.separator + "VIDEOS");
+                //endregion
+            } else if (requestCode == REQ_TAKE_VIDEO) {
+                //region VIDEO_CAPTURE
+                Uri videoUris = data.getData();
+                String[] filePaths = {MediaStore.Video.Media.DATA};
+                Cursor cu = getContentResolver().query(videoUris, filePaths, null, null, null);
+                cu.moveToFirst();
+                int columnIndex = cu.getColumnIndex(filePaths[0]);
+                String picturePaths = cu.getString(columnIndex);
+                cu.close();
+                int end = picturePaths.toString().lastIndexOf("/");
+                String str2 = picturePaths.toString().substring(end + 1, picturePaths.length());
+                File mediaStorageDir = new File(Constant.APP_MEDIA_PATH + File.separator + "VIDEOS");
 
-            // Create the storage directory if it does not exist
-            if (!mediaStorageDir.exists()) {
-                if (!mediaStorageDir.mkdirs()) {
+                // Create the storage directory if it does not exist
+                if (!mediaStorageDir.exists()) {
+                    if (!mediaStorageDir.mkdirs()) {
 
+                    }
                 }
-            }
 
-            String name = "VID_" + currentDateTimeString + seconds + hour + min + ".mp4";
+                String name = "VID_" + currentDateTimeString + seconds + hour + min + ".mp4";
 
-            Constant.copyFile(picturePaths, Constant.APP_MEDIA_PATH + File.separator + "VIDEOS", name);
+                Constant.copyFile(picturePaths, Constant.APP_MEDIA_PATH + File.separator + "VIDEOS", name);
 
 //                File file = new File(_imgPath);
 //                if (file.exists()) {
 //                    file.delete();
 //                }
 
-            String _path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + name;
-            Log.d("::::::::::: ", _path);
-            addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, HOPE_ELEMENT_ID, _path, "video");
+                String _path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + name;
+                Log.d("::::::::::: ", _path);
+                addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, HOPE_ELEMENT_ID, _path, "video");
+            }
         }
     }
 

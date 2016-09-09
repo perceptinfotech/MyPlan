@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +47,7 @@ public class AddHopeBoxActivity extends AppCompatActivity {
     private RelativeLayout LAY_SELECTIMG, LAY_SELECTEDIMG;
     private Utils UTILS;
     private CoordinatorLayout REL_COORDINATE;
+    private ProgressBar pbAddHopeBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class AddHopeBoxActivity extends AppCompatActivity {
         LAY_SELECTIMG = (RelativeLayout) findViewById(R.id.relSelectImg);
         LAY_SELECTEDIMG = (RelativeLayout) findViewById(R.id.relSelectedImg);
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
+        pbAddHopeBox = (ProgressBar) findViewById(R.id.pbAddHopeBox);
 
         LAY_SELECTEDIMG.setVisibility(View.GONE);
 
@@ -116,7 +119,8 @@ public class AddHopeBoxActivity extends AppCompatActivity {
 //            Toast.makeText(AddHopeBoxActivity.this, "Saved Called", Toast.LENGTH_SHORT).show();
 
 //            new AddHopeBox(EDT_FOLDERNAME.getText().toString(), FOLDER_IMG_PATH).execute();
-            addHopeBox(EDT_FOLDERNAME.getText().toString(), FOLDER_IMG_PATH);
+            if (pbAddHopeBox.getVisibility() == View.GONE)
+                addHopeBox(EDT_FOLDERNAME.getText().toString(), FOLDER_IMG_PATH);
         }
         return false;
     }
@@ -162,6 +166,7 @@ public class AddHopeBoxActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
+        pbAddHopeBox.setVisibility(View.VISIBLE);
         HashMap<String, String> map = new HashMap<>();
 //        map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopebox");
         map.put("cover", IMG_PATH);
@@ -169,12 +174,13 @@ public class AddHopeBoxActivity extends AppCompatActivity {
         map.put("sname", Constant.SNAME);
         map.put(Constant.ID, "");
         map.put(Constant.TITLE, TITLE);
-        new MultiPartParsing(this, map, General.PHPServices.ADD_HOPEBOX,new AsyncTaskCompletedListener() {
+        new MultiPartParsing(this, map, General.PHPServices.ADD_HOPEBOX, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
                 Log.d(":::::: ", response);
                 Toast.makeText(AddHopeBoxActivity.this,
                         getResources().getString(R.string.hopeboxadded), Toast.LENGTH_SHORT).show();
+                pbAddHopeBox.setVisibility(View.GONE);
                 AddHopeBoxActivity.this.finish();
                 ADDED_HOPEBOX = true;
             }

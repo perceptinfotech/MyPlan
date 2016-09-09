@@ -16,13 +16,19 @@ public class SidaQuestion {
     @SerializedName("state")
     private String State;
     private String SIDA_ANSWER;
+    @SerializedName("answer1right")
+    private String labelLeft;
+    @SerializedName("answer11right")
+    private String labelRight;
 
-    public SidaQuestion(String ID, String question, String ordering, String state, String sidaAnswer) {
+    public SidaQuestion(String ID, String labelLeft, String labelRight, String ordering, String question, String SIDA_ANSWER, String state) {
         this.ID = ID;
-        Question = question;
+        this.labelLeft = labelLeft;
+        this.labelRight = labelRight;
         Ordering = ordering;
+        Question = question;
+        this.SIDA_ANSWER = SIDA_ANSWER;
         State = state;
-        SIDA_ANSWER = sidaAnswer;
     }
 
     public String getSIDA_ANSWER() {
@@ -63,5 +69,21 @@ public class SidaQuestion {
 
     public void setState(String state) {
         State = state;
+    }
+
+    public String getLabelLeft() {
+        return labelLeft;
+    }
+
+    public void setLabelLeft(String labelLeft) {
+        this.labelLeft = labelLeft;
+    }
+
+    public String getLabelRight() {
+        return labelRight;
+    }
+
+    public void setLabelRight(String labelRight) {
+        this.labelRight = labelRight;
     }
 }

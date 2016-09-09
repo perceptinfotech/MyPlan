@@ -41,7 +41,7 @@ public class QuickMessageDetailsActivity extends AppCompatActivity {
         if (getIntent().hasExtra("QUICK_MSG")) {
             message = (QuickMessage) getIntent().getSerializableExtra("QUICK_MSG");
             tvMsg.setText(message.getNotificationMessage() + " " + message.getMessage());
-            mTitle.setText(message.getFirstName() + " " + message.getMessage());
+            mTitle.setText(message.getFirstName());
         }
         btnSendAgain.setOnClickListener(new View.OnClickListener() {
             @Override

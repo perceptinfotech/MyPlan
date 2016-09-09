@@ -53,10 +53,11 @@ public class SidaTestActivity extends AppCompatActivity {
     private List<SidaQuestion> LST_SIDAQUES;
     private SeekBar SEEK_SIDA;
     private Button BTN_NEXT_QUES;
-    private int CURR_QUES, TOTAL_QUES;
+    private int CURR_QUES = 0, TOTAL_QUES = 0;
     private String STRANSWER = "";
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
+    private TextView tvLabelLeft, tvLabelRight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +76,8 @@ public class SidaTestActivity extends AppCompatActivity {
         TV_TESTANSWER = (TextView) findViewById(R.id.tvSidaPoints);
         BTN_NEXT_QUES = (Button) findViewById(R.id.btnNextQues);
         PB = (ProgressBar) findViewById(R.id.pbSidaTest);
+        tvLabelLeft = (TextView) findViewById(R.id.tvLabelLeft);
+        tvLabelRight = (TextView) findViewById(R.id.tvLabelRight);
 
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
@@ -98,12 +101,16 @@ public class SidaTestActivity extends AppCompatActivity {
         });
 
         InfoDialog _dialog = new InfoDialog(SidaTestActivity.this,
-                getString(R.string.test_start_warning_msg), getString(R.string.cont), "");
+                getString(R.string.test_start_warning_msg), getString(R.string.cont), "") {
+            @Override
+            public void onClickFirstButton() {
+                super.onClickFirstButton();
+                GetSidaTest();
+            }
+        };
         _dialog.setCanceledOnTouchOutside(true);
         _dialog.show();
 
-
-        GetSidaTest();
 
         BTN_NEXT_QUES.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +118,8 @@ public class SidaTestActivity extends AppCompatActivity {
                 if (CURR_QUES + 1 < TOTAL_QUES) {
                     CURR_QUES = CURR_QUES + 1;
                     TV_TESTQUESTION.setText(LST_SIDAQUES.get(CURR_QUES - 1).getQuestion());
+                    tvLabelLeft.setText(LST_SIDAQUES.get(CURR_QUES - 1).getLabelLeft());
+                    tvLabelRight.setText(LST_SIDAQUES.get(CURR_QUES - 1).getLabelRight());
                     if (CURR_QUES + 1 == TOTAL_QUES)
                         BTN_NEXT_QUES.setText(getString(R.string.submit) +
                                 " (" + String.valueOf(CURR_QUES + 1) + "/" + String.valueOf(TOTAL_QUES) + ")");
@@ -223,6 +232,7 @@ public class SidaTestActivity extends AppCompatActivity {
     }
 
     private void GetSidaTest() {
+        PB.setVisibility(View.VISIBLE);
         params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -230,7 +240,7 @@ public class SidaTestActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(SidaTestActivity.this, General.PHPServices.GET_SIDATEST, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -246,7 +256,7 @@ public class SidaTestActivity extends AppCompatActivity {
                         TV_TESTQUESTION.setText(LST_SIDAQUES.get(CURR_QUES).getQuestion());
                         BTN_NEXT_QUES.setText(getResources().getString(R.string.nextques) +
                                 "(" + String.valueOf(CURR_QUES + 1) + "/" + String.valueOf(TOTAL_QUES) + ")");
-
+                        PB.setVisibility(View.GONE);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
