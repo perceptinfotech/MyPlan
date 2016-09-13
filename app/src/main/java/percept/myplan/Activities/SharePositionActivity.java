@@ -44,7 +44,7 @@ public class SharePositionActivity extends AppCompatActivity {
         String msg = " ";
 
 //        tvShareMsg.setText(Html.fromHtml("&lt;a href=\"http://www.google.com\"&gt;URL&lt;/a&gt;"));
-        tvShareMsg.setText(Html.fromHtml(getString(R.string.share_location_msg) + " " +
+        tvShareMsg.setText(Html.fromHtml(getString(R.string.share_location_msg) + "<br/>" +
                 "<a href=\"http://maps.google.com/?q="
                 + latLng.latitude + "," + latLng.longitude + "\">" + getString(R.string.url) + "</a>"));
         tvShareMsg.setMovementMethod(LinkMovementMethod.getInstance());

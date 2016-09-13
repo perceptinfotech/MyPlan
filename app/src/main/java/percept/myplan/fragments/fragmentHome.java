@@ -71,6 +71,7 @@ import percept.myplan.R;
 import percept.myplan.receivers.AlarmReceiver;
 
 import static android.content.Context.ALARM_SERVICE;
+import static percept.myplan.Global.Utils.decodeFile;
 
 
 public class fragmentHome extends Fragment {
@@ -510,7 +511,7 @@ public class fragmentHome extends Fragment {
         PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
         if (!TextUtils.isEmpty(FILE_PATH))
-            params.put("profile_image", FILE_PATH);
+            params.put("profile_image", decodeFile(FILE_PATH, 800, 800));
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         params.put("first_name", utils.getPreference(Constant.PREF_PROFILE_FNAME));

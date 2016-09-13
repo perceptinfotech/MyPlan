@@ -38,6 +38,7 @@ public class fragmentShareMyLocation extends Fragment {
     private GoogleMap googleMap;
     private Button BTN_SHARELOC;
     private LatLng _CurrentPos;
+    private HomeActivity activity;
 
     public fragmentShareMyLocation() {
         // Required empty public constructor
@@ -47,6 +48,7 @@ public class fragmentShareMyLocation extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        activity= (HomeActivity) getActivity();
         // Inflate the lay_help_info for this fragment
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Share My Location");
         View _view = inflater.inflate(R.layout.fragment_share_my_location, container, false);
@@ -62,36 +64,6 @@ public class fragmentShareMyLocation extends Fragment {
             e.printStackTrace();
         }
 
-        mMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap mMap) {
-                googleMap = mMap;
-
-                // For showing a move to my location button
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                googleMap.setMyLocationEnabled(false);
-
-                // For dropping a marker at a point on the Map
-                _CurrentPos = new LatLng(HomeActivity.CURRENT_LAT, HomeActivity.CURRENT_LONG);
-//                googleMap.addMarker(new MarkerOptions().position(_CurrentPos).title("Marker Title").snippet("Marker Description"));
-
-                // For zooming automatically to the location of the marker
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(_CurrentPos).zoom(12).build();
-                Marker marker = googleMap.addMarker(new MarkerOptions()
-                        .position(_CurrentPos)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
-        });
 
         BTN_SHARELOC.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,6 +81,25 @@ public class fragmentShareMyLocation extends Fragment {
     public void onResume() {
         super.onResume();
         mMapView.onResume();
+
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap mMap) {
+                googleMap = mMap;
+
+                // For showing a move to my location button
+                if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                    return;
+                }
+                googleMap.setMyLocationEnabled(false);
+                if (activity.isGPSEnabled()) {
+                    updateUI();
+                } else {
+                    activity.buildGoogleApiClient();
+                }
+            }
+        });
     }
 
     @Override
@@ -127,5 +118,18 @@ public class fragmentShareMyLocation extends Fragment {
     public void onLowMemory() {
         super.onLowMemory();
         mMapView.onLowMemory();
+    }
+
+    public void updateUI() {
+        // For dropping a marker at a point on the Map
+        _CurrentPos = new LatLng(HomeActivity.CURRENT_LAT, HomeActivity.CURRENT_LONG);
+//                googleMap.addMarker(new MarkerOptions().position(_CurrentPos).title("Marker Title").snippet("Marker Description"));
+
+        // For zooming automatically to the location of the marker
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(_CurrentPos).zoom(12).build();
+        Marker marker = googleMap.addMarker(new MarkerOptions()
+                .position(_CurrentPos)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 }

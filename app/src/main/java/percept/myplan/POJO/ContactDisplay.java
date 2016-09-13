@@ -44,6 +44,7 @@ public class ContactDisplay implements Comparable<ContactDisplay>, Serializable 
     private String company_name = "";
     private String ringtone = "";
     private String con_image_thumb = "";
+    private String emergency = "";
     private boolean isSelected = false;
 
     public ContactDisplay() {
@@ -214,5 +215,13 @@ public class ContactDisplay implements Comparable<ContactDisplay>, Serializable 
     @Override
     public int compareTo(ContactDisplay contactDisplay) {
         return first_name.compareTo(contactDisplay.getFirst_name());
+    }
+
+    public String getEmergency() {
+        return emergency;
+    }
+
+    public void setEmergency(String emergency) {
+        this.emergency = emergency;
     }
 }

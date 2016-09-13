@@ -79,9 +79,6 @@ public class ExportMyPlanPasswordActivity extends AppCompatActivity {
         params.put("sname", Constant.SNAME);
         params.put("password", pdfPassword.toString().trim());
 
-        for (String str : params.keySet()) {
-            Log.i(":::", str + "->" + params.get(str));
-        }
         try {
             new General().getJSONContentFromInternetService(ExportMyPlanPasswordActivity.this, General.PHPServices.GET_EXPORT_PDF, params, true, false, true, new VolleyResponseListener() {
                 @Override
@@ -93,7 +90,7 @@ public class ExportMyPlanPasswordActivity extends AppCompatActivity {
                 public void onResponse(JSONObject response) {
                     Log.i("::::PDF", response.toString());
                     PB.setVisibility(View.GONE);
-                    Toast.makeText(ExportMyPlanPasswordActivity.this, getString(R.string.mail_success_msg), Toast.LENGTH_LONG).show();
+                    Toast.makeText(ExportMyPlanPasswordActivity.this, getString(R.string.pdf_success_msg), Toast.LENGTH_LONG).show();
                     ExportMyPlanPasswordActivity.this.finish();
                 }
             });

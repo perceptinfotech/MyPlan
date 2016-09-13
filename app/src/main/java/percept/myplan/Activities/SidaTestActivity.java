@@ -2,11 +2,14 @@ package percept.myplan.Activities;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -99,13 +102,13 @@ public class SidaTestActivity extends AppCompatActivity {
 
             }
         });
-
+        GetSidaTest();
         InfoDialog _dialog = new InfoDialog(SidaTestActivity.this,
                 getString(R.string.test_start_warning_msg), getString(R.string.cont), "") {
             @Override
             public void onClickFirstButton() {
                 super.onClickFirstButton();
-                GetSidaTest();
+
             }
         };
         _dialog.setCanceledOnTouchOutside(true);
@@ -121,8 +124,8 @@ public class SidaTestActivity extends AppCompatActivity {
                     tvLabelLeft.setText(LST_SIDAQUES.get(CURR_QUES - 1).getLabelLeft());
                     tvLabelRight.setText(LST_SIDAQUES.get(CURR_QUES - 1).getLabelRight());
                     if (CURR_QUES + 1 == TOTAL_QUES)
-                        BTN_NEXT_QUES.setText(getString(R.string.submit) +
-                                " (" + String.valueOf(CURR_QUES + 1) + "/" + String.valueOf(TOTAL_QUES) + ")");
+                        BTN_NEXT_QUES.setText(getString(R.string.complete_test));// +
+//                                " (" + String.valueOf(CURR_QUES + 1) + "/" + String.valueOf(TOTAL_QUES) + ")");
                     else
                         BTN_NEXT_QUES.setText(getResources().getString(R.string.nextques) +
                                 " (" + String.valueOf(CURR_QUES + 1) + "/" + String.valueOf(TOTAL_QUES) + ")");
@@ -156,14 +159,13 @@ public class SidaTestActivity extends AppCompatActivity {
                     try {
                         int score = response.getJSONObject(Constant.DATA).getInt("score");
                         if (score > 15 && score <= 21) {
-                            new InfoDialog(SidaTestActivity.this, getString(R.string.test_result_btwn_15to21),
+                            InfoDialog infoDialog = new InfoDialog(SidaTestActivity.this, getString(R.string.test_result_btwn_15to21),
                                     getString(R.string.help), getString(R.string.inspiration)) {
 
                                 @Override
                                 public void onClickFirstButton() {
                                     Intent _intent = new Intent(SidaTestActivity.this, HelpListActivity.class);
                                     startActivity(_intent);
-                                    SidaTestActivity.this.finish();
                                 }
 
                                 @Override
@@ -171,11 +173,17 @@ public class SidaTestActivity extends AppCompatActivity {
                                     Intent _iIntent = new Intent();
                                     _iIntent.putExtra("SIDAS_OPEN_STRATEGIES", true);
                                     setResult(RESULT_OK, _iIntent);
+                                }
+                            };
+                            infoDialog.show();
+                            infoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialogInterface) {
                                     SidaTestActivity.this.finish();
                                 }
-                            }.show();
+                            });
                         } else if (score > 21) {
-                            new InfoDialog(SidaTestActivity.this, getString(R.string.test_result_greater_21),
+                            InfoDialog infoDialog = new InfoDialog(SidaTestActivity.this, getString(R.string.test_result_greater_21),
                                     getString(R.string.help), getString(R.string.emergency)) {
 
                                 @Override
@@ -183,24 +191,36 @@ public class SidaTestActivity extends AppCompatActivity {
 
                                     Intent _intent = new Intent(SidaTestActivity.this, HelpListActivity.class);
                                     startActivity(_intent);
-                                    SidaTestActivity.this.finish();
                                 }
 
                                 @Override
                                 public void onClickSecondButton() {
-                                    SidaTestActivity.this.finish();
                                     emergencyCall();
                                 }
-                            }.show();
+                            };
+                            infoDialog.show();
+                            infoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialogInterface) {
+                                    SidaTestActivity.this.finish();
+                                }
+                            });
                         } else {
-                            new InfoDialog(SidaTestActivity.this, getString(R.string.test_result_less_15),
+                            InfoDialog infoDialog = new InfoDialog(SidaTestActivity.this, getString(R.string.test_result_less_15),
                                     getString(R.string.ok), "") {
                                 @Override
                                 public void onClickFirstButton() {
                                     super.onClickFirstButton();
                                     SidaTestActivity.this.finish();
                                 }
-                            }.show();
+                            };
+                            infoDialog.show();
+                            infoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialogInterface) {
+                                    SidaTestActivity.this.finish();
+                                }
+                            });
                         }
 
 
@@ -252,6 +272,13 @@ public class SidaTestActivity extends AppCompatActivity {
                                 .toString(), new TypeToken<List<SidaQuestion>>() {
                         }.getType());
                         TOTAL_QUES = LST_SIDAQUES.size();
+//                        Collections.sort(LST_SIDAQUES, new Comparator<SidaQuestion>() {
+//                            @Override
+//                            public int compare(SidaQuestion sidaQuestion, SidaQuestion t1) {
+//                                return sidaQuestion.compareTo(t1);
+//                            }
+//                        });
+//                        Log.i("SortedList",gson.toJsonTree(LST_SIDAQUES).getAsJsonArray().toString());
                         CURR_QUES = 0;
                         TV_TESTQUESTION.setText(LST_SIDAQUES.get(CURR_QUES).getQuestion());
                         BTN_NEXT_QUES.setText(getResources().getString(R.string.nextques) +
@@ -299,16 +326,21 @@ public class SidaTestActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.CALL_PHONE},
                     REQUEST_CODE_CALL_PERMISSIONS);
         } else {
-            if (TextUtils.isEmpty(new Utils(SidaTestActivity.this).getPreference("EMERGENCY_CONTACT_NAME"))) {
-                Intent phoneIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "112"));
-                phoneIntent.setPackage("com.android.phone");
-                startActivity(phoneIntent);
-            } else {
-                String _phoneNo = new Utils(SidaTestActivity.this).getPreference("EMERGENCY_CONTACT_NO");
+            String _phoneNo = "112";
+            if (!TextUtils.isEmpty(new Utils(SidaTestActivity.this).getPreference("EMERGENCY_CONTACT_NAME"))) {
+                _phoneNo = new Utils(SidaTestActivity.this).getPreference("EMERGENCY_CONTACT_NO");
+            }
+            try {
                 Intent phoneIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + _phoneNo));
-                phoneIntent.setPackage("com.android.phone");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                    phoneIntent.setPackage("com.android.server.telecom");
+                else
+                    phoneIntent.setPackage("com.android.phone");
                 startActivity(phoneIntent);
 
+            } catch (ActivityNotFoundException e) {
+                Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + _phoneNo));
+                startActivity(phoneIntent);
             }
         }
     }
@@ -350,6 +382,7 @@ public class SidaTestActivity extends AppCompatActivity {
             View viewSeperator = findViewById(R.id.viewSeperator);
             TV_NOTE.setText(Html.fromHtml(note));
             tvInfoBtn1.setText(strFistTitle);
+
             if (TextUtils.isEmpty(strSecondTitle)) {
                 tvInfoBtn2.setVisibility(View.GONE);
                 viewSeperator.setVisibility(View.GONE);

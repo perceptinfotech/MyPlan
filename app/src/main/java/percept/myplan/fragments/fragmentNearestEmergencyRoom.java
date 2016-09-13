@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -66,7 +67,7 @@ public class fragmentNearestEmergencyRoom extends Fragment {
     private AutoCompleteTextView edtLocationSearch;
     private TextView mTitle;
     private ArrayList<NearestEmergencyRoom> listNearestEmergencyRoom = new ArrayList<>();
-    private TextView tvNearestDistance;
+    private Button btnNearestDistance;
     private AutoCompleteLocalSearchAdapter adapter;
 
 
@@ -93,7 +94,7 @@ public class fragmentNearestEmergencyRoom extends Fragment {
 
         mMapView = (MapView) _view.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
-        tvNearestDistance = (TextView) _view.findViewById(R.id.tvNearestDistance);
+        btnNearestDistance = (Button) _view.findViewById(R.id.btnNearestDistance);
         mMapView.onResume(); // needed to get the map to display immediately
         try {
             MapsInitializer.initialize(activity);
@@ -102,7 +103,7 @@ public class fragmentNearestEmergencyRoom extends Fragment {
         }
         edtLocationSearch.setText("");
         setHasOptionsMenu(true);
-        tvNearestDistance.setOnClickListener(new View.OnClickListener() {
+        btnNearestDistance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 InputMethodManager inputManager = (InputMethodManager)
@@ -153,7 +154,9 @@ public class fragmentNearestEmergencyRoom extends Fragment {
 //                googleMap.addMarker(new MarkerOptions().position(_CurrentPos).title("Marker Title").snippet("Marker Description"));
 
                 // For zooming automatically to the location of the marker
-                getNearestEmergencyRoom();
+                if (activity.isGPSEnabled()) {
+                    getNearestEmergencyRoom();
+                } else activity.buildGoogleApiClient();
                 googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                     @Override
                     public View getInfoWindow(Marker marker) {
@@ -229,12 +232,12 @@ public class fragmentNearestEmergencyRoom extends Fragment {
         return false;
     }
 
-    private void getNearestEmergencyRoom() {
+    public void getNearestEmergencyRoom() {
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
-        params.put("lat", String.valueOf(HomeActivity.CURRENT_LAT));
-        params.put("long", String.valueOf(HomeActivity.CURRENT_LONG));
+        params.put("lat", String.valueOf(activity.CURRENT_LAT));
+        params.put("long", String.valueOf(activity.CURRENT_LONG));
         try {
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_EMERGENCY_ROOMS,
                     params, true, false, true, new VolleyResponseListener() {
@@ -271,14 +274,14 @@ public class fragmentNearestEmergencyRoom extends Fragment {
     private void addMarkersOnMap() {
         if (listNearestEmergencyRoom.size() > 0) {
 //            if (Double.parseDouble(listNearestEmergencyRoom.get(0).getDistance()) > 0)
-//                tvNearestDistance.setText(getString(R.string.distance_nearest) + new DecimalFormat("0.00").
+//                btnNearestDistance.setText(getString(R.string.distance_nearest) + new DecimalFormat("0.00").
 //                        format(Double.parseDouble(listNearestEmergencyRoom.get(0).getDistance())) + " " + getString(R.string.km));
 //            else if (listNearestEmergencyRoom.size() > 1)
-//                tvNearestDistance.setText(getString(R.string.distance_nearest) + new DecimalFormat("0.00").
+//                btnNearestDistance.setText(getString(R.string.distance_nearest) + new DecimalFormat("0.00").
 //                        format(Double.parseDouble(listNearestEmergencyRoom.get(1).getDistance())) + " " + getString(R.string.km));
 //            else
-//                tvNearestDistance.setText(getString(R.string.nearest_emergency));
-            tvNearestDistance.setText(getString(R.string.distance_nearest) +
+//                btnNearestDistance.setText(getString(R.string.nearest_emergency));
+            btnNearestDistance.setText(getString(R.string.distance_nearest) +
                     new DecimalFormat("0.00").format(Double.parseDouble(listNearestEmergencyRoom.get(0).
                             getDistance())) + " " + getString(R.string.km));
 //            Collections.sort(listNearestEmergencyRoom, new Comparator<NearestEmergencyRoom>() {
@@ -304,10 +307,10 @@ public class fragmentNearestEmergencyRoom extends Fragment {
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         } else {
-            LatLng _CurrentPos = new LatLng(HomeActivity.CURRENT_LAT, HomeActivity.CURRENT_LONG);
+            LatLng _CurrentPos = new LatLng(activity.CURRENT_LAT, activity.CURRENT_LONG);
             CameraPosition cameraPosition = new CameraPosition.Builder().target(_CurrentPos).zoom(12).build();
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            tvNearestDistance.setText(getString(R.string.no_emergency_room));
+            btnNearestDistance.setText(getString(R.string.no_emergency_room));
         }
     }
 
@@ -321,4 +324,5 @@ public class fragmentNearestEmergencyRoom extends Fragment {
 
         }
     }
+
 }

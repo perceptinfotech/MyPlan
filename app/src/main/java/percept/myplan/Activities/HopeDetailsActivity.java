@@ -82,10 +82,10 @@ public class HopeDetailsActivity extends AppCompatActivity {
         Toro.register(mRecyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(HopeDetailsActivity.this);
         mRecyclerView.setLayoutManager(layoutManager);
-        if (layoutManager instanceof LinearLayoutManager) {
+//        if (layoutManager instanceof LinearLayoutManager) {
 //            mRecyclerView.addItemDecoration(new DividerItemDecoration(HopeDetailsActivity.this,
 //                    ((LinearLayoutManager) layoutManager).getOrientation()));
-        }
+//        }
 
 
         GetHopeDetails();

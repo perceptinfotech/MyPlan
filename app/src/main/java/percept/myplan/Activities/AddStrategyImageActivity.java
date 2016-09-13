@@ -45,6 +45,7 @@ import percept.myplan.R;
 import percept.myplan.adapters.ImageDeleteAdapter;
 
 import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
+import static percept.myplan.Global.Utils.decodeFile;
 
 
 public class AddStrategyImageActivity extends AppCompatActivity {
@@ -65,7 +66,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
     private RecyclerView rvPhotos;
     private boolean HAS_PERMISSION = true;
     private ImageDeleteAdapter imageAdapter;
-    private TextView tvSelectedText;
+    private TextView tvSelectedText, tvNoOfImaged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +100,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         TV_TAKENEW = (TextView) findViewById(R.id.tvTakeNew);
         PB = (ProgressBar) findViewById(R.id.pbAddImage);
         tvSelectedText = (TextView) findViewById(R.id.tvSelectedText);
+        tvNoOfImaged = (TextView) findViewById(R.id.tvNoOfImaged);
 
         rvPhotos = (RecyclerView) findViewById(R.id.rvPhotos);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(AddStrategyImageActivity.this, 3);
@@ -112,8 +114,10 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             insertDummyPermissionWrapper();
         }
-
-
+        if (getIntent().hasExtra("FROM_HOPE")) {
+            tvSelectedText.setVisibility(View.GONE);
+            tvNoOfImaged.setVisibility(View.GONE);
+        }
         TV_CHOOSEEXISTING.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -383,10 +387,11 @@ public class AddStrategyImageActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
+
         PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
 //        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopemedia");
-        params.put("media", imgpath);
+        params.put("media", decodeFile(imgpath, 800, 800));
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         params.put(Constant.ID, HOPE_ELEMENT_ID);
@@ -406,6 +411,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         });
 
     }
+
 
 //    private class AddHopeBoxImageElement extends AsyncTask<Void, Integer, String> {
 //

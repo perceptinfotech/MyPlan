@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:support="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_moodRatings"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/backcolor"
-    android:orientation="vertical"
-    tools:context=".Activities.MoodActivity">
+                xmlns:support="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/activity_moodRatings"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/backcolor"
+                android:orientation="vertical"
+                tools:context=".Activities.MoodActivity">
 
     <include
         android:id="@+id/lay1"
@@ -19,7 +19,9 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/layHomeButton"
         android:layout_below="@+id/lay1"
-        android:layout_margin="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/lay_moodrating_home_border"
         android:orientation="vertical"
         android:paddingBottom="10dp"
@@ -38,7 +40,7 @@
                 android:gravity="center_vertical"
                 android:padding="10dp"
                 android:text="@string/completemoodratings"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"/>
 
             <ImageView
                 android:id="@+id/imgCloseMoodRating"
@@ -47,7 +49,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
-                android:src="@drawable/close" />
+                android:src="@drawable/close"
+                android:visibility="gone"/>
         </RelativeLayout>
 
         <LinearLayout
@@ -63,35 +66,35 @@
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
-                android:src="@drawable/mood_very_sad" />
+                android:src="@drawable/mood_very_sad"/>
 
             <ImageView
                 android:id="@+id/imgSad"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
-                android:src="@drawable/mood_sad" />
+                android:src="@drawable/mood_sad"/>
 
             <ImageView
                 android:id="@+id/imgOk"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
-                android:src="@drawable/mood_nomood" />
+                android:src="@drawable/mood_nomood"/>
 
             <ImageView
                 android:id="@+id/imgHappy"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
-                android:src="@drawable/mood_happy" />
+                android:src="@drawable/mood_happy"/>
 
             <ImageView
                 android:id="@+id/imgVeryHappy"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
-                android:src="@drawable/mood_very_happy" />
+                android:src="@drawable/mood_very_happy"/>
 
         </LinearLayout>
     </LinearLayout>
@@ -109,7 +112,7 @@
         android:gravity="center_vertical"
         android:padding="10dp"
         android:text="Calender - August"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"/>
 
     <TextView
         android:id="@+id/tvCalenderYear"
@@ -123,7 +126,7 @@
         android:gravity="center_vertical"
         android:padding="10dp"
         android:text="2016"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"/>
 
     <com.p_v.flexiblecalendar.FlexibleCalendarView
         android:id="@+id/calendar_view"
@@ -134,8 +137,8 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:background="#ffffff"
-        support:monthDayVerticalSpacing="10dp"
-        support:startDayOfTheWeek="WEDNESDAY" />
+        support:monthDayVerticalSpacing="8dp"
+        support:startDayOfTheWeek="SUNDAY"/>
 
 
     <Button
@@ -145,13 +148,15 @@
         android:layout_alignParentBottom="true"
 
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="35dp"
         android:layout_marginRight="35dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/btn_register_border"
         android:text="@string/seeallnote"
         android:textAllCaps="false"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"/>
+
     <ProgressBar
         android:id="@+id/pbMood"
         style="?android:attr/progressBarStyle"
@@ -159,7 +164,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/view"
         android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <include layout="@layout/lay_internet_lost"/>
 </RelativeLayout>

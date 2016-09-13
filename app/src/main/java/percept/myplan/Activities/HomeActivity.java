@@ -2,9 +2,13 @@ package percept.myplan.Activities;
 
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +32,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import org.json.JSONObject;
 
@@ -55,58 +73,38 @@ import percept.myplan.fragments.fragmentShareMyLocation;
 import percept.myplan.fragments.fragmentStrategies;
 import percept.myplan.fragments.fragmentSymptoms;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-
 public class HomeActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
-    // implements NavigationView.OnNavigationItemSelectedListener {
-    public Toolbar toolbar;
-    private NavigationDrawerAdapter ADAPTER;
-    private ListView LST_MENUITEMS;
-    private Utils UTILS;
-
-    private TextView TV_PROFILE_NAME;
-
-    public static double CURRENT_LAT, CURRENT_LONG;
-
-    private final static int MY_PERMISSIONS_REQUEST = 19;
-
-    //Location
-    protected static final String TAG = "location-updates-sample";
-
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
     public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
-
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
      * than this value.
      */
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2;
-
+    //Location
+    protected static final String TAG = "location-updates-sample";
     // Keys for storing activity state in the Bundle.
     protected final static String REQUESTING_LOCATION_UPDATES_KEY = "requesting-location-updates-key";
     protected final static String LOCATION_KEY = "location-key";
     protected final static String LAST_UPDATED_TIME_STRING_KEY = "last-updated-time-string-key";
-
+    private final static int MY_PERMISSIONS_REQUEST = 19;
+    private static final int REQUEST_CHECK_SETTINGS = 100;
+    public static double CURRENT_LAT, CURRENT_LONG;
+    private final int GPS_REQUEST_CODE = 120;
+    // implements NavigationView.OnNavigationItemSelectedListener {
+    public Toolbar toolbar;
     /**
      * Provides the entry point to Google Play services.
      */
     protected GoogleApiClient mGoogleApiClient;
-
     /**
      * Stores parameters for requests to the FusedLocationProviderApi.
      */
     protected LocationRequest mLocationRequest;
-
     /**
      * Represents a geographical location.
      */
@@ -116,18 +114,21 @@ public class HomeActivity extends AppCompatActivity implements
      * Start Updates and Stop Updates buttons.
      */
     protected Boolean mRequestingLocationUpdates;
-
     /**
      * Time when the location was updated represented as a String.
      */
     protected String mLastUpdateTime;
-
     // Labels.
     protected String mLatitudeLabel;
     protected String mLongitudeLabel;
     protected String mLastUpdateTimeLabel;
-
+    boolean doubleBackToExitPressedOnce = false;
+    private NavigationDrawerAdapter ADAPTER;
+    private ListView LST_MENUITEMS;
+    private Utils UTILS;
+    private TextView TV_PROFILE_NAME;
     private ImageView IMG_DRAWER;
+    private boolean isFromDialog = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +156,6 @@ public class HomeActivity extends AppCompatActivity implements
 //        LST_SIDEMENU.add(getString(R.string.settings));
 //        LST_SIDEMENU.add(getString(R.string.logout));
 
-
         ADAPTER = new NavigationDrawerAdapter(HomeActivity.this,
                 Arrays.asList(getResources().getStringArray(R.array.navigation_menu)));
         LST_MENUITEMS.setAdapter(ADAPTER);
@@ -172,7 +172,7 @@ public class HomeActivity extends AppCompatActivity implements
         TV_PROFILE_NAME = (TextView) findViewById(R.id.tvProfileName);
         IMG_DRAWER = (ImageView) findViewById(R.id.imgDrawer);
 
-        TV_PROFILE_NAME.setText(getResources().getString(R.string.hello) + " " + UTILS.getPreference(Constant.PREF_PROFILE_FNAME)+ " " + UTILS.getPreference(Constant.PREF_PROFILE_LNAME));
+        TV_PROFILE_NAME.setText(getResources().getString(R.string.hello) + " " + UTILS.getPreference(Constant.PREF_PROFILE_FNAME) + " " + UTILS.getPreference(Constant.PREF_PROFILE_LNAME));
         LST_MENUITEMS.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -199,26 +199,7 @@ public class HomeActivity extends AppCompatActivity implements
 
         // Update values using data stored in the Bundle.
         updateValuesFromBundle(savedInstanceState);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            if (ContextCompat.checkSelfPermission(HomeActivity.this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(HomeActivity.this,
-                        Manifest.permission.ACCESS_FINE_LOCATION)) {
-                } else {
 
-                    ActivityCompat.requestPermissions(HomeActivity.this,
-                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                            MY_PERMISSIONS_REQUEST);
-                }
-            } else {
-                // Kick off the process of building a GoogleApiClient and requesting the LocationServices
-                // API.
-                buildGoogleApiClient();
-            }
-        } else {
-            buildGoogleApiClient();
-        }
     }
 
     private void CheckSession() {
@@ -271,7 +252,8 @@ public class HomeActivity extends AppCompatActivity implements
                 List<Fragment> fragments = getSupportFragmentManager().getFragments();
                 if (fragments != null) {
                     for (Fragment fragment : fragments) {
-                        fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                        if (fragment != null)
+                            fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
                     }
                 }
                 break;
@@ -317,13 +299,7 @@ public class HomeActivity extends AppCompatActivity implements
         // The final argument to {@code requestLocationUpdates()} is a LocationListener
         // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+
             return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(
@@ -347,15 +323,68 @@ public class HomeActivity extends AppCompatActivity implements
      * Builds a GoogleApiClient. Uses the {@code #addApi} method to request the
      * LocationServices API.
      */
-    protected synchronized void buildGoogleApiClient() {
+    public synchronized void buildGoogleApiClient() {
+
+        if (!UTILS.getBoolPref(Constant.PREF_LOCATION))
+            return;
         Log.i(TAG, "Building GoogleApiClient");
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient = null;
+            mCurrentLocation = null;
+
+        }
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+        mGoogleApiClient.connect();
         createLocationRequest();
+
+//        LocationRequest locationRequest = LocationRequest.create();
+//        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+//        locationRequest.setInterval(30 * 1000);
+//        locationRequest.setFastestInterval(5 * 1000);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest);
+
+        //**************************
+        builder.setAlwaysShow(true); //this is the key ingredient
+        //**************************
+
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                final LocationSettingsStates state = result.getLocationSettingsStates();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
+                            status.startResolutionForResult(
+                                    HomeActivity.this, REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException e) {
+                            // Ignore the error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
+                        break;
+                }
+            }
+        });
     }
+
 
     /**
      * Sets up the location request. Android has two location request settings:
@@ -385,9 +414,6 @@ public class HomeActivity extends AppCompatActivity implements
 
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
-
-
-    boolean doubleBackToExitPressedOnce = false;
 
     @Override
     public void onBackPressed() {
@@ -419,6 +445,28 @@ public class HomeActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         selectItem(Constant.CURRENT_FRAGMENT);
+        if (!isFromDialog)
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+                if (ContextCompat.checkSelfPermission(HomeActivity.this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    if (!UTILS.getBoolPref(Constant.PREF_LOCATION))
+                        return;
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(HomeActivity.this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        ActivityCompat.requestPermissions(HomeActivity.this,
+                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                MY_PERMISSIONS_REQUEST);
+                    }
+                } else {
+                    // Kick off the process of building a GoogleApiClient and requesting the LocationServices
+                    // API.
+                    buildGoogleApiClient();
+                }
+            } else {
+                buildGoogleApiClient();
+            }
+
         if (mGoogleApiClient != null)
             if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
                 startLocationUpdates();
@@ -700,4 +748,67 @@ public class HomeActivity extends AppCompatActivity implements
         savedInstanceState.putString(LAST_UPDATED_TIME_STRING_KEY, mLastUpdateTime);
         super.onSaveInstanceState(savedInstanceState);
     }
+
+
+    public boolean isGPSEnabled() {
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (manager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+            return true;
+        else return false;
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                isFromDialog = true;
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        // All required changes were successfully made
+                        buildGoogleApiClient();
+
+                        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+                        if (fragments != null) {
+                            for (final Fragment fragment : fragments) {
+                                if (fragment instanceof fragmentShareMyLocation) {
+
+                                    final Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            //Do something after 100ms
+                                            ((fragmentShareMyLocation) fragment).updateUI();
+                                        }
+                                    }, 2000);
+                                    break;
+
+                                } else if (fragment instanceof fragmentNearestEmergencyRoom) {
+                                    final Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            //Do something after 100ms
+                                            ((fragmentNearestEmergencyRoom) fragment).getNearestEmergencyRoom();
+                                        }
+                                    }, 2000);
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        // The user was asked to change settings, but chose not to
+                        break;
+                    default:
+                        break;
+                }
+                break;
+        }
+    }
+
 }

@@ -102,6 +102,7 @@ public class FeedbackActivity extends AppCompatActivity {
 
                 @Override
                 public void onResponse(JSONObject response) {
+                    Toast.makeText(FeedbackActivity.this, getString(R.string.thank_feedback), Toast.LENGTH_LONG).show();
                     FeedbackActivity.this.finish();
                 }
             });

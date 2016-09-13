@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by percept on 16/8/16.
  */
 
-public class SidaQuestion {
+public class SidaQuestion implements Comparable<SidaQuestion> {
     @SerializedName("id")
     private String ID;
     @SerializedName("question")
@@ -85,5 +85,10 @@ public class SidaQuestion {
 
     public void setLabelRight(String labelRight) {
         this.labelRight = labelRight;
+    }
+
+    @Override
+    public int compareTo(SidaQuestion sidaQuestion) {
+        return ID.compareTo(sidaQuestion.getID());
     }
 }

@@ -1,6 +1,7 @@
 package percept.myplan.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +48,10 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
     private int[] getSectionIndices() {
         if (LIST_CONTACT.size() > 0) {
             ArrayList<Integer> sectionIndices = new ArrayList<Integer>();
-            char lastFirstChar = LIST_CONTACT.get(0).getFirstName().charAt(0);
+            char lastFirstChar;
+            if (!TextUtils.isEmpty(LIST_CONTACT.get(0).getFirstName()))
+                lastFirstChar = LIST_CONTACT.get(0).getFirstName().charAt(0);
+            else lastFirstChar = '#';
             sectionIndices.add(0);
             for (int i = 1; i < LIST_CONTACT.size(); i++) {
                 if (LIST_CONTACT.get(i).getFirstName().charAt(0) != lastFirstChar) {
@@ -60,6 +64,7 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
                 sections[i] = sectionIndices.get(i);
             }
             return sections;
+
         }
         return null;
     }
@@ -69,7 +74,10 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
             return null;
         Character[] letters = new Character[mSectionIndices.length];
         for (int i = 0; i < mSectionIndices.length; i++) {
-            letters[i] = LIST_CONTACT.get(mSectionIndices[i]).getFirstName().charAt(0);
+            if (TextUtils.isEmpty(LIST_CONTACT.get(mSectionIndices[i]).getFirstName()))
+                letters[i] = '#';
+            else
+                letters[i] = LIST_CONTACT.get(mSectionIndices[i]).getFirstName().charAt(0);
         }
         return letters;
     }
@@ -128,8 +136,10 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-
-        holder.TV_CONTACTNAME.setText(LIST_CONTACT.get(position).getFirstName());
+        if (TextUtils.isEmpty(LIST_CONTACT.get(position).getFirstName()))
+            holder.TV_CONTACTNAME.setText(LIST_CONTACT.get(position).getPhoneNo());
+        else
+            holder.TV_CONTACTNAME.setText(LIST_CONTACT.get(position).getFirstName());
 
         if (LIST_CONTACT.get(position).isSelected()) {
             holder.IMG_CHK.setImageResource(R.drawable.tick);
@@ -154,7 +164,11 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
         }
 
         // set header text as first char in name
-        CharSequence headerChar = LIST_CONTACT.get(position).getFirstName().subSequence(0, 1);
+        CharSequence headerChar;
+        if (TextUtils.isEmpty(LIST_CONTACT.get(position).getFirstName()))
+            headerChar = "#";
+        else
+            headerChar = LIST_CONTACT.get(position).getFirstName().subSequence(0, 1);
         holder.text.setText(headerChar);
 
         return convertView;

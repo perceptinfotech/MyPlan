@@ -35,7 +35,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.android.volley.VolleyError;
 import com.squareup.picasso.Picasso;
 
@@ -60,8 +59,16 @@ import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
 
+import static percept.myplan.Global.Utils.decodeFile;
+
 
 public class SignUpActivity extends AppCompatActivity {
+    private static final int REQ_TAKE_PICTURE = 33;
+    private static final int TAKE_PICTURE_GALLERY = 34;
+    private final static int MY_PERMISSIONS_REQUEST = 14;
+    public static boolean PIC_FROM_GALLERY = true;
+    private static Uri IMG_URI;
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
     private ImageView IMG_USER;
     private EditText EDT_FIRSTNAME, EDT_LASTNAME, EDT_EMAIL, EDT_PHONENO, EDT_BIRTHDAY, EDT_PASSWORD;
     private Button BTN_ENTER;
@@ -70,16 +77,19 @@ public class SignUpActivity extends AppCompatActivity {
     private String FILE_PATH = "", YEAR = "1960";
     private Utils UTILS;
     private ProgressBar PB;
-    private static Uri IMG_URI;
-    private static final int REQ_TAKE_PICTURE = 33;
-    private static final int TAKE_PICTURE_GALLERY = 34;
-
-    private final static int MY_PERMISSIONS_REQUEST = 14;
-
-    public static boolean PIC_FROM_GALLERY = true;
     private CoordinatorLayout REL_COORDINATE;
     private boolean HAS_PERMISSION = true;
+    private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
 
+        @Override
+        public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
+            // TODO Auto-generated method stub
+            // arg1 = year
+            // arg2 = month
+            // arg3 = day
+            showDate(arg1, arg2, arg3);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -233,131 +243,6 @@ public class SignUpActivity extends AppCompatActivity {
         setViews();
     }
 
-    private void signup() {
-        if (!UTILS.isNetConnected()) {
-            Snackbar snackbar = Snackbar
-                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
-                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            signup();
-                        }
-                    });
-
-            // Changing message text color
-            snackbar.setActionTextColor(Color.RED);
-            // Changing action button text color
-            View sbView = snackbar.getView();
-            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-            textView.setTextColor(Color.YELLOW);
-
-            snackbar.show();
-            return;
-        }
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".register");
-        if (!FILE_PATH.equals("")) {
-            params.put("profile_image", FILE_PATH);
-        }
-        params.put(Constant.FIRST_NAME, EDT_FIRSTNAME.getText().toString().trim());
-        params.put(Constant.LAST_NAME, EDT_LASTNAME.getText().toString().trim());
-        params.put(Constant.EMAIL, EDT_EMAIL.getText().toString().trim());
-        params.put(Constant.PHONE, EDT_PHONENO.getText().toString().trim());
-        params.put(Constant.DOB, YEAR.toString().trim());
-        params.put(Constant.PASSWORD, EDT_PASSWORD.getText().toString().trim());
-        new MultiPartParsing(SignUpActivity.this, params, General.PHPServices.REGISTER, new AsyncTaskCompletedListener() {
-            @Override
-            public void onTaskCompleted(String response) {
-
-                try {
-                    JSONObject _object = new JSONObject(response);
-                    JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
-                    if (_ObjData.getString(Constant.STATUS).equals("Success")) {
-                        LoginCall();
-                       /* startActivity(new Intent(SignUpActivity.this, LoginActivity_1.class));
-                        SignUpActivity.this.finish();*/
-                    } else {
-                        Toast.makeText(SignUpActivity.this, getResources().getString(R.string.signuperror), Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-
-    private void LoginCall() {
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(Constant.USER_NAME, EDT_EMAIL.getText().toString().trim());
-        params.put(Constant.PASSWORD, EDT_PASSWORD.getText().toString().trim());
-
-        try {
-            new General().getJSONContentFromInternetService(SignUpActivity.this, General.PHPServices.LOGIN, params, true, false, true, new VolleyResponseListener() {
-
-                @Override
-                public void onError(VolleyError message) {
-                    Log.d(":::::::::: ", message.toString());
-                    PB.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.d(":::::::::: ", response.toString());
-                    PB.setVisibility(View.GONE);
-                    try {
-                        if (response.has(Constant.DATA)) {
-                            if (response.getJSONObject(Constant.DATA).getString(Constant.STATUS).equals("Success")) {
-                                Constant.SID = response.getJSONObject(Constant.DATA).getString("sid");
-                                Constant.SNAME = response.getJSONObject(Constant.DATA).getString("sname");
-                                Constant.PROFILE_IMG_LINK = response.getJSONObject(Constant.DATA).getString(Constant.PROFILE_IMAGE);
-                                Constant.PROFILE_EMAIL = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.EMAIL);
-                                Constant.PROFILE_USER_NAME = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.USER_NAME);
-                                Constant.PROFILE_NAME = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.NAME);
-
-                                UTILS.setPreference(Constant.PREF_EMAIL, EDT_EMAIL.getText().toString().trim());
-                                startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
-                                SignUpActivity.this.finish();
-                                UTILS.setPreference(Constant.PREF_LOGGEDIN, "true");
-                                UTILS.setPreference(Constant.PREF_SID, Constant.SID);
-                                UTILS.setPreference(Constant.PREF_SNAME, Constant.SNAME);
-                                UTILS.setPreference(Constant.PREF_PROFILE_IMG_LINK, Constant.PROFILE_IMG_LINK);
-                                UTILS.setPreference(Constant.PREF_PROFILE_USER_NAME, Constant.PROFILE_USER_NAME);
-                                UTILS.setPreference(Constant.PREF_PROFILE_EMAIL, Constant.PROFILE_EMAIL);
-                                String names[] = TextUtils.split(Constant.PROFILE_NAME, " ");
-                                UTILS.setPreference(Constant.PREF_PROFILE_FNAME, names[0]);
-                                if (names.length > 1)
-                                    UTILS.setPreference(Constant.PREF_PROFILE_LNAME, names[1]);
-                                UTILS.setPreference(Constant.PASSWORD, EDT_PASSWORD.getText().toString().trim());
-//                            } else {
-//                                Toast.makeText(SignUpActivity.this, "Login Error", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        PB.setVisibility(View.GONE);
-                    }
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-            PB.setVisibility(View.GONE);
-            Snackbar snackbar = Snackbar
-                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
-                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            LoginCall();
-                        }
-                    });
-            snackbar.setActionTextColor(Color.RED);
-            View sbView = snackbar.getView();
-            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-            textView.setTextColor(Color.YELLOW);
-            snackbar.show();
-        }
-    }
-
 //    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
 //        @Override
 //        protected void onPreExecute() {
@@ -455,22 +340,134 @@ public class SignUpActivity extends AppCompatActivity {
 //
 //    }
 
+    private void signup() {
+        if (!UTILS.isNetConnected()) {
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            signup();
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+
+            snackbar.show();
+            return;
+        }
+        HashMap<String, String> params = new HashMap<>();
+        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".register");
+        if (!FILE_PATH.equals("")) {
+            params.put("profile_image", decodeFile(FILE_PATH, 800, 800));
+        }
+        params.put(Constant.FIRST_NAME, EDT_FIRSTNAME.getText().toString().trim());
+        params.put(Constant.LAST_NAME, EDT_LASTNAME.getText().toString().trim());
+        params.put(Constant.EMAIL, EDT_EMAIL.getText().toString().trim());
+        params.put(Constant.PHONE, EDT_PHONENO.getText().toString().trim());
+        params.put(Constant.DOB, YEAR.toString().trim());
+        params.put(Constant.PASSWORD, EDT_PASSWORD.getText().toString().trim());
+        new MultiPartParsing(SignUpActivity.this, params, General.PHPServices.REGISTER, new AsyncTaskCompletedListener() {
+            @Override
+            public void onTaskCompleted(String response) {
+
+                try {
+                    JSONObject _object = new JSONObject(response);
+                    JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
+                    if (_ObjData.getString(Constant.STATUS).equals("Success")) {
+                        LoginCall();
+                       /* startActivity(new Intent(SignUpActivity.this, LoginActivity_1.class));
+                        SignUpActivity.this.finish();*/
+                    } else {
+                        Toast.makeText(SignUpActivity.this, getResources().getString(R.string.signuperror), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void LoginCall() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(Constant.USER_NAME, EDT_EMAIL.getText().toString().trim());
+        params.put(Constant.PASSWORD, EDT_PASSWORD.getText().toString().trim());
+
+        try {
+            new General().getJSONContentFromInternetService(SignUpActivity.this, General.PHPServices.LOGIN, params, true, false, true, new VolleyResponseListener() {
+
+                @Override
+                public void onError(VolleyError message) {
+                    Log.d(":::::::::: ", message.toString());
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d(":::::::::: ", response.toString());
+                    PB.setVisibility(View.GONE);
+                    try {
+                        if (response.has(Constant.DATA)) {
+                            if (response.getJSONObject(Constant.DATA).getString(Constant.STATUS).equals("Success")) {
+                                Constant.SID = response.getJSONObject(Constant.DATA).getString("sid");
+                                Constant.SNAME = response.getJSONObject(Constant.DATA).getString("sname");
+                                Constant.PROFILE_IMG_LINK = response.getJSONObject(Constant.DATA).getString(Constant.PROFILE_IMAGE);
+                                Constant.PROFILE_EMAIL = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.EMAIL);
+                                Constant.PROFILE_USER_NAME = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.USER_NAME);
+                                Constant.PROFILE_NAME = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.NAME);
+
+                                UTILS.setPreference(Constant.PREF_EMAIL, EDT_EMAIL.getText().toString().trim());
+                                startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
+                                SignUpActivity.this.finish();
+                                UTILS.setPreference(Constant.PREF_LOGGEDIN, "true");
+                                UTILS.setPreference(Constant.PREF_SID, Constant.SID);
+                                UTILS.setPreference(Constant.PREF_SNAME, Constant.SNAME);
+                                UTILS.setPreference(Constant.PREF_PROFILE_IMG_LINK, Constant.PROFILE_IMG_LINK);
+                                UTILS.setPreference(Constant.PREF_PROFILE_USER_NAME, Constant.PROFILE_USER_NAME);
+                                UTILS.setPreference(Constant.PREF_PROFILE_EMAIL, Constant.PROFILE_EMAIL);
+                                String names[] = TextUtils.split(Constant.PROFILE_NAME, " ");
+                                UTILS.setPreference(Constant.PREF_PROFILE_FNAME, names[0]);
+                                if (names.length > 1)
+                                    UTILS.setPreference(Constant.PREF_PROFILE_LNAME, names[1]);
+                                UTILS.setPreference(Constant.PASSWORD, EDT_PASSWORD.getText().toString().trim());
+//                            } else {
+//                                Toast.makeText(SignUpActivity.this, "Login Error", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        PB.setVisibility(View.GONE);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            PB.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            LoginCall();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+    }
+
     private void setViews() {
         IMG_USER = (ImageView) findViewById(R.id.imgUserImage);
 
     }
-
-    private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
-
-        @Override
-        public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
-            // TODO Auto-generated method stub
-            // arg1 = year
-            // arg2 = month
-            // arg3 = day
-            showDate(arg1, arg2, arg3);
-        }
-    };
 
     private void showDate(int year, int month, int day) {
 
@@ -548,44 +545,6 @@ public class SignUpActivity extends AppCompatActivity {
         SignUpActivity.this.finish();
     }
 
-    public class YearCalender extends Dialog {
-
-        private NumberPicker YEAR_PICKER;
-        private TextView TV_DONE;
-
-        public YearCalender(Context context) {
-            super(context, R.style.DialogTheme);
-        }
-
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            setContentView(R.layout.lay_year_picker);
-
-            InputMethodManager inputManager = (InputMethodManager)
-                    getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
-            TV_DONE = (TextView) findViewById(R.id.tvDone);
-
-            YEAR_PICKER = (NumberPicker) findViewById(R.id.pickYear);
-            //setNumberPickerTextColor(YEAR_PICKER, android.R.color.black);
-
-            YEAR_PICKER.setMinValue(1960);
-            YEAR_PICKER.setMaxValue(2010);
-
-            TV_DONE.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    YEAR_PICKER.clearFocus();
-                    YEAR = String.valueOf(YEAR_PICKER.getValue());
-                    YearCalender.this.dismiss();
-                }
-            });
-        }
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -594,8 +553,6 @@ public class SignUpActivity extends AppCompatActivity {
         }
         return false;
     }
-
-    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
     private void getPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -631,7 +588,10 @@ public class SignUpActivity extends AppCompatActivity {
                         REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
 
                 return;
+            } else {
+                OpenDialog();
             }
+
         } else {
             OpenDialog();
         }
@@ -709,6 +669,44 @@ public class SignUpActivity extends AppCompatActivity {
             break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    public class YearCalender extends Dialog {
+
+        private NumberPicker YEAR_PICKER;
+        private TextView TV_DONE;
+
+        public YearCalender(Context context) {
+            super(context, R.style.DialogTheme);
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            setContentView(R.layout.lay_year_picker);
+
+            InputMethodManager inputManager = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+            TV_DONE = (TextView) findViewById(R.id.tvDone);
+
+            YEAR_PICKER = (NumberPicker) findViewById(R.id.pickYear);
+            //setNumberPickerTextColor(YEAR_PICKER, android.R.color.black);
+
+            YEAR_PICKER.setMinValue(1960);
+            YEAR_PICKER.setMaxValue(2010);
+
+            TV_DONE.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    YEAR_PICKER.clearFocus();
+                    YEAR = String.valueOf(YEAR_PICKER.getValue());
+                    YearCalender.this.dismiss();
+                }
+            });
         }
     }
 

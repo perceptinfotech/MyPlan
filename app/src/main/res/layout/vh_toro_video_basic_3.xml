@@ -44,7 +44,7 @@ android:descendantFocusability="blocksDescendants" is added to pass click event 
                 android:id="@+id/video"
                 android:layout_width="match_parent"
                 android:foregroundGravity="center"
-                android:layout_height="192dp"/>
+                android:layout_height="225dp"/>
 
             <TextView
                 android:id="@+id/text"

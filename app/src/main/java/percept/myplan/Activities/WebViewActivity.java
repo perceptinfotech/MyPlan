@@ -31,12 +31,15 @@ public class WebViewActivity extends AppCompatActivity {
         mTitle.setText(getResources().getString(R.string.app_name));
 
         mWebView = (WebView) findViewById(R.id.webView1);
-        mWebView.setWebViewClient(new HelloWebViewClient());
         mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.getSettings().setDomStorageEnabled(true);
         mWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         mWebView.getSettings().setPluginState(WebSettings.PluginState.ON);
         mWebView.getSettings().setAllowFileAccess(true);
-        mWebView.loadUrl(getIntent().getStringExtra("URL_MUSIC"));
+        mWebView.setWebViewClient(new HelloWebViewClient());
+        String url = getIntent().getStringExtra("URL_MUSIC");
+
+        mWebView.loadUrl(url.replace(" ", "%20"));
     }
 
     @Override
@@ -68,7 +71,7 @@ public class WebViewActivity extends AppCompatActivity {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             view.loadUrl(url);
-            return true;
+            return super.shouldOverrideUrlLoading(view,url);
         }
     }
 }

@@ -239,6 +239,7 @@
     <string name="editcontact">Edit Contact</string>
     <string name="submitted">Submitted</string>
     <string name="submit">Submit</string>
+    <string name="complete_test">Complete Test</string>
     <string name="user">User</string>
     <string name="entries">entries</string>
     <string name="entry">entry</string>
@@ -336,4 +337,14 @@
     <string name="help_contact_validate">You can\'t select more than 10 contacts for Help!</string>
     <string name="share_strategy_confirm">Are you sure you want to share you strategy title and text anonymously with MyPlan users. No media will be shared, and an Administrator will check for anonymization purposes.</string>
     <string name="strategyadd_failed">Strategy Adding Failed. Please try again later</string>
+    <string name="validate_enter_emergency_room">Please enter Emergency Room Name</string>
+    <string name="validate_address">Please add address</string>
+    <string name="add_video">Add Video</string>
+    <string name="dialog_no_gps">No GPS</string>
+    <string name="dialog_no_gps_messgae">Seems like you have not started your location service.</string>
+    <string name="dialog_enable_gps">Enable GPS</string>
+    <string name="exit">Exit</string>
+    <string name="thank_feedback">Thank you for feedback.</string>
+    <string name="pdf_success_msg">Your PDF has been sent to your e-mail with a password protecting it.</string>
+    <string name="dialog_gps_msg">Your GPS is turn off on your phone. Do you want to turn od GPS?</string>
 </resources>

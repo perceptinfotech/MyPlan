@@ -7,17 +7,18 @@
     android:layout_height="match_parent"
     android:background="@color/backcolor"
     android:orientation="vertical"
-    tools:context="percept.myplan.Activities.ProfileActivity">
+    >
 
     <include layout="@layout/app_toolbar"></include>
 
-    <Switch
+    <android.support.v7.widget.SwitchCompat
         android:id="@+id/switchLocationSharing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:background="@android:color/white"
         android:padding="10dp"
+        android:theme="@style/SCBSwitch"
         android:text="@string/enablelocationsharing"
         android:textSize="16sp" />
 

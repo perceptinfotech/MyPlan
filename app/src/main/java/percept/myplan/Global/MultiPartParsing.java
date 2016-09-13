@@ -14,6 +14,7 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.util.TextUtils;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,9 +76,9 @@ public class MultiPartParsing {
 //                    File sourceFile = new File(FILE_PATH);
 
                 // Adding file data to http body
-
+                Log.d("::::::Params ", new JSONObject(map).toString());
                 for (String key : map.keySet()) {
-                    Log.d("Multi-part params", key + "->" + map.get(key));
+
                     if (key.contains("image") || key.contains("video") ||
                             key.contains("audio") || key.contains("cover") || key.contains("media")) {
                         if (key.equals("media_title")) {

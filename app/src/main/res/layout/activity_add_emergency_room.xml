@@ -8,6 +8,9 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+
+        <include layout="@layout/app_toolbar"/>
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -17,8 +20,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-
-                <include layout="@layout/app_toolbar"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -38,6 +39,7 @@
                             android:layout_height="70dp"
                             android:layout_margin="5dp"
                             android:src="@drawable/contact_default"/>
+
                         <TextView
                             android:id="@+id/tvAddPhoto"
                             android:layout_width="70dp"
@@ -51,21 +53,22 @@
                     </RelativeLayout>
 
 
+                    <EditText
+                        android:id="@+id/edtEmergencyRoomName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:hint="@string/emergency_room_name"
+                        android:imeOptions="actionNext"
+                        android:padding="10dp"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black"/>
 
-                        <EditText
-                            android:id="@+id/edtEmergencyRoomName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@null"
-                            android:hint="@string/emergency_room_name"
-                            android:padding="10dp"
-                            android:textColor="@android:color/black"/>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginLeft="5dp"
-                            android:background="@color/sidemenu_seperator"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="5dp"
+                        android:background="@color/sidemenu_seperator"/>
 
 
                 </LinearLayout>
@@ -87,7 +90,8 @@
                         android:drawablePadding="10dp"
                         android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
                         android:hint="@string/address"
-                        android:imeOptions="actionNext"/>
+                        android:imeOptions="actionNext"
+                        android:maxLines="3"/>
 
                     <View
                         android:layout_width="match_parent"
@@ -177,7 +181,8 @@
                         android:drawablePadding="10dp"
                         android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
                         android:hint="Country"
-                        android:imeOptions="actionDone"/>
+                        android:imeOptions="actionDone"
+                        android:singleLine="true"/>
 
                     <View
                         android:layout_width="match_parent"

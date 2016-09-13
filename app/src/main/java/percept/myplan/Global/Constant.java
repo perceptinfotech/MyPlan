@@ -35,6 +35,7 @@ public class Constant {
     public final static String PREF_PROFILE_EMAIL = "profileEmail";
     public final static String PREF_PROFILE_FNAME = "firstName";
     public final static String PREF_PROFILE_LNAME = "lastName";
+    public final static String PREF_LOCATION = "PREF_LOCATION";
 
     //Login Page
     public final static String USER_NAME = "username";

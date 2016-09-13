@@ -23,7 +23,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,6 +40,7 @@ import percept.myplan.POJO.Alarm;
 import percept.myplan.R;
 
 import static percept.myplan.Activities.AddStrategyToSymptomActivity.GET_STRATEGIES;
+import static percept.myplan.Global.Utils.decodeFile;
 import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
 
 public class AddStrategyActivity extends AppCompatActivity {
@@ -197,7 +197,7 @@ public class AddStrategyActivity extends AppCompatActivity {
         HashMap<String, String> map = new HashMap<>();
         if (LIST_IMG.size() > 0) {
             for (int i = 0; i < LIST_IMG.size(); i++) {
-                map.put("image" + (i + 1), LIST_IMG.get(i));
+                map.put("image" + (i + 1), decodeFile(LIST_IMG.get(i), 800, 800));
             }
         }
         if (LIST_MUSIC.size() > 0) {

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/backcolor"
     android:orientation="vertical"
-    tools:context="percept.myplan.Activities.ProfileActivity">
+    >
 
     <include layout="@layout/app_toolbar"
         android:id="@+id/include"></include>

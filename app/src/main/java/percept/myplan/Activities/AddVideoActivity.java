@@ -74,7 +74,7 @@ public class AddVideoActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText("Add Video");
+        mTitle.setText(getString(R.string.add_video));
 
         if (getIntent().hasExtra("FROM_HOPE")) {
             FROM = getIntent().getExtras().getString("FROM_HOPE");
@@ -124,7 +124,6 @@ public class AddVideoActivity extends AppCompatActivity {
                 Intent intents = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 intents.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 20);
                 intents.putExtra(MediaStore.EXTRA_OUTPUT, videFileUri);
-                intents.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
                 startActivityForResult(intents, REQ_TAKE_VIDEO);
             }
         });
@@ -185,8 +184,8 @@ public class AddVideoActivity extends AppCompatActivity {
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(AddVideoActivity.this)
                 .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton(getString(R.string.ok), okListener)
+                .setNegativeButton(getString(R.string.cancel), null)
                 .create()
                 .show();
     }

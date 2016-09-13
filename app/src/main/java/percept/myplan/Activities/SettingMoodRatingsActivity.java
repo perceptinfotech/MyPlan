@@ -187,13 +187,20 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
                                             listSidasSchedule.add(new SidaSchedule(_sidasInterval[i], false));
                                     }
 
-                                    rcvSidas.setAdapter(new SidaScheduleAdapter(SettingMoodRatingsActivity.this, listSidasSchedule));
 
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                            }
+                                String _sidasInterval[] = getResources().getStringArray(R.array.sidas_interval);
+                                for (int i = 0; i < _sidasInterval.length; i++) {
+                                    if (i == 0)
+                                        listSidasSchedule.add(new SidaSchedule(_sidasInterval[i], true));
+                                    else
+                                        listSidasSchedule.add(new SidaSchedule(_sidasInterval[i], false));
+                                }
 
+                            }
+                            rcvSidas.setAdapter(new SidaScheduleAdapter(SettingMoodRatingsActivity.this, listSidasSchedule));
 
                         }
                     });

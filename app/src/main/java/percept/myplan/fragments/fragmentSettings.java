@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import percept.myplan.Activities.FeedbackActivity;
 import percept.myplan.Activities.SettingExportMyPlanActivity;
 import percept.myplan.Activities.SettingGeoTrackingActivity;
 import percept.myplan.Activities.SettingMoodRatingsActivity;
@@ -83,7 +84,7 @@ public class fragmentSettings extends Fragment {
         TV_FEEDBACK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(getActivity(), FeedbackActivity.class));
             }
         });
 

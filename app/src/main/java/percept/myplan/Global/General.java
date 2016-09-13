@@ -156,6 +156,8 @@ public class General {
 
         JSONObject parameters = new JSONObject(params);
 
+        Log.d("::::::Params ", parameters.toString());
+
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 _str, parameters,
                 new Response.Listener<JSONObject>() {
@@ -164,7 +166,7 @@ public class General {
                         Log.d(":::::::::::: ", response.toString());
 
                         try {
-                            if (response.getJSONObject("data").has("message")) {
+                            if (response.get("data") instanceof JSONObject && response.getJSONObject("data").has("message")) {
                                 if (response.getJSONObject("data").get("message").equals("Your session is expired.")) {
                                     //Uncomment call for Session code.
                                     Intent intent = new Intent(context.getApplicationContext(), LoginActivity.class);

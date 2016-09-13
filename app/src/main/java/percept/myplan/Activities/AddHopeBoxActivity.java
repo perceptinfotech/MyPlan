@@ -169,7 +169,7 @@ public class AddHopeBoxActivity extends AppCompatActivity {
         pbAddHopeBox.setVisibility(View.VISIBLE);
         HashMap<String, String> map = new HashMap<>();
 //        map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopebox");
-        map.put("cover", IMG_PATH);
+        map.put("cover", Utils.decodeFile(IMG_PATH, 800, 800));
         map.put("sid", Constant.SID);
         map.put("sname", Constant.SNAME);
         map.put(Constant.ID, "");

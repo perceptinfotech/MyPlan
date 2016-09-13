@@ -109,6 +109,7 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
 
         edtAddress = (AutoCompleteTextView) findViewById(R.id.edtAddress);
         edtEmergencyRoomName = (EditText) findViewById(R.id.edtEmergencyRoomName);
+        edtCity = (EditText) findViewById(R.id.edtCity);
         edtCountry = (EditText) findViewById(R.id.edtCountry);
         edtTelephoneNo = (EditText) findViewById(R.id.edtTelephoneNo);
         edtPostCode = (EditText) findViewById(R.id.edtPostCode);
@@ -244,10 +245,10 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
     private boolean isValidate() {
         String msg = null;
         if (TextUtils.isEmpty(edtEmergencyRoomName.getText().toString().trim()))
-            msg = "Please enter Emergency Room Name";
+            msg = getString(R.string.validate_enter_emergency_room);
         if (addressLatlng == null)
-            msg = "Please add address";
-        if (TextUtils.isEmpty(msg)) {
+            msg = getString(R.string.validate_address);
+        if (!TextUtils.isEmpty(msg)) {
             Toast.makeText(AddEmergencyRoomActivity.this, msg, Toast.LENGTH_LONG).show();
             return false;
         }
