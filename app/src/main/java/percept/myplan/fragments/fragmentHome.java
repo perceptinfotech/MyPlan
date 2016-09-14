@@ -316,6 +316,7 @@ public class fragmentHome extends Fragment {
 
                 return;
             }
+            else OpenDialog();
         } else {
             OpenDialog();
         }

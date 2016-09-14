@@ -109,7 +109,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
             public void onClick(View view, int position) {
                 LIST_SYMPTOMSTRATEGY.get(position);
 
-                Intent _intent = new Intent(SymptomDetailsActivity.this, StrategyDetailsOtherActivity.class);
+                Intent _intent = new Intent(SymptomDetailsActivity.this, StrategyDetailsOwnActivity.class);
                 _intent.putExtra("STRATEGY_ID", LIST_SYMPTOMSTRATEGY.get(position).getId());
                 _intent.putExtra("STRATEGY_NAME", LIST_SYMPTOMSTRATEGY.get(position).getTitle());
                 _intent.putExtra("FROM_SYMPTOM", "FROM_SYMPTOM");

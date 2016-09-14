@@ -10,6 +10,11 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
+        ndk {
+            abiFilter "armeabi-v7a"
+            //abiFilter "x86"
+        }
     }
     buildTypes {
         release {
@@ -27,7 +32,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(include: ['*.jar', '*.so'], dir: 'libs')
     compile project(':pickphotos')
     compile files('libs/httpclient-4.3.6.jar')
     compile files('libs/httpcore-4.3.3.jar')
@@ -46,4 +51,6 @@ dependencies {
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.9'
     testCompile 'junit:junit:4.12'
+    compile project(':ffmpeg4android_lib')
+    compile project(path: ':ffmpeg4android_lib')
 }

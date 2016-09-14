@@ -2,10 +2,10 @@ package percept.myplan.Activities;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -150,8 +150,9 @@ public class HopeDetailsAddElementActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             HopeDetailsAddElementActivity.this.finish();
         } else if (item.getItemId() == R.id.action_Save) {
-            addHopeBoxElement(EDT_TITLE.getText().toString().trim(),
-                    getIntent().getExtras().getString("HOPE_ID"), "", hopeDetail.getID(), hopeDetail.getTYPE());
+            if (hopeDetail != null)
+                addHopeBoxElement(EDT_TITLE.getText().toString().trim(),
+                        getIntent().getExtras().getString("HOPE_ID"), "", hopeDetail.getID(), hopeDetail.getTYPE());
         }
         return false;
     }
