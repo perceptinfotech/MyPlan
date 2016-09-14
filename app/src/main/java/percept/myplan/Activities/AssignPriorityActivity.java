@@ -50,7 +50,8 @@ public class AssignPriorityActivity extends AppCompatActivity {
         if (_count < 10 && getIntent().getStringExtra("ADD_TO_HELP").equals("1")) {
             imgTickHelp.setChecked(true);
         }
-
+        if (getIntent().hasExtra("FROM_EMERGENCY"))
+            imgTickEmergency.setChecked(true);
 //        tvEmergency.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -111,7 +112,7 @@ public class AssignPriorityActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == R.id.action_saveNote) {
             Intent intent = new Intent();
-            if (imgTickEmergency.isSelected())
+            if (imgTickEmergency.isChecked())
                 con_priority = 2;
             else con_priority = 1;
             intent.putExtra("FROM_PRIORITY", con_priority);

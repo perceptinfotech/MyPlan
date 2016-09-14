@@ -3,6 +3,7 @@ package percept.myplan.Activities;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -26,6 +27,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -85,8 +87,9 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             FROM_PAGE = getIntent().getStringExtra("FROM");
         }
 
-        if (FROM_PAGE.toLowerCase().trim().equals("emergency")) {
+        if (getIntent().hasExtra("FROM_EMERGENCY")) {
             SINGLE_CHECK = true;
+
         }
         if (getIntent().hasExtra("ADD_TO_HELP")) {
             ADD_TO_HELP_LIST = "1";
@@ -227,36 +230,80 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             if (SINGLE_CHECK) {
                 for (Contact _obj : LIST_CONTACTS) {
                     if (_obj.isSelected()) {
-                        UTILS.setPreference("EMERGENCY_CONTACT_NAME", _obj.getFirstName());
-                        UTILS.setPreference("EMERGENCY_CONTACT_NO", _obj.getPhoneNo());
+                        saveContact(_obj);
+                        break;
                     }
                 }
+
                 AddContactFromPhoneActivity.this.finish();
                 return true;
             }
 //            Toast.makeText(AddContactFromPhoneActivity.this, "Add Contact Pressed", Toast.LENGTH_SHORT).show();
-            if (UTILS.isNetConnected()) {
-                UpdateContacts();
-            } else {
-                Snackbar snackbar = Snackbar
-                        .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
-                        .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                UpdateContacts();
-                            }
-                        });
-                snackbar.setActionTextColor(Color.RED);
-                View sbView = snackbar.getView();
-                TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-                textView.setTextColor(Color.YELLOW);
-                snackbar.show();
-            }
+
+            UpdateContacts();
+
             return true;
         } else if (item.getItemId() == R.id.action_Next) {
             startActivity(new Intent(AddContactFromPhoneActivity.this, SharePositionActivity.class));
         }
         return false;
+    }
+
+    private void saveContact(final Contact _contact) {
+        InputMethodManager inputManager = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow((null == getCurrentFocus())
+                ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        if (!UTILS.isNetConnected()) {
+            Snackbar snackbar = Snackbar
+                    .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            saveContact(_contact);
+                        }
+                    });
+
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+            return;
+        }
+
+
+        PB_SAVECONTACT.setVisibility(View.VISIBLE);
+        HashMap<String, String> params = new HashMap<>();
+        // Adding file data to http body
+        params.put(Constant.ID, "");
+        params.put(Constant.FIRST_NAME, _contact.getFirstName());
+        params.put(Constant.LAST_NAME, _contact.getLastName());
+        params.put(Constant.PHONE, _contact.getPhoneNo());
+        params.put(Constant.SKYPE, _contact.getSkypeName());
+        params.put(Constant.EMAIL, _contact.getEmail());
+        params.put(Constant.HELPLIST, ADD_TO_HELP_LIST);
+        params.put(Constant.NOTE, _contact.getNote());
+        params.put(Constant.COMPANY_NAME, _contact.getOrgName());
+        params.put(Constant.RINGTONE, "");
+        params.put(Constant.WEB_ADDRESS, _contact.getWebURL());
+        params.put("emergency", "1");
+        params.put(Constant.RINGTONE, "");
+
+        new MultiPartParsing(AddContactFromPhoneActivity.this, params, General.PHPServices.SAVE_CONTACT, new AsyncTaskCompletedListener() {
+            @Override
+            public void onTaskCompleted(String response) {
+                UTILS.setPreference("EMERGENCY_CONTACT_NAME", _contact.getFirstName());
+                UTILS.setPreference("EMERGENCY_CONTACT_NO", _contact.getPhoneNo());
+                fragmentContacts.GET_CONTACTS = true;
+                PB_SAVECONTACT.setVisibility(View.GONE);
+                AddContactFromPhoneActivity.this.finish();
+            }
+        });
+
+
     }
 
     private void UpdateContacts() {
@@ -285,6 +332,9 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
+        if (SINGLE_CHECK) {
+            params.put("emergency", "1");
+        }
         List<HashMap<String, String>> _tmpConList = addContactList();
         if (_tmpConList.size() <= 0)
             return;
@@ -517,34 +567,14 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                 map.put(Constant.RINGTONE, "");
                 map.put(Constant.WEB_ADDRESS, _contact.getWebURL());
 
-        /*new MultiPartParsing(this, map, General.PHPServices.SAVE_CONTACT, new AsyncTaskCompletedListener() {
-            @Override
-            public void onTaskCompleted(String response) {
-                try {
-                    Log.d(":::::: ", response);
-                    JSONObject _object = new JSONObject(response);
-                    JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
-                    SAVED_NO_COUNT = SAVED_NO_COUNT + 1;
-                    if (NO_COUNT == SAVED_NO_COUNT) {
-                        PB_SAVECONTACT.setVisibility(View.GONE);
-                        Toast.makeText(AddContactFromPhoneActivity.this,
-                                getResources().getString(R.string.contactsaved), Toast.LENGTH_SHORT).show();
-                        AddContactFromPhoneActivity.this.finish();
-                        fragmentContacts.GET_CONTACTS = true;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });*/
+
                 contactList.add(map);
                 Log.d("Position:::", "Added " + i);
             }
         }
-//        Gson gson = new Gson();
-//        Log.d("JSON:::", "::" + gson.toJson(contactList));
         return contactList;
     }
+
 
     private String deleteContactIds() {
         List<String> listContacts = new ArrayList<>();

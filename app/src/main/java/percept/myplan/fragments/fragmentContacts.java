@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -74,6 +75,7 @@ public class fragmentContacts extends Fragment {
     private ContactHelpListAdapter ADPT_CONTACTLIST;
     private Utils UTILS;
     private CoordinatorLayout REL_COORDINATE;
+    private ProgressBar PB;
 
     public fragmentContacts() {
         // Required empty public constructor
@@ -97,6 +99,7 @@ public class fragmentContacts extends Fragment {
         LST_CONTACTS = (RecyclerView) _View.findViewById(R.id.lstContacts);
 
         REL_COORDINATE = (CoordinatorLayout) _View.findViewById(R.id.snakeBar);
+        PB = (ProgressBar) _View.findViewById(R.id.pbContacts);
 
         LIST_ALLCONTACTS = new ArrayList<>();
         LIST_HELPCONTACTS = new ArrayList<>();
@@ -190,6 +193,7 @@ public class fragmentContacts extends Fragment {
     }
 
     private void GetContacts() {
+        PB.setVisibility(View.VISIBLE);
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -198,7 +202,7 @@ public class fragmentContacts extends Fragment {
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -212,7 +216,14 @@ public class fragmentContacts extends Fragment {
                         e.printStackTrace();
                     }
                     for (ContactDisplay _obj : LIST_ALLCONTACTS) {
-                        if (_obj.getHelplist().equals("0")) {
+                        if (_obj.getEmergency().equals("1")) {
+                            if (!TextUtils.isEmpty(_obj.getFirst_name()))
+                                TV_EMERGENCYNO.setText(_obj.getFirst_name());
+                            else
+                                TV_EMERGENCYNO.setText(_obj.getPhone());
+                            UTILS.setPreference("EMERGENCY_CONTACT_NAME", _obj.getFirst_name());
+                            UTILS.setPreference("EMERGENCY_CONTACT_NO", _obj.getPhone());
+                        } else if (_obj.getHelplist().equals("0")) {
                             CONTACT_NAME.put(_obj.getId(), _obj.getFirst_name());
                             LIST_CONTACTS.add(_obj);
                         } else {
@@ -220,11 +231,15 @@ public class fragmentContacts extends Fragment {
                             LIST_HELPCONTACTS.add(_obj);
                         }
                     }
+                    if (TextUtils.isEmpty(TV_EMERGENCYNO.getText().toString())) {
+                        TV_EMERGENCYNO.setText("112");
+                    }
                     ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
                     LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
 
                     ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
                     LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
+                    PB.setVisibility(View.GONE);
                 }
             });
         } catch (Exception e) {
@@ -261,12 +276,6 @@ public class fragmentContacts extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        if (!UTILS.getPreference("EMERGENCY_CONTACT_NAME").equals("")) {
-            TV_EMERGENCYNO.setText(UTILS.getPreference("EMERGENCY_CONTACT_NAME"));
-        } else {
-            TV_EMERGENCYNO.setText("112");
-        }
 
 
         if (GET_CONTACTS) {

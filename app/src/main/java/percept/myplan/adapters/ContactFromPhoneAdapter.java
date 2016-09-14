@@ -182,7 +182,10 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
     public long getHeaderId(int position) {
         // return the first character of the country as ID because this is what
         // headers are based upon
-        return LIST_CONTACT.get(position).getFirstName().subSequence(0, 1).charAt(0);
+        if (TextUtils.isEmpty(LIST_CONTACT.get(position).getFirstName()))
+            return "#".charAt(0);
+        else
+            return LIST_CONTACT.get(position).getFirstName().subSequence(0, 1).charAt(0);
     }
 
     @Override

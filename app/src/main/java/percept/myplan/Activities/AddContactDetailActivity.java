@@ -72,22 +72,21 @@ import percept.myplan.fragments.fragmentContacts;
 
 public class AddContactDetailActivity extends AppCompatActivity {
 
+    private static final int REQ_TAKE_PICTURE = 33;
+    private static final int TAKE_PICTURE_GALLERY = 34;
+    private static Uri IMG_URI;
     private final int REQUEST_CODE_RINGTONE = 12;
     private final int REQUEST_CODE_PRIORITY = 13;
     private final int REQUEST_CODE_WRITE_CONTACT_PERMISSION = 123;
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
-
-    private static final int REQ_TAKE_PICTURE = 33;
-    private static final int TAKE_PICTURE_GALLERY = 34;
-
+    RoundedImageView imgContact;
     private TextView tvAssignPriority, tvContactChar, tvAddRingTone;
     private EditText edtFirstName, edtLastName, edtCompany, edtAddAddress, edtAddUrl, edtAddEmail, edtAddPhoneNo;
-    RoundedImageView imgContact;
     private ContactDisplay _contactDisplay;
-    private static Uri IMG_URI;
     private String FILE_PATH = "";
     private CoordinatorLayout REL_COORDINATE;
     private String ADD_TO_HELP_LIST = "0";
+    private String ADD_TO_EMERGENCY = "";
     private int contact_priority = 0;
     private Utils UTILS;
     private Ringtone ringtone = null;
@@ -110,9 +109,11 @@ public class AddContactDetailActivity extends AppCompatActivity {
         if (getIntent().hasExtra("ADD_TO_HELP")) {
             ADD_TO_HELP_LIST = "1";
         }
-        if (getIntent().hasExtra(Constant.HELP_COUNT)) {
-            ADD_TO_HELP_LIST = "1";
+        if (getIntent().hasExtra("FROM_EMERGENCY")) {
+            ADD_TO_EMERGENCY = "1";
+
         }
+
         initializeComponent();
 
     }
@@ -158,8 +159,11 @@ public class AddContactDetailActivity extends AppCompatActivity {
                     return;
                 Intent intent = new Intent(AddContactDetailActivity.this, AssignPriorityActivity.class);
                 intent.putExtra("ADD_TO_HELP", ADD_TO_HELP_LIST);
+                if (getIntent().hasExtra("FROM_EMERGENCY")) {
+                    intent.putExtra("FROM_EMERGENCY", "true");
+                }
                 if (getIntent().hasExtra(Constant.HELP_COUNT))
-                intent.putExtra(Constant.HELP_COUNT, getIntent().getIntExtra(Constant.HELP_COUNT, 0));
+                    intent.putExtra(Constant.HELP_COUNT, getIntent().getIntExtra(Constant.HELP_COUNT, 0));
                 startActivityForResult(intent, REQUEST_CODE_PRIORITY);
             }
         });
@@ -381,6 +385,9 @@ public class AddContactDetailActivity extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     if (data.hasExtra("FROM_PRIORITY")) {
                         contact_priority = data.getIntExtra("FROM_PRIORITY", 0);
+                        if (contact_priority == 2)
+                            ADD_TO_EMERGENCY = "1";
+                        else ADD_TO_EMERGENCY = "";
                     }
                 }
                 break;
@@ -414,51 +421,49 @@ public class AddContactDetailActivity extends AppCompatActivity {
             return;
         }
 
-        switch (contact_priority) {
-            case 0:
-            case 1:
-                PB.setVisibility(View.VISIBLE);
-                ADD_TO_HELP_LIST = String.valueOf(contact_priority);
-                HashMap<String, String> params = new HashMap<>();
-                // Adding file data to http body
-                if (FILE_PATH != null)
-                    params.put(Constant.CON_IMAGE, FILE_PATH);
-                params.put("sid", Constant.SID);
-                params.put("sname", Constant.SNAME);
-                if (_contactDisplay != null)
-                    params.put(Constant.ID, _contactDisplay.getId());
-                else
-                    params.put(Constant.ID, "");
-                params.put(Constant.FIRST_NAME, edtFirstName.getText().toString().trim());
-                params.put(Constant.LAST_NAME, edtLastName.getText().toString().trim());
-                params.put(Constant.PHONE, edtAddPhoneNo.getText().toString().trim());
-                params.put(Constant.SKYPE, "");
-                params.put(Constant.EMAIL, edtAddEmail.getText().toString().trim());
-                params.put(Constant.HELPLIST, ADD_TO_HELP_LIST);
-                params.put(Constant.WEB_ADDRESS, edtAddUrl.getText().toString().trim());
-                params.put(Constant.COMPANY_NAME, edtCompany.getText().toString().trim());
-                params.put(Constant.ADDRESS, edtAddAddress.getText().toString().trim());
-                if (ringtone != null)
-                    params.put(Constant.RINGTONE, tvAddRingTone.getText().toString());
-                else
-                    params.put(Constant.RINGTONE, "");
-                checkPermissionForContact();
-                new MultiPartParsing(AddContactDetailActivity.this, params, General.PHPServices.SAVE_CONTACT, new AsyncTaskCompletedListener() {
-                    @Override
-                    public void onTaskCompleted(String response) {
-                        fragmentContacts.GET_CONTACTS = true;
-                        PB.setVisibility(View.GONE);
-                        AddContactDetailActivity.this.finish();
-                    }
-                });
-                break;
-            case 2:
-                UTILS.setPreference("EMERGENCY_CONTACT_NAME", edtFirstName.getText().toString().trim() + " " + edtLastName.getText().toString().trim());
-                UTILS.setPreference("EMERGENCY_CONTACT_NO", edtAddPhoneNo.getText().toString().trim());
-                AddContactDetailActivity.this.finish();
-                break;
 
-        }
+        PB.setVisibility(View.VISIBLE);
+        if (contact_priority != 2)
+            ADD_TO_HELP_LIST = String.valueOf(contact_priority);
+        HashMap<String, String> params = new HashMap<>();
+        // Adding file data to http body
+        if (FILE_PATH != null)
+            params.put(Constant.CON_IMAGE, FILE_PATH);
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        if (_contactDisplay != null)
+            params.put(Constant.ID, _contactDisplay.getId());
+        else
+            params.put(Constant.ID, "");
+        params.put(Constant.FIRST_NAME, edtFirstName.getText().toString().trim());
+        params.put(Constant.LAST_NAME, edtLastName.getText().toString().trim());
+        params.put(Constant.PHONE, edtAddPhoneNo.getText().toString().trim());
+        params.put(Constant.SKYPE, "");
+        params.put(Constant.EMAIL, edtAddEmail.getText().toString().trim());
+        params.put(Constant.HELPLIST, ADD_TO_HELP_LIST);
+        params.put(Constant.WEB_ADDRESS, edtAddUrl.getText().toString().trim());
+        params.put(Constant.COMPANY_NAME, edtCompany.getText().toString().trim());
+        params.put(Constant.ADDRESS, edtAddAddress.getText().toString().trim());
+        params.put("emergency", ADD_TO_EMERGENCY);
+
+        if (ringtone != null)
+            params.put(Constant.RINGTONE, tvAddRingTone.getText().toString());
+        else
+            params.put(Constant.RINGTONE, "");
+        checkPermissionForContact();
+        new MultiPartParsing(AddContactDetailActivity.this, params, General.PHPServices.SAVE_CONTACT, new AsyncTaskCompletedListener() {
+            @Override
+            public void onTaskCompleted(String response) {
+                if (contact_priority == 2) {
+                    UTILS.setPreference("EMERGENCY_CONTACT_NAME", edtFirstName.getText().toString().trim() + " " + edtLastName.getText().toString().trim());
+                    UTILS.setPreference("EMERGENCY_CONTACT_NO", edtAddPhoneNo.getText().toString().trim());
+
+                }
+                fragmentContacts.GET_CONTACTS = true;
+                PB.setVisibility(View.GONE);
+                AddContactDetailActivity.this.finish();
+            }
+        });
 
 
     }
@@ -503,6 +508,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
             ops.add(ContentProviderOperation.newInsert(
                     ContactsContract.RawContacts.CONTENT_URI)
                     .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
+                    .withValue(ContactsContract.RawContacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
                     .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
                     .build());
 

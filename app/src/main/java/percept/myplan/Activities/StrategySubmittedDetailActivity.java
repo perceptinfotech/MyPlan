@@ -68,8 +68,7 @@ public class StrategySubmittedDetailActivity extends AppCompatActivity {
         if (getIntent().hasExtra(Constant.USER_ID))
             USER_ID = getIntent().getStringExtra(Constant.USER_ID);
         tvSubmittedByName.setText(getString(R.string.user) + " "
-                + getIntent().getStringExtra(Constant.CREATED_BY_NAME));
-        Log.e(":::USER_ID", USER_ID);
+                + getIntent().getStringExtra(Constant.USER_ID));
         PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);

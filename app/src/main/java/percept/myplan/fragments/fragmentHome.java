@@ -43,6 +43,8 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -55,10 +57,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import percept.myplan.Activities.HelpListActivity;
 import percept.myplan.AppController;
 import percept.myplan.Dialogs.dialogSelectPic;
+import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.Dialogs.fragmentAddNote;
 import percept.myplan.Dialogs.fragmentMoodSummary;
 import percept.myplan.Dialogs.fragmentSidasRating;
@@ -67,6 +71,8 @@ import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
+import percept.myplan.Interfaces.VolleyResponseListener;
+import percept.myplan.POJO.ContactDisplay;
 import percept.myplan.R;
 import percept.myplan.receivers.AlarmReceiver;
 
@@ -93,6 +99,8 @@ public class fragmentHome extends Fragment {
     private Utils utils;
     private CoordinatorLayout REL_COORDINATE;
     private ProgressBar PB;
+    private Utils UTILS;
+    private String _phoneNo = "112";
 
     public fragmentHome() {
         // Required empty public constructor
@@ -149,6 +157,7 @@ public class fragmentHome extends Fragment {
             });
 
         }
+        UTILS = new Utils(getActivity());
         IMG_MOODRATING_CLOSE.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,7 +180,8 @@ public class fragmentHome extends Fragment {
         LAY_EMERGENCY.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onCall();
+//                onCall();
+                getEmergencyContact();
             }
         });
 
@@ -198,6 +208,41 @@ public class fragmentHome extends Fragment {
         utils = new Utils(getActivity());
     }
 
+    private void getEmergencyContact() {
+        PB.setVisibility(View.VISIBLE);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put("helplist", "2");
+        try {
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        PB.setVisibility(View.GONE);
+                        if (response.getJSONArray(Constant.DATA) != null && response.getJSONArray(Constant.DATA).length() > 0) {
+                            ContactDisplay _contactDisplay = new Gson().fromJson(response.getJSONArray(Constant.DATA).get(0)
+                                    .toString(), new TypeToken<ContactDisplay>() {
+                            }.getType());
+                            UTILS.setPreference("EMERGENCY_CONTACT_NAME", _contactDisplay.getFirst_name());
+                            UTILS.setPreference("EMERGENCY_CONTACT_NO", _contactDisplay.getPhone());
+                            onCall();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void onCall() {
         int permissionCheck = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE);
 
@@ -206,22 +251,35 @@ public class fragmentHome extends Fragment {
                     new String[]{Manifest.permission.CALL_PHONE},
                     REQUEST_CODE_CALL_PERMISSIONS);
         } else {
-            String _phoneNo = "112";
+
             if (!TextUtils.isEmpty(new Utils(getActivity()).getPreference("EMERGENCY_CONTACT_NAME"))) {
                 _phoneNo = new Utils(getActivity()).getPreference("EMERGENCY_CONTACT_NO");
             }
-            try {
-                Intent phoneIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + _phoneNo));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                    phoneIntent.setPackage("com.android.server.telecom");
-                else
-                    phoneIntent.setPackage("com.android.phone");
-                startActivity(phoneIntent);
+            new dialogYesNoOption(getActivity(), getString(R.string.confimation_call) + "\n" + _phoneNo) {
+                @Override
+                public void onClickYes() {
+                    dismiss();
+                    try {
+                        Intent phoneIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + _phoneNo));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                            phoneIntent.setPackage("com.android.server.telecom");
+                        else
+                            phoneIntent.setPackage("com.android.phone");
+                        startActivity(phoneIntent);
 
-            } catch (ActivityNotFoundException e) {
-                Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + _phoneNo));
-                startActivity(phoneIntent);
-            }
+                    } catch (ActivityNotFoundException e) {
+                        Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + _phoneNo));
+                        startActivity(phoneIntent);
+                    }
+                }
+
+                @Override
+                public void onClickNo() {
+                    dismiss();
+                }
+            }.show();
+
+
         }
     }
 
@@ -315,8 +373,7 @@ public class fragmentHome extends Fragment {
                         REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
 
                 return;
-            }
-            else OpenDialog();
+            } else OpenDialog();
         } else {
             OpenDialog();
         }

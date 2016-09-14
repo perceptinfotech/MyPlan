@@ -41,10 +41,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.VolleyResponseListener;
+import percept.myplan.POJO.ContactDisplay;
 import percept.myplan.POJO.SidaQuestion;
 import percept.myplan.R;
 
@@ -61,6 +63,8 @@ public class SidaTestActivity extends AppCompatActivity {
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
     private TextView tvLabelLeft, tvLabelRight;
+    private Utils UTILS;
+    private String _phoneNo = "112";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +85,7 @@ public class SidaTestActivity extends AppCompatActivity {
         PB = (ProgressBar) findViewById(R.id.pbSidaTest);
         tvLabelLeft = (TextView) findViewById(R.id.tvLabelLeft);
         tvLabelRight = (TextView) findViewById(R.id.tvLabelRight);
-
+        UTILS = new Utils(SidaTestActivity.this);
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         SEEK_SIDA = (SeekBar) findViewById(R.id.seekBarSidas);
@@ -195,7 +199,7 @@ public class SidaTestActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onClickSecondButton() {
-                                    emergencyCall();
+                                    getEmergencyContact();
                                 }
                             };
                             infoDialog.show();
@@ -318,7 +322,42 @@ public class SidaTestActivity extends AppCompatActivity {
         return false;
     }
 
-    public void emergencyCall() {
+    private void getEmergencyContact() {
+        PB.setVisibility(View.VISIBLE);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put("helplist", "2");
+        try {
+            new General().getJSONContentFromInternetService(SidaTestActivity.this, General.PHPServices.GET_CONTACTS, params, true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        PB.setVisibility(View.GONE);
+                        if (response.getJSONArray(Constant.DATA) != null && response.getJSONArray(Constant.DATA).length() > 0) {
+                            ContactDisplay _contactDisplay = new Gson().fromJson(response.getJSONArray(Constant.DATA).get(0)
+                                    .toString(), new TypeToken<ContactDisplay>() {
+                            }.getType());
+                            UTILS.setPreference("EMERGENCY_CONTACT_NAME", _contactDisplay.getFirst_name());
+                            UTILS.setPreference("EMERGENCY_CONTACT_NO", _contactDisplay.getPhone());
+                            onCall();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onCall() {
         int permissionCheck = ContextCompat.checkSelfPermission(SidaTestActivity.this, Manifest.permission.CALL_PHONE);
 
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -326,22 +365,41 @@ public class SidaTestActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.CALL_PHONE},
                     REQUEST_CODE_CALL_PERMISSIONS);
         } else {
-            String _phoneNo = "112";
+
             if (!TextUtils.isEmpty(new Utils(SidaTestActivity.this).getPreference("EMERGENCY_CONTACT_NAME"))) {
                 _phoneNo = new Utils(SidaTestActivity.this).getPreference("EMERGENCY_CONTACT_NO");
             }
-            try {
-                Intent phoneIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + _phoneNo));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                    phoneIntent.setPackage("com.android.server.telecom");
-                else
-                    phoneIntent.setPackage("com.android.phone");
-                startActivity(phoneIntent);
+            new dialogYesNoOption(SidaTestActivity.this, getString(R.string.confimation_call) + "\n" + _phoneNo) {
+                @Override
+                public void onClickYes() {
+                    dismiss();
+                    try {
+                        Intent phoneIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + _phoneNo));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                            phoneIntent.setPackage("com.android.server.telecom");
+                        else
+                            phoneIntent.setPackage("com.android.phone");
+                        if (ActivityCompat.checkSelfPermission(SidaTestActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(SidaTestActivity.this,
+                                    new String[]{Manifest.permission.CALL_PHONE},
+                                    REQUEST_CODE_CALL_PERMISSIONS);
+                            return;
+                        }
+                        startActivity(phoneIntent);
 
-            } catch (ActivityNotFoundException e) {
-                Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + _phoneNo));
-                startActivity(phoneIntent);
-            }
+                    } catch (ActivityNotFoundException e) {
+                        Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + _phoneNo));
+                        startActivity(phoneIntent);
+                    }
+                }
+
+                @Override
+                public void onClickNo() {
+                    dismiss();
+                }
+            }.show();
+
+
         }
     }
 
@@ -352,7 +410,7 @@ public class SidaTestActivity extends AppCompatActivity {
             case REQUEST_CODE_CALL_PERMISSIONS:
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    emergencyCall();
+                    onCall();
                 break;
         }
     }

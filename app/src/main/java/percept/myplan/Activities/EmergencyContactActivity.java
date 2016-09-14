@@ -83,8 +83,8 @@ public class EmergencyContactActivity extends AppCompatActivity {
             EmergencyContactActivity.this.finish();
             return true;
         } else if (item.getItemId() == R.id.action_addContact) {
-            Intent _intent = new Intent(EmergencyContactActivity.this, AddContactFromPhoneActivity.class);
-            _intent.putExtra("FROM", "emergency");
+            Intent _intent = new Intent(EmergencyContactActivity.this, AddContactActivity.class);
+            _intent.putExtra("FROM_EMERGENCY", "emergency");
             startActivity(_intent);
             return true;
         }
