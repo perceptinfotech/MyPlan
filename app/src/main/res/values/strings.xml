@@ -353,4 +353,5 @@
     <string name="confimation_call">Are you sure you want to call to this number?</string>
     <string name="strategies_to_symptom">Strategies for this symptom</string>
     <string name="time">Time</string>
+    <string name="multiple_days">Multiple Days</string>
 </resources>

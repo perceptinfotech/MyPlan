@@ -1,6 +1,5 @@
 package percept.myplan.Activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,10 +18,8 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -66,6 +63,8 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
 
     public static List<StrategyContact> LIST_STRATEGYCONTACT;
+    public static List<Alarm> LIST_ALARM = new ArrayList<>();
+    private final int SET_ALARM = 15;
     Map<String, String> params;
     private RecyclerView LST_OWNSTRATEGYIMG;
     private List<String> LIST_IMAGE, listMusic;
@@ -82,7 +81,6 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     private Button BTN_SHARESTRATEGY;
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
-    private List<Alarm> LIST_ALARM;
     private TextView tvImages, tvNetwork, tvAlarms, tvMusic, tvLink;
     private View vImages, vNetwork, vAlarms, vMusic, vLink;
 
@@ -109,9 +107,9 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
         vAlarms = findViewById(R.id.vAlarm);
         vNetwork = findViewById(R.id.vNetwork);
-        vImages =  findViewById(R.id.vImage);
-        vMusic =  findViewById(R.id.vMusic);
-        vLink =  findViewById(R.id.vLink);
+        vImages = findViewById(R.id.vImage);
+        vMusic = findViewById(R.id.vMusic);
+        vLink = findViewById(R.id.vLink);
 
         LST_OWNSTRATEGYIMG = (RecyclerView) findViewById(R.id.lstOwnStrategyImage);
         lstOwnStrategyMusic = (RecyclerView) findViewById(R.id.lstOwnStrategyMusic);
@@ -241,8 +239,22 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
             }
         }));
-//        initSwipe(LST_STRATEGYCONTACT);
-//        initSwipe(LST_STRATEGYALARM);
+
+        LST_STRATEGYALARM.addOnItemTouchListener(new RecyclerTouchListener(StrategyDetailsOwnActivity.this, LST_STRATEGYALARM, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Intent _intent = new Intent(StrategyDetailsOwnActivity.this, AlarmListActivity.class);
+                _intent.putExtra("FROM_DETAIL", "TRUE");
+                startActivityForResult(_intent, SET_ALARM);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+        initSwipe(LST_STRATEGYCONTACT);
+        initSwipe(LST_STRATEGYALARM);
 
     }
 
@@ -602,5 +614,17 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case SET_ALARM:
+                MAP_ALARM.put(STRATEGY_ID, LIST_ALARM);
+                Gson gson = new Gson();
+                String _alarmList = gson.toJson(MAP_ALARM);
+                UTILS.setPreference("ALARMLIST", _alarmList);
+                ADAPTER_ALARM.notifyDataSetChanged();
+                break;
+        }
+    }
 }

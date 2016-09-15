@@ -283,12 +283,16 @@ public class AddVideoActivity extends AppCompatActivity {
                     Toast.makeText(AddVideoActivity.this, R.string.pickagainwithlesstime, Toast.LENGTH_SHORT).show();
                     return;
                 }
+                File file = new File(videosPath);
+                long videoLength = file.length() / 1024;
+                if (videoLength > (5 * 1024L)) {
+                    String _path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + "compress.mp4";
+                    new TranscdingBackground(AddVideoActivity.this).execute(videosPath, _path);
+                } else
+                    addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, HOPE_ELEMENT_ID, videosPath, "video");
 
-//                addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, HOPE_ELEMENT_ID, videosPath, "video", progressDialog);
-                String _path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + "compress.mp4";
-                new TranscdingBackground(AddVideoActivity.this).execute(videosPath, _path);
 
-//                int end = videosPath.toString().lastIndexOf("/");
+//              int end = videosPath.toString().lastIndexOf("/");
 //            String str2 = videosPath.toString().substring(end + 1, videosPath.length());
 //
 //            String name = "VID_" + currentDateTimeString + seconds + hour + min + ".mp4";
@@ -310,6 +314,7 @@ public class AddVideoActivity extends AppCompatActivity {
                 //
 //            }
                 //endregion
+
             } else if (requestCode == REQ_TAKE_VIDEO) {
                 //region VIDEO_CAPTURE
                 Uri videoUris = data.getData();
@@ -370,7 +375,7 @@ public class AddVideoActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
-//        PB.setVisibility(View.VISIBLE);
+        PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
 //        params.put(Constant.URL,getResources().getString(R.string.server_url) + ".saveHopemedia");
         if (!TextUtils.isEmpty(vidpath)) {
@@ -453,7 +458,7 @@ public class AddVideoActivity extends AppCompatActivity {
             //String[] complexCommand = {"ffmpeg", "-y" ,"-i", "/sdcard/videokit/in.mp4","-strict","experimental","-s", "160x120","-r","25", "-vcodec", "mpeg4", "-b", "150k", "-ab","48000", "-ac", "2", "-ar", "22050", "/sdcard/videokit/out.mp4"};
             ///////////////////////////////////////////////////////////////////////
 
-            commandStr = "ffmpeg -y -i " + paths[0] + " -strict experimental -s 160x120 -r 30 -aspect 4:3 -ab 48000 -ac 2 -ar 22050 -b 2097k " + _path;
+            commandStr = "ffmpeg -y -i " + paths[0] + " -strict experimental -ab 48000 -ac 2 -ar 22050 -b 2097k " + _path;
             Log.d(":::: Command", commandStr);
             LoadJNI vk = new LoadJNI();
             try {

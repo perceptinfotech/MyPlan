@@ -1,11 +1,13 @@
 package percept.myplan.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -96,11 +98,13 @@ public class AlarmRepeatListActivity extends AppCompatActivity {
         listAlarmRepeat = new ArrayList<>();
 
         String[] repeat = getResources().getStringArray(R.array.alarm_repeat);
+
+        String ids = getIntent().getStringExtra("ALARM_REPEAT");
         for (int i = 0; i < repeat.length; i++) {
             AlarmRepeat alarmRepeat = new AlarmRepeat();
             alarmRepeat.setId(i);
             alarmRepeat.setAlarmDay(repeat[i]);
-            if (i == 0)
+            if (ids.contains(String.valueOf(i)))
                 alarmRepeat.setSelected(true);
             else alarmRepeat.setSelected(false);
             listAlarmRepeat.add(alarmRepeat);
@@ -112,7 +116,16 @@ public class AlarmRepeatListActivity extends AppCompatActivity {
         lstAlarmRepeat.addOnItemTouchListener(new RecyclerTouchListener(AlarmRepeatListActivity.this, lstAlarmRepeat, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-
+                if (position == 0) {
+                    for (int i = 0; i < listAlarmRepeat.size(); i++) {
+                        listAlarmRepeat.get(i).setSelected(false);
+                    }
+                    listAlarmRepeat.get(position).setSelected(true);
+                } else {
+                    listAlarmRepeat.get(0).setSelected(false);
+                    listAlarmRepeat.get(position).setSelected(!listAlarmRepeat.get(position).isSelected());
+                }
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -131,11 +144,30 @@ public class AlarmRepeatListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            ArrayList<Integer> listInt = new ArrayList<>();
+            for (int i = 0; i < listAlarmRepeat.size(); i++) {
+                if (listAlarmRepeat.get(i).isSelected())
+                    listInt.add(listAlarmRepeat.get(i).getId());
+            }
+            Intent intent = new Intent();
+            intent.putExtra("ALARM_REPEAT", TextUtils.join(",", listInt));
+            setResult(RESULT_OK, intent);
             AlarmRepeatListActivity.this.finish();
             return true;
         }
         return false;
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        ArrayList<Integer> listInt = new ArrayList<>();
+        for (int i = 0; i < listAlarmRepeat.size(); i++) {
+            if (listAlarmRepeat.get(i).isSelected())
+                listInt.add(listAlarmRepeat.get(i).getId());
+        }
+        Intent intent = new Intent();
+        intent.putExtra("ALARM_REPEAT", TextUtils.join(",", listInt));
+        setResult(RESULT_OK, intent);
+    }
 }
