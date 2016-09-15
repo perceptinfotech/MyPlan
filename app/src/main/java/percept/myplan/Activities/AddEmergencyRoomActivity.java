@@ -63,6 +63,7 @@ import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
 import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
+import percept.myplan.POJO.NearestEmergencyRoom;
 import percept.myplan.R;
 import percept.myplan.adapters.PlacesAutocompleteAdapter;
 
@@ -89,6 +90,8 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
 
     private ImageView imgRoomPhoto;
     private TextView tvAddPhoto;
+    private NearestEmergencyRoom emergencyRoom;
+    private Marker marker;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -129,6 +132,13 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        if (getIntent().hasExtra("FROM_EDIT")) {
+
+            emergencyRoom = (NearestEmergencyRoom) getIntent().getSerializableExtra(Constant.DATA);
+            mTitle.setText(emergencyRoom.getRoomName());
+
+        }
         edtAddress.setAdapter(new PlacesAutocompleteAdapter(this));
         edtAddress.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -164,9 +174,12 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
                                 if (!TextUtils.isEmpty(address.getPhone()))
                                     edtTelephoneNo.setText(address.getPhone());
                                 CameraPosition cameraPosition = new CameraPosition.Builder().target(addressLatlng).zoom(12).build();
-                                Marker marker = googleMap.addMarker(new MarkerOptions()
-                                        .position(addressLatlng)
-                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
+                                if (marker == null) {
+                                    marker = googleMap.addMarker(new MarkerOptions()
+                                            .position(addressLatlng)
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
+                                } else
+                                    marker.setPosition(addressLatlng);
                                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                             }
                         } catch (IOException e) {
@@ -184,16 +197,23 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
 
                 // For showing a move to my location button
                 if (ActivityCompat.checkSelfPermission(AddEmergencyRoomActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(AddEmergencyRoomActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
                 googleMap.setMyLocationEnabled(false);
+                if (emergencyRoom != null) {
+                    addressLatlng = new LatLng(Double.parseDouble(emergencyRoom.getLatitude()), Double.parseDouble(emergencyRoom.getLongitude()));
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(addressLatlng).zoom(12).build();
+                    marker = googleMap.addMarker(new MarkerOptions()
+                            .position(addressLatlng)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
+                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    edtAddress.setText(emergencyRoom.getAddress());
+                    edtTelephoneNo.setText(emergencyRoom.getPhone());
+                    edtEmergencyRoomName.setText(emergencyRoom.getRoomName());
+                    edtPostCode.setText(emergencyRoom.getPostcode());
+                    edtCity.setText(emergencyRoom.getCity());
+                    edtCountry.setText(emergencyRoom.getCountry());
+                }
 
             }
         });
@@ -283,6 +303,8 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
+        if (emergencyRoom != null)
+            params.put("id", emergencyRoom.getId());
         if (FILE_PATH != null)
             params.put("image", FILE_PATH);
         params.put("name", edtEmergencyRoomName.getText().toString());
@@ -293,11 +315,14 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
         params.put("phone", edtTelephoneNo.getText().toString());
         params.put("lat", String.valueOf(addressLatlng.latitude));
         params.put("long", String.valueOf(addressLatlng.longitude));
+        params.put("current_lat", String.valueOf(HomeActivity.CURRENT_LAT));
+        params.put("current_long", String.valueOf(HomeActivity.CURRENT_LONG));
+
         new MultiPartParsing(AddEmergencyRoomActivity.this, params, General.PHPServices.SAVE_EMERGENCY_ROOM, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
                 PB.setVisibility(View.GONE);
-                Toast.makeText(AddEmergencyRoomActivity.this, "Successfully added neared emergency room", Toast.LENGTH_LONG).show();
+                Toast.makeText(AddEmergencyRoomActivity.this, "Emergency Room has been added.", Toast.LENGTH_LONG).show();
                 AddEmergencyRoomActivity.this.finish();
             }
         });
