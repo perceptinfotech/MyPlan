@@ -62,6 +62,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
     private Button btnDeleteSymptom;
+    private TextView tvStrategiesToSymptom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,8 @@ public class SymptomDetailsActivity extends AppCompatActivity {
         SYMPTOM_ID = getIntent().getExtras().getString("SYMPTOM_ID");
         TV_TITLE = (EditText) findViewById(R.id.tvTitle);
         TV_TEXT = (EditText) findViewById(R.id.tvText);
+        tvStrategiesToSymptom = (TextView) findViewById(R.id.tvStrategiesToSymptom);
+
         TV_TITLE.setEnabled(false);
         TV_TEXT.setEnabled(false);
 
@@ -198,6 +201,8 @@ public class SymptomDetailsActivity extends AppCompatActivity {
             TV_TITLE.setEnabled(true);
             TV_TEXT.setEnabled(true);
             isEDIT = false;
+            if (tvStrategiesToSymptom.getVisibility() == View.GONE)
+                tvStrategiesToSymptom.setVisibility(View.VISIBLE);
             btnDeleteSymptom.setVisibility(View.VISIBLE);
         } else {
             menu.getItem(0).setVisible(true);
@@ -318,6 +323,9 @@ public class SymptomDetailsActivity extends AppCompatActivity {
                             else
                                 STR_STRATEGYID += "," + LIST_SYMPTOMSTRATEGY.get(i).getId();
                         }
+                        if (LIST_SYMPTOMSTRATEGY.size() > 0)
+                            tvStrategiesToSymptom.setVisibility(View.VISIBLE);
+                        else tvStrategiesToSymptom.setVisibility(View.GONE);
 
                         LST_SYMPTOMSTRATEGY.setAdapter(ADAPTER);
                         PB.setVisibility(View.GONE);

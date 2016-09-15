@@ -195,6 +195,7 @@ public class SidaTestActivity extends AppCompatActivity {
 
                                     Intent _intent = new Intent(SidaTestActivity.this, HelpListActivity.class);
                                     startActivity(_intent);
+                                    SidaTestActivity.this.finish();
                                 }
 
                                 @Override
@@ -206,7 +207,7 @@ public class SidaTestActivity extends AppCompatActivity {
                             infoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                                 @Override
                                 public void onDismiss(DialogInterface dialogInterface) {
-                                    SidaTestActivity.this.finish();
+
                                 }
                             });
                         } else {
@@ -386,16 +387,19 @@ public class SidaTestActivity extends AppCompatActivity {
                             return;
                         }
                         startActivity(phoneIntent);
+                        SidaTestActivity.this.finish();
 
                     } catch (ActivityNotFoundException e) {
                         Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + _phoneNo));
                         startActivity(phoneIntent);
+
                     }
                 }
 
                 @Override
                 public void onClickNo() {
                     dismiss();
+                    SidaTestActivity.this.finish();
                 }
             }.show();
 

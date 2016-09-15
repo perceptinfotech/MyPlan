@@ -102,6 +102,24 @@
                 android:background="@color/sidemenu_seperator"/>
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/tvStrategiesToSymptom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingTop="10dp"
+            android:text="@string/strategies_to_symptom"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            />
+
+        <View
+            android:id="@+id/vNetwork"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/sidemenu_seperator"/>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/lstSymptomStrategy"
             android:layout_width="match_parent"
@@ -113,11 +131,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
-            android:text="@string/delete"
-            android:textSize="16sp"
-            android:padding="10dp"
             android:gravity="left|center_vertical"
-            android:textColor="@color/red"/>
+            android:padding="10dp"
+            android:text="@string/delete"
+            android:textColor="@color/red"
+            android:textSize="16sp"/>
 
         <View
             android:layout_width="match_parent"

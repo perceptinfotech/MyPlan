@@ -2,13 +2,11 @@ package percept.myplan.Activities;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -26,7 +24,8 @@ import percept.myplan.R;
 
 public class AddAlarmActivity extends AppCompatActivity {
 
-    private TextView TV_ALARMREPEAT, TV_ALARMSOUND;
+    private final int REQ_CODE_ALARM_REPEAT = 320;
+    private TextView TV_ALARMREPEAT, TV_ALARMSOUND, tvAlarmTime;
     private Switch SWITCH_ALARMSNOOZE;
     private EditText EDT_ALARMLABLE;
     private AlarmManager ALARM_MANAGER;
@@ -49,6 +48,7 @@ public class AddAlarmActivity extends AppCompatActivity {
 
 
         TV_ALARMREPEAT = (TextView) findViewById(R.id.tvAlarmRepeat);
+        tvAlarmTime = (TextView) findViewById(R.id.tvAlarmTime);
         TV_ALARMSOUND = (TextView) findViewById(R.id.tvAlarmSound);
         SWITCH_ALARMSNOOZE = (Switch) findViewById(R.id.switchAlarmSnooze);
         EDT_ALARMLABLE = (EditText) findViewById(R.id.edtAlarmLable);
@@ -68,6 +68,8 @@ public class AddAlarmActivity extends AppCompatActivity {
             TIME_PICKER.setCurrentHour(calendar2.get(Calendar.HOUR_OF_DAY)); // or Calendar.HOUR for 12 hour format
             TIME_PICKER.setCurrentMinute(calendar2.get(Calendar.MINUTE));
 //            DATE_PICKER.updateDate(calendar2.get(Calendar.YEAR), calendar2.get(Calendar.MONTH), calendar2.get(Calendar.DAY_OF_MONTH));
+        } else {
+            tvAlarmTime.setText(TIME_PICKER.getCurrentHour() + " : " + TIME_PICKER.getCurrentMinute());
         }
 
 
@@ -85,7 +87,8 @@ public class AddAlarmActivity extends AppCompatActivity {
         TV_ALARMREPEAT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showRepeatDialog();
+                Intent intent = new Intent(AddAlarmActivity.this, AlarmRepeatListActivity.class);
+                startActivityForResult(intent, REQ_CODE_ALARM_REPEAT);
             }
         });
     }
@@ -128,16 +131,23 @@ public class AddAlarmActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 12 && resultCode == RESULT_OK) {
-            final Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-            final Ringtone ringtone = RingtoneManager.getRingtone(this, uri);
-            // Get your title here `ringtone.getTitle(this)
-            String Str = ringtone.getTitle(this);
+        switch (requestCode) {
+            case 12:
+                if (resultCode == RESULT_OK) {
+                    final Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                    Ringtone ringtone;
+                    String Str;
+                    if (uri != null) {
+                        ringtone = RingtoneManager.getRingtone(this, uri);
+                        // Get your title here `ringtone.getTitle(this)
+                        Str = ringtone.getTitle(this);
+                    } else Str = "Slient";
 
-            TV_ALARMSOUND.setText(Str);
-            Log.d("::::: ", Str);
-            ALARM_SOUND = String.valueOf(uri);
-            ALARM_SOUND_NAME = Str;
+
+                    TV_ALARMSOUND.setText(Str);
+                    Log.d("::::: ", Str);
+                    ALARM_SOUND = String.valueOf(uri);
+                    ALARM_SOUND_NAME = Str;
 
 
 //            ALARM_MANAGER = (AlarmManager) AddAlarmActivity.this.getSystemService(ALARM_SERVICE);
@@ -154,18 +164,16 @@ public class AddAlarmActivity extends AppCompatActivity {
 //            AlarmManager manager = (AlarmManager) AddAlarmActivity.this.getSystemService(Context.ALARM_SERVICE);
 //            ALARM_MANAGER.cancel(_pendingIntent);
 //            manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000, _pendingIntent);
-//            Toast.makeText(AddAlarmActivity.this, "Alarm Set", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(AddAlarmActivity.this, "Alarm Set", Toast.LENGTH_SHORT).show();   }
+                }
+                break;
+            case REQ_CODE_ALARM_REPEAT:
+                break;
+
         }
     }
 
-    private void showRepeatDialog() {
-        AlertDialog.Builder build = new AlertDialog.Builder(AddAlarmActivity.this);
-        build.setItems(getResources().getStringArray(R.array.alarm_repeat), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //do stuff....
-                TV_ALARMREPEAT.setText(getResources().getStringArray(R.array.alarm_repeat)[which]);
-            }
-        }).create().show();
-    }
 }
+
+
+

@@ -133,6 +133,7 @@ public class MultiPartParsing {
         @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
+            Log.d(":::::::::", response);
             if (completedListener != null)
                 completedListener.onTaskCompleted(response);
         }

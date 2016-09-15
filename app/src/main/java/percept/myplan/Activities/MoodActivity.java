@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -315,7 +316,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, day);
 //        Toast.makeText(MoodActivity.this,cal.getTime().toString()+ " Clicked",Toast.LENGTH_SHORT).show();
-        String NOTE = "No Mood Available";
+        String NOTE = "";
         for (Mood _obj : LIST_MOOD) {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             try {
@@ -332,10 +333,8 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                 e.printStackTrace();
             }
         }
-        if (NOTE.equals(""))
-            NOTE = "No Note Available";
 
-        if (!NOTE.equals("No Mood Available")) {
+        if (!TextUtils.isEmpty(NOTE)) {
             NoteCalender _dialog = new NoteCalender(MoodActivity.this, NOTE);
             _dialog.setCanceledOnTouchOutside(true);
             _dialog.show();

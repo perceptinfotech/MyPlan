@@ -121,7 +121,7 @@
     <string name="action_add">Add</string>
     <string name="alarms">Alarms</string>
     <string name="morning">Morning</string>
-    <string name="network">Network</string>
+    <string name="network">Contact</string>
     <string name="images">Images</string>
     <string name="addastrategy">Add a strategy</string>
     <string name="internetconn">Please check internet connection</string>
@@ -282,11 +282,14 @@
     </string-array>
 
     <string-array name="alarm_repeat">
-        <item>Once</item>
-        <item>Every Week</item>
-        <item>Every 2 Week</item>
-        <item>Every 3 Week</item>
-        <item>Once a month</item>
+        <item>Never</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
     </string-array>
 
     <string name="test_start_warning_msg">
@@ -348,4 +351,6 @@
     <string name="pdf_success_msg">Your PDF has been sent to your e-mail with a password protecting it.</string>
     <string name="dialog_gps_msg">Your GPS is turn off on your phone. Do you want to turn od GPS?</string>
     <string name="confimation_call">Are you sure you want to call to this number?</string>
+    <string name="strategies_to_symptom">Strategies for this symptom</string>
+    <string name="time">Time</string>
 </resources>

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.text.DateFormatSymbols;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,21 +49,34 @@ public class SidaSummaryAdapter extends RecyclerView.Adapter<SidaSummaryAdapter.
 //        holder.TV_ALARMTITLE.setText(album.getAlarmName());
 
         if (TextUtils.isEmpty(_mood.getWeek_Number()))
-            TV_MOODSUMTITLE.setText(new DateFormatSymbols().getMonths()[Integer.parseInt(_mood.getMonthNumber())-1]+ " " + _mood.getYear());
+            TV_MOODSUMTITLE.setText(new DateFormatSymbols().getMonths()[Integer.parseInt(_mood.getMonthNumber()) - 1] + " " + _mood.getYear());
 //            TV_MOODSUMTITLE.setText(_mood.getMonthNumber() + " " + CONTEXT.getString(R.string.month_of) + " " + _mood.getYear());
         else
             TV_MOODSUMTITLE.setText(_mood.getWeek_Number() + " " + CONTEXT.getString(R.string.week_of) + " " + _mood.getYear());
         ArrayList<PieSlice> LST_PIEDATA = new ArrayList<>();
         PieSlice slice = new PieSlice();
+        double avgScore = Float.parseFloat(_mood.getAvg_Score());
+        if (avgScore <= 30) {
+            slice.setColor(CONTEXT.getResources().getColor(R.color.pie_color1));
+//            $color = '#04a060';
+        } else if (avgScore > 30 && avgScore <= 42) {
+            slice.setColor(CONTEXT.getResources().getColor(R.color.pie_color2));
+//            $color = '#fed304';
+        } else if (avgScore > 42) {
+            slice.setColor(CONTEXT.getResources().getColor(R.color.pie_color3));
+//            $color = '#ed1c24';
+        }
+
         slice.setColor(CONTEXT.getResources().getColor(R.color.pie_color1));
         slice.setValue(Float.parseFloat(_mood.getAvg_Score()));
+        slice.setTitle(new DecimalFormat("0.00").format(Float.parseFloat(_mood.getAvg_Score())) + "%");
         LST_PIEDATA.add(slice);
         slice = new PieSlice();
-        slice.setColor(CONTEXT.getResources().getColor(R.color.pie_color2));
+        slice.setColor(CONTEXT.getResources().getColor(android.R.color.transparent));
         slice.setValue(100 - Float.parseFloat(_mood.getAvg_Score()));
+        slice.setTitle(new DecimalFormat("0.00").format(100 - Float.parseFloat(_mood.getAvg_Score())) + "%");
         LST_PIEDATA.add(slice);
         SIDA_PIE_GRAPH.removeSlices();
-
         SIDA_PIE_GRAPH.addSlice(LST_PIEDATA.get(0));
         SIDA_PIE_GRAPH.addSlice(LST_PIEDATA.get(1));
         SIDA_PIE_GRAPH.setPadding(2);

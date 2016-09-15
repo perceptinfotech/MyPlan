@@ -2,41 +2,43 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/tvText"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/backcolor"
-                android:padding="10dp">
+                android:gravity="center_horizontal"
+                android:padding="5dp">
 
     <ImageView
         android:id="@+id/ivRoomThumb"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:src="@mipmap/ic_launcher"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/llText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
-        android:layout_toLeftOf="@+id/ivEnter"
         android:layout_toRightOf="@+id/ivRoomThumb"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/tvEmergencyRoomName"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ems="10"
             android:singleLine="true"
             android:text="name"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"
             android:textColor="@android:color/black"/>
 
         <TextView
             android:id="@+id/tvEmergencyRoomNo"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ems="10"
             android:text="number"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/black"/>
     </LinearLayout>
 
@@ -44,8 +46,8 @@
         android:id="@+id/ivEnter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/llText"
         android:rotation="180"
         android:src="@drawable/back_button"/>
 </RelativeLayout>

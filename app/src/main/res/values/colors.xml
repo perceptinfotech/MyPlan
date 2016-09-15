@@ -43,9 +43,10 @@
     <color name="happy">#CDCCCC</color>
     <color name="veryhappy">#4CC1B6</color>
 
-    <color name="pie_color1">#fccf09</color>
+    <color name="pie_color1">#04a060</color>
+    <color name="pie_color2">#fed304</color>
+    <color name="pie_color3">#ed1c24</color>
 
-    <color name="pie_color2">#1c9889</color>
     <color name="btninspicolor">#04a060</color>
 
 </resources>

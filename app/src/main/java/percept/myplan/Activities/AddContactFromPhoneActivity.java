@@ -278,6 +278,8 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         PB_SAVECONTACT.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
         // Adding file data to http body
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
         params.put(Constant.ID, "");
         params.put(Constant.FIRST_NAME, _contact.getFirstName());
         params.put(Constant.LAST_NAME, _contact.getLastName());
@@ -291,6 +293,10 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         params.put(Constant.WEB_ADDRESS, _contact.getWebURL());
         params.put("emergency", "1");
         params.put(Constant.RINGTONE, "");
+        String _filePath = getPathFromURI(_contact.getContactID());
+        if (!TextUtils.isEmpty(_filePath)) {
+            params.put(Constant.CON_IMAGE, _filePath);
+        }
 
         new MultiPartParsing(AddContactFromPhoneActivity.this, params, General.PHPServices.SAVE_CONTACT, new AsyncTaskCompletedListener() {
             @Override
@@ -336,14 +342,16 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             params.put("emergency", "1");
         }
         List<HashMap<String, String>> _tmpConList = addContactList();
-        if (_tmpConList.size() <= 0)
+        String deleteIds = deleteContactIds();
+
+        if (_tmpConList.size() <= 0 || TextUtils.isEmpty(deleteIds))
             return;
         PB_SAVECONTACT.setVisibility(View.VISIBLE);
         for (int i = 0; i < _tmpConList.size(); i++) {
             params.put("add_" + i, new Gson().toJson(_tmpConList.get(i)));
         }
         params.put("count", String.valueOf(_tmpConList.size()));
-        params.put("delete", deleteContactIds());
+        params.put("delete", deleteIds);
         int img_count = 0;
         for (int i = 0; i < LIST_CONTACTS.size(); i++) {
 
