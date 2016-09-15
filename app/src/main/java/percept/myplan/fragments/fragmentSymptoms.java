@@ -53,9 +53,11 @@ import java.util.Map;
 import percept.myplan.Activities.AddNewSymptomActivity;
 import percept.myplan.Activities.DangerSignalsActivity;
 import percept.myplan.Activities.SymptomDetailsActivity;
+import percept.myplan.CustomListener.RecyclerTouchListener;
 import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
+import percept.myplan.Interfaces.ClickListener;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.HelpVideos;
 import percept.myplan.POJO.Symptom;
@@ -490,53 +492,6 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
         itemTouchHelper.attachToRecyclerView(LST_SYMPTOM);
     }
 
-    public interface ClickListener {
-        void onClick(View view, int position);
 
-        void onLongClick(View view, int position);
-    }
-
-    public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
-
-        private GestureDetector gestureDetector;
-        private fragmentSymptoms.ClickListener clickListener;
-
-        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final fragmentSymptoms.ClickListener clickListener) {
-            this.clickListener = clickListener;
-            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
-                @Override
-                public boolean onSingleTapUp(MotionEvent e) {
-                    return true;
-                }
-
-                @Override
-                public void onLongPress(MotionEvent e) {
-                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
-                    if (child != null && clickListener != null) {
-                        clickListener.onLongClick(child, recyclerView.getChildPosition(child));
-                    }
-                }
-            });
-        }
-
-        @Override
-        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-
-            View child = rv.findChildViewUnder(e.getX(), e.getY());
-            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
-                clickListener.onClick(child, rv.getChildPosition(child));
-            }
-            return false;
-        }
-
-        @Override
-        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-        }
-
-        @Override
-        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-        }
-    }
 
 }

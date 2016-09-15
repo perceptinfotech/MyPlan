@@ -8,10 +8,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import percept.myplan.CustomListener.RecyclerTouchListener;
+import percept.myplan.Interfaces.ClickListener;
 import percept.myplan.POJO.AlarmRepeat;
 import percept.myplan.R;
 import percept.myplan.adapters.AlarmRepeatAdapter;
@@ -105,6 +108,18 @@ public class AlarmRepeatListActivity extends AppCompatActivity {
 
         adapter = new AlarmRepeatAdapter(AlarmRepeatListActivity.this, listAlarmRepeat);
         lstAlarmRepeat.setAdapter(adapter);
+
+        lstAlarmRepeat.addOnItemTouchListener(new RecyclerTouchListener(AlarmRepeatListActivity.this, lstAlarmRepeat, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
     }
 
 

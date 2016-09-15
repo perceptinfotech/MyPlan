@@ -37,9 +37,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import percept.myplan.CustomListener.RecyclerTouchListener;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.Utils;
+import percept.myplan.Interfaces.ClickListener;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.ContactDisplay;
 import percept.myplan.R;
@@ -107,8 +109,8 @@ public class HelpListActivity extends AppCompatActivity {
             }
         });
 
-        LST_HELP.addOnItemTouchListener(new fragmentContacts.RecyclerTouchListener(
-                HelpListActivity.this, LST_HELP, new fragmentContacts.ClickListener() {
+        LST_HELP.addOnItemTouchListener(new RecyclerTouchListener(
+                HelpListActivity.this, LST_HELP, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 phoneNo = LIST_ALLCONTACTS.get(position).getPhone();

@@ -47,9 +47,11 @@ import percept.myplan.Activities.AddContactActivity;
 import percept.myplan.Activities.AddContactDetailActivity;
 import percept.myplan.Activities.EmergencyContactActivity;
 import percept.myplan.Activities.HelpListEditActivity;
+import percept.myplan.CustomListener.RecyclerTouchListener;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.Utils;
+import percept.myplan.Interfaces.ClickListener;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.ContactDisplay;
 import percept.myplan.R;
@@ -150,7 +152,7 @@ public class fragmentContacts extends Fragment {
             }
         });
 
-        LST_HELP.addOnItemTouchListener(new fragmentContacts.RecyclerTouchListener(getActivity(), LST_HELP, new ClickListener() {
+        LST_HELP.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), LST_HELP, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
 //                Toast.makeText(getActivity(), LIST_HELPCONTACTS.get(position).getFirst_name(), Toast.LENGTH_SHORT).show();
@@ -341,53 +343,6 @@ public class fragmentContacts extends Fragment {
         }
     }
 
-    public interface ClickListener {
-        void onClick(View view, int position);
 
-        void onLongClick(View view, int position);
-    }
-
-    public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
-
-        private GestureDetector gestureDetector;
-        private fragmentContacts.ClickListener clickListener;
-
-        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final fragmentContacts.ClickListener clickListener) {
-            this.clickListener = clickListener;
-            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
-                @Override
-                public boolean onSingleTapUp(MotionEvent e) {
-                    return true;
-                }
-
-                @Override
-                public void onLongPress(MotionEvent e) {
-                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
-                    if (child != null && clickListener != null) {
-                        clickListener.onLongClick(child, recyclerView.getChildPosition(child));
-                    }
-                }
-            });
-        }
-
-        @Override
-        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-
-            View child = rv.findChildViewUnder(e.getX(), e.getY());
-            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
-                clickListener.onClick(child, rv.getChildPosition(child));
-            }
-            return false;
-        }
-
-        @Override
-        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-        }
-
-        @Override
-        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-        }
-    }
 
 }

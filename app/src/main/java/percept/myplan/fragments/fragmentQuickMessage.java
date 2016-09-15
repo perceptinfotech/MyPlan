@@ -35,8 +35,10 @@ import java.util.Map;
 
 import percept.myplan.Activities.CreateQuickMsgActivity;
 import percept.myplan.Activities.QuickMessageDetailsActivity;
+import percept.myplan.CustomListener.RecyclerTouchListener;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
+import percept.myplan.Interfaces.ClickListener;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.QuickMessage;
 import percept.myplan.R;
@@ -90,7 +92,7 @@ public class fragmentQuickMessage extends Fragment {
 
             }
         });
-        LSTQUICKMSG.addOnItemTouchListener(new fragmentContacts.RecyclerTouchListener(getActivity(), LSTQUICKMSG, new fragmentContacts.ClickListener() {
+        LSTQUICKMSG.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), LSTQUICKMSG, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), QuickMessageDetailsActivity.class);

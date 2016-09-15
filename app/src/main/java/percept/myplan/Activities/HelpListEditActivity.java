@@ -28,13 +28,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import percept.myplan.CustomListener.RecyclerTouchListener;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
+import percept.myplan.Interfaces.ClickListener;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.ContactDisplay;
 import percept.myplan.R;
 import percept.myplan.adapters.ContactHelpListAdapter;
-import percept.myplan.fragments.fragmentContacts;
 
 import static percept.myplan.fragments.fragmentContacts.HELP_CONTACT_NAME;
 import static percept.myplan.fragments.fragmentContacts.LIST_HELPCONTACTS;
@@ -78,7 +79,7 @@ public class HelpListEditActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent _intent = new Intent(HelpListEditActivity.this, AddContactActivity.class);
                 _intent.putExtra("ADD_TO_HELP", "true");
-                _intent.putExtra(Constant.HELP_COUNT,LIST_HELPCONTACTS.size());
+                _intent.putExtra(Constant.HELP_COUNT, LIST_HELPCONTACTS.size());
                 startActivity(_intent);
                 if (getIntent().hasExtra("FROM_HELP")) {
                     HelpListEditActivity.this.finish();
@@ -86,13 +87,13 @@ public class HelpListEditActivity extends AppCompatActivity {
             }
         });
 
-        LST_HELP.addOnItemTouchListener(new fragmentContacts.RecyclerTouchListener(HelpListEditActivity.this, LST_HELP, new fragmentContacts.ClickListener() {
+        LST_HELP.addOnItemTouchListener(new RecyclerTouchListener(HelpListEditActivity.this, LST_HELP, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
 //                Toast.makeText(getActivity(), LIST_HELPCONTACTS.get(position).getFirst_name(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(HelpListEditActivity.this, AddContactDetailActivity.class);
                 intent.putExtra("IS_FOR_EDIT", true);
-                intent.putExtra(Constant.HELP_COUNT,LIST_HELPCONTACTS.size());
+                intent.putExtra(Constant.HELP_COUNT, LIST_HELPCONTACTS.size());
                 intent.putExtra("DATA", LIST_HELPCONTACTS.get(position));
                 startActivity(intent);
             }
@@ -108,7 +109,7 @@ public class HelpListEditActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-            GetContacts();
+        GetContacts();
     }
 
     private void GetContacts() {
@@ -185,7 +186,7 @@ public class HelpListEditActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.action_add_editHelpList) {
             Intent _intent = new Intent(HelpListEditActivity.this, AddContactActivity.class);
             _intent.putExtra("ADD_TO_HELP", "true");
-            _intent.putExtra(Constant.HELP_COUNT,LIST_HELPCONTACTS.size());
+            _intent.putExtra(Constant.HELP_COUNT, LIST_HELPCONTACTS.size());
             startActivity(_intent);
         }
         return false;
