@@ -3,7 +3,6 @@ package percept.myplan.fragments;
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -20,12 +19,10 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -151,7 +148,7 @@ public class fragmentContacts extends Fragment {
                 startActivity(_intent);
             }
         });
-
+        LST_HELP.setNestedScrollingEnabled(false);
         LST_HELP.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), LST_HELP, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -342,7 +339,6 @@ public class fragmentContacts extends Fragment {
                 break;
         }
     }
-
 
 
 }

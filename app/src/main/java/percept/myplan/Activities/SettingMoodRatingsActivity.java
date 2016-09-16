@@ -1,5 +1,9 @@
 package percept.myplan.Activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -10,20 +14,27 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.android.volley.VolleyError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import percept.myplan.Global.Constant;
@@ -32,15 +43,20 @@ import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.SidaSchedule;
 import percept.myplan.R;
 import percept.myplan.adapters.SidaScheduleAdapter;
+import percept.myplan.receivers.MyReceiver;
 
 public class SettingMoodRatingsActivity extends AppCompatActivity {
 
     private SwitchCompat SWITCH_SIDAS, SWITCH_MOOD;
-    private LinearLayout LAY_SIDAS;
+    private LinearLayout LAY_SIDAS, layMood, llNotificationOne, llNotificationTwo;
     private RecyclerView rcvSidas;
     private ArrayList<SidaSchedule> listSidasSchedule = new ArrayList<>();
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
+    private CheckBox chkOneDay, chkTwoDay;
+    private TextView tvMoodTimeTitle, tvAlarmOne, tvAlarmTwo;
+    private int countMoodRatingNotification = 0;
+    private String strAlarms = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +76,51 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
         PB = (ProgressBar) findViewById(R.id.progressBar);
 
+        chkOneDay = (CheckBox) findViewById(R.id.chkOneDay);
+        chkTwoDay = (CheckBox) findViewById(R.id.chkTwoDay);
+
         LAY_SIDAS = (LinearLayout) findViewById(R.id.laySidas);
+        layMood = (LinearLayout) findViewById(R.id.layMood);
+        llNotificationOne = (LinearLayout) findViewById(R.id.llNotificationOne);
+        llNotificationTwo = (LinearLayout) findViewById(R.id.llNotificationTwo);
+
         rcvSidas = (RecyclerView) findViewById(R.id.rcvSidas);
+
+        tvMoodTimeTitle = (TextView) findViewById(R.id.tvMoodTimeTitle);
+        tvAlarmOne = (TextView) findViewById(R.id.tvAlarmOne);
+        tvAlarmTwo = (TextView) findViewById(R.id.tvAlarmTwo);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(SettingMoodRatingsActivity.this);
         rcvSidas.setLayoutManager(mLayoutManager);
         rcvSidas.setItemAnimator(new DefaultItemAnimator());
         getSetting();
+
+        chkOneDay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+
+                if (isChecked) {
+                    chkTwoDay.setChecked(false);
+                } else {
+                    chkTwoDay.setChecked(true);
+                }
+            }
+        });
+        chkTwoDay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+
+                if (isChecked) {
+                    tvMoodTimeTitle.setText(getString(R.string.mood_times));
+                    chkOneDay.setChecked(false);
+                    llNotificationTwo.setVisibility(View.VISIBLE);
+                } else {
+                    tvMoodTimeTitle.setText(getString(R.string.mood_time));
+                    chkOneDay.setChecked(true);
+                    llNotificationTwo.setVisibility(View.GONE);
+                }
+            }
+        });
 
         SWITCH_SIDAS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -80,11 +134,27 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
 
         SWITCH_MOOD.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    layMood.setVisibility(View.VISIBLE);
+                    chkOneDay.setChecked(true);
+                } else {
+                    layMood.setVisibility(View.GONE);
+                }
             }
         });
-
+        tvAlarmOne.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openTimeDialog(tvAlarmOne);
+            }
+        });
+        tvAlarmTwo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openTimeDialog(tvAlarmTwo);
+            }
+        });
 
     }
 
@@ -115,17 +185,29 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
         params.put("sidas", String.valueOf(_sidas));
         params.put("interval", String.valueOf(_interval));
         params.put("mood", String.valueOf(_mood));
+        if (_mood == 1) {
+            if (chkOneDay.isChecked())
+                countMoodRatingNotification = 1;
+            else countMoodRatingNotification = 2;
+
+            params.put("countperday", String.valueOf(countMoodRatingNotification));
+            strAlarms = tvAlarmOne.getText().toString().trim();
+            if (countMoodRatingNotification == 2)
+                strAlarms += "," + tvAlarmTwo.getText().toString().trim();
+            params.put("time", strAlarms);
+        }
         try {
             new General().getJSONContentFromInternetService(SettingMoodRatingsActivity.this, General.PHPServices.SAVE_SETTINGS, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-
+                    PB.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
                     PB.setVisibility(View.GONE);
-                    SettingMoodRatingsActivity.this.finish();
+                    setAlarms();
+
                 }
             });
         } catch (Exception e) {
@@ -187,6 +269,19 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
                                             listSidasSchedule.add(new SidaSchedule(_sidasInterval[i], false));
                                     }
 
+                                    countMoodRatingNotification = Integer.parseInt(jsonObject.getString("countperday"));
+                                    if (countMoodRatingNotification == 1)
+                                        chkOneDay.setChecked(true);
+                                    else if (countMoodRatingNotification == 2)
+                                        chkTwoDay.setChecked(true);
+                                    strAlarms = jsonObject.getString("time");
+                                    if (!TextUtils.isEmpty(strAlarms)) {
+                                        String[] arrAlarms = TextUtils.split(strAlarms, ",");
+                                        tvAlarmOne.setText(arrAlarms[0]);
+                                        if (arrAlarms.length > 1)
+                                            tvAlarmTwo.setText(arrAlarms[1]);
+                                    }
+
 
                                 }
                             } catch (JSONException e) {
@@ -222,6 +317,66 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
             snackbar.show();
         }
 
+    }
+
+    private void openTimeDialog(final TextView view) {
+        Calendar mcurrentTime = Calendar.getInstance();
+        int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+        int minute = mcurrentTime.get(Calendar.MINUTE);
+        TimePickerDialog mTimePicker;
+        mTimePicker = new TimePickerDialog(SettingMoodRatingsActivity.this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                view.setText(selectedHour + ":" + selectedMinute);
+            }
+        }, hour, minute, false);//Yes 24 hour time
+        mTimePicker.setTitle(getString(R.string.select_time));
+
+        mTimePicker.show();
+    }
+
+    private void setAlarms() {
+        if (countMoodRatingNotification != 0) {
+            if (countMoodRatingNotification == 2) {
+                SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+                Date date = null;
+                try {
+                    date = format.parse(tvAlarmTwo.getText().toString().trim());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Calendar calendar = Calendar.getInstance();
+
+                calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+                calendar.set(Calendar.MINUTE, date.getMinutes());
+
+                Intent myIntent = new Intent(SettingMoodRatingsActivity.this, MyReceiver.class);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingMoodRatingsActivity.this, 0, myIntent, 0);
+
+                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), 24 * 60 * 60 * 1000, pendingIntent);
+            }
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+            Date date = null;
+            try {
+                date = format.parse(tvAlarmOne.getText().toString().trim());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            Calendar calendar = Calendar.getInstance();
+
+            calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+            calendar.set(Calendar.MINUTE, date.getMinutes());
+
+            Intent myIntent = new Intent(SettingMoodRatingsActivity.this, MyReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingMoodRatingsActivity.this, 0, myIntent, 0);
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), 24 * 60 * 60 * 1000, pendingIntent);
+        }
+        SettingMoodRatingsActivity.this.finish();
     }
 
 }

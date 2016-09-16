@@ -45,98 +45,100 @@ public class General {
     }
 
     public String getServiceName(PHPServices serviceName) {
-        if (serviceName == PHPServices.LOGIN) {
-            return ".login";
-        } else if (serviceName == PHPServices.REGISTER) {
-            return ".register";
-        } else if (serviceName == PHPServices.GET_SYMPTOMS) {
-            return ".getsymptoms";
-        } else if (serviceName == PHPServices.GET_SYMPTOM) {
-            return ".getsymptom";
-        } else if (serviceName == PHPServices.GET_STRATEGIES) {
-            return ".getStrategies";
-        } else if (serviceName == PHPServices.GET_CONTACTS) {
-            return ".getContacts";
-        } else if (serviceName == PHPServices.GET_CONTACT) {
-            return ".getContact";
-        } else if (serviceName == PHPServices.GET_SIDASCALENDER) {
-            return "";
-        } else if (serviceName == PHPServices.GET_MOODCALENDER) {
-            return ".getMoodCalendar";
-        } else if (serviceName == PHPServices.GET_HOPEBOXES) {
-            return ".getHopeboxes";
-        } else if (serviceName == PHPServices.GET_HOPEBOX) {
-            return ".getHopeboxe";
-        } else if (serviceName == PHPServices.SAVE_SYMPTOM) {
-            return ".saveSymptom";
-        } else if (serviceName == PHPServices.DELETE_CONTACT) {
-            return ".deleteContact";
-        } else if (serviceName == PHPServices.GET_CATEGORIES) {
-            return ".getCategories";
-        } else if (serviceName == PHPServices.GET_CATEGORY_INSPIRATIONS) {
-            return ".getCategoryInspirations";
-        } else if (serviceName == PHPServices.GET_STRATEGY) {
-            return ".getStrategy";
-        } else if (serviceName == PHPServices.ADD_MYSTRATEGY) {
-            return ".addMystrategy";
-        } else if (serviceName == PHPServices.ADD_HOPEBOX) {
-            return ".saveHopebox";
-        } else if (serviceName == PHPServices.CHECK_LOGIN) {
-            return ".checkLoginSession";
-        } else if (serviceName == PHPServices.SAVE_PROFILE) {
-            return ".saveProfile";
-        } else if (serviceName == PHPServices.ADD_MOOD) {
-            return ".submitMoodTest";
-        } else if (serviceName == PHPServices.GET_SIDATEST) {
-            return ".getSIDASTest";
-        } else if (serviceName == PHPServices.GET_SIDACALENDER) {
-            return ".getSIDASCalendar";
-        } else if (serviceName == PHPServices.SUBMIT_SIDATEST) {
-            return ".submitSIDASTest";
-        } else if (serviceName == PHPServices.SAVE_HOPE_MEDIA) {
-            return ".saveHopemedia";
-        } else if (serviceName == PHPServices.SHARE_STRATEGIES) {
-            return ".shareStrategies";
-        } else if (serviceName == PHPServices.SAVE_CONTACT) {
-            return ".saveContact";
-        } else if (serviceName == PHPServices.SAVE_STRATEGY) {
-            return ".saveStrategy";
-        } else if (serviceName == PHPServices.SAVE_CONTACTS) {
-            return ".saveContacts";
-        } else if (serviceName == PHPServices.GET_USER_STRATEGY) {
-            return ".getUserstrategy";
-        } else if (serviceName == PHPServices.PROFILE) {
-            return ".profile";
-        } else if (serviceName == PHPServices.DELETE_HOPE_BOX) {
-            return ".deleteHopebox";
-        } else if (serviceName == PHPServices.DELETE_HOPE_MEDIA) {
-            return ".deleteHopemedia";
-        } else if (serviceName == PHPServices.FORGOT_PASSWORD) {
-            return ".forgotPassword";
-        } else if (serviceName == PHPServices.GET_SETTINGS) {
-            return ".getSettings";
-        } else if (serviceName == PHPServices.SAVE_SETTINGS) {
-            return ".SaveSettings";
-        } else if (serviceName == PHPServices.GET_MESSAGE) {
-            return ".getMessage";
-        } else if (serviceName == PHPServices.SAVE_MESSAGE) {
-            return ".SaveMessage";
-        } else if (serviceName == PHPServices.GET_HELP_INFO) {
-            return ".getHelpinfo";
-        } else if (serviceName == PHPServices.GIVE_FEEDBACK) {
-            return ".giveFeedback";
-        } else if (serviceName == PHPServices.GET_EMERGENCY_ROOMS) {
-            return ".getEmergencyrooms";
-        } else if (serviceName == PHPServices.SAVE_EMERGENCY_ROOM) {
-            return ".saveEmergencyroom";
-        } else if (serviceName == PHPServices.DELETE_STRATEGY_IMAGES) {
-            return ".DeleteStrategyimages";
-        } else if (serviceName == PHPServices.DELETE_SYMPTOM) {
-            return ".DeleteSymptom";
-        } else if (serviceName == PHPServices.GET_EXPORT_PDF) {
-            return ".getExportpdf";
+        switch (serviceName) {
+            case LOGIN:
+                return ".login";
+            case REGISTER:
+                return ".register";
+            case GET_SYMPTOMS:
+                return ".getsymptoms";
+            case GET_SYMPTOM:
+                return ".getsymptom";
+            case GET_STRATEGIES:
+                return ".getStrategies";
+            case GET_CONTACTS:
+                return ".getContacts";
+            case GET_CONTACT:
+                return ".getContact";
+            case GET_MOODCALENDER:
+                return ".getMoodCalendar";
+            case GET_HOPEBOXES:
+                return ".getHopeboxes";
+            case GET_HOPEBOX:
+                return ".getHopeboxe";
+            case SAVE_SYMPTOM:
+                return ".saveSymptom";
+            case DELETE_CONTACT:
+                return ".deleteContact";
+            case GET_CATEGORIES:
+                return ".getCategories";
+            case GET_CATEGORY_INSPIRATIONS:
+                return ".getCategoryInspirations";
+            case GET_STRATEGY:
+                return ".getStrategy";
+            case ADD_MYSTRATEGY:
+                return ".addMystrategy";
+            case ADD_HOPEBOX:
+                return ".saveHopebox";
+            case CHECK_LOGIN:
+                return ".checkLoginSession";
+            case SAVE_PROFILE:
+                return ".saveProfile";
+            case ADD_MOOD:
+                return ".submitMoodTest";
+            case GET_SIDATEST:
+                return ".getSIDASTest";
+            case GET_SIDACALENDER:
+                return ".getSIDASCalendar";
+            case SUBMIT_SIDATEST:
+                return ".submitSIDASTest";
+            case SAVE_HOPE_MEDIA:
+                return ".saveHopemedia";
+            case SHARE_STRATEGIES:
+                return ".shareStrategies";
+            case SAVE_CONTACT:
+                return ".saveContact";
+            case SAVE_STRATEGY:
+                return ".saveStrategy";
+            case SAVE_CONTACTS:
+                return ".saveContacts";
+            case GET_USER_STRATEGY:
+                return ".getUserstrategy";
+            case PROFILE:
+                return ".profile";
+            case DELETE_HOPE_BOX:
+                return ".deleteHopebox";
+            case DELETE_HOPE_MEDIA:
+                return ".deleteHopemedia";
+            case FORGOT_PASSWORD:
+                return ".forgotPassword";
+            case GET_SETTINGS:
+                return ".getSettings";
+            case SAVE_SETTINGS:
+                return ".SaveSettings";
+            case GET_MESSAGE:
+                return ".getMessage";
+            case SAVE_MESSAGE:
+                return ".SaveMessage";
+            case GET_HELP_INFO:
+                return ".getHelpinfo";
+            case GIVE_FEEDBACK:
+                return ".giveFeedback";
+            case GET_EMERGENCY_ROOMS:
+                return ".getEmergencyrooms";
+            case SAVE_EMERGENCY_ROOM:
+                return ".saveEmergencyroom";
+            case DELETE_STRATEGY_IMAGES:
+                return ".DeleteStrategyimages";
+            case DELETE_SYMPTOM:
+                return ".DeleteSymptom";
+            case GET_EXPORT_PDF:
+                return ".getExportpdf";
+            case GET_PROFILE:
+                return ".getprofile";
+            default:
+                return "";
         }
-        return "";
     }
 
     public String getJSONContentFromInternetService(final Context context, PHPServices servicesName,
@@ -246,6 +248,6 @@ public class General {
         GET_USER_STRATEGY, PROFILE, DELETE_HOPE_BOX, FORGOT_PASSWORD,
         GET_SETTINGS, SAVE_SETTINGS, GET_MESSAGE, SAVE_MESSAGE, GET_HELP_INFO, GIVE_FEEDBACK,
         GET_EMERGENCY_ROOMS, SAVE_EMERGENCY_ROOM, DELETE_STRATEGY_IMAGES, DELETE_SYMPTOM, DELETE_HOPE_MEDIA,
-        GET_EXPORT_PDF,
+        GET_EXPORT_PDF, GET_PROFILE,
     }
 }

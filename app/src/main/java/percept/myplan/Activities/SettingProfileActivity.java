@@ -2,13 +2,11 @@ package percept.myplan.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,7 +36,6 @@ import percept.myplan.R;
 public class SettingProfileActivity extends AppCompatActivity {
 
     private EditText EDT_FIRSTNAME, EDT_LASTNAME, EDT_EMAIL;
-    Map<String, String> params;
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
     private LinearLayout LL_PASSWORD;
@@ -68,9 +65,7 @@ public class SettingProfileActivity extends AppCompatActivity {
         EDT_LASTNAME = (EditText) findViewById(R.id.edtProfileLastName);
         TV_PASSWORD = (TextView) findViewById(R.id.tvPassword);
         EDT_EMAIL = (EditText) findViewById(R.id.edtProfileEmail);
-        params = new HashMap<String, String>();
-        params.put("sid", Constant.SID);
-        params.put("sname", Constant.SNAME);
+
 
         LL_PASSWORD.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +75,7 @@ public class SettingProfileActivity extends AppCompatActivity {
             }
         });
         utils = new Utils(SettingProfileActivity.this);
+        getProfile();
         EDT_FIRSTNAME.setText(utils.getPreference(Constant.PREF_PROFILE_FNAME));
         EDT_LASTNAME.setText(utils.getPreference(Constant.PREF_PROFILE_LNAME));
         EDT_EMAIL.setText(utils.getPreference(Constant.PREF_PROFILE_EMAIL));
@@ -112,6 +108,48 @@ public class SettingProfileActivity extends AppCompatActivity {
         return false;
     }
 
+    private void getProfile() {
+        PB.setVisibility(View.VISIBLE);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        try {
+            new General().getJSONContentFromInternetService(SettingProfileActivity.this, General.PHPServices.GET_PROFILE, params, true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    if (response.has(Constant.DATA)) {
+                        try {
+                            Constant.PROFILE_IMG_LINK = response.getJSONObject(Constant.DATA).getString(Constant.PROFILE_IMAGE);
+                            Constant.PROFILE_EMAIL = response.getJSONObject(Constant.DATA).getString(Constant.EMAIL);
+
+                            utils.setPreference(Constant.PREF_EMAIL, EDT_EMAIL.getText().toString().trim());
+                            utils.setPreference(Constant.PREF_PROFILE_IMG_LINK, Constant.PROFILE_IMG_LINK);
+                            utils.setPreference(Constant.PREF_PROFILE_EMAIL, Constant.PROFILE_EMAIL);
+                            utils.setPreference(Constant.PREF_PROFILE_FNAME, response.getJSONObject(Constant.DATA).getString(Constant.FIRST_NAME));
+                            utils.setPreference(Constant.PREF_PROFILE_LNAME, response.getJSONObject(Constant.DATA).getString(Constant.FIRST_NAME));
+
+                            EDT_FIRSTNAME.setText(utils.getPreference(Constant.PREF_PROFILE_FNAME));
+                            EDT_LASTNAME.setText(utils.getPreference(Constant.PREF_PROFILE_LNAME));
+                            EDT_EMAIL.setText(utils.getPreference(Constant.PREF_PROFILE_EMAIL));
+                            TV_PASSWORD.setText(utils.getPreference(Constant.PASSWORD));
+                            strOldPassword = utils.getPreference(Constant.PASSWORD);
+                            PB.setVisibility(View.GONE);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void SaveProfile() {
         if (!utils.isNetConnected()) {
             Snackbar snackbar = Snackbar
@@ -125,6 +163,8 @@ public class SettingProfileActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
+        PB.setVisibility(View.VISIBLE);
+
 
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
@@ -154,6 +194,8 @@ public class SettingProfileActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                PB.setVisibility(View.GONE);
+
 
             }
         });

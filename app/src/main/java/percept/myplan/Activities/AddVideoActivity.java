@@ -393,18 +393,18 @@ public class AddVideoActivity extends AppCompatActivity {
             @Override
             public void onTaskCompleted(String response) {
 
-                try {
-                    File file = new File(vidpath);
-                    file.delete();
-                    if (file.exists()) {
-                        file.getCanonicalFile().delete();
-                        if (file.exists()) {
-                            getApplicationContext().deleteFile(file.getName());
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    File file = new File(vidpath);
+//                    file.delete();
+//                    if (file.exists()) {
+//                        file.getCanonicalFile().delete();
+//                        if (file.exists()) {
+//                            getApplicationContext().deleteFile(file.getName());
+//                        }
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
                 PB.setVisibility(View.GONE);
                 Log.d(":::::: ", response);
                 if (getIntent().hasExtra("FROM_HOPE")) {

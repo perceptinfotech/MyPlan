@@ -12,9 +12,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -50,7 +55,12 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -101,9 +111,17 @@ public class fragmentHome extends Fragment {
     private ProgressBar PB;
     private Utils UTILS;
     private String _phoneNo = "112";
+    private Bitmap _tmpBitmap;
 
     public fragmentHome() {
         // Required empty public constructor
+    }
+
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix,
+                true);
     }
 
     @Override
@@ -199,6 +217,7 @@ public class fragmentHome extends Fragment {
 //        MoodRatingAddNoteConfirmDialog();
 
 //        SidasDialog();
+        getProfile();
         return _View;
     }
 
@@ -395,7 +414,8 @@ public class fragmentHome extends Fragment {
                 c.close();
 //                IMG_USER.setImageURI(selectedImage);
                 IMG_URI = selectedImage;
-                SaveProfile();
+//                SaveProfile();
+                rotateImage();
             }
             if (requestCode == REQ_TAKE_PICTURE) {
 
@@ -430,7 +450,8 @@ public class fragmentHome extends Fragment {
 
 //                    Picasso.with(getActivity()).load(IMG_URI).into(IMG_USERPROFILE);
 //                    tvCaptureImg.setVisibility(View.GONE);
-                    SaveProfile();
+//                    SaveProfile();
+                    rotateImage();
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
@@ -523,7 +544,6 @@ public class fragmentHome extends Fragment {
         fraMoodSummartDialog.show(getFragmentManager().beginTransaction(), "fragment_add_note");
     }
 
-
     private void setAlarmForMood() {
         ALARM_MANAGER = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
         // AlarmReceiver1 = broadcast receiver
@@ -584,13 +604,14 @@ public class fragmentHome extends Fragment {
             @Override
             public void onTaskCompleted(String response) {
                 Log.d(":::Profile Edit", response.toString());
-                PB.setVisibility(View.GONE);
+                getProfile();
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     if (jsonObject.getJSONObject("data").getString("status").equalsIgnoreCase("Success")) {
                         Constant.PROFILE_IMG_LINK = IMG_URI.toString();
                         utils.setPreference(Constant.PREF_PROFILE_IMG_LINK, IMG_URI.toString());
-                        Picasso.with(getActivity()).load(IMG_URI).into(IMG_USERPROFILE);
+//                        Picasso.with(getActivity()).load(IMG_URI).into(IMG_USERPROFILE);
+                        IMG_USERPROFILE.setImageBitmap(_tmpBitmap);
                         tvCaptureImg.setVisibility(View.INVISIBLE);
                         Toast.makeText(getActivity(), "Cover photo changed Successfully", Toast.LENGTH_SHORT).show();
                     } else
@@ -604,4 +625,108 @@ public class fragmentHome extends Fragment {
 
 
     }
+
+    private void getProfile() {
+        PB.setVisibility(View.VISIBLE);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        try {
+            new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_PROFILE, params, true, false, true, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    if (response.has(Constant.DATA)) {
+                        try {
+                            Constant.PROFILE_IMG_LINK = response.getJSONObject(Constant.DATA).getString(Constant.PROFILE_IMAGE);
+                            utils.setPreference(Constant.PREF_PROFILE_IMG_LINK, Constant.PROFILE_IMG_LINK);
+                            Picasso.with(getActivity()).load(Constant.PROFILE_IMG_LINK).into(IMG_USERPROFILE);
+                            PB.setVisibility(View.GONE);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void rotateImage() {
+        try {
+            File f = new File(FILE_PATH);
+
+            int angle = 0;
+            ExifInterface exif = new ExifInterface(FILE_PATH);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 2;
+
+            Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(f),
+                    null, options);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    angle = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    angle = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    angle = 270;
+                    break;
+                case ExifInterface.ORIENTATION_NORMAL:
+                default:
+                    break;
+            }
+
+            Matrix matrix = new Matrix();
+            matrix.postRotate(angle);
+            _tmpBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix,
+                    true);
+
+            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            _tmpBitmap.compress(Bitmap.CompressFormat.PNG, 100,
+                    outputStream);
+
+            new AsyncTask<Void, Void, Void>() {
+
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(FILE_PATH);
+                        fos.write(outputStream.toByteArray());
+                        fos.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    SaveProfile();
+                }
+            }.execute();
+
+
+        } catch (IOException e) {
+            Log.w("TAG", "-- Error in setting image");
+        } catch (OutOfMemoryError oom) {
+            Log.w("TAG", "-- OOM Error in setting image");
+        }
+    }
+
 }

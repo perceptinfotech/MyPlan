@@ -45,7 +45,12 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -322,7 +327,20 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
             @Override
             public void onTaskCompleted(String response) {
                 PB.setVisibility(View.GONE);
-                Toast.makeText(AddEmergencyRoomActivity.this, "Emergency Room has been added.", Toast.LENGTH_LONG).show();
+                if (emergencyRoom != null) {
+                    try {
+                        emergencyRoom = new Gson().fromJson(new JSONObject(response).getJSONObject(Constant.DATA).toString(),
+                                new TypeToken<NearestEmergencyRoom>() {
+                                }.getType());
+                        Intent intent = new Intent();
+                        intent.putExtra("EMERGENCY_ROOM_DETAIL", emergencyRoom);
+                        setResult(RESULT_OK, intent);
+                        Toast.makeText(AddEmergencyRoomActivity.this, getString(R.string.update_emergency_room), Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    Toast.makeText(AddEmergencyRoomActivity.this, getString(R.string.added_emergency_room), Toast.LENGTH_LONG).show();
                 AddEmergencyRoomActivity.this.finish();
             }
         });

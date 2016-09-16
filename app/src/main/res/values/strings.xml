@@ -354,4 +354,15 @@
     <string name="strategies_to_symptom">Strategies for this symptom</string>
     <string name="time">Time</string>
     <string name="multiple_days">Multiple Days</string>
+    <string name="update_emergency_room">Emergency Room has been updated.</string>
+    <string name="added_emergency_room">Emergency Room has been added.</string>
+    <string name="mood_interval">MOOD RATING INTERVAL</string>
+    <string name="mood_times">MOOD RATING TIMES</string>
+    <string name="mood_time">MOOD RATING TIME</string>
+    <string name="one_time_day">One time per day</string>
+    <string name="two_times_day">Two times per day</string>
+    <string name="notification_one">Notification 1</string>
+    <string name="notification_two">Notification 2</string>
+    <string name="select_time">Select Time</string>
+    <string name="notification_mood">Remember to complete your mood rating.</string>
 </resources>
