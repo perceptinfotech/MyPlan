@@ -52,5 +52,4 @@ dependencies {
     compile 'com.google.android.exoplayer:exoplayer:r1.5.9'
     testCompile 'junit:junit:4.12'
     compile project(':ffmpeg4android_lib')
-    compile project(path: ':ffmpeg4android_lib')
 }

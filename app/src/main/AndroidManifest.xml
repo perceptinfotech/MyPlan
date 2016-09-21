@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
     <uses-permission android:name="android.permission.INTERNAL_S"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".AppController"
@@ -43,6 +44,11 @@
 
         <receiver
             android:name=".receivers.AlarmReceiver"
+            android:enabled="true"
+            android:exported="false"/>
+
+        <receiver
+            android:name=".receivers.MyReceiver"
             android:enabled="true"
             android:exported="false"/>
 

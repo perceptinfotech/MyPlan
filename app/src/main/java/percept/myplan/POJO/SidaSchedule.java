@@ -1,7 +1,5 @@
 package percept.myplan.POJO;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Created by percept on 16/8/16.
  */

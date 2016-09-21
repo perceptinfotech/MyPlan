@@ -125,8 +125,10 @@ public class SidaTestActivity extends AppCompatActivity {
                 if (CURR_QUES + 1 < TOTAL_QUES) {
                     CURR_QUES = CURR_QUES + 1;
                     TV_TESTQUESTION.setText(LST_SIDAQUES.get(CURR_QUES - 1).getQuestion());
-                    tvLabelLeft.setText(LST_SIDAQUES.get(CURR_QUES - 1).getLabelLeft());
-                    tvLabelRight.setText(LST_SIDAQUES.get(CURR_QUES - 1).getLabelRight());
+                    String arr[] = TextUtils.split(LST_SIDAQUES.get(CURR_QUES - 1).getLabelLeft(), " - ");
+                    tvLabelLeft.setText(arr[1]);
+                    arr = TextUtils.split(LST_SIDAQUES.get(CURR_QUES - 1).getLabelRight(), " - ");
+                    tvLabelRight.setText(arr[1]);
                     if (CURR_QUES + 1 == TOTAL_QUES)
                         BTN_NEXT_QUES.setText(getString(R.string.complete_test));// +
 //                                " (" + String.valueOf(CURR_QUES + 1) + "/" + String.valueOf(TOTAL_QUES) + ")");

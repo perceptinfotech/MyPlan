@@ -37,6 +37,7 @@ import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -147,8 +148,18 @@ public class PieGraph extends View implements HoloGraphAnimate {
                     (int) (midX + radius),
                     (int) (midY + radius));
             canvas.drawPath(p, mPaint);
+
+
             currentAngle = currentAngle + currentSweep;
 
+            mPaint.setTextAlign(Paint.Align.CENTER);
+            mPaint.setColor(0xFFFFFFFF);
+            mPaint.setTextSize(18.0f);
+            if (!TextUtils.isEmpty(slice.getTitle()))
+                canvas.drawText(slice.getTitle(),
+                        (float) (midX + (innerRadius + (radius - innerRadius)/2)*Math.sin((currentSweep)*(Math.PI/360) )),
+                        (float) (midY - (innerRadius + (radius - innerRadius)/2)*Math.cos((currentSweep)*(Math.PI/360))),
+                        mPaint);
             count++;
         }
         mDrawCompleted = true;
@@ -212,15 +223,15 @@ public class PieGraph extends View implements HoloGraphAnimate {
         return mBackgroundImage;
     }
 
-    public void setBackgroundBitmap(Bitmap backgroundBitmap, int pos_x, int pos_y) {
-        mBackgroundImage = backgroundBitmap;
-        mBackgroundImageAnchor.set(pos_x, pos_y);
-        postInvalidate();
-    }
-
     public void setBackgroundBitmap(Bitmap backgroundBitmap) {
         mBackgroundImageCenter = true;
         mBackgroundImage = backgroundBitmap;
+        postInvalidate();
+    }
+
+    public void setBackgroundBitmap(Bitmap backgroundBitmap, int pos_x, int pos_y) {
+        mBackgroundImage = backgroundBitmap;
+        mBackgroundImageAnchor.set(pos_x, pos_y);
         postInvalidate();
     }
 

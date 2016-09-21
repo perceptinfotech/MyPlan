@@ -34,7 +34,6 @@ import com.netcompss.loader.LoadJNI;
 import org.apache.http.util.TextUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -458,7 +457,7 @@ public class AddVideoActivity extends AppCompatActivity {
             //String[] complexCommand = {"ffmpeg", "-y" ,"-i", "/sdcard/videokit/in.mp4","-strict","experimental","-s", "160x120","-r","25", "-vcodec", "mpeg4", "-b", "150k", "-ab","48000", "-ac", "2", "-ar", "22050", "/sdcard/videokit/out.mp4"};
             ///////////////////////////////////////////////////////////////////////
 
-            commandStr = "ffmpeg -y -i " + paths[0] + " -strict experimental -ab 48000 -ac 2 -ar 22050 -b 2097k " + _path;
+            commandStr = "ffmpeg -y -i " + paths[0] + " -strict experimental -r 30 -ab 48000 -ac 2 -ar 22050 -vcodec mpeg4 -b 2097k " + _path;
             Log.d(":::: Command", commandStr);
             LoadJNI vk = new LoadJNI();
             try {

@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import percept.myplan.R;
 import percept.myplan.SplashActivity;
@@ -14,6 +15,8 @@ public class MyReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        Log.i("MyReceiver", "MyReceiver");
         NotificationManager mManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
         Intent intent1 = new Intent(context, SplashActivity.class);
 
@@ -24,23 +27,21 @@ public class MyReceiver extends BroadcastReceiver {
 
         Notification.Builder builder = new Notification.Builder(context);
 
-        builder.setAutoCancel(false);
         builder.setContentTitle(context.getString(R.string.app_name));
         builder.setContentText(context.getString(R.string.notification_mood));
         builder.setSmallIcon(R.mipmap.ic_launcher);
         builder.setContentIntent(pendingNotificationIntent);
-//        builder.setOngoing(true);
-//        builder.setSubText("This is subtext...");   //API level 16
-//        builder.setNumber(100);
+        builder.setAutoCancel(true);
         builder.build();
 
         notification = builder.build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        notification.flags |= Notification.DEFAULT_SOUND;
-        notification.flags |= Notification.DEFAULT_VIBRATE;
-        notification.flags |= Notification.DEFAULT_LIGHTS;
+        notification.defaults = Notification.DEFAULT_ALL;
 
         mManager.notify(0, notification);
+
+
+
 
     }
 }

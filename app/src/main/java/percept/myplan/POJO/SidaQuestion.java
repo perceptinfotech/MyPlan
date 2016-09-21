@@ -16,9 +16,9 @@ public class SidaQuestion implements Comparable<SidaQuestion> {
     @SerializedName("state")
     private String State;
     private String SIDA_ANSWER;
-    @SerializedName("answer1right")
+    @SerializedName("answer1")
     private String labelLeft;
-    @SerializedName("answer11right")
+    @SerializedName("answer11")
     private String labelRight;
 
     public SidaQuestion(String ID, String labelLeft, String labelRight, String ordering, String question, String SIDA_ANSWER, String state) {

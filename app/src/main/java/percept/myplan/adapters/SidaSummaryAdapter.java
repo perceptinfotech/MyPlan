@@ -70,16 +70,18 @@ public class SidaSummaryAdapter extends RecyclerView.Adapter<SidaSummaryAdapter.
         slice.setColor(CONTEXT.getResources().getColor(R.color.pie_color1));
         slice.setValue(Float.parseFloat(_mood.getAvg_Score()));
         slice.setTitle(new DecimalFormat("0.00").format(Float.parseFloat(_mood.getAvg_Score())) + "%");
+
         LST_PIEDATA.add(slice);
         slice = new PieSlice();
         slice.setColor(CONTEXT.getResources().getColor(android.R.color.transparent));
         slice.setValue(100 - Float.parseFloat(_mood.getAvg_Score()));
-        slice.setTitle(new DecimalFormat("0.00").format(100 - Float.parseFloat(_mood.getAvg_Score())) + "%");
+//        slice.setTitle(new DecimalFormat("0.00").format(100 - Float.parseFloat(_mood.getAvg_Score())) + "%");
         LST_PIEDATA.add(slice);
         SIDA_PIE_GRAPH.removeSlices();
         SIDA_PIE_GRAPH.addSlice(LST_PIEDATA.get(0));
         SIDA_PIE_GRAPH.addSlice(LST_PIEDATA.get(1));
         SIDA_PIE_GRAPH.setPadding(2);
+
 
     }
 

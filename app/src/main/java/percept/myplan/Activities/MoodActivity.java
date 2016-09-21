@@ -141,6 +141,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         IMG_HAPPY.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                calendarView.goToCurrentDay();
                 List<CustomEvent> _Happy = new ArrayList<>();
                 _Happy.add(new CustomEvent(R.color.happy));
                 eventMap.put(calendarView.getSelectedDateItem().getDay(), _Happy);
@@ -152,6 +153,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         IMG_OK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                calendarView.goToCurrentDay();
                 List<CustomEvent> _Ok = new ArrayList<>();
                 _Ok.add(new CustomEvent(R.color.ok));
                 eventMap.put(calendarView.getSelectedDateItem().getDay(), _Ok);
@@ -163,6 +165,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         IMG_VHAPPY.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                calendarView.goToCurrentDay();
                 List<CustomEvent> _Vhappy = new ArrayList<>();
                 _Vhappy.add(new CustomEvent(R.color.veryhappy));
                 eventMap.put(calendarView.getSelectedDateItem().getDay(), _Vhappy);
@@ -174,6 +177,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         IMG_SAD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                calendarView.goToCurrentDay();
                 List<CustomEvent> _Sad = new ArrayList<>();
                 _Sad.add(new CustomEvent(R.color.sad));
                 eventMap.put(calendarView.getSelectedDateItem().getDay(), _Sad);
@@ -185,6 +189,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         IMG_VSAD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                calendarView.goToCurrentDay();
                 List<CustomEvent> _vSad = new ArrayList<>();
                 _vSad.add(new CustomEvent(R.color.verysad));
                 eventMap.put(calendarView.getSelectedDateItem().getDay(), _vSad);

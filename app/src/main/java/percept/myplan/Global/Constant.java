@@ -1,5 +1,10 @@
 package percept.myplan.Global;
 
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
 
 import java.io.File;
@@ -10,6 +15,8 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import percept.myplan.receivers.MyReceiver;
 
 /**
  * Created by percept on 12/7/16.
@@ -90,6 +97,11 @@ public class Constant {
     public static final String APP_MEDIA_PATH = Environment.getExternalStorageDirectory()
             + File.separator + "MyPlan";
 
+//Notification REQ Code
+    public static final int NOTI_REQ_CODE_SIDAS = 500;
+    public static final int NOTI_REQ_CODE_MOOD_1 = 501;
+    public static final int NOTI_REQ_CODE_MOOD_2 = 502;
+
     public static File getOutputMediaFile() {
         // External sdcard location
         File mediaStorageDir = new File(Environment
@@ -140,5 +152,17 @@ public class Constant {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public static void removeAlarms(Context context) {
+        Intent myIntent = new Intent(context, MyReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, NOTI_REQ_CODE_MOOD_1, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent1 = PendingIntent.getBroadcast(context, NOTI_REQ_CODE_MOOD_2, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntentSidas = PendingIntent.getBroadcast(context, NOTI_REQ_CODE_SIDAS, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Activity.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+        alarmManager.cancel(pendingIntent1);
+        alarmManager.cancel(pendingIntentSidas);
     }
 }
