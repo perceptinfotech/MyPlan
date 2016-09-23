@@ -1,6 +1,8 @@
 package percept.myplan.Activities;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,6 +11,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +31,8 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,6 +43,7 @@ import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.POJO.Alarm;
 import percept.myplan.R;
+import percept.myplan.receivers.AlarmReceiver;
 
 import static percept.myplan.Activities.AddStrategyToSymptomActivity.GET_STRATEGIES;
 import static percept.myplan.Global.Utils.decodeFile;
@@ -231,14 +237,27 @@ public class AddStrategyActivity extends AppCompatActivity {
 //                    if (_object.get(Constant.DATA) instanceof JSONArray)
                     JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
                     _id = _ObjData.getString(Constant.ID);
-                    MAP_ALARM.put(_id, LIST_ALARM);
+
+                    MAP_ALARM.put(Constant.PROFILE_USER_ID + "_" + _id, LIST_ALARM);
                     Gson gson = new Gson();
                     String _alarmList = gson.toJson(MAP_ALARM);
                     UTILS.setPreference("ALARMLIST", _alarmList);
                     Toast.makeText(AddStrategyActivity.this,
                             getResources().getString(R.string.strategyadded), Toast.LENGTH_SHORT).show();
 
+                    for (int i = 0; i < LIST_ALARM.size(); i++) {
+                        Alarm alarm = LIST_ALARM.get(i);
+                        if (alarm.isStatus()) {
+                            String repeat[] = TextUtils.split(alarm.getAlarmRepeat(), ",");
+                            if (repeat != null) {
+                                for (int j = 0; j < repeat.length; j++) {
+                                    setAlarms(alarm.getAlarmName(), alarm.getAlarmTime(), Integer.parseInt(repeat[j]),
+                                            Integer.parseInt(Constant.PROFILE_USER_ID + _id + j), alarm.getAlarmTune());
+                                }
+                            }
+                        }
 
+                    }
                     if (getIntent().hasExtra("FROM_SYMPTOM")) {
                         GET_STRATEGIES = true;
                     } else {
@@ -265,17 +284,53 @@ public class AddStrategyActivity extends AppCompatActivity {
         });
     }
 
+    private void setAlarms(String title, String time, int dayOfWeek, int requestCode, String uri) {
+
+        Date date = new Date(Long.parseLong(time));
+
+        Calendar calendar = Calendar.getInstance();
+        if (dayOfWeek > 0)
+            calendar.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+        calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+        calendar.set(Calendar.MINUTE, date.getMinutes());
+        calendar.set(Calendar.SECOND, 0);
+
+        Log.i("::::Time", calendar.get(Calendar.HOUR_OF_DAY) + " : " + calendar.get(Calendar.MINUTE));
+
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            if (dayOfWeek > 0)
+                calendar.add(Calendar.DAY_OF_YEAR, 7);
+            else
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        Intent alarmIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("ALARM_SOUND", uri);
+        bundle.putString("ALARM_TITLE", title);
+        alarmIntent.putExtras(bundle);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), requestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        if (dayOfWeek > 0)
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+        else
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+    }
+
 //    private class AddStrategy extends AsyncTask<Void, Integer, String> {
 //
 //        private String TITLE, TEXT, CONTACT_ID, LINK;
 //        private List<String> LST_IMG, LST_MUSIC;
 //
-//        public AddStrategy(String title, String text, String STR_CONTACTID, List<String> listImg, List<String> listMusic, String STR_LINK) {
+//        public AddStrategy(String title, String text, String STR_CONTACTID, List<String> listImg, List<String> listLink, String STR_LINK) {
 //            this.TITLE = title;
 //            this.TEXT = text;
 //            this.CONTACT_ID = STR_CONTACTID;
 //            this.LST_IMG = listImg;
-//            this.LST_MUSIC = listMusic;
+//            this.LST_MUSIC = listLink;
 //            this.LINK = STR_LINK;
 //        }
 //

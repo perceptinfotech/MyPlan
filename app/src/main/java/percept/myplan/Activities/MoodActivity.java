@@ -259,6 +259,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                                     case "1":
                                         colorLst.add(new CustomEvent(R.color.veryhappy));
                                         eventMap.put(_day, colorLst);
+                                        eventMap.put(_day, colorLst);
                                         break;
                                     case "2":
                                         colorLst.add(new CustomEvent(R.color.happy));

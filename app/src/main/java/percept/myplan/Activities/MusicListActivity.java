@@ -495,13 +495,16 @@ public class MusicListActivity extends AppCompatActivity {
                             thumbnailsselection[i] = false;
                         }
                     }
-                    if (thumbnailsselection[id]) {
-                        cb.setChecked(false);
-                        thumbnailsselection[id] = false;
-                    } else {
-                        cb.setChecked(true);
-                        thumbnailsselection[id] = true;
-                    }
+//                    if (thumbnailsselection[id]) {
+//                        cb.setChecked(false);
+//                        thumbnailsselection[id] = false;
+//                    } else {
+//                        cb.setChecked(true);
+//                        thumbnailsselection[id] = true;
+//                    }
+//                    cb.setChecked(!cb.isChecked());
+                    thumbnailsselection[id] = cb.isChecked();
+                    notifyDataSetChanged();
                 }
             });
             holder.imageview.setOnClickListener(new View.OnClickListener() {

@@ -8,11 +8,14 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import percept.myplan.Global.Constant;
+import percept.myplan.Global.Utils;
 import percept.myplan.R;
 
 public class SettingNotificationActivity extends AppCompatActivity {
 
     private Switch SWITCH_NOTIFICATIONS;
+    private Utils utils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +30,12 @@ public class SettingNotificationActivity extends AppCompatActivity {
         mTitle.setText(getResources().getString(R.string.title_activity_notification));
 
         SWITCH_NOTIFICATIONS = (Switch) findViewById(R.id.switchNotifications);
+        SWITCH_NOTIFICATIONS.setChecked(utils.getBoolPref(Constant.PREF_NOTIFICATION));
 
         SWITCH_NOTIFICATIONS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-
+                utils.setBoolPrefrences(Constant.PREF_NOTIFICATION, isChecked);
             }
         });
 

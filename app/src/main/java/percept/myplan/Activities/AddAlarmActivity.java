@@ -169,23 +169,6 @@ public class AddAlarmActivity extends AppCompatActivity {
                     Log.d("::::: ", Str);
                     ALARM_SOUND = String.valueOf(uri);
                     ALARM_SOUND_NAME = Str;
-
-
-//            ALARM_MANAGER = (AlarmManager) AddAlarmActivity.this.getSystemService(ALARM_SERVICE);
-//            // AlarmReceiver1 = broadcast receiver
-////            Intent alarmIntent = new Intent(AddAlarmActivity.this, AlarmReceiver.class);
-//
-//            Intent alarmIntent = new Intent(AddAlarmActivity.this, AlarmReceiver.class);
-//            Bundle bundle = new Bundle();
-//            bundle.putString("ALARM_SOUND", String.valueOf(uri));
-//            alarmIntent.putExtras(bundle);
-//
-////            alarmIntent.putExtra("ALARM_SOUND",String.valueOf(uri));
-//            PendingIntent _pendingIntent = PendingIntent.getBroadcast(AddAlarmActivity.this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//            AlarmManager manager = (AlarmManager) AddAlarmActivity.this.getSystemService(Context.ALARM_SERVICE);
-//            ALARM_MANAGER.cancel(_pendingIntent);
-//            manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000, _pendingIntent);
-//            Toast.makeText(AddAlarmActivity.this, "Alarm Set", Toast.LENGTH_SHORT).show();   }
                 }
                 break;
             case REQ_CODE_ALARM_REPEAT:

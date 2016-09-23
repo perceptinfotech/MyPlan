@@ -57,6 +57,7 @@ import percept.myplan.R;
 import percept.myplan.adapters.ImageAdapter;
 import percept.myplan.adapters.StrategyAlarmAdapter;
 import percept.myplan.adapters.StrategyContactSimpleAdapter;
+import percept.myplan.adapters.StrategyLinkAdapter;
 import percept.myplan.adapters.StrategyMusicAdapter;
 
 public class StrategyDetailsOwnActivity extends AppCompatActivity {
@@ -67,7 +68,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     private final int SET_ALARM = 15;
     Map<String, String> params;
     private RecyclerView LST_OWNSTRATEGYIMG;
-    private List<String> LIST_IMAGE, listMusic;
+    private List<String> LIST_IMAGE, listMusic, listLink;
     private ImageAdapter ADAPTER_IMG;
     private String STRATEGY_ID;
     private Utils UTILS;
@@ -77,7 +78,8 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     private StrategyContactSimpleAdapter ADAPTER;
     private StrategyAlarmAdapter ADAPTER_ALARM;
     private StrategyMusicAdapter musicAdapter;
-    private RecyclerView LST_STRATEGYCONTACT, LST_STRATEGYALARM, lstOwnStrategyMusic;
+    private StrategyLinkAdapter linkAdapter;
+    private RecyclerView LST_STRATEGYCONTACT, LST_STRATEGYALARM, lstOwnStrategyMusic, lstOwnStrategyLink;
     private Button BTN_SHARESTRATEGY;
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
@@ -113,6 +115,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
         LST_OWNSTRATEGYIMG = (RecyclerView) findViewById(R.id.lstOwnStrategyImage);
         lstOwnStrategyMusic = (RecyclerView) findViewById(R.id.lstOwnStrategyMusic);
+        lstOwnStrategyLink = (RecyclerView) findViewById(R.id.lstOwnStrategyLink);
         LST_STRATEGYCONTACT = (RecyclerView) findViewById(R.id.lstStrategyContacts);
         LST_STRATEGYALARM = (RecyclerView) findViewById(R.id.lstStrategyAlarm);
 
@@ -165,12 +168,17 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         lstOwnStrategyMusic.setLayoutManager(_mLayoutManagerMusic);
         lstOwnStrategyMusic.setItemAnimator(new DefaultItemAnimator());
 
+        RecyclerView.LayoutManager _mLayoutManagerLink = new LinearLayoutManager(StrategyDetailsOwnActivity.this);
+        lstOwnStrategyLink.setLayoutManager(_mLayoutManagerLink);
+        lstOwnStrategyLink.setItemAnimator(new DefaultItemAnimator());
+
         RecyclerView.LayoutManager _mLayoutManagerAlarm = new LinearLayoutManager(StrategyDetailsOwnActivity.this);
         LST_STRATEGYALARM.setLayoutManager(_mLayoutManagerAlarm);
         LST_STRATEGYALARM.setItemAnimator(new DefaultItemAnimator());
 
         LIST_IMAGE = new ArrayList<>();
         listMusic = new ArrayList<>();
+        listLink = new ArrayList<>();
 
         LST_STRATEGYCONTACT.addOnItemTouchListener(new RecyclerTouchListener(StrategyDetailsOwnActivity.this, LST_STRATEGYCONTACT, new ClickListener() {
             @Override
@@ -254,7 +262,6 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             }
         }));
         initSwipe(LST_STRATEGYCONTACT);
-        initSwipe(LST_STRATEGYALARM);
 
     }
 
@@ -386,6 +393,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             LIST_IMAGE.clear();
             LIST_STRATEGYCONTACT.clear();
             listMusic.clear();
+            listLink.clear();
             new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this, General.PHPServices.GET_STRATEGY, params, false, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
@@ -437,7 +445,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
                     }
 
-                    LIST_ALARM = MAP_ALARM.get(STRATEGY_ID);
+                    LIST_ALARM = MAP_ALARM.get(Constant.PROFILE_USER_ID + "_" + STRATEGY_ID);
 
                     if (LIST_ALARM != null && LIST_ALARM.size() > 0) {
                         ADAPTER_ALARM = new StrategyAlarmAdapter(LIST_ALARM);
@@ -482,6 +490,24 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                         tvMusic.setVisibility(View.GONE);
                         vMusic.setVisibility(View.GONE);
                     }
+                    if (!TextUtils.isEmpty(clsStrategy.getLink())) {
+                        String links = clsStrategy.getLink();
+                        String[] _arrLink = links.split(",");
+                        for (int i = 0; i < _arrLink.length; i++) {
+                            listLink.add(_arrLink[i]);
+                        }
+
+
+                        if (listLink != null && listLink.size() > 0) {
+                            linkAdapter = new StrategyLinkAdapter(listLink);
+                            lstOwnStrategyLink.setAdapter(linkAdapter);
+                            tvLink.setVisibility(View.VISIBLE);
+                            vLink.setVisibility(View.VISIBLE);
+                        }
+                    } else {
+                        tvLink.setVisibility(View.GONE);
+                        vLink.setVisibility(View.GONE);
+                    }
 
 
                     PB.setVisibility(View.GONE);
@@ -522,7 +548,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                 _intent.putExtra("STRATEGY_ID", STRATEGY_ID);
                 _intent.putExtra("STRATEGY_TITLE", EDT_STRATEGYTITLE.getText().toString());
                 _intent.putExtra("STRATEGY_DESC", EDT_STRATEGYDESC.getText().toString());
-                _intent.putExtra("STR_LINK", clsStrategy.getLink());
+                _intent.putExtra("STR_LINK", new Gson().toJson(listLink));
                 startActivity(_intent);
             }
 //            Toast.makeText(StrategyDetailsOwnActivity.this, "Edit Strategy called", Toast.LENGTH_SHORT).show();
@@ -619,7 +645,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case SET_ALARM:
-                MAP_ALARM.put(STRATEGY_ID, LIST_ALARM);
+                MAP_ALARM.put(Constant.PROFILE_USER_ID + "_" + STRATEGY_ID, LIST_ALARM);
                 Gson gson = new Gson();
                 String _alarmList = gson.toJson(MAP_ALARM);
                 UTILS.setPreference("ALARMLIST", _alarmList);

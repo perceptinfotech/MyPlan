@@ -44,6 +44,7 @@ public class SettingGeoTrackingActivity extends AppCompatActivity {
         SWITCH_LOCATIONSHARE.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                UTILS.setBoolPrefrences(Constant.PREF_LOCATION, b);
                 if (!isGPSEnabled() && b) {
                     dialogYesNoOption dialog = new dialogYesNoOption(SettingGeoTrackingActivity.this, getString(R.string.dialog_gps_msg)) {
                         @Override
@@ -51,7 +52,7 @@ public class SettingGeoTrackingActivity extends AppCompatActivity {
                             Intent viewIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                             startActivity(viewIntent);
                             dismiss();
-                            UTILS.setBoolPrefrences(Constant.PREF_LOCATION, SWITCH_LOCATIONSHARE.isChecked());
+
                             SettingGeoTrackingActivity.this.finish();
                         }
 

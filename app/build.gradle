@@ -52,4 +52,5 @@ dependencies {
     compile 'com.google.android.exoplayer:exoplayer:r1.5.9'
     testCompile 'junit:junit:4.12'
     compile project(':ffmpeg4android_lib')
+    compile files('libs/mint-5.1.0.jar')
 }

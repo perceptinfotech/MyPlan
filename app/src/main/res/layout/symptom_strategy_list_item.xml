@@ -13,6 +13,8 @@
         android:text="Message 1 Mom"
         android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
         android:padding="5dp"
+        android:autoLink="web"
+        android:textColorLink="@color/blue"
         android:gravity="center_vertical"
         android:textColor="@android:color/black"/>
 

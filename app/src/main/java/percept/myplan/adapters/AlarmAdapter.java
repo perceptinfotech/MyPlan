@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -23,29 +24,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.MyViewHolder
     private AlarmListActivity activity;
     private List<Alarm> LST_HOPE;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView TV_ALARMTITLE, TV_ALARMEDIT, TV_ALARMTIME;
-        public Switch SWITCH_STATUS;
-
-
-        public MyViewHolder(View view) {
-            super(view);
-
-            TV_ALARMTITLE = (TextView) view.findViewById(R.id.tvAlarmTitle);
-            TV_ALARMEDIT = (TextView) view.findViewById(R.id.tvAlarmEdit);
-            TV_ALARMTIME = (TextView) view.findViewById(R.id.tvAlarmTime);
-            TV_ALARMEDIT.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int position = (int) view.getTag();
-                    Log.d(":::: Pressed on ", String.valueOf(position));
-                    activity.editAlarm(position);
-                }
-            });
-        }
-    }
-
-
     public AlarmAdapter(AlarmListActivity activity, List<Alarm> hopeList) {
         this.activity = activity;
         this.LST_HOPE = hopeList;
@@ -62,20 +40,50 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        Alarm album = LST_HOPE.get(position);
-        holder.TV_ALARMTITLE.setText(album.getAlarmName());
-//                TV_ALARMTIME
-
-        Date date = new Date(Long.valueOf(album.getAlarmTime()));
+        Alarm alarm = LST_HOPE.get(position);
+        holder.TV_ALARMTITLE.setText(alarm.getAlarmName());
+        Date date = new Date(Long.valueOf(alarm.getAlarmTime()));
         int _hour = date.getHours();
         int _min = date.getMinutes();
         holder.TV_ALARMTIME.setText(_hour + ":" + _min);
         holder.TV_ALARMEDIT.setTag(position);
+        holder.SWITCH_STATUS.setTag(position);
+        holder.SWITCH_STATUS.setChecked(true);
 
     }
 
     @Override
     public int getItemCount() {
         return LST_HOPE.size();
+    }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView TV_ALARMTITLE, TV_ALARMEDIT, TV_ALARMTIME;
+        public Switch SWITCH_STATUS;
+
+
+        public MyViewHolder(View view) {
+            super(view);
+
+            TV_ALARMTITLE = (TextView) view.findViewById(R.id.tvAlarmTitle);
+            TV_ALARMEDIT = (TextView) view.findViewById(R.id.tvAlarmEdit);
+            TV_ALARMTIME = (TextView) view.findViewById(R.id.tvAlarmTime);
+            SWITCH_STATUS= (Switch) view.findViewById(R.id.switchAlarmStatus);
+            TV_ALARMEDIT.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = (int) view.getTag();
+                    Log.d(":::: Pressed on ", String.valueOf(position));
+                    activity.editAlarm(position);
+                }
+            });
+            SWITCH_STATUS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    int position = (int) compoundButton.getTag();
+                    LST_HOPE.get(position).setStatus(b);
+                }
+            });
+        }
     }
 }

@@ -1,6 +1,8 @@
 package percept.myplan.Activities;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,6 +11,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +32,8 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,6 +45,7 @@ import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.POJO.Alarm;
 import percept.myplan.POJO.StrategyContact;
 import percept.myplan.R;
+import percept.myplan.receivers.AlarmReceiver;
 
 import static percept.myplan.Activities.StrategyDetailsOwnActivity.LIST_STRATEGYCONTACT;
 import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
@@ -56,11 +62,12 @@ public class StrategyEditActivity extends AppCompatActivity {
     private final int SET_LINK = 25;
     private EditText EDT_TITLE, EDT_TEXT;
     private TextView TV_ALARM, TV_IMAGES, TV_LINKS, TV_NETWORK, TV_MUSIC;
-    private String STR_LINK = "", STR_CONTACTID = "";
+    private String STR_CONTACTID = "";
     private HashMap<String, List<Alarm>> MAP_ALARM;
     private Utils UTILS;
     private String STRATEGY_ID;
     private ProgressBar PB;
+    private List<String> listLink = new ArrayList<>();
 
     private CoordinatorLayout REL_COORDINATE;
 
@@ -102,7 +109,7 @@ public class StrategyEditActivity extends AppCompatActivity {
         UTILS = new Utils(StrategyEditActivity.this);
         String _strAlarm = UTILS.getPreference("ALARMLIST");
         try {
-            if (!_strAlarm.equals("") && !_strAlarm.equals("null")) {
+            if (!TextUtils.isEmpty(_strAlarm)) {
                 Type listType = new TypeToken<HashMap<String, List<Alarm>>>() {
 
                 }.getType();
@@ -117,8 +124,8 @@ public class StrategyEditActivity extends AppCompatActivity {
         } catch (Exception ex) {
 
         }
-        if (MAP_ALARM.containsKey(STRATEGY_ID))
-            LIST_ALARM = MAP_ALARM.get(STRATEGY_ID);
+        if (MAP_ALARM.containsKey(Constant.PROFILE_USER_ID + "_" + STRATEGY_ID))
+            LIST_ALARM = MAP_ALARM.get(Constant.PROFILE_USER_ID + "_" + STRATEGY_ID);
 
         for (StrategyContact _obj : LIST_STRATEGYCONTACT) {
             if (STR_CONTACTID.equals("")) {
@@ -128,7 +135,8 @@ public class StrategyEditActivity extends AppCompatActivity {
             }
         }
 
-        STR_LINK = getIntent().getExtras().getString("STR_LINK");
+        listLink = new Gson().fromJson(getIntent().getExtras().getString("STR_LINK"), new TypeToken<ArrayList<String>>() {
+        }.getType());
         TV_ALARM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -194,7 +202,7 @@ public class StrategyEditActivity extends AppCompatActivity {
 
 
             addStrategy(EDT_TITLE.getText().toString().trim(), EDT_TEXT.getText().toString().trim(),
-                    STR_CONTACTID, LIST_IMG, LIST_MUSIC, STR_LINK);
+                    STR_CONTACTID, LIST_IMG, LIST_MUSIC, TextUtils.join(",", listLink));
             return true;
         }
         return false;
@@ -256,10 +264,27 @@ public class StrategyEditActivity extends AppCompatActivity {
                     JSONObject _object = new JSONObject(response);
                     JSONObject _ObjData = _object.getJSONObject(Constant.DATA);
                     _id = _ObjData.getString(Constant.ID);
-                    MAP_ALARM.put(_id, LIST_ALARM);
+                    MAP_ALARM.put(Constant.PROFILE_USER_ID + "_" + _id, LIST_ALARM);
                     Gson gson = new Gson();
                     String _alarmList = gson.toJson(MAP_ALARM);
                     UTILS.setPreference("ALARMLIST", _alarmList);
+                    Intent removeAlarmIntent = new Intent("MyPlan.Remove.Alarm");
+                    removeAlarmIntent.putExtra("STRATEGY_ID", STRATEGY_ID);
+                    sendBroadcast(removeAlarmIntent);
+                    for (int i = 0; i < LIST_ALARM.size(); i++) {
+                        Alarm alarm = LIST_ALARM.get(i);
+                        if (alarm.isStatus()) {
+                            String repeat[] = TextUtils.split(alarm.getAlarmRepeat(), ",");
+                            if (repeat != null) {
+                                for (int j = 0; j < repeat.length; j++) {
+
+                                    setAlarms(alarm.getAlarmName(), alarm.getAlarmTime(), Integer.parseInt(repeat[j]),
+                                            Integer.parseInt(Constant.PROFILE_USER_ID + _id + j), alarm.getAlarmTune());
+                                }
+                            }
+                        }
+                    }
+
                     Toast.makeText(StrategyEditActivity.this,
                             getResources().getString(R.string.strategyedit), Toast.LENGTH_SHORT).show();
                     StrategyEditActivity.this.finish();
@@ -276,12 +301,12 @@ public class StrategyEditActivity extends AppCompatActivity {
 //        private String TITLE, TEXT, CONTACT_ID, LINK;
 //        private List<String> LST_IMG, LST_MUSIC;
 //
-//        public AddStrategy(String title, String text, String STR_CONTACTID, List<String> listImg, List<String> listMusic, String STR_LINK) {
+//        public AddStrategy(String title, String text, String STR_CONTACTID, List<String> listImg, List<String> listLink, String STR_LINK) {
 //            this.TITLE = title;
 //            this.TEXT = text;
 //            this.CONTACT_ID = STR_CONTACTID;
 //            this.LST_IMG = listImg;
-//            this.LST_MUSIC = listMusic;
+//            this.LST_MUSIC = listLink;
 //            this.LINK = STR_LINK;
 //        }
 //
@@ -443,8 +468,9 @@ public class StrategyEditActivity extends AppCompatActivity {
             }
         } else if (requestCode == SET_LINK) {
             if (resultCode == Activity.RESULT_OK) {
-                STR_LINK = data.getStringExtra("LINK");
-                Log.d(":::::: ", STR_LINK);
+                if (!TextUtils.isEmpty(data.getStringExtra("LINK")))
+                    listLink.add(data.getStringExtra("LINK"));
+//                Log.d(":::::: ", STR_LINK);
 
             }
             if (resultCode == Activity.RESULT_CANCELED) {
@@ -452,4 +478,57 @@ public class StrategyEditActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void setAlarms(String title, String time, int dayOfWeek, int requestCode, String uri) {
+
+        Date date = new Date(Long.parseLong(time));
+
+        Calendar calendar = Calendar.getInstance();
+        if (dayOfWeek > 0)
+            calendar.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+        calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+        calendar.set(Calendar.MINUTE, date.getMinutes());
+        calendar.set(Calendar.SECOND, 0);
+
+        Log.i("::::Time", calendar.get(Calendar.HOUR_OF_DAY) + " : " + calendar.get(Calendar.MINUTE));
+
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            if (dayOfWeek > 0)
+                calendar.add(Calendar.DAY_OF_YEAR, 7);
+            else
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        Intent alarmIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("ALARM_SOUND", uri);
+        bundle.putString("ALARM_TITLE", title);
+        alarmIntent.putExtras(bundle);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), requestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        if (dayOfWeek > 0)
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+        else
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+    }
 }
+
+
+//            ALARM_MANAGER = (AlarmManager) AddAlarmActivity.this.getSystemService(ALARM_SERVICE);
+//            // AlarmReceiver1 = broadcast receiver
+////            Intent alarmIntent = new Intent(AddAlarmActivity.this, AlarmReceiver.class);
+//
+//            Intent alarmIntent = new Intent(AddAlarmActivity.this, AlarmReceiver.class);
+//            Bundle bundle = new Bundle();
+//            bundle.putString("ALARM_SOUND", String.valueOf(uri));
+//            alarmIntent.putExtras(bundle);
+//
+////            alarmIntent.putExtra("ALARM_SOUND",String.valueOf(uri));
+//            PendingIntent _pendingIntent = PendingIntent.getBroadcast(AddAlarmActivity.this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//            AlarmManager manager = (AlarmManager) AddAlarmActivity.this.getSystemService(Context.ALARM_SERVICE);
+//            ALARM_MANAGER.cancel(_pendingIntent);
+//            manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000, _pendingIntent);
+//            Toast.makeText(AddAlarmActivity.this, "Alarm Set", Toast.LENGTH_SHORT).show();   }

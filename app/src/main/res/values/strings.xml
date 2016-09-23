@@ -283,13 +283,13 @@
 
     <string-array name="alarm_repeat">
         <item>Never</item>
+        <item>Sunday</item>
         <item>Monday</item>
         <item>Tuesday</item>
         <item>Wednesday</item>
         <item>Thursday</item>
         <item>Friday</item>
         <item>Saturday</item>
-        <item>Sunday</item>
     </string-array>
 
     <string name="test_start_warning_msg">
@@ -365,4 +365,6 @@
     <string name="notification_two">Notification 2</string>
     <string name="select_time">Select Time</string>
     <string name="notification_mood">Remember to complete your mood rating.</string>
+    <string name="notification_sidas">Remember to complete your Sidas test.</string>
+    <string name="setting_off_location">Geotracking settings off please switch on setting for sharing your location.</string>
 </resources>

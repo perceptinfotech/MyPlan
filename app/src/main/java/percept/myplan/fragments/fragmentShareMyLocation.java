@@ -26,6 +26,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import percept.myplan.Activities.AddStrategyContactActivity;
 import percept.myplan.Activities.HomeActivity;
+import percept.myplan.Dialogs.dialogOk;
+import percept.myplan.Global.Constant;
+import percept.myplan.Global.Utils;
 import percept.myplan.R;
 
 /**
@@ -39,6 +42,7 @@ public class fragmentShareMyLocation extends Fragment {
     private Button BTN_SHARELOC;
     private LatLng _CurrentPos;
     private HomeActivity activity;
+    private Utils utils;
 
     public fragmentShareMyLocation() {
         // Required empty public constructor
@@ -48,13 +52,14 @@ public class fragmentShareMyLocation extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        activity= (HomeActivity) getActivity();
+        activity = (HomeActivity) getActivity();
         // Inflate the lay_help_info for this fragment
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Share My Location");
         View _view = inflater.inflate(R.layout.fragment_share_my_location, container, false);
 
         BTN_SHARELOC = (Button) _view.findViewById(R.id.btnShareMyLoc);
         mMapView = (MapView) _view.findViewById(R.id.mapView);
+        utils = new Utils(getActivity());
         mMapView.onCreate(savedInstanceState);
 
         mMapView.onResume(); // needed to get the map to display immediately
@@ -64,7 +69,15 @@ public class fragmentShareMyLocation extends Fragment {
             e.printStackTrace();
         }
 
-
+        if (!utils.getBoolPref(Constant.PREF_LOCATION)) {
+            new dialogOk(getActivity()) {
+                @Override
+                public void onClickOk() {
+                    dismiss();
+                    ((HomeActivity) getActivity()).selectItem(fragmentSettings.INDEX);
+                }
+            }.show();
+        }
         BTN_SHARELOC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

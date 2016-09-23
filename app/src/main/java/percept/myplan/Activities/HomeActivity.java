@@ -73,6 +73,8 @@ import percept.myplan.fragments.fragmentShareMyLocation;
 import percept.myplan.fragments.fragmentStrategies;
 import percept.myplan.fragments.fragmentSymptoms;
 
+import static percept.myplan.Global.Constant.removeAlarms;
+
 public class HomeActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
     /**
@@ -216,7 +218,7 @@ public class HomeActivity extends AppCompatActivity implements
 
                         @Override
                         public void onResponse(JSONObject response) {
-
+                            Constant.PROFILE_USER_ID= UTILS.getPreference(Constant.PREF_USER_ID);
                         }
                     });
         } catch (Exception e) {
@@ -325,8 +327,7 @@ public class HomeActivity extends AppCompatActivity implements
      */
     public synchronized void buildGoogleApiClient() {
 
-        if (!UTILS.getBoolPref(Constant.PREF_LOCATION))
-            return;
+
         Log.i(TAG, "Building GoogleApiClient");
         if (mGoogleApiClient != null) {
             mGoogleApiClient = null;
@@ -445,6 +446,8 @@ public class HomeActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         selectItem(Constant.CURRENT_FRAGMENT);
+        if (!UTILS.getBoolPref(Constant.PREF_LOCATION))
+            return;
         if (!isFromDialog)
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
                 if (ContextCompat.checkSelfPermission(HomeActivity.this,
@@ -623,6 +626,8 @@ public class HomeActivity extends AppCompatActivity implements
                 // Logout
 //                mTitle.setText(getResources().getString(R.string.myplan));
                 Constant.CURRENT_FRAGMENT = 0;
+                Intent intent = new Intent("MyPlan.Remove.Alarm");
+                sendBroadcast(intent);
                 UTILS.setPreference(Constant.PREF_LOGGEDIN, "false");
                 UTILS.setPreference(Constant.PREF_SID, "");
                 UTILS.setPreference(Constant.PREF_SNAME, "");
@@ -631,6 +636,8 @@ public class HomeActivity extends AppCompatActivity implements
                 UTILS.setPreference(Constant.PREF_PROFILE_EMAIL, "");
                 UTILS.setPreference(Constant.PREF_PROFILE_FNAME, "");
                 UTILS.setPreference(Constant.PREF_PROFILE_LNAME, "");
+                UTILS.setPreference(Constant.PREF_USER_ID, "");
+                removeAlarms(getBaseContext());
                 startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                 HomeActivity.this.finish();
                 return;

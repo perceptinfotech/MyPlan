@@ -420,6 +420,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 Constant.PROFILE_EMAIL = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.EMAIL);
                                 Constant.PROFILE_USER_NAME = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.USER_NAME);
                                 Constant.PROFILE_NAME = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.NAME);
+                                Constant.PROFILE_USER_ID = response.getJSONObject(Constant.DATA).getJSONObject(Constant.USER).getString(Constant.ID);
 
                                 UTILS.setPreference(Constant.PREF_EMAIL, EDT_EMAIL.getText().toString().trim());
                                 startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
@@ -429,6 +430,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 UTILS.setPreference(Constant.PREF_SNAME, Constant.SNAME);
                                 UTILS.setPreference(Constant.PREF_PROFILE_IMG_LINK, Constant.PROFILE_IMG_LINK);
                                 UTILS.setPreference(Constant.PREF_PROFILE_USER_NAME, Constant.PROFILE_USER_NAME);
+                                UTILS.setPreference(Constant.PREF_PROFILE_EMAIL, Constant.PROFILE_EMAIL);
                                 UTILS.setPreference(Constant.PREF_PROFILE_EMAIL, Constant.PROFILE_EMAIL);
                                 String names[] = TextUtils.split(Constant.PROFILE_NAME, " ");
                                 UTILS.setPreference(Constant.PREF_PROFILE_FNAME, names[0]);

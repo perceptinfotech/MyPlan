@@ -15,8 +15,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
     <uses-permission android:name="android.permission.INTERNAL_S"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:name=".AppController"
@@ -46,6 +46,23 @@
             android:name=".receivers.AlarmReceiver"
             android:enabled="true"
             android:exported="false"/>
+
+        <receiver
+            android:name=".receivers.AlarmRemoveReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="MyPlan.Remove.Alarm"/>
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".receivers.AddAllAlarmReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="MyPlan.AddAll.Alarm"/>
+            </intent-filter>
+        </receiver>
 
         <receiver
             android:name=".receivers.MyReceiver"

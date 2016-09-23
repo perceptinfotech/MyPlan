@@ -177,7 +177,6 @@ public class AlarmListActivity extends AppCompatActivity {
                         StrategyEditActivity.LIST_ALARM.get(POSITION).setStatus(true);
                         StrategyEditActivity.LIST_ALARM.get(POSITION).setAlarmTune(data.getStringExtra("ALARM_URI"));
                         StrategyEditActivity.LIST_ALARM.get(POSITION).setAlarmRepeat(data.getStringExtra("ALARM_REPEAT"));
-                        StrategyEditActivity.LIST_ALARM.get(POSITION).setSnooze("Snooze");
                         StrategyEditActivity.LIST_ALARM.get(POSITION).setAlarmTuneName(data.getStringExtra("ALARM_SOUND_NAME"));
                         ADAPTER = new AlarmAdapter(AlarmListActivity.this, StrategyEditActivity.LIST_ALARM);
                     } else if (getIntent().hasExtra("FROM_DETAIL")){
@@ -186,7 +185,6 @@ public class AlarmListActivity extends AppCompatActivity {
                         StrategyDetailsOwnActivity.LIST_ALARM.get(POSITION).setStatus(true);
                         StrategyDetailsOwnActivity.LIST_ALARM.get(POSITION).setAlarmTune(data.getStringExtra("ALARM_URI"));
                         StrategyDetailsOwnActivity.LIST_ALARM.get(POSITION).setAlarmRepeat(data.getStringExtra("ALARM_REPEAT"));
-                        StrategyDetailsOwnActivity.LIST_ALARM.get(POSITION).setSnooze("Snooze");
                         StrategyDetailsOwnActivity.LIST_ALARM.get(POSITION).setAlarmTuneName(data.getStringExtra("ALARM_SOUND_NAME"));
                         ADAPTER = new AlarmAdapter(AlarmListActivity.this, StrategyDetailsOwnActivity.LIST_ALARM);
                     }else {
@@ -195,7 +193,6 @@ public class AlarmListActivity extends AppCompatActivity {
                         AddStrategyActivity.LIST_ALARM.get(POSITION).setStatus(true);
                         AddStrategyActivity.LIST_ALARM.get(POSITION).setAlarmTune(data.getStringExtra("ALARM_URI"));
                         AddStrategyActivity.LIST_ALARM.get(POSITION).setAlarmRepeat(data.getStringExtra("ALARM_REPEAT"));
-                        AddStrategyActivity.LIST_ALARM.get(POSITION).setSnooze("Snooze");
                         AddStrategyActivity.LIST_ALARM.get(POSITION).setAlarmTuneName(data.getStringExtra("ALARM_SOUND_NAME"));
                         ADAPTER = new AlarmAdapter(AlarmListActivity.this, AddStrategyActivity.LIST_ALARM);
                     }
@@ -212,22 +209,10 @@ public class AlarmListActivity extends AppCompatActivity {
                     }
                 }
 
-//                Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putString("ALARM_SOUND", data.getStringExtra("ALARM_SOUND"));
-//                intent.putExtras(bundle);
-//                PendingIntent pendingIntent = PendingIntent.getBroadcast(
-//                        getBaseContext(), 11, intent, 0);
-//                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Long.parseLong(data.getStringExtra("ALARM_TIME")), AlarmManager.INTERVAL_DAY,
-//                        pendingIntent);
 
                 LST_STRATEGYALARM.setAdapter(ADAPTER);
 
 
-//                Gson gson = new Gson();
-//                STR_ALARM = gson.toJson(AddStrategyActivity.LIST_ALARM);
-//               UTILS.setPreference("LOCAL_DATA", _str);
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result

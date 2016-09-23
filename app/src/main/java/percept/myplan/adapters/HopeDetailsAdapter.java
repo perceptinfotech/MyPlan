@@ -44,7 +44,7 @@ public class HopeDetailsAdapter extends RecyclerView.Adapter<HopeDetailsAdapter.
             CARD_VIDEO = (CardView) view.findViewById(R.id.cardVideo);
 
             IMG_HOPEDETAILS = (ImageView) view.findViewById(R.id.imgCardImage);
-            VID_HOPEDETAILS = (TextureView) view.findViewById(R.id.video);
+            VID_HOPEDETAILS = (TextureView) view.findViewById(R.id.videoViewCardVideo);
 
             TV_CARDIMG_TITLE = (TextView) view.findViewById(R.id.tvCardImage);
             TV_CARDVID_TITLE = (TextView) view.findViewById(R.id.tvCardVideo);

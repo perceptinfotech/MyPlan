@@ -16,6 +16,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
@@ -165,12 +166,21 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.add_note,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
+        }
+        else if (item.getItemId()==R.id.action_saveNote)
+        {
+            saveSetting();
         }
         return false;
     }
@@ -214,9 +224,9 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(JSONObject response) {
                     PB.setVisibility(View.GONE);
-                    removeAlarms(getBaseContext());
+                    removeAlarms(getApplicationContext());
                     setAlarms();
-
+                    SettingMoodRatingsActivity.this.finish();
                 }
             });
         } catch (Exception e) {
@@ -296,6 +306,8 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                SWITCH_MOOD.setChecked(true);
+                                SWITCH_SIDAS.setChecked(true);
                                 String _sidasInterval[] = getResources().getStringArray(R.array.sidas_interval);
                                 for (int i = 0; i < _sidasInterval.length; i++) {
                                     if (i == 0)
@@ -305,6 +317,9 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
                                 }
 
                             }
+                            removeAlarms(getApplicationContext());
+                            setAlarms();
+
                             rcvSidas.setAdapter(new SidaScheduleAdapter(SettingMoodRatingsActivity.this, listSidasSchedule));
 
                         }
@@ -369,7 +384,7 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
                     break;
             }
         }
-        SettingMoodRatingsActivity.this.finish();
+
     }
 
     private void setAlarmOnTime(String time, int requestCode) {
@@ -382,11 +397,15 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
             calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
             calendar.set(Calendar.MINUTE, date.getMinutes());
             calendar.set(Calendar.SECOND, 0);
+            if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+            }
 
             Log.i("::::Time", calendar.get(Calendar.HOUR_OF_DAY) + " : " + calendar.get(Calendar.MINUTE));
 
-            Intent myIntent = new Intent(getBaseContext(), MyReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), requestCode, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Intent myIntent = new Intent(getApplicationContext(), MyReceiver.class);
+            myIntent.putExtra("NOTI_MSG",getString(R.string.notification_mood));
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), requestCode, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
@@ -398,7 +417,6 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
 
     }
 
-
     private void setAlarmForEveryWeek() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
@@ -406,9 +424,13 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 7);
+        }
 
-        Intent myIntent = new Intent(getBaseContext(), MyReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), NOTI_REQ_CODE_SIDAS, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent myIntent = new Intent(getApplicationContext(), MyReceiver.class);
+        myIntent.putExtra("NOTI_MSG",getString(R.string.notification_sidas));
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), NOTI_REQ_CODE_SIDAS, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
@@ -422,9 +444,13 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 15);
+        }
 
-        Intent myIntent = new Intent(getBaseContext(), MyReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), NOTI_REQ_CODE_SIDAS, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent myIntent = new Intent(getApplicationContext(), MyReceiver.class);
+        myIntent.putExtra("NOTI_MSG",getString(R.string.notification_sidas));
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), NOTI_REQ_CODE_SIDAS, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
@@ -438,9 +464,13 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 21);
+        }
 
-        Intent myIntent = new Intent(getBaseContext(), MyReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), NOTI_REQ_CODE_SIDAS, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent myIntent = new Intent(getApplicationContext(), MyReceiver.class);
+        myIntent.putExtra("NOTI_MSG",getString(R.string.notification_sidas));
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), NOTI_REQ_CODE_SIDAS, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
@@ -454,17 +484,16 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-
-        Intent myIntent = new Intent(getBaseContext(), MyReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), NOTI_REQ_CODE_SIDAS, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 30);
+        }
+        Intent myIntent = new Intent(getApplicationContext(), MyReceiver.class);
+        myIntent.putExtra("NOTI_MSG",getString(R.string.notification_sidas));
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), NOTI_REQ_CODE_SIDAS, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY * 30, pendingIntent);
     }
 
-    @Override
-    public void onBackPressed() {
-        saveSetting();
-    }
 }

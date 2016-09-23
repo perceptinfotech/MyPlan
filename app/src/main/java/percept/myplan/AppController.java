@@ -7,6 +7,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.splunk.mint.Mint;
 
 import percept.myplan.Global.LruBitmapCache;
 import percept.myplan.toro.Toro;
@@ -20,11 +21,13 @@ public class AppController extends Application {
 
     public static final String TAG = AppController.class
             .getSimpleName();
-
+    private static AppController mInstance;
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
 
-    private static AppController mInstance;
+    public static synchronized AppController getInstance() {
+        return mInstance;
+    }
 
     @Override
     public void onCreate() {
@@ -32,10 +35,7 @@ public class AppController extends Application {
         mInstance = this;
 
         Toro.init(this);
-    }
-
-    public static synchronized AppController getInstance() {
-        return mInstance;
+        Mint.initAndStartSession(this, "390c5614");
     }
 
     public RequestQueue getRequestQueue() {
@@ -70,5 +70,12 @@ public class AppController extends Application {
         if (mRequestQueue != null) {
             mRequestQueue.cancelAll(tag);
         }
+    }
+
+    @Override
+    public void onTerminate() {
+        Mint.closeSession(this);
+        super.onTerminate();
+
     }
 }

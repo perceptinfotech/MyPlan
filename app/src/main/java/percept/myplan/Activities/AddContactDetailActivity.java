@@ -95,6 +95,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
     private TextView mTitle;
     private ProgressBar PB;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,11 +144,9 @@ public class AddContactDetailActivity extends AppCompatActivity {
 
         PB = (ProgressBar) findViewById(R.id.pbAddContact);
 
-        imgContact.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.lay1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!view.isEnabled())
-                    return;
                 getPermission();
             }
         });
@@ -210,6 +209,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
         });
 
         if (isForEdit) {
+            mTitle.setText(_contactDisplay.getFirst_name() + " " + _contactDisplay.getLast_name());
             edtFirstName.setText(_contactDisplay.getFirst_name());
             edtLastName.setText(_contactDisplay.getLast_name());
             edtAddPhoneNo.setText(_contactDisplay.getPhone());
@@ -288,11 +288,13 @@ public class AddContactDetailActivity extends AppCompatActivity {
             menu.getItem(0).setVisible(true);
             menu.getItem(1).setVisible(false);
             isEDIT = false;
-            mTitle.setText(getString(R.string.editcontact));
         } else {
             menu.getItem(0).setVisible(false);
             menu.getItem(1).setVisible(true);
-            mTitle.setText(getString(R.string.addcontact));
+            if (isForEdit)
+                mTitle.setText(getString(R.string.editcontact));
+            else
+                mTitle.setText(getString(R.string.addcontact));
         }
         return true;
     }
@@ -635,7 +637,8 @@ public class AddContactDetailActivity extends AppCompatActivity {
                         REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
 
                 return;
-            }
+            } else
+                OpenDialog();
         } else {
             OpenDialog();
         }

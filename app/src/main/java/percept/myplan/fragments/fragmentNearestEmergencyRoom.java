@@ -47,8 +47,10 @@ import java.util.HashMap;
 import percept.myplan.Activities.AddEmergencyRoomActivity;
 import percept.myplan.Activities.EmergencyRoomDetailActivity;
 import percept.myplan.Activities.HomeActivity;
+import percept.myplan.Dialogs.dialogOk;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
+import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.NearestEmergencyRoom;
 import percept.myplan.R;
@@ -69,6 +71,7 @@ public class fragmentNearestEmergencyRoom extends Fragment {
     private ArrayList<NearestEmergencyRoom> listNearestEmergencyRoom = new ArrayList<>();
     private Button btnNearestDistance;
     private AutoCompleteLocalSearchAdapter adapter;
+    private Utils utils;
 
 
     public fragmentNearestEmergencyRoom() {
@@ -91,7 +94,7 @@ public class fragmentNearestEmergencyRoom extends Fragment {
         mTitle.setVisibility(View.GONE);
         edtLocationSearch = (AutoCompleteTextView) toolbar.findViewById(R.id.edtLocationSearch);
         edtLocationSearch.setVisibility(View.VISIBLE);
-
+        utils = new Utils(getActivity());
         mMapView = (MapView) _view.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         btnNearestDistance = (Button) _view.findViewById(R.id.btnNearestDistance);
@@ -100,6 +103,15 @@ public class fragmentNearestEmergencyRoom extends Fragment {
             MapsInitializer.initialize(activity);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        if (!utils.getBoolPref(Constant.PREF_LOCATION)) {
+            new dialogOk(getActivity()) {
+                @Override
+                public void onClickOk() {
+                    dismiss();
+                    ((HomeActivity) getActivity()).selectItem(fragmentSettings.INDEX);
+                }
+            }.show();
         }
         edtLocationSearch.setText("");
         setHasOptionsMenu(true);

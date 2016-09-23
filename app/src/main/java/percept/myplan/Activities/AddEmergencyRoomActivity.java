@@ -144,6 +144,13 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
             mTitle.setText(emergencyRoom.getRoomName());
 
         }
+
+        imgRoomPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getPermission();
+            }
+        });
         edtAddress.setAdapter(new PlacesAutocompleteAdapter(this));
         edtAddress.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -443,6 +450,8 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
 
                 return;
             }
+            else
+                OpenDialog();
         } else {
             OpenDialog();
         }

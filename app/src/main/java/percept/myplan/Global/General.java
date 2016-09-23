@@ -26,6 +26,8 @@ import percept.myplan.AppController;
 import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
 
+import static percept.myplan.Global.Constant.removeAlarms;
+
 /**
  * Created by percept on 25/7/16.
  */
@@ -171,6 +173,8 @@ public class General {
                             if (response.get("data") instanceof JSONObject && response.getJSONObject("data").has("message")) {
                                 if (response.getJSONObject("data").get("message").equals("Your session is expired.")) {
                                     //Uncomment call for Session code.
+                                    Intent removeAlarmIntent=new Intent("MyPlan.Remove.Alarm");
+                                    context.sendBroadcast(removeAlarmIntent);
                                     Intent intent = new Intent(context.getApplicationContext(), LoginActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                     context.startActivity(intent);
@@ -184,6 +188,9 @@ public class General {
                                     _utils.setPreference(Constant.PREF_PROFILE_EMAIL, "");
                                     _utils.setPreference(Constant.PREF_PROFILE_FNAME, "");
                                     _utils.setPreference(Constant.PREF_PROFILE_LNAME, "");
+                                    _utils.setPreference(Constant.PREF_USER_ID, "");
+                                    removeAlarms(context);
+
                                     ((AppCompatActivity) context).finish();
                                 }
                             }
