@@ -174,6 +174,10 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+
+            AddStrategyContactActivity.this.finish();
+            return true;
+        } else if (item.getItemId() == R.id.action_AddStrategyContact) {
             for (ContactDisplay _obj : LIST_ALLCONTACTS) {
                 if (_obj.isSelected()) {
                     if (STR_CONTACTID.equals("")) {
@@ -183,15 +187,10 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
                     }
                 }
             }
-
             Intent returnIntent = new Intent();
             returnIntent.putExtra("CONTACT_ID", STR_CONTACTID);
             setResult(Activity.RESULT_OK, returnIntent);
             AddStrategyContactActivity.this.finish();
-            return true;
-        } else if (item.getItemId() == R.id.action_AddStrategyContact) {
-            Intent _intent = new Intent(AddStrategyContactActivity.this, AddContactActivity.class);
-            startActivity(_intent);
             return true;
         } else if (item.getItemId() == R.id.action_Next) {
             String strContactNos = "";

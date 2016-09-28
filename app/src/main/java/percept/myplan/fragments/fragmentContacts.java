@@ -5,7 +5,12 @@ import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +23,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,6 +51,7 @@ import percept.myplan.Activities.AddContactDetailActivity;
 import percept.myplan.Activities.EmergencyContactActivity;
 import percept.myplan.Activities.HelpListEditActivity;
 import percept.myplan.CustomListener.RecyclerTouchListener;
+import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.Utils;
@@ -108,6 +115,9 @@ public class fragmentContacts extends Fragment {
         UTILS = new Utils(getActivity());
 
         GET_CONTACTS = true;
+
+        initSwipe(LST_CONTACTS);
+        initSwipe(LST_HELP);
 
         ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
 
@@ -340,5 +350,115 @@ public class fragmentContacts extends Fragment {
         }
     }
 
+    private void initSwipe(final RecyclerView recyclerView) {
+        final Paint p = new Paint();
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+//                if (direction == ItemTouchHelper.LEFT){
+//                    adapter.removeItem(position);
+//                } else {
+                // Snackbar.make(getView(), "Swipe Right", Snackbar.LENGTH_LONG).show();
+//                }
+                if (recyclerView == LST_CONTACTS)
+                    deleteContact(position, false);
+                else if (recyclerView == LST_HELP)
+                    deleteContact(position, true);
+
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                Bitmap icon;
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+
+                    View itemView = viewHolder.itemView;
+                    float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                    float width = height / 3;
+
+//                    if(dX > 0){
+//                        p.setColor(Color.parseColor("#388E3C"));
+//                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX,(float) itemView.getBottom());
+//                        c.drawRect(background,p);
+//                        icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_edit_white);
+//                        RectF icon_dest = new RectF((float) itemView.getLeft() + width ,(float) itemView.getTop() + width,(float) itemView.getLeft()+ 2*width,(float)itemView.getBottom() - width);
+//                        c.drawBitmap(icon,null,icon_dest,p);
+//                    } else {
+                    p.setColor(getResources().getColor(android.R.color.white));
+                    RectF background = new RectF((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom());
+                    c.drawRect(background, p);
+                    icon = BitmapFactory.decodeResource(getResources(), R.drawable.icon_delete);
+                    RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width, (float) itemView.getTop() + width, (float) itemView.getRight() - width, (float) itemView.getBottom() - width);
+                    c.drawBitmap(icon, null, icon_dest, p);
+//                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+    }
+
+    private void deleteContact(final int position, final boolean isFromHelp) {
+        dialogYesNoOption _dialog = new dialogYesNoOption(getActivity(), getString(R.string.delete_contact)) {
+
+            @Override
+            public void onClickYes() {
+                PB.setVisibility(View.VISIBLE);
+                HashMap<String, String> params = new HashMap<>();
+                params.put("sid", Constant.SID);
+                params.put("sname", Constant.SNAME);
+                if (isFromHelp)
+                    params.put("id", LIST_HELPCONTACTS.get(position).getId());
+                else
+                    params.put("id", LIST_CONTACTS.get(position).getId());
+                try {
+                    new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.DELETE_CONTACT, params, true, false, true, new VolleyResponseListener() {
+                        @Override
+                        public void onError(VolleyError message) {
+                            PB.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            PB.setVisibility(View.GONE);
+                            if (isFromHelp) {
+                                LIST_HELPCONTACTS.remove(position);
+                            } else {
+                                LIST_CONTACTS.remove(position);
+                            }
+                            ADPT_CONTACTLIST.notifyDataSetChanged();
+                            ADPT_CONTACTHELPLIST.notifyDataSetChanged();
+                        }
+                    });
+                } catch (Exception e) {
+                    PB.setVisibility(View.GONE);
+                    e.printStackTrace();
+                }
+                dismiss();
+
+
+                findViewById(android.R.id.content).invalidate();
+            }
+
+            @Override
+            public void onClickNo() {
+                ADPT_CONTACTLIST.notifyDataSetChanged();
+                ADPT_CONTACTHELPLIST.notifyDataSetChanged();
+                dismiss();
+            }
+        };
+        _dialog.setCancelable(false);
+        _dialog.setCanceledOnTouchOutside(false);
+        _dialog.show();
+    }
 
 }

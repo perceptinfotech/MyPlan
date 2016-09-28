@@ -154,7 +154,7 @@ public class PieGraph extends View implements HoloGraphAnimate {
 
             mPaint.setTextAlign(Paint.Align.CENTER);
             mPaint.setColor(0xFFFFFFFF);
-            mPaint.setTextSize(18.0f);
+            mPaint.setTextSize(28.0f);
             if (!TextUtils.isEmpty(slice.getTitle()))
                 canvas.drawText(slice.getTitle(),
                         (float) (midX + (innerRadius + (radius - innerRadius)/2)*Math.sin((currentSweep)*(Math.PI/360) )),

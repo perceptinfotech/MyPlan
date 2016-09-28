@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -51,6 +50,8 @@ import com.android.volley.toolbox.ImageLoader;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,10 +62,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -260,6 +258,7 @@ public class fragmentHome extends Fragment {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
         }
     }
 
@@ -403,69 +402,85 @@ public class fragmentHome extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == TAKE_PICTURE_GALLERY) {
-                Uri selectedImage = data.getData();
-
-                String[] filePath = {MediaStore.Images.Media.DATA};
-                Cursor c = getActivity().getContentResolver().query(selectedImage, filePath,
-                        null, null, null);
-                c.moveToFirst();
-                int columnIndex = c.getColumnIndex(filePath[0]);
-                FILE_PATH = c.getString(columnIndex);
-                c.close();
-//                IMG_USER.setImageURI(selectedImage);
-                IMG_URI = selectedImage;
-//                SaveProfile();
-                rotateImage();
-            }
-            if (requestCode == REQ_TAKE_PICTURE) {
-
-                try {
-
-                    Calendar cal = Calendar.getInstance();
-                    int seconds = cal.get(Calendar.SECOND);
-                    int hour = cal.get(Calendar.HOUR);
-                    int min = cal.get(Calendar.MINUTE);
-                    String currentDateTimeString = new SimpleDateFormat("ddMMMyyyy").format(new Date());
-
-                    String name = "IMG_" + currentDateTimeString + seconds + hour + min + ".jpeg";
-
-                    String _imgPath = IMG_URI.getPath();
-
-                    File mediaStorageDir = new File(Constant.APP_MEDIA_PATH + File.separator + "IMAGES");
-
-                    // Create the storage directory if it does not exist
-                    if (!mediaStorageDir.exists()) {
-                        if (!mediaStorageDir.mkdirs()) {
-
-                        }
+            switch (requestCode) {
+                case TAKE_PICTURE_GALLERY:
+                    Uri selectedImage = data.getData();
+                    CropImage.activity(selectedImage)
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .start(getActivity(), this);
+//
+//                String[] filePath = {MediaStore.Images.Media.DATA};
+//                Cursor c = getActivity().getContentResolver().query(selectedImage, filePath,
+//                        null, null, null);
+//                c.moveToFirst();
+//                int columnIndex = c.getColumnIndex(filePath[0]);
+//                FILE_PATH = c.getString(columnIndex);
+//                c.close();
+////                IMG_USER.setImageURI(selectedImage);
+//                IMG_URI = selectedImage;
+////                SaveProfile();
+//                rotateImage();
+                    break;
+                case REQ_TAKE_PICTURE:
+                    CropImage.activity(IMG_URI)
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .start(getActivity(), this);
+//                try {
+//
+//                    Calendar cal = Calendar.getInstance();
+//                    int seconds = cal.get(Calendar.SECOND);
+//                    int hour = cal.get(Calendar.HOUR);
+//                    int min = cal.get(Calendar.MINUTE);
+//                    String currentDateTimeString = new SimpleDateFormat("ddMMMyyyy").format(new Date());
+//
+//                    String name = "IMG_" + currentDateTimeString + seconds + hour + min + ".jpeg";
+//
+//                    String _imgPath = IMG_URI.getPath();
+//
+//                    File mediaStorageDir = new File(Constant.APP_MEDIA_PATH + File.separator + "IMAGES");
+//
+//                    // Create the storage directory if it does not exist
+//                    if (!mediaStorageDir.exists()) {
+//                        if (!mediaStorageDir.mkdirs()) {
+//
+//                        }
+//                    }
+//
+//                    Constant.copyFile(_imgPath, Constant.APP_MEDIA_PATH + File.separator + "IMAGES", name);
+//
+//                    File file = new File(_imgPath);
+//                    if (file.exists()) {
+////                        file.delete();
+//                    }
+//                    FILE_PATH = Constant.APP_MEDIA_PATH + File.separator + "IMAGES" + File.separator + name;
+//
+////                    Picasso.with(getActivity()).load(IMG_URI).into(IMG_USERPROFILE);
+////                    tvCaptureImg.setVisibility(View.GONE);
+////                    SaveProfile();
+//                    rotateImage();
+//                } catch (NullPointerException e) {
+//                    e.printStackTrace();
+//                }
+                    break;
+                case DIALOG_ADDNOTE:
+                    if (resultCode == Activity.RESULT_OK) {
+                        String str = data.getStringExtra("NOTE");
+                        Log.d(":::::::::::::::: ", str);
+                        MoodRatingSummaryDialog(str);
+                        // After Ok code.
+                    } else if (resultCode == Activity.RESULT_CANCELED) {
+                        // After Cancel code.
+                        MoodRatingSummaryDialog("");
                     }
-
-                    Constant.copyFile(_imgPath, Constant.APP_MEDIA_PATH + File.separator + "IMAGES", name);
-
-                    File file = new File(_imgPath);
-                    if (file.exists()) {
-//                        file.delete();
-                    }
-                    FILE_PATH = Constant.APP_MEDIA_PATH + File.separator + "IMAGES" + File.separator + name;
-
-//                    Picasso.with(getActivity()).load(IMG_URI).into(IMG_USERPROFILE);
-//                    tvCaptureImg.setVisibility(View.GONE);
-//                    SaveProfile();
-                    rotateImage();
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-            } else if (requestCode == DIALOG_ADDNOTE) {
-                if (resultCode == Activity.RESULT_OK) {
-                    String str = data.getStringExtra("NOTE");
-                    Log.d(":::::::::::::::: ", str);
-                    MoodRatingSummaryDialog(str);
-                    // After Ok code.
-                } else if (resultCode == Activity.RESULT_CANCELED) {
-                    // After Cancel code.
-                    MoodRatingSummaryDialog("");
-                }
+                    break;
+                case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                    CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                    Uri resultUri = result.getUri();
+                    FILE_PATH = new File(resultUri.toString()).getPath();
+                    Picasso.with(getActivity()).load(resultUri).into(IMG_USERPROFILE);
+                    tvCaptureImg.setVisibility(View.INVISIBLE);
+                    SaveProfile();
+                    break;
             }
         }
 
@@ -609,11 +624,6 @@ public class fragmentHome extends Fragment {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     if (jsonObject.getJSONObject("data").getString("status").equalsIgnoreCase("Success")) {
-                        Constant.PROFILE_IMG_LINK = IMG_URI.toString();
-                        utils.setPreference(Constant.PREF_PROFILE_IMG_LINK, IMG_URI.toString());
-//                        Picasso.with(getActivity()).load(IMG_URI).into(IMG_USERPROFILE);
-                        IMG_USERPROFILE.setImageBitmap(_tmpBitmap);
-                        tvCaptureImg.setVisibility(View.INVISIBLE);
                         Toast.makeText(getActivity(), "Cover photo changed Successfully", Toast.LENGTH_SHORT).show();
                     } else
                         Toast.makeText(getActivity(), "Cover photo not changed", Toast.LENGTH_SHORT).show();
@@ -645,7 +655,10 @@ public class fragmentHome extends Fragment {
                         try {
                             Constant.PROFILE_IMG_LINK = response.getJSONObject(Constant.DATA).getString(Constant.PROFILE_IMAGE);
                             utils.setPreference(Constant.PREF_PROFILE_IMG_LINK, Constant.PROFILE_IMG_LINK);
-                            Picasso.with(getActivity()).load(Constant.PROFILE_IMG_LINK).into(IMG_USERPROFILE);
+                            if (!TextUtils.isEmpty(Constant.PROFILE_IMG_LINK)) {
+                                Picasso.with(getActivity()).load(Constant.PROFILE_IMG_LINK).into(IMG_USERPROFILE);
+                                tvCaptureImg.setVisibility(View.INVISIBLE);
+                            }
                             PB.setVisibility(View.GONE);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -655,6 +668,7 @@ public class fragmentHome extends Fragment {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            PB.setVisibility(View.GONE);
         }
     }
 

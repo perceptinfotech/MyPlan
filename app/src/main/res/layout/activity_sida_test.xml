@@ -133,7 +133,7 @@
                     android:maxHeight="3dp"
                     android:minHeight="3dp"
                     android:progressDrawable="@drawable/progress_seekbar"
-                    android:thumb="@drawable/seekbar"/>
+                    android:thumb="@drawable/thumb_image"/>
 
                 <percept.myplan.customviews.CircularTextView
                     android:id="@+id/tvmax"

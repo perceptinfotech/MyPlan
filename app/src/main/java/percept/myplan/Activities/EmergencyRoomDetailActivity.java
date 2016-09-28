@@ -142,7 +142,7 @@ public class EmergencyRoomDetailActivity extends AppCompatActivity {
             case REQ_CODE_EDIT_ROOM:
                 if (resultCode == RESULT_OK) {
                     if (data != null) {
-                        emergencyRoom = (NearestEmergencyRoom) getIntent().getSerializableExtra("EMERGENCY_ROOM_DETAIL");
+                        emergencyRoom = (NearestEmergencyRoom) data.getSerializableExtra("EMERGENCY_ROOM_DETAIL");
                         mTitle.setText(emergencyRoom.getRoomName());
                         tvDistance.setText(new DecimalFormat("0.00").format(Double.parseDouble(
                                 emergencyRoom.getDistance())) + getString(R.string.km));

@@ -344,7 +344,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
         List<HashMap<String, String>> _tmpConList = addContactList();
         String deleteIds = deleteContactIds();
 
-        if (_tmpConList.size() <= 0 || TextUtils.isEmpty(deleteIds))
+        if (_tmpConList.size() <= 0 && TextUtils.isEmpty(deleteIds))
             return;
         PB_SAVECONTACT.setVisibility(View.VISIBLE);
         for (int i = 0; i < _tmpConList.size(); i++) {
@@ -390,50 +390,48 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
             }
         });
 
-       /* Gson gson = new Gson();
-        Log.d("JSON:::", "::" + gson.toJson(params));*/
-
-
-        /*for (int i = 0; i < LIST_CONTACTS.size(); i++) {
-            if (LIST_CONTACTS.get(i).isSelected() && !LIST_CONTACTS.get(i).isOriginalSelection()) {
-                PB_SAVECONTACT.setVisibility(View.VISIBLE);
-                NO_COUNT = NO_COUNT + 1;
-//                getContactInfoFromID(LIST_CONTACTS.get(i).getContactID(), LIST_CONTACTS.get(i).getPhoneNo());
-                addContactList(LIST_CONTACTS, ADD_TO_HELP_LIST);
-
-            } else if (!LIST_CONTACTS.get(i).isSelected() && LIST_CONTACTS.get(i).isOriginalSelection()) {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("sid", Constant.SID);
-                params.put("sname", Constant.SNAME);
-                params.put(Constant.ID, LIST_CONTACTS.get(i).getWEB_ID());
-                PB_SAVECONTACT.setVisibility(View.VISIBLE);
-                NO_COUNT = NO_COUNT + 1;
-                *//*try {
-                    new General().getJSONContentFromInternetService(AddContactFromPhoneActivity.this,
-                            General.PHPServices.DELETE_CONTACT, params, false, false, true, new VolleyResponseListener() {
-                                @Override
-                                public void onError(VolleyError message) {
-                                    PB_SAVECONTACT.setVisibility(View.GONE);
-                                }
-
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    Log.d("::::::::::::: ", response.toString());
-                                    SAVED_NO_COUNT = SAVED_NO_COUNT + 1;
-                                    if (NO_COUNT == SAVED_NO_COUNT) {
-                                        PB_SAVECONTACT.setVisibility(View.GONE);
-                                        Toast.makeText(AddContactFromPhoneActivity.this,
-                                                getResources().getString(R.string.contactsaved), Toast.LENGTH_SHORT).show();
-                                        AddContactFromPhoneActivity.this.finish();
-                                        fragmentContacts.GET_CONTACTS = true;
-                                    }
-                                }
-                            });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }*//*
-            }
-        }*/
+//       Gson gson = new Gson();
+//        Log.d("JSON:::", "::" + gson.toJson(params));
+//        for (int i = 0; i < LIST_CONTACTS.size(); i++) {
+//            if (LIST_CONTACTS.get(i).isSelected() && !LIST_CONTACTS.get(i).isOriginalSelection()) {
+//                PB_SAVECONTACT.setVisibility(View.VISIBLE);
+//                NO_COUNT = NO_COUNT + 1;
+////                getContactInfoFromID(LIST_CONTACTS.get(i).getContactID(), LIST_CONTACTS.get(i).getPhoneNo());
+//                addContactList(LIST_CONTACTS, ADD_TO_HELP_LIST);
+//
+//            } else if (!LIST_CONTACTS.get(i).isSelected() && LIST_CONTACTS.get(i).isOriginalSelection()) {
+//                Map<String, String> params = new HashMap<String, String>();
+//                params.put("sid", Constant.SID);
+//                params.put("sname", Constant.SNAME);
+//                params.put(Constant.ID, LIST_CONTACTS.get(i).getWEB_ID());
+//                PB_SAVECONTACT.setVisibility(View.VISIBLE);
+//                NO_COUNT = NO_COUNT + 1;
+//                *//*try {
+//                    new General().getJSONContentFromInternetService(AddContactFromPhoneActivity.this,
+//                            General.PHPServices.DELETE_CONTACT, params, false, false, true, new VolleyResponseListener() {
+//                                @Override
+//                                public void onError(VolleyError message) {
+//                                    PB_SAVECONTACT.setVisibility(View.GONE);
+//                                }
+//
+//                                @Override
+//                                public void onResponse(JSONObject response) {
+//                                    Log.d("::::::::::::: ", response.toString());
+//                                    SAVED_NO_COUNT = SAVED_NO_COUNT + 1;
+//                                    if (NO_COUNT == SAVED_NO_COUNT) {
+//                                        PB_SAVECONTACT.setVisibility(View.GONE);
+//                                        Toast.makeText(AddContactFromPhoneActivity.this,
+//                                                getResources().getString(R.string.contactsaved), Toast.LENGTH_SHORT).show();
+//                                        AddContactFromPhoneActivity.this.finish();
+//                                        fragmentContacts.GET_CONTACTS = true;
+//                                    }
+//                                }
+//                            });
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
     }
 
 //    private void getContactInfoFromID(String _contactID, String _phoneno) {

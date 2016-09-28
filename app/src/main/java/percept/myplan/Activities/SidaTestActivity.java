@@ -115,7 +115,8 @@ public class SidaTestActivity extends AppCompatActivity {
 
             }
         };
-        _dialog.setCanceledOnTouchOutside(true);
+        _dialog.setCanceledOnTouchOutside(false);
+        _dialog.setCancelable(false);
         _dialog.show();
 
 
@@ -143,6 +144,7 @@ public class SidaTestActivity extends AppCompatActivity {
                     SubmitSidaTest();
 
                 }
+                SEEK_SIDA.setProgress(0);
             }
         });
     }
@@ -288,6 +290,10 @@ public class SidaTestActivity extends AppCompatActivity {
 //                        Log.i("SortedList",gson.toJsonTree(LST_SIDAQUES).getAsJsonArray().toString());
                         CURR_QUES = 0;
                         TV_TESTQUESTION.setText(LST_SIDAQUES.get(CURR_QUES).getQuestion());
+                        String arr[] = TextUtils.split(LST_SIDAQUES.get(CURR_QUES).getLabelLeft(), " - ");
+                        tvLabelLeft.setText(arr[1]);
+                        arr = TextUtils.split(LST_SIDAQUES.get(CURR_QUES).getLabelRight(), " - ");
+                        tvLabelRight.setText(arr[1]);
                         BTN_NEXT_QUES.setText(getResources().getString(R.string.nextques) +
                                 "(" + String.valueOf(CURR_QUES + 1) + "/" + String.valueOf(TOTAL_QUES) + ")");
                         PB.setVisibility(View.GONE);
@@ -479,6 +485,12 @@ public class SidaTestActivity extends AppCompatActivity {
                     onClickSecondButton();
                 }
             });
+        }
+
+        @Override
+        public void setOnDismissListener(OnDismissListener listener) {
+            super.setOnDismissListener(listener);
+            SidaTestActivity.this.finish();
         }
 
         public void onClickFirstButton() {

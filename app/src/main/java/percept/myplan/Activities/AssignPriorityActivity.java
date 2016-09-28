@@ -6,14 +6,28 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import percept.myplan.Global.Constant;
+import percept.myplan.Global.General;
+import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.R;
 
 /**
@@ -24,6 +38,7 @@ public class AssignPriorityActivity extends AppCompatActivity {
     private int con_priority = 0; // 0: Default 1:Help  2:Emergency
     private int _count = 0;
     private CheckBox imgTickHelp, imgTickEmergency;
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,7 +57,8 @@ public class AssignPriorityActivity extends AppCompatActivity {
         tvHelp = (TextView) findViewById(R.id.tvHelp);
         imgTickHelp = (CheckBox) findViewById(R.id.imgTickHelp);
         imgTickEmergency = (CheckBox) findViewById(R.id.imgTickEmergency);
-
+        PB = (ProgressBar) findViewById(R.id.pbPriority);
+        getContacts();
         if (getIntent().hasExtra(Constant.HELP_COUNT)) {
             _count = getIntent().getIntExtra(Constant.HELP_COUNT, 0);
         }
@@ -121,5 +137,39 @@ public class AssignPriorityActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    private void getContacts() {
+        PB.setVisibility(View.VISIBLE);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", Constant.SID);
+        params.put("sname", Constant.SNAME);
+        params.put("helplist", "1");
+        try {
+            new General().getJSONContentFromInternetService(AssignPriorityActivity.this, General.PHPServices.GET_CONTACTS, params, true, false, false, new VolleyResponseListener() {
+                @Override
+                public void onError(VolleyError message) {
+                    PB.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d(":::::::::::::: ", response.toString());
+
+                    try {
+                        JSONArray jsonArray = response.getJSONArray(Constant.DATA);
+                        if (jsonArray != null)
+                            _count = jsonArray.length();
+                        PB.setVisibility(View.GONE);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -67,9 +67,8 @@ public class SidaSummaryAdapter extends RecyclerView.Adapter<SidaSummaryAdapter.
 //            $color = '#ed1c24';
         }
 
-        slice.setColor(CONTEXT.getResources().getColor(R.color.pie_color1));
         slice.setValue(Float.parseFloat(_mood.getAvg_Score()));
-        slice.setTitle(new DecimalFormat("0.00").format(Float.parseFloat(_mood.getAvg_Score())) + "%");
+        slice.setTitle(new DecimalFormat("0").format(Float.parseFloat(_mood.getAvg_Score())));
 
         LST_PIEDATA.add(slice);
         slice = new PieSlice();

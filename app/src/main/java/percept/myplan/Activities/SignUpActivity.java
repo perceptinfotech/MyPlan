@@ -2,13 +2,11 @@ package percept.myplan.Activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -27,7 +25,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
@@ -37,15 +34,15 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,24 +69,22 @@ public class SignUpActivity extends AppCompatActivity {
     private ImageView IMG_USER;
     private EditText EDT_FIRSTNAME, EDT_LASTNAME, EDT_EMAIL, EDT_PHONENO, EDT_BIRTHDAY, EDT_PASSWORD;
     private Button BTN_ENTER;
-    private int SDAY = 0, SMONTH = 0, SYEAR = 0;
+    private int SYEAR = 0;//,SDAY = 0, SMONTH = 0;
     private TextView TV_CAPTUREIMG;
     private String FILE_PATH = "", YEAR = "1960";
     private Utils UTILS;
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
     private boolean HAS_PERMISSION = true;
-    private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
-
-        @Override
-        public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
-            // TODO Auto-generated method stub
-            // arg1 = year
-            // arg2 = month
-            // arg3 = day
-            showDate(arg1, arg2, arg3);
-        }
-    };
+//    private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
+//
+//        @Override
+//        public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
+//            // TODO Auto-generated method stub
+//
+//            showDate(arg1, arg2, arg3);
+//        }
+//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,9 +121,9 @@ public class SignUpActivity extends AppCompatActivity {
 
         Calendar cal = Calendar.getInstance();
         SYEAR = cal.get(Calendar.YEAR);
-        SMONTH = cal.get(Calendar.MONTH);
-        SDAY = cal.get(Calendar.DAY_OF_MONTH);
-        showDate(SYEAR, SMONTH, SDAY);
+//        SMONTH = cal.get(Calendar.MONTH);
+//        SDAY = cal.get(Calendar.DAY_OF_MONTH);
+//        showDate(SYEAR, SMONTH, SDAY);
 
         EDT_BIRTHDAY.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -471,68 +466,73 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-    private void showDate(int year, int month, int day) {
-
-//        EDT_BIRTHDAY.setText(new StringBuilder().append(day).append("/").append(month + 1).append("/").append(year));
-        SYEAR = year;
-        SMONTH = month;
-        SDAY = day;
-    }
+//    private void showDate(int year, int month, int day) {
+//
+////        EDT_BIRTHDAY.setText(new StringBuilder().append(day).append("/").append(month + 1).append("/").append(year));
+//        SYEAR = year;
+//        SMONTH = month;
+//        SDAY = day;
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (resultCode == RESULT_OK) {
-            if (requestCode == TAKE_PICTURE_GALLERY) {
-                Uri selectedImage = data.getData();
+            switch (requestCode) {
+                case TAKE_PICTURE_GALLERY:
+                    Uri selectedImage = data.getData();
 
-                String[] filePath = {MediaStore.Images.Media.DATA};
-                Cursor c = getContentResolver().query(selectedImage, filePath,
-                        null, null, null);
-                c.moveToFirst();
-                int columnIndex = c.getColumnIndex(filePath[0]);
-                FILE_PATH = c.getString(columnIndex);
-                c.close();
-//                IMG_USER.setImageURI(selectedImage);
-                Picasso.with(SignUpActivity.this).load(selectedImage).into(IMG_USER);
-                TV_CAPTUREIMG.setVisibility(View.INVISIBLE);
-            }
-            if (requestCode == REQ_TAKE_PICTURE) {
+                    CropImage.activity(selectedImage)
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .start(this);
+                    break;
+                case REQ_TAKE_PICTURE:
 
-                try {
-
-                    Calendar cal = Calendar.getInstance();
-                    int seconds = cal.get(Calendar.SECOND);
-                    int hour = cal.get(Calendar.HOUR);
-                    int min = cal.get(Calendar.MINUTE);
-                    String currentDateTimeString = new SimpleDateFormat("ddMMMyyyy").format(new Date());
-
-                    String name = "IMG_" + currentDateTimeString + seconds + hour + min + ".jpeg";
-
-                    String _imgPath = IMG_URI.getPath();
-
-                    File mediaStorageDir = new File(Constant.APP_MEDIA_PATH + File.separator + "IMAGES");
-
-                    // Create the storage directory if it does not exist
-                    if (!mediaStorageDir.exists()) {
-                        if (!mediaStorageDir.mkdirs()) {
-
-                        }
-                    }
-
-                    Constant.copyFile(_imgPath, Constant.APP_MEDIA_PATH + File.separator + "IMAGES", name);
-
-                    File file = new File(_imgPath);
-                    if (file.exists()) {
-//                        file.delete();
-                    }
-                    FILE_PATH = Constant.APP_MEDIA_PATH + File.separator + "IMAGES" + File.separator + name;
-
-                    Picasso.with(SignUpActivity.this).load(IMG_URI).into(IMG_USER);
+                    CropImage.activity(IMG_URI)
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .start(this);
+//                    try {
+//
+//                        Calendar cal = Calendar.getInstance();
+//                        int seconds = cal.get(Calendar.SECOND);
+//                        int hour = cal.get(Calendar.HOUR);
+//                        int min = cal.get(Calendar.MINUTE);
+//                        String currentDateTimeString = new SimpleDateFormat("ddMMMyyyy").format(new Date());
+//
+//                        String name = "IMG_" + currentDateTimeString + seconds + hour + min + ".jpeg";
+//
+//                        String _imgPath = IMG_URI.getPath();
+//
+//                        File mediaStorageDir = new File(Constant.APP_MEDIA_PATH + File.separator + "IMAGES");
+//
+//                        // Create the storage directory if it does not exist
+//                        if (!mediaStorageDir.exists()) {
+//                            if (!mediaStorageDir.mkdirs()) {
+//
+//                            }
+//                        }
+//
+//                        Constant.copyFile(_imgPath, Constant.APP_MEDIA_PATH + File.separator + "IMAGES", name);
+//
+//                        File file = new File(_imgPath);
+//                        if (file.exists()) {
+////                        file.delete();
+//                        }
+//                        FILE_PATH = Constant.APP_MEDIA_PATH + File.separator + "IMAGES" + File.separator + name;
+//
+//                        Picasso.with(SignUpActivity.this).load(IMG_URI).into(IMG_USER);
+//                        TV_CAPTUREIMG.setVisibility(View.INVISIBLE);
+//                    } catch (NullPointerException e) {
+//                        e.printStackTrace();
+//                    }
+                    break;
+                case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                    CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                    Uri resultUri = result.getUri();
+                    FILE_PATH = new File(resultUri.toString()).getPath();
+                    Picasso.with(SignUpActivity.this).load(resultUri).into(IMG_USER);
                     TV_CAPTUREIMG.setVisibility(View.INVISIBLE);
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
+                    break;
             }
         }
 
@@ -699,7 +699,7 @@ public class SignUpActivity extends AppCompatActivity {
             //setNumberPickerTextColor(YEAR_PICKER, android.R.color.black);
 
             YEAR_PICKER.setMinValue(1960);
-            YEAR_PICKER.setMaxValue(2010);
+            YEAR_PICKER.setMaxValue(SYEAR - 10);
 
             TV_DONE.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -18,13 +18,13 @@
 android:descendantFocusability="blocksDescendants" is added to pass click event down to children
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    android:descendantFocusability="blocksDescendants"
-    android:orientation="vertical"
-    android:padding="4dp">
+              xmlns:card_view="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_margin="4dp"
+              android:descendantFocusability="blocksDescendants"
+              android:orientation="vertical"
+              android:padding="4dp">
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardVideo"
@@ -33,18 +33,18 @@ android:descendantFocusability="blocksDescendants" is added to pass click event 
         android:layout_gravity="center"
         android:layout_margin="20dp"
         android:background="@drawable/lay_moodrating_home_border"
-        card_view:cardElevation="3dp"
-        card_view:cardCornerRadius="5dp">
+        card_view:cardCornerRadius="5dp"
+        card_view:cardElevation="3dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <percept.myplan.player.widget.ToroVideoView
+            <im.ene.lab.flvv.FloppyVideoView
                 android:id="@+id/video"
                 android:layout_width="match_parent"
-                android:foregroundGravity="center"
-                android:layout_height="225dp"/>
+                android:layout_height="225dp"
+                card_view:scaleType="centerCrop"/>
 
             <TextView
                 android:id="@+id/text"
@@ -55,7 +55,7 @@ android:descendantFocusability="blocksDescendants" is added to pass click event 
                 android:gravity="left"
                 android:padding="@dimen/album_title_padding"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/album_title" />
+                android:textSize="@dimen/album_title"/>
 
             <TextView
                 android:id="@+id/tvCardVideoEdit"
@@ -68,7 +68,7 @@ android:descendantFocusability="blocksDescendants" is added to pass click event 
                 android:paddingRight="10dp"
                 android:text="@string/edit"
                 android:textColor="@color/appBackColor"
-                android:textSize="@dimen/album_title" />
+                android:textSize="@dimen/album_title"/>
 
         </RelativeLayout>
 

@@ -24,6 +24,46 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     private boolean SINGLE_CHECK;
     private boolean onBind;
 
+    public ContactAdapter(List<Contact> contactList, boolean singleCheck) {
+        this.LIST_CONTACT = contactList;
+        this.SINGLE_CHECK = singleCheck;
+    }
+
+    @Override
+    public ContactViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.contact_list_item, parent, false);
+        return new ContactViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(final ContactViewHolder holder, int position) {
+        Contact _contact = LIST_CONTACT.get(position);
+        if (!TextUtils.isEmpty(_contact.getFirstName()))
+            holder.TV_CONTACTNAME.setText(_contact.getFirstName() + " " + _contact.getFirstName());
+        else
+            holder.TV_CONTACTNAME.setText(_contact.getPhoneNo());
+        onBind = true;
+//        holder.CHK_CONTACTSELECTION.setChecked(_contact.isSelected());
+        onBind = false;
+        if (_contact.isSelected()) {
+            onBind = true;
+            holder.IMG_TICK.setImageResource(R.drawable.tick); //setChecked(true);
+            onBind = false;
+        } else {
+            onBind = true;
+            holder.IMG_TICK.setImageResource(R.drawable.untick); //setChecked(false);
+            onBind = false;
+        }
+
+        holder.IMG_TICK.setTag(position);
+    }
+
+    @Override
+    public int getItemCount() {
+        return LIST_CONTACT.size();
+    }
+
     public class ContactViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView TV_CONTACTNAME;
@@ -70,46 +110,5 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                 notifyDataSetChanged();
             }
         }
-    }
-
-    public ContactAdapter(List<Contact> contactList, boolean singleCheck) {
-        this.LIST_CONTACT = contactList;
-        this.SINGLE_CHECK = singleCheck;
-    }
-
-    @Override
-    public ContactViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.contact_list_item, parent, false);
-        return new ContactViewHolder(itemView);
-    }
-
-    @Override
-    public void onBindViewHolder(final ContactViewHolder holder, int position) {
-        Contact _contact = LIST_CONTACT.get(position);
-        if (!TextUtils.isEmpty(_contact.getFirstName()))
-            holder.TV_CONTACTNAME.setText(_contact.getFirstName());
-        else
-            holder.TV_CONTACTNAME.setText(_contact.getPhoneNo());
-        onBind = true;
-//        holder.CHK_CONTACTSELECTION.setChecked(_contact.isSelected());
-        onBind = false;
-        if (_contact.isSelected()) {
-            onBind = true;
-            holder.IMG_TICK.setImageResource(R.drawable.tick); //setChecked(true);
-            onBind = false;
-        } else {
-            onBind = true;
-            holder.IMG_TICK.setImageResource(R.drawable.untick); //setChecked(false);
-            onBind = false;
-        }
-
-        holder.IMG_TICK.setTag(position);
-    }
-
-
-    @Override
-    public int getItemCount() {
-        return LIST_CONTACT.size();
     }
 }

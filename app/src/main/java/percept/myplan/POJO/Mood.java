@@ -98,4 +98,6 @@ public class Mood {
     public void setMEASUREMENT(String MEASUREMENT) {
         this.MEASUREMENT = MEASUREMENT;
     }
+
+
 }

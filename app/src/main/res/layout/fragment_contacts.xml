@@ -7,7 +7,7 @@
                 tools:context="percept.myplan.fragments.fragmentContacts">
 
     <!-- TODO: Update blank fragment lay_help_info -->
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -90,7 +90,7 @@
                 layout="@layout/lay_contact_list"></include>
 
         </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
     <ProgressBar
         android:id="@+id/pbContacts"

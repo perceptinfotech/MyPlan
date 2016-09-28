@@ -38,4 +38,5 @@ public abstract class Basic3ViewHolder extends RecyclerView.ViewHolder {
     public void setOnItemLongClickListener(View.OnLongClickListener listener) {
         this.itemView.setOnLongClickListener(listener);
     }
+
 }

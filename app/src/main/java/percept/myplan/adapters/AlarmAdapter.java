@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import percept.myplan.Activities.AlarmListActivity;
+import percept.myplan.Activities.StrategyDetailsOwnActivity;
 import percept.myplan.POJO.Alarm;
 import percept.myplan.R;
 
@@ -23,9 +24,13 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.MyViewHolder
 
     private AlarmListActivity activity;
     private List<Alarm> LST_HOPE;
+    private boolean isFromDetail = false;
 
     public AlarmAdapter(AlarmListActivity activity, List<Alarm> hopeList) {
         this.activity = activity;
+        if (hopeList == StrategyDetailsOwnActivity.LIST_ALARM)
+            isFromDetail = true;
+
         this.LST_HOPE = hopeList;
 
     }
@@ -49,6 +54,13 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.MyViewHolder
         holder.TV_ALARMEDIT.setTag(position);
         holder.SWITCH_STATUS.setTag(position);
         holder.SWITCH_STATUS.setChecked(true);
+        if (isFromDetail) {
+            holder.TV_ALARMEDIT.setEnabled(false);
+            holder.SWITCH_STATUS.setEnabled(false);
+        } else {
+            holder.TV_ALARMEDIT.setEnabled(true);
+            holder.SWITCH_STATUS.setEnabled(true);
+        }
 
     }
 
@@ -68,7 +80,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.MyViewHolder
             TV_ALARMTITLE = (TextView) view.findViewById(R.id.tvAlarmTitle);
             TV_ALARMEDIT = (TextView) view.findViewById(R.id.tvAlarmEdit);
             TV_ALARMTIME = (TextView) view.findViewById(R.id.tvAlarmTime);
-            SWITCH_STATUS= (Switch) view.findViewById(R.id.switchAlarmStatus);
+            SWITCH_STATUS = (Switch) view.findViewById(R.id.switchAlarmStatus);
             TV_ALARMEDIT.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

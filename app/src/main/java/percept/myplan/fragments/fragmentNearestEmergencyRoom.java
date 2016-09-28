@@ -21,6 +21,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -36,6 +37,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,6 +64,7 @@ import percept.myplan.adapters.AutoCompleteLocalSearchAdapter;
 public class fragmentNearestEmergencyRoom extends Fragment {
 
     public static final int INDEX = 9;
+    public static boolean RELOAD_MAP = false;
     private final int REQ_CODE_ADD_ROOM = 392;
     MapView mMapView;
     private GoogleMap googleMap;
@@ -118,13 +121,15 @@ public class fragmentNearestEmergencyRoom extends Fragment {
         btnNearestDistance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                InputMethodManager inputManager = (InputMethodManager)
-                        getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.hideSoftInputFromWindow((null == getActivity().getCurrentFocus())
-                        ? null : getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                Intent _intent = new Intent(getActivity(), EmergencyRoomDetailActivity.class);
-                _intent.putExtra("EMERGENCY_ROOM_DETAIL", listNearestEmergencyRoom.get(0));
-                startActivity(_intent);
+                if (listNearestEmergencyRoom != null && listNearestEmergencyRoom.size() > 0) {
+                    InputMethodManager inputManager = (InputMethodManager)
+                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputManager.hideSoftInputFromWindow((null == getActivity().getCurrentFocus())
+                            ? null : getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    Intent _intent = new Intent(getActivity(), EmergencyRoomDetailActivity.class);
+                    _intent.putExtra("EMERGENCY_ROOM_DETAIL", listNearestEmergencyRoom.get(0));
+                    startActivity(_intent);
+                }
             }
         });
         adapter = new AutoCompleteLocalSearchAdapter(getActivity(), listNearestEmergencyRoom);
@@ -174,6 +179,8 @@ public class fragmentNearestEmergencyRoom extends Fragment {
                     public View getInfoContents(Marker marker) {
                         NearestEmergencyRoom emergencyRoom = (NearestEmergencyRoom) marker.getTag();
                         View view = View.inflate(getActivity(), R.layout.lay_marker_infowindow, null);
+                        ImageView ivRoomThumb = (ImageView) view.findViewById(R.id.ivRoomThumb);
+                        Picasso.with(getActivity()).load(emergencyRoom.getImageThumb()).into(ivRoomThumb);
                         TextView tvEmergencyRoomName = (TextView) view.findViewById(R.id.tvEmergencyRoomName);
                         tvEmergencyRoomName.setText(emergencyRoom.getRoomName());
                         TextView tvEmergencyRoomNo = (TextView) view.findViewById(R.id.tvEmergencyRoomNo);
@@ -187,6 +194,7 @@ public class fragmentNearestEmergencyRoom extends Fragment {
                         Intent _intent = new Intent(getActivity(), EmergencyRoomDetailActivity.class);
                         _intent.putExtra("EMERGENCY_ROOM_DETAIL", (NearestEmergencyRoom) marker.getTag());
                         startActivity(_intent);
+//                        marker.hideInfoWindow();
                     }
                 });
 
@@ -199,6 +207,13 @@ public class fragmentNearestEmergencyRoom extends Fragment {
     public void onResume() {
         super.onResume();
         mMapView.onResume();
+        if (RELOAD_MAP) {
+            RELOAD_MAP = false;
+            if (activity.isGPSEnabled()) {
+                googleMap.clear();
+                getNearestEmergencyRoom();
+            }
+        }
 
     }
 

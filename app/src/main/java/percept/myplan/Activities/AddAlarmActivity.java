@@ -57,6 +57,7 @@ public class AddAlarmActivity extends AppCompatActivity {
         EDT_ALARMLABLE = (EditText) findViewById(R.id.edtAlarmLable);
 //        DATE_PICKER = (DatePicker) findViewById(R.id.datePicker);
         TIME_PICKER = (TimePicker) findViewById(R.id.timePicker);
+        TIME_PICKER.setIs24HourView(true);
 
         if (getIntent().hasExtra("EDIT_ALARM")) {
             EDT_ALARMLABLE.setText(getIntent().getExtras().getString("ALARM_NAME"));
@@ -75,7 +76,7 @@ public class AddAlarmActivity extends AppCompatActivity {
                     Settings.System.DEFAULT_NOTIFICATION_URI);
             TV_ALARMSOUND.setText(ringtone.getTitle(AddAlarmActivity.this));
         }
-        tvAlarmTime.setText(TIME_PICKER.getCurrentHour() + " : " + TIME_PICKER.getCurrentMinute());
+        tvAlarmTime.setText(String.format("%02d : %02d", TIME_PICKER.getCurrentHour(), TIME_PICKER.getCurrentMinute()));
         String[] repeatIdArr = TextUtils.split(repeatIds, ",");
         if (repeatIdArr.length == 1) {
             TV_ALARMREPEAT.setText(getResources().getStringArray(R.array.alarm_repeat)[Integer.parseInt(repeatIdArr[0])]);
@@ -109,7 +110,8 @@ public class AddAlarmActivity extends AppCompatActivity {
         TIME_PICKER.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
             @Override
             public void onTimeChanged(TimePicker timePicker, int hour, int minute) {
-                tvAlarmTime.setText(hour + " : " + minute);
+
+                tvAlarmTime.setText(String.format("%02d : %02d", hour, minute));
             }
         });
     }

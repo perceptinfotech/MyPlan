@@ -94,6 +94,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
     private boolean isEDIT = false;
     private TextView mTitle;
     private ProgressBar PB;
+    private Uri uri;
 
 
     @Override
@@ -102,20 +103,26 @@ public class AddContactDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_contact_detail);
         isForEdit = getIntent().getBooleanExtra("IS_FOR_EDIT", false);
         isEDIT = isForEdit;
+
         if (isForEdit) {
             _contactDisplay = (ContactDisplay) getIntent().getSerializableExtra("DATA");
             ADD_TO_HELP_LIST = _contactDisplay.getHelplist();
         }
-
-        if (getIntent().hasExtra("ADD_TO_HELP")) {
-            ADD_TO_HELP_LIST = "1";
-        }
-        if (getIntent().hasExtra("FROM_EMERGENCY")) {
-            ADD_TO_EMERGENCY = "1";
-
+        int helpCount = 0;
+        if (getIntent().hasExtra(Constant.HELP_COUNT)) {
+            helpCount = getIntent().getIntExtra(Constant.HELP_COUNT, 0);
         }
 
         initializeComponent();
+        if (getIntent().hasExtra("ADD_TO_HELP")) {
+            ADD_TO_HELP_LIST = "1";
+            if (helpCount < 10)
+                tvAssignPriority.setText(getString(R.string.help));
+        }
+        if (getIntent().hasExtra("FROM_EMERGENCY")) {
+            ADD_TO_EMERGENCY = "1";
+            tvAssignPriority.setText(getString(R.string.emergency));
+        }
 
     }
 
@@ -141,6 +148,8 @@ public class AddContactDetailActivity extends AppCompatActivity {
         edtAddEmail = (EditText) findViewById(R.id.edtAddEmail);
         edtAddUrl = (EditText) findViewById(R.id.edtAddUrl);
         edtAddAddress = (EditText) findViewById(R.id.edtAddAddress);
+
+        REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         PB = (ProgressBar) findViewById(R.id.pbAddContact);
 
@@ -244,6 +253,8 @@ public class AddContactDetailActivity extends AppCompatActivity {
                             }
                         });
             }
+            if (_contactDisplay.getHelplist().equals("1"))
+                tvAssignPriority.setText(getString(R.string.help));
             disableAllCompontent();
         }
 
@@ -321,7 +332,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
         switch (requestCode) {
             case REQUEST_CODE_RINGTONE:
                 if (resultCode == RESULT_OK) {
-                    final Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                    uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
                     ringtone = RingtoneManager.getRingtone(this, uri);
                     // Get your title here `ringtone.getTitle(this)
                     String Str = ringtone.getTitle(this);
@@ -387,6 +398,14 @@ public class AddContactDetailActivity extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     if (data.hasExtra("FROM_PRIORITY")) {
                         contact_priority = data.getIntExtra("FROM_PRIORITY", 0);
+                        switch (contact_priority) {
+                            case 1:
+                                tvAssignPriority.setText(getString(R.string.help));
+                                break;
+                            case 2:
+                                tvAssignPriority.setText(getString(R.string.emergency));
+                                break;
+                        }
                         if (contact_priority == 2)
                             ADD_TO_EMERGENCY = "1";
                         else ADD_TO_EMERGENCY = "";
@@ -510,7 +529,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
             ops.add(ContentProviderOperation.newInsert(
                     ContactsContract.RawContacts.CONTENT_URI)
                     .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
-                    .withValue(ContactsContract.RawContacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+//                    .withValue(ContactsContract.RawContacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
                     .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
                     .build());
 
@@ -555,9 +574,11 @@ public class AddContactDetailActivity extends AppCompatActivity {
                     .withValue(ContactsContract.CommonDataKinds.Website.URL,
                             edtAddUrl.getText().toString().trim()).build());
 
-            ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                    .withValue(ContactsContract.Contacts.CUSTOM_RINGTONE, ringtone).build());
+            if (uri != null)
+                ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                        .withValue(ContactsContract.Contacts.CUSTOM_RINGTONE, uri.getPath()).build());
+
 
             ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                     .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
@@ -598,7 +619,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
                 getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(AddContactDetailActivity.this, "Exception: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                // Toast.makeText(AddContactDetailActivity.this, "Exception: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }

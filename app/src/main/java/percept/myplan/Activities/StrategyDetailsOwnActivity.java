@@ -261,7 +261,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
             }
         }));
-        initSwipe(LST_STRATEGYCONTACT);
+//        initSwipe(LST_STRATEGYCONTACT);
 
     }
 
@@ -337,19 +337,38 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
             @Override
             public void onClickYes() {
+                PB.setVisibility(View.VISIBLE);
                 HashMap<String, String> params = new HashMap<>();
                 params.put("sid", Constant.SID);
                 params.put("sname", Constant.SNAME);
+                params.put("id", Constant.SNAME);
+                try {
+                    new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this, General.PHPServices.DELETE_CONTACT, params, true, false, true, new VolleyResponseListener() {
+                        @Override
+                        public void onError(VolleyError message) {
+                            PB.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            PB.setVisibility(View.GONE);
+                            LIST_STRATEGYCONTACT.remove(position);
+                            ADAPTER.notifyDataSetChanged();
+                        }
+                    });
+                } catch (Exception e) {
+                    PB.setVisibility(View.GONE);
+                    e.printStackTrace();
+                }
                 dismiss();
-                LIST_STRATEGYCONTACT.remove(position);
-                ADAPTER.notifyDataSetChanged();
+
 
                 findViewById(android.R.id.content).invalidate();
             }
 
             @Override
             public void onClickNo() {
-
+                ADAPTER.notifyDataSetChanged();
                 dismiss();
             }
         };

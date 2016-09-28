@@ -7,26 +7,6 @@ import java.io.Serializable;
  */
 
 public class ContactDisplay implements Comparable<ContactDisplay>, Serializable {
-//    {
-//    "created_by": "721",
-//            "id": "172",
-//            "first_name": "By",
-//            "last_name": "Ttvm",
-//            "phone": "946497976494",
-//            "email": "jdjrjr@kfif.com",
-//            "helplist": "0",
-//            "state": "1",
-//            "ordering": "0",
-//            "note": "",
-//            "con_image": "",
-//            "skype": ""
-//            "web_address": "",
-//            "address": "",
-//            "company_name": "",
-//            "ringtone": "",
-//            "con_image_thumb": "",
-// },
-
     private String created_by = "";
     private String id = "";
     private String first_name = "";

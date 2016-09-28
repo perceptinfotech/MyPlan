@@ -28,7 +28,7 @@ public class SettingNotificationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.title_activity_notification));
-
+        utils=new Utils(SettingNotificationActivity.this);
         SWITCH_NOTIFICATIONS = (Switch) findViewById(R.id.switchNotifications);
         SWITCH_NOTIFICATIONS.setChecked(utils.getBoolPref(Constant.PREF_NOTIFICATION));
 

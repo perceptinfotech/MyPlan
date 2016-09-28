@@ -101,10 +101,10 @@ public class AlarmListActivity extends AppCompatActivity {
         if (FROM_EDIT) {
             ADAPTER = new AlarmAdapter(AlarmListActivity.this, StrategyEditActivity.LIST_ALARM);
             LST_STRATEGYALARM.setAdapter(ADAPTER);
-        } else if (getIntent().hasExtra("FROM_DETAIL")){
+        } else if (getIntent().hasExtra("FROM_DETAIL")) {
             ADAPTER = new AlarmAdapter(AlarmListActivity.this, StrategyDetailsOwnActivity.LIST_ALARM);
             LST_STRATEGYALARM.setAdapter(ADAPTER);
-        }  else {
+        } else {
             ADAPTER = new AlarmAdapter(AlarmListActivity.this, AddStrategyActivity.LIST_ALARM);
             LST_STRATEGYALARM.setAdapter(ADAPTER);
         }
@@ -116,9 +116,9 @@ public class AlarmListActivity extends AppCompatActivity {
         Alarm _objAlarm;
         if (FROM_EDIT) {
             _objAlarm = StrategyEditActivity.LIST_ALARM.get(position);
-        } else if (getIntent().hasExtra("FROM_DETAIL")){
+        } else if (getIntent().hasExtra("FROM_DETAIL")) {
             _objAlarm = StrategyDetailsOwnActivity.LIST_ALARM.get(position);
-        }else {
+        } else {
             _objAlarm = AddStrategyActivity.LIST_ALARM.get(position);
         }
         Intent _intent = new Intent(AlarmListActivity.this, AddAlarmActivity.class);
@@ -135,6 +135,8 @@ public class AlarmListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (getIntent().hasExtra("FROM_DETAIL"))
+            return super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.add_alarm, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -148,6 +150,7 @@ public class AlarmListActivity extends AppCompatActivity {
             AlarmListActivity.this.finish();
             return true;
         } else if (item.getItemId() == R.id.action_AddAlarm) {
+
             startActivityForResult(new Intent(AlarmListActivity.this, AddAlarmActivity.class), ADDALARM);
             return true;
         }
@@ -179,7 +182,7 @@ public class AlarmListActivity extends AppCompatActivity {
                         StrategyEditActivity.LIST_ALARM.get(POSITION).setAlarmRepeat(data.getStringExtra("ALARM_REPEAT"));
                         StrategyEditActivity.LIST_ALARM.get(POSITION).setAlarmTuneName(data.getStringExtra("ALARM_SOUND_NAME"));
                         ADAPTER = new AlarmAdapter(AlarmListActivity.this, StrategyEditActivity.LIST_ALARM);
-                    } else if (getIntent().hasExtra("FROM_DETAIL")){
+                    } else if (getIntent().hasExtra("FROM_DETAIL")) {
                         StrategyDetailsOwnActivity.LIST_ALARM.get(POSITION).setAlarmName(data.getStringExtra("ALARM_NAME"));
                         StrategyDetailsOwnActivity.LIST_ALARM.get(POSITION).setAlarmTime(data.getStringExtra("ALARM_TIME"));
                         StrategyDetailsOwnActivity.LIST_ALARM.get(POSITION).setStatus(true);
@@ -187,7 +190,7 @@ public class AlarmListActivity extends AppCompatActivity {
                         StrategyDetailsOwnActivity.LIST_ALARM.get(POSITION).setAlarmRepeat(data.getStringExtra("ALARM_REPEAT"));
                         StrategyDetailsOwnActivity.LIST_ALARM.get(POSITION).setAlarmTuneName(data.getStringExtra("ALARM_SOUND_NAME"));
                         ADAPTER = new AlarmAdapter(AlarmListActivity.this, StrategyDetailsOwnActivity.LIST_ALARM);
-                    }else {
+                    } else {
                         AddStrategyActivity.LIST_ALARM.get(POSITION).setAlarmName(data.getStringExtra("ALARM_NAME"));
                         AddStrategyActivity.LIST_ALARM.get(POSITION).setAlarmTime(data.getStringExtra("ALARM_TIME"));
                         AddStrategyActivity.LIST_ALARM.get(POSITION).setStatus(true);
@@ -200,7 +203,7 @@ public class AlarmListActivity extends AppCompatActivity {
                     if (FROM_EDIT) {
                         StrategyEditActivity.LIST_ALARM.add(_obj);
                         ADAPTER = new AlarmAdapter(AlarmListActivity.this, StrategyEditActivity.LIST_ALARM);
-                    } else if(getIntent().hasExtra("FROM_DETAIL")){
+                    } else if (getIntent().hasExtra("FROM_DETAIL")) {
                         StrategyDetailsOwnActivity.LIST_ALARM.add(_obj);
                         ADAPTER = new AlarmAdapter(AlarmListActivity.this, StrategyDetailsOwnActivity.LIST_ALARM);
                     } else {

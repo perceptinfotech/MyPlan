@@ -54,10 +54,16 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
             else lastFirstChar = '#';
             sectionIndices.add(0);
             for (int i = 1; i < LIST_CONTACT.size(); i++) {
-                if (LIST_CONTACT.get(i).getFirstName().charAt(0) != lastFirstChar) {
+                if (TextUtils.isEmpty(LIST_CONTACT.get(i).getFirstName())) {
+                    if (lastFirstChar != '#') {
+                        lastFirstChar = '#';
+                        sectionIndices.add(i);
+                    }
+                } else if (LIST_CONTACT.get(i).getFirstName().charAt(0) != lastFirstChar) {
                     lastFirstChar = LIST_CONTACT.get(i).getFirstName().charAt(0);
                     sectionIndices.add(i);
                 }
+
             }
             int[] sections = new int[sectionIndices.size()];
             for (int i = 0; i < sectionIndices.size(); i++) {
@@ -139,7 +145,7 @@ public class ContactFromPhoneAdapter extends BaseAdapter implements
         if (TextUtils.isEmpty(LIST_CONTACT.get(position).getFirstName()))
             holder.TV_CONTACTNAME.setText(LIST_CONTACT.get(position).getPhoneNo());
         else
-            holder.TV_CONTACTNAME.setText(LIST_CONTACT.get(position).getFirstName());
+            holder.TV_CONTACTNAME.setText(LIST_CONTACT.get(position).getFirstName() + " " + LIST_CONTACT.get(position).getLastName());
 
         if (LIST_CONTACT.get(position).isSelected()) {
             holder.IMG_CHK.setImageResource(R.drawable.tick);

@@ -5,8 +5,13 @@ import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -25,7 +30,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -278,22 +288,34 @@ public class AddStrategyImageActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) {
             return;
         }
 
         if (requestCode == PickConfig.PICK_REQUEST_CODE) {
+
             if (FROM.equals("") || FROM_EDIT) {
+                final List<String> _LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        for (String path : _LIST_IMG) {
+                            rotateImage(path);
+                        }
+                    }
+                }).start();
                 if (FROM_EDIT) {
-                    StrategyEditActivity.LIST_IMG.addAll(data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST));
+//                    StrategyEditActivity.LIST_IMG.addAll(data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST));
+                    StrategyEditActivity.LIST_IMG.addAll(_LIST_IMG);
 //                    AddStrategyImageActivity.this.finish();
                     tvSelectedText.setVisibility(View.VISIBLE);
                     imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, StrategyEditActivity.LIST_IMG);
                     rvPhotos.setAdapter(imageAdapter);
                 } else {
-                    AddStrategyActivity.LIST_IMG.addAll(data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST));
+                    AddStrategyActivity.LIST_IMG.addAll(_LIST_IMG);
 //                    AddStrategyImageActivity.this.finish();
                     imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, AddStrategyActivity.LIST_IMG);
                     rvPhotos.setAdapter(imageAdapter);
@@ -302,9 +324,16 @@ public class AddStrategyImageActivity extends AppCompatActivity {
 
                 imageAdapter.notifyDataSetChanged();
             } else {
-                List<String> _LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
+                final List<String> _LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
                 if (_LIST_IMG.size() > 0) {
-                    addHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _LIST_IMG.get(0), HOPE_ELEMENT_ID, "image");
+                    // addHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _LIST_IMG.get(0), HOPE_ELEMENT_ID, "image");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            rotateImage(_LIST_IMG.get(0));
+                        }
+                    }).start();
+
                 }
             }
         }
@@ -340,27 +369,99 @@ public class AddStrategyImageActivity extends AppCompatActivity {
                 String _Path = Constant.APP_MEDIA_PATH + File.separator + "IMAGES" + File.separator + name;
 
                 Log.d("::::::: ", _Path);
-                if (FROM.equals("") || FROM_EDIT) {
-                    if (FROM_EDIT) {
-                        StrategyEditActivity.LIST_IMG.add(_Path);
-                        tvSelectedText.setVisibility(View.VISIBLE);
-                        imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, StrategyEditActivity.LIST_IMG);
-                        rvPhotos.setAdapter(imageAdapter);
-//                        AddStrategyImageActivity.this.finish();
-                    } else {
-                        AddStrategyActivity.LIST_IMG.add(_Path);
-                        imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, AddStrategyActivity.LIST_IMG);
-                        rvPhotos.setAdapter(imageAdapter);
-//                        AddStrategyImageActivity.this.finish();
-                    }
-                    imageAdapter.notifyDataSetChanged();
-                } else {
-                    addHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _Path, HOPE_ELEMENT_ID, "image");
-                }
 
+                rotateImage(_Path);
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void rotateImage(final String FILE_PATH) {
+        try {
+            File f = new File(FILE_PATH);
+
+            int angle = 0;
+            ExifInterface exif = new ExifInterface(FILE_PATH);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 2;
+
+            Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(f),
+                    null, options);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    angle = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    angle = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    angle = 270;
+                    break;
+                case ExifInterface.ORIENTATION_NORMAL:
+                default:
+                    break;
+            }
+
+            Matrix matrix = new Matrix();
+            matrix.postRotate(angle);
+            Bitmap _tmpBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix,
+                    true);
+
+            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            _tmpBitmap.compress(Bitmap.CompressFormat.PNG, 100,
+                    outputStream);
+
+            new AsyncTask<Void, Void, Void>() {
+
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(FILE_PATH);
+                        fos.write(outputStream.toByteArray());
+                        fos.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    if (FROM.equals("") || FROM_EDIT) {
+                        if (FROM_EDIT) {
+                            StrategyEditActivity.LIST_IMG.add(FILE_PATH);
+                            tvSelectedText.setVisibility(View.VISIBLE);
+                            imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, StrategyEditActivity.LIST_IMG);
+                            rvPhotos.setAdapter(imageAdapter);
+//                        AddStrategyImageActivity.this.finish();
+                        } else {
+                            AddStrategyActivity.LIST_IMG.add(FILE_PATH);
+                            imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, AddStrategyActivity.LIST_IMG);
+                            rvPhotos.setAdapter(imageAdapter);
+//                        AddStrategyImageActivity.this.finish();
+                        }
+                        imageAdapter.notifyDataSetChanged();
+                    } else {
+                        addHopeBoxImageElement(HOPE_TITLE, HOPE_ID, FILE_PATH, HOPE_ELEMENT_ID, "image");
+                    }
+                }
+            }.execute();
+
+
+        } catch (IOException e) {
+            Log.w("TAG", "-- Error in setting image");
+        } catch (OutOfMemoryError oom) {
+            Log.w("TAG", "-- OOM Error in setting image");
         }
     }
 

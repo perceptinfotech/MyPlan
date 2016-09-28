@@ -61,8 +61,8 @@
             android:layout_centerVertical="true"
             android:visibility="gone"/>
 
-        <include layout="@layout/lay_help_info"/>
     </RelativeLayout>
 
+    <include layout="@layout/lay_help_info"/>
 
 </android.support.design.widget.CoordinatorLayout>

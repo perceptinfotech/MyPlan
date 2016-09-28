@@ -59,7 +59,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
     private Map<Integer, List<CustomEvent>> eventMap;
     private ImageView IMG_VSAD, IMG_SAD, IMG_OK, IMG_HAPPY, IMG_VHAPPY;
     private String STR_NOTE = "";
-    private List<Mood> LIST_MOOD;
+    private List<Mood> LIST_MOOD, LIST_MOOD_TMP;
     private Button BTN_SEEALLNOTE;
     private ProgressBar PB;
 
@@ -241,11 +241,59 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                         LIST_MOOD = gson.fromJson(response.getJSONArray(Constant.DATA)
                                 .toString(), new TypeToken<List<Mood>>() {
                         }.getType());
+
+//                        Collections.sort(LIST_MOOD, new Comparator<Mood>() {
+//                            @Override
+//                            public int compare(Mood o1, Mood o2) {
+//                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                                try {
+//                                    Date date = format.parse(o1.getMOOD_DATE());
+//                                    Date date2 = format.parse(o2.getMOOD_DATE());
+//                                    return date.compareTo(date2);
+//                                } catch (ParseException e) {
+//                                    e.printStackTrace();
+//                                }
+//                                return 0;
+//
+//                            }
+//                        });
+//                        LIST_MOOD = new ArrayList<Mood>();
+//                        for (int i = 0; i < LIST_MOOD_TMP.size(); i++) {
+//                            Mood _obj = LIST_MOOD_TMP.get(i);
+//                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                            Date date = format.parse(_obj.getMOOD_DATE());
+//                            Calendar cal = Calendar.getInstance();
+//                            cal.setTime(date);
+//                            String strDate = cal.get(Calendar.YEAR) + "-" +
+//                                    cal.get(Calendar.MONTH) + "-" + cal.get(Calendar.DAY_OF_MONTH);
+//
+//                            for (int j = i + 1; j < LIST_MOOD_TMP.size(); j++) {
+//
+//                                Date date1 = format.parse(LIST_MOOD_TMP.get(j).getMOOD_DATE());
+//                                Calendar cal1 = Calendar.getInstance();
+//                                cal.setTime(date1);
+//                                String strDate1 = cal1.get(Calendar.YEAR) + "-" +
+//                                        cal1.get(Calendar.MONTH) + "-" + cal1.get(Calendar.DAY_OF_MONTH);
+//
+//                                if (strDate.contains(strDate1)) {
+//                                    _obj.setMEASUREMENT(_obj.getMEASUREMENT() + ","
+//                                            + LIST_MOOD_TMP.get(j).getMEASUREMENT());
+//                                    _obj.setNOTE(_obj.getNOTE() + ","
+//                                            + LIST_MOOD_TMP.get(j).getNOTE());
+//                                    LIST_MOOD_TMP.remove(j);
+//                                    break;
+//                                }
+//                            }
+//                            LIST_MOOD.add(_obj);
+//                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
                     }
-
+                    Log.i("Mood::::", new Gson().toJson(LIST_MOOD));
                     for (Mood _obj : LIST_MOOD) {
+
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         try {
                             Date date = format.parse(_obj.getMOOD_DATE());
@@ -258,26 +306,21 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                                 switch (_obj.getMEASUREMENT()) {
                                     case "1":
                                         colorLst.add(new CustomEvent(R.color.veryhappy));
-                                        eventMap.put(_day, colorLst);
-                                        eventMap.put(_day, colorLst);
                                         break;
                                     case "2":
                                         colorLst.add(new CustomEvent(R.color.happy));
-                                        eventMap.put(_day, colorLst);
                                         break;
                                     case "3":
                                         colorLst.add(new CustomEvent(R.color.ok));
-                                        eventMap.put(_day, colorLst);
                                         break;
                                     case "4":
                                         colorLst.add(new CustomEvent(R.color.sad));
-                                        eventMap.put(_day, colorLst);
                                         break;
                                     case "5":
                                         colorLst.add(new CustomEvent(R.color.verysad));
-                                        eventMap.put(_day, colorLst);
                                         break;
                                 }
+                                eventMap.put(_day, colorLst);
                             }
 
                         } catch (ParseException e) {

@@ -50,6 +50,8 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.9'
+    compile 'com.theartofdev.edmodo:android-image-cropper:2.3.0'
+    compile 'im.ene.lab:flvv:1.0.0'
     testCompile 'junit:junit:4.12'
     compile project(':ffmpeg4android_lib')
     compile files('libs/mint-5.1.0.jar')

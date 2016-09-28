@@ -124,7 +124,7 @@ public class GeneralUtils {
 		else return false;
 	}
 	
-	@TargetApi(23) 
+	@TargetApi(23)
 	public static void checkForPermissionsMAndAbove(Activity act, boolean isBlocking) {
 		Log.i(Prefs.TAG, "checkForPermissions() called");
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -169,7 +169,7 @@ public class GeneralUtils {
 		}
 
     }
-    
+
 	
 	public static long getVKLogSizeRandomAccess(String vkLogpath) {
 		RandomAccessFile f = null;

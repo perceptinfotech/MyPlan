@@ -1,6 +1,7 @@
 package percept.myplan.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,8 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
-
-import org.apache.http.util.TextUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,8 +108,11 @@ public class StrategyContactAdapter extends BaseAdapter implements
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-
-        holder.TV_CONTACTNAME.setText(LIST_CONTACT.get(position).getFirst_name());
+        if (TextUtils.isEmpty(LIST_CONTACT.get(position).getFirst_name()))
+            holder.TV_CONTACTNAME.setText(LIST_CONTACT.get(position).getPhone());
+        else
+            holder.TV_CONTACTNAME.setText(LIST_CONTACT.get(position).getFirst_name()
+                    + " " + LIST_CONTACT.get(position).getLast_name());
 
         if (LIST_CONTACT.get(position).isSelected()) {
             holder.IMG_CHK.setImageResource(R.drawable.tick);
@@ -138,8 +140,7 @@ public class StrategyContactAdapter extends BaseAdapter implements
         if (!TextUtils.isEmpty(LIST_CONTACT.get(position).getFirst_name())) {
             CharSequence headerChar = LIST_CONTACT.get(position).getFirst_name().subSequence(0, 1);
             holder.text.setText(headerChar);
-        }
-        else  holder.text.setText("#");
+        } else holder.text.setText("#");
 
         return convertView;
     }

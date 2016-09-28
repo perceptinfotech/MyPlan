@@ -78,9 +78,12 @@ public class SidasActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         GetSida();
-
-
     }
 
     private void GetSida() {

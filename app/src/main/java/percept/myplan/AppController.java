@@ -10,7 +10,6 @@ import com.android.volley.toolbox.Volley;
 import com.splunk.mint.Mint;
 
 import percept.myplan.Global.LruBitmapCache;
-import percept.myplan.toro.Toro;
 
 
 /**
@@ -34,7 +33,6 @@ public class AppController extends Application {
         super.onCreate();
         mInstance = this;
 
-        Toro.init(this);
         Mint.initAndStartSession(this, "390c5614");
     }
 

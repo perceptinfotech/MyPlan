@@ -34,7 +34,6 @@ import percept.myplan.Interfaces.VolleyResponseListener;
 import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
 import percept.myplan.adapters.Basic3Adapter;
-import percept.myplan.toro.Toro;
 
 public class HopeDetailsActivity extends AppCompatActivity {
     public static boolean GET_HOPE_DETAILS = false;
@@ -51,9 +50,6 @@ public class HopeDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hope_details);
-        Toro.attach(this);
-
-        Toro.setStrategy(Toro.Strategies.MOST_VISIBLE_TOP_DOWN);
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -79,7 +75,6 @@ public class HopeDetailsActivity extends AppCompatActivity {
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         PB = (ProgressBar) findViewById(R.id.pbgetHopeDetail);
-        Toro.register(mRecyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(HopeDetailsActivity.this);
         mRecyclerView.setLayoutManager(layoutManager);
 //        if (layoutManager instanceof LinearLayoutManager) {
@@ -145,15 +140,11 @@ public class HopeDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Toro.detach(this);
-        Toro.unregister(mRecyclerView);
         super.onDestroy();
     }
 
     @Override
     protected void onPause() {
-        Toro.detach(this);
-        Toro.unregister(mRecyclerView);
         super.onPause();
 
     }

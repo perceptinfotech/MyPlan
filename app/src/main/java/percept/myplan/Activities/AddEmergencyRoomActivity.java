@@ -71,6 +71,7 @@ import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.POJO.NearestEmergencyRoom;
 import percept.myplan.R;
 import percept.myplan.adapters.PlacesAutocompleteAdapter;
+import percept.myplan.fragments.fragmentNearestEmergencyRoom;
 
 /**
  * Created by percept on 3/9/16.
@@ -349,6 +350,7 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
                 } else
                     Toast.makeText(AddEmergencyRoomActivity.this, getString(R.string.added_emergency_room), Toast.LENGTH_LONG).show();
                 AddEmergencyRoomActivity.this.finish();
+                fragmentNearestEmergencyRoom.RELOAD_MAP = true;
             }
         });
     }
@@ -449,8 +451,7 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
                         REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
 
                 return;
-            }
-            else
+            } else
                 OpenDialog();
         } else {
             OpenDialog();
