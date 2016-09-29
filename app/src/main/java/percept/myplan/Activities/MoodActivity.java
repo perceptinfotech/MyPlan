@@ -238,11 +238,11 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
 //                            showMessageOK(response.getString(Constant.DATA));
                             return;
                         }
-                        LIST_MOOD = gson.fromJson(response.getJSONArray(Constant.DATA)
+                        LIST_MOOD_TMP = gson.fromJson(response.getJSONArray(Constant.DATA)
                                 .toString(), new TypeToken<List<Mood>>() {
                         }.getType());
 
-//                        Collections.sort(LIST_MOOD, new Comparator<Mood>() {
+//                        Collections.sort(LIST_MOOD_TMP, new Comparator<Mood>() {
 //                            @Override
 //                            public int compare(Mood o1, Mood o2) {
 //                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -257,40 +257,46 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
 //
 //                            }
 //                        });
-//                        LIST_MOOD = new ArrayList<Mood>();
-//                        for (int i = 0; i < LIST_MOOD_TMP.size(); i++) {
-//                            Mood _obj = LIST_MOOD_TMP.get(i);
-//                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//                            Date date = format.parse(_obj.getMOOD_DATE());
-//                            Calendar cal = Calendar.getInstance();
-//                            cal.setTime(date);
-//                            String strDate = cal.get(Calendar.YEAR) + "-" +
-//                                    cal.get(Calendar.MONTH) + "-" + cal.get(Calendar.DAY_OF_MONTH);
-//
-//                            for (int j = i + 1; j < LIST_MOOD_TMP.size(); j++) {
-//
-//                                Date date1 = format.parse(LIST_MOOD_TMP.get(j).getMOOD_DATE());
-//                                Calendar cal1 = Calendar.getInstance();
-//                                cal.setTime(date1);
-//                                String strDate1 = cal1.get(Calendar.YEAR) + "-" +
-//                                        cal1.get(Calendar.MONTH) + "-" + cal1.get(Calendar.DAY_OF_MONTH);
-//
-//                                if (strDate.contains(strDate1)) {
-//                                    _obj.setMEASUREMENT(_obj.getMEASUREMENT() + ","
-//                                            + LIST_MOOD_TMP.get(j).getMEASUREMENT());
-//                                    _obj.setNOTE(_obj.getNOTE() + ","
-//                                            + LIST_MOOD_TMP.get(j).getNOTE());
-//                                    LIST_MOOD_TMP.remove(j);
-//                                    break;
-//                                }
-//                            }
-//                            LIST_MOOD.add(_obj);
-//                        }
+                        LIST_MOOD = new ArrayList<Mood>();
+                        int i = 0;
+                        while (i < LIST_MOOD_TMP.size()) {
+                            Mood _obj = LIST_MOOD_TMP.get(i);
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            Date date = format.parse(_obj.getMOOD_DATE());
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTime(date);
+                            String strDate = cal.get(Calendar.YEAR) + "-" +
+                                    cal.get(Calendar.MONTH) + "-" + cal.get(Calendar.DAY_OF_MONTH);
+                            boolean flag = false;
+                            for (int j = i + 1; j < LIST_MOOD_TMP.size(); j++) {
+                                Date date1 = format.parse(LIST_MOOD_TMP.get(j).getMOOD_DATE());
+                                Calendar cal1 = Calendar.getInstance();
+                                cal1.setTime(date1);
+                                String strDate1 = cal1.get(Calendar.YEAR) + "-" +
+                                        cal1.get(Calendar.MONTH) + "-" + cal1.get(Calendar.DAY_OF_MONTH);
+
+                                if (strDate.contains(strDate1)) {
+                                    _obj.setMEASUREMENT(_obj.getMEASUREMENT() + "|"
+                                            + LIST_MOOD_TMP.get(j).getMEASUREMENT());
+                                    if (!TextUtils.isEmpty(LIST_MOOD_TMP.get(j).getNOTE()))
+                                        _obj.setNOTE(_obj.getNOTE() + "|"
+                                                + LIST_MOOD_TMP.get(j).getNOTE());
+                                    LIST_MOOD_TMP.remove(j);
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if (!flag) {
+                                i++;
+                                LIST_MOOD.add(_obj);
+                            }
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
-//                    } catch (ParseException e) {
-//                        e.printStackTrace();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
+
                     Log.i("Mood::::", new Gson().toJson(LIST_MOOD));
                     for (Mood _obj : LIST_MOOD) {
 
@@ -303,21 +309,34 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                             int _Month = cal.get(Calendar.MONTH);
                             List<CustomEvent> colorLst = new ArrayList<>();
                             if (_Month == calendarView.getCurrentMonth()) {
-                                switch (_obj.getMEASUREMENT()) {
-                                    case "1":
-                                        colorLst.add(new CustomEvent(R.color.veryhappy));
-                                        break;
-                                    case "2":
-                                        colorLst.add(new CustomEvent(R.color.happy));
-                                        break;
-                                    case "3":
-                                        colorLst.add(new CustomEvent(R.color.ok));
-                                        break;
-                                    case "4":
-                                        colorLst.add(new CustomEvent(R.color.sad));
-                                        break;
-                                    case "5":
-                                        colorLst.add(new CustomEvent(R.color.verysad));
+                                String measurement[] = TextUtils.split(_obj.getMEASUREMENT(), "|");
+                                int count = 0;
+                                for (String strMeasurement : measurement) {
+
+                                    switch (strMeasurement) {
+                                        case "1":
+                                            ++count;
+                                            colorLst.add(new CustomEvent(R.color.veryhappy));
+                                            break;
+                                        case "2":
+                                            ++count;
+                                            colorLst.add(new CustomEvent(R.color.happy));
+                                            break;
+                                        case "3":
+                                            ++count;
+                                            colorLst.add(new CustomEvent(R.color.ok));
+                                            break;
+                                        case "4":
+                                            ++count;
+                                            colorLst.add(new CustomEvent(R.color.sad));
+                                            break;
+                                        case "5":
+                                            ++count;
+                                            colorLst.add(new CustomEvent(R.color.verysad));
+                                            break;
+                                    }
+
+                                    if (count > 1)
                                         break;
                                 }
                                 eventMap.put(_day, colorLst);
@@ -600,7 +619,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
             setContentView(R.layout.lay_note);
 
             TV_NOTE = (TextView) findViewById(R.id.tvNote);
-            TV_NOTE.setText(NOTE);
+            TV_NOTE.setText(NOTE.replace("|", "\n"));
         }
     }
 }

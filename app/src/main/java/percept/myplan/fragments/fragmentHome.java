@@ -407,7 +407,7 @@ public class fragmentHome extends Fragment {
                     Uri selectedImage = data.getData();
                     CropImage.activity(selectedImage)
                             .setGuidelines(CropImageView.Guidelines.ON)
-                            .start(getActivity(), this);
+                            .start(getContext(), this);
 //
 //                String[] filePath = {MediaStore.Images.Media.DATA};
 //                Cursor c = getActivity().getContentResolver().query(selectedImage, filePath,
@@ -424,7 +424,7 @@ public class fragmentHome extends Fragment {
                 case REQ_TAKE_PICTURE:
                     CropImage.activity(IMG_URI)
                             .setGuidelines(CropImageView.Guidelines.ON)
-                            .start(getActivity(), this);
+                            .start(getContext(), this);
 //                try {
 //
 //                    Calendar cal = Calendar.getInstance();
@@ -476,8 +476,9 @@ public class fragmentHome extends Fragment {
                 case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
                     CropImage.ActivityResult result = CropImage.getActivityResult(data);
                     Uri resultUri = result.getUri();
-                    FILE_PATH = new File(resultUri.toString()).getPath();
-                    Picasso.with(getActivity()).load(resultUri).into(IMG_USERPROFILE);
+
+                    FILE_PATH =resultUri.getPath();
+                    Picasso.with(getActivity()).load(new File(FILE_PATH)).into(IMG_USERPROFILE);
                     tvCaptureImg.setVisibility(View.INVISIBLE);
                     SaveProfile();
                     break;
@@ -605,7 +606,7 @@ public class fragmentHome extends Fragment {
         PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
         if (!TextUtils.isEmpty(FILE_PATH))
-            params.put("profile_image", decodeFile(FILE_PATH, 800, 800));
+            params.put("profile_image", FILE_PATH);
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         params.put("first_name", utils.getPreference(Constant.PREF_PROFILE_FNAME));
@@ -672,76 +673,76 @@ public class fragmentHome extends Fragment {
         }
     }
 
-    private void rotateImage() {
-        try {
-            File f = new File(FILE_PATH);
-
-            int angle = 0;
-            ExifInterface exif = new ExifInterface(FILE_PATH);
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_UNDEFINED);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 2;
-
-            Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(f),
-                    null, options);
-
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    angle = 90;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    angle = 180;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    angle = 270;
-                    break;
-                case ExifInterface.ORIENTATION_NORMAL:
-                default:
-                    break;
-            }
-
-            Matrix matrix = new Matrix();
-            matrix.postRotate(angle);
-            _tmpBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix,
-                    true);
-
-            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            _tmpBitmap.compress(Bitmap.CompressFormat.PNG, 100,
-                    outputStream);
-
-            new AsyncTask<Void, Void, Void>() {
-
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    FileOutputStream fos = null;
-                    try {
-                        fos = new FileOutputStream(FILE_PATH);
-                        fos.write(outputStream.toByteArray());
-                        fos.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    super.onPostExecute(aVoid);
-                    SaveProfile();
-                }
-            }.execute();
-
-
-        } catch (IOException e) {
-            Log.w("TAG", "-- Error in setting image");
-        } catch (OutOfMemoryError oom) {
-            Log.w("TAG", "-- OOM Error in setting image");
-        }
-    }
+//    private void rotateImage() {
+//        try {
+//            File f = new File(FILE_PATH);
+//
+//            int angle = 0;
+//            ExifInterface exif = new ExifInterface(FILE_PATH);
+//            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+//                    ExifInterface.ORIENTATION_UNDEFINED);
+//            BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inSampleSize = 2;
+//
+//            Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(f),
+//                    null, options);
+//
+//            switch (orientation) {
+//                case ExifInterface.ORIENTATION_ROTATE_90:
+//                    angle = 90;
+//                    break;
+//                case ExifInterface.ORIENTATION_ROTATE_180:
+//                    angle = 180;
+//                    break;
+//                case ExifInterface.ORIENTATION_ROTATE_270:
+//                    angle = 270;
+//                    break;
+//                case ExifInterface.ORIENTATION_NORMAL:
+//                default:
+//                    break;
+//            }
+//
+//            Matrix matrix = new Matrix();
+//            matrix.postRotate(angle);
+//            _tmpBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix,
+//                    true);
+//
+//            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//            _tmpBitmap.compress(Bitmap.CompressFormat.PNG, 100,
+//                    outputStream);
+//
+//            new AsyncTask<Void, Void, Void>() {
+//
+//                @Override
+//                protected Void doInBackground(Void... voids) {
+//                    FileOutputStream fos = null;
+//                    try {
+//                        fos = new FileOutputStream(FILE_PATH);
+//                        fos.write(outputStream.toByteArray());
+//                        fos.close();
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//
+//                    return null;
+//                }
+//
+//                @Override
+//                protected void onPostExecute(Void aVoid) {
+//                    super.onPostExecute(aVoid);
+//                    SaveProfile();
+//                }
+//            }.execute();
+//
+//
+//        } catch (IOException e) {
+//            Log.w("TAG", "-- Error in setting image");
+//        } catch (OutOfMemoryError oom) {
+//            Log.w("TAG", "-- OOM Error in setting image");
+//        }
+//    }
 
 }

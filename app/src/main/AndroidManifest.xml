@@ -154,6 +154,7 @@
             android:name=".Activities.SettingProfileActivity"
             android:label="@string/title_activity_profile"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".Activities.SettingMoodRatingsActivity"

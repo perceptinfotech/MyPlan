@@ -359,7 +359,7 @@ public class SignUpActivity extends AppCompatActivity {
         HashMap<String, String> params = new HashMap<>();
         params.put(Constant.URL, getResources().getString(R.string.server_url) + ".register");
         if (!FILE_PATH.equals("")) {
-            params.put("profile_image", decodeFile(FILE_PATH, 800, 800));
+            params.put("profile_image", FILE_PATH);
         }
         params.put(Constant.FIRST_NAME, EDT_FIRSTNAME.getText().toString().trim());
         params.put(Constant.LAST_NAME, EDT_LASTNAME.getText().toString().trim());
@@ -529,7 +529,7 @@ public class SignUpActivity extends AppCompatActivity {
                 case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
                     CropImage.ActivityResult result = CropImage.getActivityResult(data);
                     Uri resultUri = result.getUri();
-                    FILE_PATH = new File(resultUri.toString()).getPath();
+                    FILE_PATH = resultUri.getPath();
                     Picasso.with(SignUpActivity.this).load(resultUri).into(IMG_USER);
                     TV_CAPTUREIMG.setVisibility(View.INVISIBLE);
                     break;

@@ -1,7 +1,9 @@
 package percept.myplan.Activities;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -12,16 +14,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,14 +44,57 @@ import percept.myplan.R;
 
 public class SettingProfileActivity extends AppCompatActivity {
 
+    private static final int CAMERA_CROP_RESULT = 200;
+    private final int CHANGE_PASSWORD_REQUEST_CODE = 1;
     private EditText EDT_FIRSTNAME, EDT_LASTNAME, EDT_EMAIL;
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
     private LinearLayout LL_PASSWORD;
-    private int CHANGE_PASSWORD_REQUEST_CODE = 1;
     private TextView TV_PASSWORD;
     private Utils utils;
     private String strOldPassword;
+    private ImageView ivProfileCover;
+    private TextView tvEditProfileCover, tvDeleteProfileCover;
+    private File file = null;
+    private Target target = new Target() {
+
+        @Override
+        public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    String fileName = "profile_cover_photo" + Constant.PROFILE_IMG_LINK.substring(Constant.PROFILE_IMG_LINK.lastIndexOf(".") + 1);
+                    file = new File(Constant.APP_MEDIA_PATH + File.separator + "IMAGES" + File.separator + fileName);
+                    try {
+                        if (file.exists())
+                            file.delete();
+                        file.createNewFile();
+                        FileOutputStream ostream = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
+
+                        ostream.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            ivProfileCover.setImageBitmap(bitmap);
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+            if (placeHolderDrawable != null) {
+            }
+        }
+    };
+    private String FILE_PATH;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +117,9 @@ public class SettingProfileActivity extends AppCompatActivity {
         EDT_LASTNAME = (EditText) findViewById(R.id.edtProfileLastName);
         TV_PASSWORD = (TextView) findViewById(R.id.tvPassword);
         EDT_EMAIL = (EditText) findViewById(R.id.edtProfileEmail);
+        ivProfileCover = (ImageView) findViewById(R.id.ivProfileCover);
+        tvEditProfileCover = (TextView) findViewById(R.id.tvEditProfileCover);
+        tvDeleteProfileCover = (TextView) findViewById(R.id.tvDeleteProfileCover);
 
 
         LL_PASSWORD.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +136,19 @@ public class SettingProfileActivity extends AppCompatActivity {
         EDT_EMAIL.setText(utils.getPreference(Constant.PREF_PROFILE_EMAIL));
         TV_PASSWORD.setText(utils.getPreference(Constant.PASSWORD));
         strOldPassword = utils.getPreference(Constant.PASSWORD);
+        Picasso.with(SettingProfileActivity.this).load(Constant.PROFILE_IMG_LINK).into(target);
+
+        tvEditProfileCover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (file != null)
+                    CropImage.activity(Uri.fromFile(file))
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .start(SettingProfileActivity.this);
+            }
+        });
+
+
     }
 
     @Override
@@ -138,6 +206,7 @@ public class SettingProfileActivity extends AppCompatActivity {
                             EDT_EMAIL.setText(utils.getPreference(Constant.PREF_PROFILE_EMAIL));
                             TV_PASSWORD.setText(utils.getPreference(Constant.PASSWORD));
                             strOldPassword = utils.getPreference(Constant.PASSWORD);
+                            Picasso.with(SettingProfileActivity.this).load(Constant.PROFILE_IMG_LINK).into(target);
                             PB.setVisibility(View.GONE);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -176,6 +245,8 @@ public class SettingProfileActivity extends AppCompatActivity {
         params.put("oldpass", strOldPassword);
         params.put("phone", "");
         params.put("dob", "");
+        if (FILE_PATH != null)
+            params.put("profile_image", FILE_PATH);
 
 
         new MultiPartParsing(SettingProfileActivity.this, params, General.PHPServices.PROFILE, new AsyncTaskCompletedListener() {
@@ -191,6 +262,7 @@ public class SettingProfileActivity extends AppCompatActivity {
                         Toast.makeText(SettingProfileActivity.this, "Profile saved Successfully", Toast.LENGTH_SHORT).show();
                     } else
                         Toast.makeText(SettingProfileActivity.this, "Profile saved Failed", Toast.LENGTH_SHORT).show();
+                    SettingProfileActivity.this.finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -206,11 +278,23 @@ public class SettingProfileActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CHANGE_PASSWORD_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if (data != null && data.hasExtra("change_password")) {
-                strOldPassword = data.getStringExtra("old_password");
-                TV_PASSWORD.setText(data.getStringExtra("change_password"));
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case CHANGE_PASSWORD_REQUEST_CODE:
+                    if (data != null && data.hasExtra("change_password")) {
+                        strOldPassword = data.getStringExtra("old_password");
+                        TV_PASSWORD.setText(data.getStringExtra("change_password"));
+                    }
+                    break;
+                case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                    CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                    Uri resultUri = result.getUri();
+                    FILE_PATH = resultUri.getPath();
+                    Picasso.with(SettingProfileActivity.this).load(resultUri).into(ivProfileCover);
+                    break;
             }
         }
+
     }
+
 }
