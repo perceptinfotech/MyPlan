@@ -3,6 +3,7 @@ package percept.myplan.adapters;
 import android.media.MediaPlayer;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import im.ene.lab.flvv.FloppyVideoView;
@@ -24,14 +25,16 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
             ScaleType.FIT_CENTER, ScaleType.FIT_XY, ScaleType.FIT_START, ScaleType.FIT_END,
             ScaleType.CENTER, ScaleType.CENTER_CROP, ScaleType.CENTER_INSIDE
     };
+    public FloppyVideoView videoView;
     int scaleTypeIndex = 0;
     int videoIndex = 0;
     private HopeDetail video;
-    public FloppyVideoView videoView;
+    public LinearLayout llVideoView;
 
     public Basic3VideoViewHolder(View itemView) {
         super(itemView);
 
+        llVideoView = (LinearLayout) itemView.findViewById(R.id.llVideoView);
         dummyView = (TextView) itemView.findViewById(R.id.text);
         videoView = (FloppyVideoView) itemView.findViewById(R.id.video);
         tvCardVideoEdit = (TextView) itemView.findViewById(R.id.tvCardVideoEdit);
@@ -63,7 +66,28 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
                 mediaPlayer.setLooping(true);
             }
         });
+        videoView.setTag(position);
+        tvCardVideoEdit.setTag(position);
+        dummyView.setTag(position);
+        llVideoView.setTag(position);
     }
 
+    @Override
+    public void setOnItemClickListener(View.OnClickListener listener) {
+        super.setOnItemClickListener(listener);
+        videoView.setOnClickListener(listener);
+        tvCardVideoEdit.setOnClickListener(listener);
+    }
+
+    @Override
+    public void setOnItemLongClickListener(final View.OnLongClickListener listener) {
+        super.setOnItemLongClickListener(listener);
+        videoView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                return listener.onLongClick(view);
+            }
+        });
+    }
 
 }

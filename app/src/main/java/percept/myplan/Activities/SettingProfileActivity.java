@@ -1,14 +1,22 @@
 package percept.myplan.Activities;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,9 +40,13 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import percept.myplan.Dialogs.dialogSelectPic;
+import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
@@ -45,7 +58,10 @@ import percept.myplan.R;
 public class SettingProfileActivity extends AppCompatActivity {
 
     private static final int CAMERA_CROP_RESULT = 200;
+    private static final int REQ_TAKE_PICTURE = 33;
+    private static final int TAKE_PICTURE_GALLERY = 34;
     private final int CHANGE_PASSWORD_REQUEST_CODE = 1;
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
     private EditText EDT_FIRSTNAME, EDT_LASTNAME, EDT_EMAIL;
     private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
@@ -54,8 +70,9 @@ public class SettingProfileActivity extends AppCompatActivity {
     private Utils utils;
     private String strOldPassword;
     private ImageView ivProfileCover;
-    private TextView tvEditProfileCover, tvDeleteProfileCover;
+    private TextView tvEditProfileCover, tvDeleteProfileCover, tvCaptureImg;
     private File file = null;
+    private RelativeLayout rlCoverImage;
     private Target target = new Target() {
 
         @Override
@@ -94,6 +111,7 @@ public class SettingProfileActivity extends AppCompatActivity {
         }
     };
     private String FILE_PATH;
+    private Uri IMG_URI;
 
 
     @Override
@@ -120,6 +138,8 @@ public class SettingProfileActivity extends AppCompatActivity {
         ivProfileCover = (ImageView) findViewById(R.id.ivProfileCover);
         tvEditProfileCover = (TextView) findViewById(R.id.tvEditProfileCover);
         tvDeleteProfileCover = (TextView) findViewById(R.id.tvDeleteProfileCover);
+        tvCaptureImg = (TextView) findViewById(R.id.tvCaptureImg);
+        rlCoverImage = (RelativeLayout) findViewById(R.id.rlCoverImage);
 
 
         LL_PASSWORD.setOnClickListener(new View.OnClickListener() {
@@ -136,8 +156,20 @@ public class SettingProfileActivity extends AppCompatActivity {
         EDT_EMAIL.setText(utils.getPreference(Constant.PREF_PROFILE_EMAIL));
         TV_PASSWORD.setText(utils.getPreference(Constant.PASSWORD));
         strOldPassword = utils.getPreference(Constant.PASSWORD);
-        Picasso.with(SettingProfileActivity.this).load(Constant.PROFILE_IMG_LINK).into(target);
-
+        if (!TextUtils.isEmpty(Constant.PROFILE_IMG_LINK)) {
+            Picasso.with(SettingProfileActivity.this).load(Constant.PROFILE_IMG_LINK).into(target);
+            tvCaptureImg.setVisibility(View.GONE);
+        } else {
+            tvCaptureImg.setVisibility(View.VISIBLE);
+            tvEditProfileCover.setVisibility(View.GONE);
+            tvDeleteProfileCover.setVisibility(View.GONE);
+        }
+        rlCoverImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getPermission();
+            }
+        });
         tvEditProfileCover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -145,6 +177,52 @@ public class SettingProfileActivity extends AppCompatActivity {
                     CropImage.activity(Uri.fromFile(file))
                             .setGuidelines(CropImageView.Guidelines.ON)
                             .start(SettingProfileActivity.this);
+            }
+        });
+
+        tvDeleteProfileCover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogYesNoOption _dialog = new dialogYesNoOption(SettingProfileActivity.this, getString(R.string.delete_cover_photo)) {
+
+                    @Override
+                    public void onClickYes() {
+                        HashMap<String, String> params = new HashMap<>();
+                        params.put("sid", Constant.SID);
+                        params.put("sname", Constant.SNAME);
+                        try {
+                            new General().getJSONContentFromInternetService(SettingProfileActivity.this, General.PHPServices.DELETE_PROFILEMAGE, params, true, false, true, new VolleyResponseListener() {
+                                @Override
+                                public void onError(VolleyError message) {
+
+                                }
+
+                                @Override
+                                public void onResponse(JSONObject response) {
+
+                                    Constant.PROFILE_IMG_LINK = "";
+                                    tvCaptureImg.setVisibility(View.VISIBLE);
+                                    tvEditProfileCover.setVisibility(View.GONE);
+                                    tvDeleteProfileCover.setVisibility(View.GONE);
+                                    ivProfileCover.setVisibility(View.GONE);
+                                    dismiss();
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onClickNo() {
+                        dismiss();
+                    }
+                };
+                _dialog.setCancelable(false);
+                _dialog.setCanceledOnTouchOutside(false);
+                _dialog.show();
             }
         });
 
@@ -206,7 +284,16 @@ public class SettingProfileActivity extends AppCompatActivity {
                             EDT_EMAIL.setText(utils.getPreference(Constant.PREF_PROFILE_EMAIL));
                             TV_PASSWORD.setText(utils.getPreference(Constant.PASSWORD));
                             strOldPassword = utils.getPreference(Constant.PASSWORD);
-                            Picasso.with(SettingProfileActivity.this).load(Constant.PROFILE_IMG_LINK).into(target);
+                            if (!TextUtils.isEmpty(Constant.PROFILE_IMG_LINK)) {
+                                Picasso.with(SettingProfileActivity.this).load(Constant.PROFILE_IMG_LINK).into(target);
+                                tvEditProfileCover.setVisibility(View.VISIBLE);
+                                tvDeleteProfileCover.setVisibility(View.VISIBLE);
+                                tvCaptureImg.setVisibility(View.GONE);
+                            } else {
+                                tvCaptureImg.setVisibility(View.VISIBLE);
+                                tvEditProfileCover.setVisibility(View.GONE);
+                                tvDeleteProfileCover.setVisibility(View.GONE);
+                            }
                             PB.setVisibility(View.GONE);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -280,6 +367,19 @@ public class SettingProfileActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
+                case TAKE_PICTURE_GALLERY:
+                    Uri selectedImage = data.getData();
+
+                    CropImage.activity(selectedImage)
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .start(this);
+                    break;
+                case REQ_TAKE_PICTURE:
+
+                    CropImage.activity(IMG_URI)
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .start(this);
+                    break;
                 case CHANGE_PASSWORD_REQUEST_CODE:
                     if (data != null && data.hasExtra("change_password")) {
                         strOldPassword = data.getStringExtra("old_password");
@@ -290,11 +390,130 @@ public class SettingProfileActivity extends AppCompatActivity {
                     CropImage.ActivityResult result = CropImage.getActivityResult(data);
                     Uri resultUri = result.getUri();
                     FILE_PATH = resultUri.getPath();
+                    tvCaptureImg.setVisibility(View.GONE);
+                    ivProfileCover.setVisibility(View.VISIBLE);
                     Picasso.with(SettingProfileActivity.this).load(resultUri).into(ivProfileCover);
                     break;
             }
         }
 
+    }
+
+    private void getPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            List<String> permissionsNeeded = new ArrayList<String>();
+
+            final List<String> permissionsList = new ArrayList<String>();
+            if (!addPermission(permissionsList, Manifest.permission.CAMERA))
+                permissionsNeeded.add("Camera");
+            if (!addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                permissionsNeeded.add("Write Storage");
+            if (!addPermission(permissionsList, Manifest.permission.READ_EXTERNAL_STORAGE))
+                permissionsNeeded.add("Read Storage");
+
+            if (permissionsList.size() > 0) {
+                if (permissionsNeeded.size() > 0) {
+                    // Need Rationale
+                    String message = "You need to grant access to " + permissionsNeeded.get(0);
+                    for (int i = 1; i < permissionsNeeded.size(); i++)
+                        message = message + ", " + permissionsNeeded.get(i);
+                    showMessageOKCancel(message,
+                            new DialogInterface.OnClickListener() {
+                                @TargetApi(Build.VERSION_CODES.M)
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                                            REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+                                }
+                            });
+                    return;
+                }
+
+                requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                        REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+
+                return;
+            } else {
+                OpenDialog();
+            }
+
+        } else {
+            OpenDialog();
+        }
+    }
+
+    public void OpenDialog() {
+        dialogSelectPic _dialogDate = new dialogSelectPic(SettingProfileActivity.this) {
+            @Override
+            public void fromGallery() {
+                dismiss();
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto, TAKE_PICTURE_GALLERY);
+            }
+
+            @Override
+            public void fromCamera() {
+                dismiss();
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                IMG_URI = Uri.fromFile(Constant.getOutputMediaFile());
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, IMG_URI);
+                // start the image capture Intent
+                startActivityForResult(intent, REQ_TAKE_PICTURE);
+            }
+        };
+        _dialogDate.setCanceledOnTouchOutside(false);
+        _dialogDate.show();
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(SettingProfileActivity.this)
+                .setMessage(message)
+                .setPositiveButton(getString(R.string.ok), okListener)
+                .setNegativeButton(getString(R.string.cancel), null)
+                .create()
+                .show();
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean addPermission(List<String> permissionsList, String permission) {
+        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            permissionsList.add(permission);
+            // Check for Rationale Option
+            if (!shouldShowRequestPermissionRationale(permission))
+                return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
+                Map<String, Integer> perms = new HashMap<String, Integer>();
+                // Initial
+                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+                // Check for ACCESS_FINE_LOCATION
+                if (perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    // All Permissions Granted
+                    OpenDialog();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(SettingProfileActivity.this, "Some Permission is Denied", Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+            break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
 }

@@ -368,4 +368,5 @@
     <string name="notification_sidas">Remember to complete your Sidas test.</string>
     <string name="setting_off_location">Geotracking settings off please switch on setting for sharing your location.</string>
     <string name="cover_photo">Cover Photo</string>
+    <string name="delete_cover_photo">Are you sure you want to delete Cover Photo?</string>
 </resources>

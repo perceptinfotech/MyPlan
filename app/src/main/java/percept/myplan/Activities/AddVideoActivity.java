@@ -458,7 +458,7 @@ public class AddVideoActivity extends AppCompatActivity {
             //String[] complexCommand = {"ffmpeg", "-y" ,"-i", "/sdcard/videokit/in.mp4","-strict","experimental","-s", "160x120","-r","25", "-vcodec", "mpeg4", "-b", "150k", "-ab","48000", "-ac", "2", "-ar", "22050", "/sdcard/videokit/out.mp4"};
             ///////////////////////////////////////////////////////////////////////
 
-            commandStr = "ffmpeg -y -i " + paths[0] + " -strict experimental -c:v mpeg4 -r 30 -ab 48000 -ac 2 -ar 22050 -b 2097k " + _path;
+            commandStr = "ffmpeg -y -i " + paths[0] + " " + _path;
             Log.d(":::: Command", commandStr);
             LoadJNI vk = new LoadJNI();
             try {

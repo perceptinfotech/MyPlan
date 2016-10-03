@@ -66,7 +66,7 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
                 @Override
                 public void onClick(View view) {
                     // Do this for for videoView only.
-                    if (view == ((Basic3VideoViewHolder) viewHolder).videoView) {
+                    if (view == ((Basic3VideoViewHolder) viewHolder).llVideoView) {
                         hopeDetailsActivity.playMusicHopeElement((Integer) view.getTag());
 //                        // 1. Temporary disable the playback.
 //                        Toro.rest(true);
