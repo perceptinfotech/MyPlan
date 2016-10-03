@@ -197,6 +197,13 @@ public class HopeDetailsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void playVideoHopeElement(int position) {
+        Intent intent = new Intent(HopeDetailsActivity.this, FullscreenVideoActivity.class);
+        intent.putExtra("URL_MUSIC", LIST_HOPEDETAILS.get(position).getMEDIA());
+        intent.putExtra(Constant.DATA, LIST_HOPEDETAILS.get(position));
+        startActivity(intent);
+    }
+
     public void deleteHopeElement(int poition) {
         deletePosition = poition;
         params = new HashMap<String, String>();

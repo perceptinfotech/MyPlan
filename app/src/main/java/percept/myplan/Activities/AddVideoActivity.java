@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -23,9 +24,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.netcompss.ffmpeg4android.GeneralUtils;
 import com.netcompss.ffmpeg4android.Prefs;
@@ -73,6 +76,7 @@ public class AddVideoActivity extends AppCompatActivity {
     private Utils UTILS;
     private CoordinatorLayout REL_COORDINATE;
     private HopeDetail hopeDetail;
+    private VideoView vvPlayVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +103,8 @@ public class AddVideoActivity extends AppCompatActivity {
 
         UTILS = new Utils(AddVideoActivity.this);
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
+
+        vvPlayVideo = (VideoView) findViewById(R.id.vvPlayVideo);
 
         TV_CHOOSEVIDEO = (TextView) findViewById(R.id.tvChooseExistingVideo);
         TV_RECORDVIDEO = (TextView) findViewById(R.id.tvRecordVideo);
@@ -458,7 +464,7 @@ public class AddVideoActivity extends AppCompatActivity {
             //String[] complexCommand = {"ffmpeg", "-y" ,"-i", "/sdcard/videokit/in.mp4","-strict","experimental","-s", "160x120","-r","25", "-vcodec", "mpeg4", "-b", "150k", "-ab","48000", "-ac", "2", "-ar", "22050", "/sdcard/videokit/out.mp4"};
             ///////////////////////////////////////////////////////////////////////
 
-            commandStr = "ffmpeg -y -i " + paths[0] + " " + _path;
+            commandStr = "ffmpeg -y -i " + paths[0] + " -strict experimental " + _path;
             Log.d(":::: Command", commandStr);
             LoadJNI vk = new LoadJNI();
             try {
@@ -510,6 +516,16 @@ public class AddVideoActivity extends AppCompatActivity {
                     // copying vk.log (internal native log) to the sdcard folder
                     GeneralUtils.copyFileToFolder(vkLogPath, demoVideoFolder);
                     addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, HOPE_ELEMENT_ID, _path, "video");
+//                    vvPlayVideo.setVideoURI(Uri.parse(_path));
+//
+//
+//
+//                    vvPlayVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//                        @Override
+//                        public void onPrepared(MediaPlayer mediaPlayer) {
+//                            mediaPlayer.start();
+//                        }
+//                    });
                 }
             });
 
