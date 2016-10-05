@@ -299,31 +299,33 @@ public class AddStrategyImageActivity extends AppCompatActivity {
 
             if (FROM.equals("") || FROM_EDIT) {
                 final List<String> _LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
+                PB.setVisibility(View.VISIBLE);
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
 
-                        for (String path : _LIST_IMG) {
+                        for (String path : _LIST_IMG)
                             rotateImage(path);
-                        }
+
+
                     }
                 }).start();
-                if (FROM_EDIT) {
-//                    StrategyEditActivity.LIST_IMG.addAll(data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST));
-                    StrategyEditActivity.LIST_IMG.addAll(_LIST_IMG);
-//                    AddStrategyImageActivity.this.finish();
-                    tvSelectedText.setVisibility(View.VISIBLE);
-                    imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, StrategyEditActivity.LIST_IMG);
-                    rvPhotos.setAdapter(imageAdapter);
-                } else {
-                    AddStrategyActivity.LIST_IMG.addAll(_LIST_IMG);
-//                    AddStrategyImageActivity.this.finish();
-                    imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, AddStrategyActivity.LIST_IMG);
-                    rvPhotos.setAdapter(imageAdapter);
-                }
-
-
-                imageAdapter.notifyDataSetChanged();
+                PB.setVisibility(View.GONE);
+//                if (FROM_EDIT) {
+////                    StrategyEditActivity.LIST_IMG.addAll(data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST));
+//                    StrategyEditActivity.LIST_IMG.addAll(_LIST_IMG);
+////                    AddStrategyImageActivity.this.finish();
+//                    tvSelectedText.setVisibility(View.VISIBLE);
+//                    imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, StrategyEditActivity.LIST_IMG);
+//                    rvPhotos.setAdapter(imageAdapter);
+//                } else {
+//                    AddStrategyActivity.LIST_IMG.addAll(_LIST_IMG);
+////                    AddStrategyImageActivity.this.finish();
+//                    imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, AddStrategyActivity.LIST_IMG);
+//                    rvPhotos.setAdapter(imageAdapter);
+//                }
+//                imageAdapter.notifyDataSetChanged();
             } else {
                 final List<String> _LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
                 if (_LIST_IMG.size() > 0) {
@@ -402,18 +404,16 @@ public class AddStrategyImageActivity extends AppCompatActivity {
                 case ExifInterface.ORIENTATION_ROTATE_270:
                     angle = 270;
                     break;
-                case ExifInterface.ORIENTATION_NORMAL:
                 default:
                     break;
             }
 
             Matrix matrix = new Matrix();
             matrix.postRotate(angle);
-            Bitmap _tmpBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix,
-                    true);
+
 
             final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            _tmpBitmap.compress(Bitmap.CompressFormat.PNG, 100,
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100,
                     outputStream);
 
             new AsyncTask<Void, Void, Void>() {
@@ -440,13 +440,13 @@ public class AddStrategyImageActivity extends AppCompatActivity {
                     super.onPostExecute(aVoid);
                     if (FROM.equals("") || FROM_EDIT) {
                         if (FROM_EDIT) {
-                            StrategyEditActivity.LIST_IMG.add(FILE_PATH);
+                            StrategyEditActivity.LIST_IMG.add(decodeFile(FILE_PATH,800,800));
                             tvSelectedText.setVisibility(View.VISIBLE);
                             imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, StrategyEditActivity.LIST_IMG);
                             rvPhotos.setAdapter(imageAdapter);
 //                        AddStrategyImageActivity.this.finish();
                         } else {
-                            AddStrategyActivity.LIST_IMG.add(FILE_PATH);
+                            AddStrategyActivity.LIST_IMG.add(decodeFile(FILE_PATH,800,800));
                             imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, AddStrategyActivity.LIST_IMG);
                             rvPhotos.setAdapter(imageAdapter);
 //                        AddStrategyImageActivity.this.finish();
@@ -522,8 +522,9 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         });
 
     }
+
     private void showAlertMessage() {
-        dialogOk dialogOk = new dialogOk(AddStrategyImageActivity.this,getString(R.string.image_size_bigger)) {
+        dialogOk dialogOk = new dialogOk(AddStrategyImageActivity.this, getString(R.string.image_size_bigger)) {
             @Override
             public void onClickOk() {
                 dismiss();

@@ -1,13 +1,13 @@
 package percept.myplan.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.squareup.picasso.Picasso;
 
@@ -47,24 +47,34 @@ public class ImageDeleteAdapter extends RecyclerView.Adapter<ImageDeleteAdapter.
         this.holder = holder;
         path = LST_IMG.get(position);
 
-
-        imageLoader.get(LST_IMG.get(position), new ImageLoader.ImageListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
-                if (response.getBitmap() != null) {
-                    // load image into imageview
-                    ImageDeleteAdapter.this.holder.ivSelectedImg.setImageBitmap(response.getBitmap());
-                } else
-                    Picasso.with(CONTEXT).load(new File(path)).resize(200, 200).into(holder.ivSelectedImg);
-                //ImageDeleteAdapter.this.holder.ivSelectedImg.setImageURI(Uri.parse(path));
-            }
-        });
+        Picasso.with(CONTEXT).load(new File(LST_IMG.get(position))).into(holder.ivSelectedImg);
+//        holder.ivSelectedImg.setImageURI(Uri.parse(path));
+//        imageLoader.get(path, new ImageLoader.ImageListener() {
+//
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//            }
+//
+//            @Override
+//            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+//                if (response.getBitmap() != null) {
+//                    // load image into imageview
+//                    ImageDeleteAdapter.this.holder.ivSelectedImg.setImageBitmap(response.getBitmap());
+//                } else {
+//                    Picasso.with(CONTEXT).load(new File(path)).into(holder.ivSelectedImg);
+//
+//
+//                }
+//                //ImageDeleteAdapter.this.holder.ivSelectedImg.setImageURI(Uri.parse(path));
+//            }
+//        });
+        File file = new File(path);
+        if ((file.length() / 1024) > 512) {
+            holder.ivDeleteImg.setImageResource(R.drawable.circle_plus_delete);
+        } else {
+            holder.ivDeleteImg.setImageResource(R.drawable.circle_plus);
+        }
         holder.ivDeleteImg.setTag(position);
     }
 

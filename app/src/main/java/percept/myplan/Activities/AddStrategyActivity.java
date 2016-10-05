@@ -203,7 +203,8 @@ public class AddStrategyActivity extends AppCompatActivity {
         HashMap<String, String> map = new HashMap<>();
         if (LIST_IMG.size() > 0) {
             for (int i = 0; i < LIST_IMG.size(); i++) {
-                map.put("image" + (i + 1), decodeFile(LIST_IMG.get(i), 800, 800));
+//                map.put("image" + (i + 1), decodeFile(LIST_IMG.get(i), 800, 800));
+                map.put("image" + (i + 1), LIST_IMG.get(i));
             }
         }
         if (LIST_MUSIC.size() > 0) {

@@ -349,7 +349,7 @@ public class Utils extends Application {
                 mFolder.mkdir();
             }
 
-            String s = ".tmp.png";
+            String s = "_tmp.png";
 
             File f = new File(mFolder, s);
 
@@ -357,7 +357,7 @@ public class Utils extends Application {
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream(f);
-                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 75, fos);
+                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
                 fos.flush();
                 fos.close();
             } catch (FileNotFoundException e) {
