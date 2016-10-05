@@ -2,19 +2,16 @@ package percept.myplan.Activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -24,15 +21,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
-
-import com.netcompss.ffmpeg4android.GeneralUtils;
-import com.netcompss.ffmpeg4android.Prefs;
-import com.netcompss.loader.LoadJNI;
 
 import org.apache.http.util.TextUtils;
 
@@ -46,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import percept.myplan.Dialogs.dialogOk;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
@@ -53,6 +46,7 @@ import percept.myplan.Global.Utils;
 import percept.myplan.Interfaces.AsyncTaskCompletedListener;
 import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
+import percept.myplan.videocompressor.MediaController;
 
 import static percept.myplan.Activities.HopeDetailsActivity.GET_HOPE_DETAILS;
 
@@ -292,8 +286,9 @@ public class AddVideoActivity extends AppCompatActivity {
                 File file = new File(videosPath);
                 long videoLength = file.length() / 1024;
                 if (videoLength > (5 * 1024L)) {
-                    String _path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + "compress.mp4";
-                    new TranscdingBackground(AddVideoActivity.this).execute(videosPath, _path);
+//                    String _path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + "compress.mp4";
+//                    new TranscdingBackground(AddVideoActivity.this).execute(videosPath, _path);
+                    new VideoCompressor().execute(videosPath);
                 } else
                     addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, HOPE_ELEMENT_ID, videosPath, "video");
 
@@ -351,7 +346,8 @@ public class AddVideoActivity extends AppCompatActivity {
 //                }
 
                 String _path = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS" + File.separator + name;
-                new TranscdingBackground(AddVideoActivity.this).execute(picturePaths, _path);
+//                new TranscdingBackground(AddVideoActivity.this).execute(picturePaths, _path);
+                new VideoCompressor().execute(picturePaths);
                 Log.d("::::::::::: ", _path);
                 //addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, HOPE_ELEMENT_ID, _path, "video");
             }
@@ -422,116 +418,159 @@ public class AddVideoActivity extends AppCompatActivity {
 
     }
 
-    public class TranscdingBackground extends AsyncTask<String, Integer, Integer> {
+    private void showAlertMessage() {
+        dialogOk dialogOk = new dialogOk(AddVideoActivity.this,getString(R.string.video_size_bigger)) {
+            @Override
+            public void onClickOk() {
+                dismiss();
+            }
+        };
+        dialogOk.setCancelable(false);
+        dialogOk.setCanceledOnTouchOutside(false);
+        dialogOk.show();
 
-        Activity _act;
-        String _path = null;
+    }
 
-        public TranscdingBackground(Activity act) {
-            _act = act;
-        }
+    class VideoCompressor extends AsyncTask<String, Void, String> {
 
 
         @Override
         protected void onPreExecute() {
-            demoVideoFolder = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS";
-
-            Log.i(Prefs.TAG, getString(R.string.app_name) + " version: " + GeneralUtils.getVersionName(getApplicationContext()));
-            workFolder = getApplicationContext().getFilesDir().getAbsolutePath() + "/";
-            Log.i(Prefs.TAG, "workFolder (license and logs location) path: " + workFolder);
-            vkLogPath = workFolder + "vk.log";
-            Log.i(Prefs.TAG, "vk log (native log) path: " + vkLogPath);
-
-            GeneralUtils.copyLicenseFromAssetsToSDIfNeeded(AddVideoActivity.this, workFolder);
+            super.onPreExecute();
             PB.setVisibility(View.VISIBLE);
-        }
-
-        protected Integer doInBackground(String... paths) {
-            Log.i(Prefs.TAG, "doInBackground started...");
-
-            // delete previous log
-            GeneralUtils.deleteFileUtil(workFolder + "/vk.log");
-
-            PowerManager powerManager = (PowerManager) _act.getSystemService(Activity.POWER_SERVICE);
-            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "VK_LOCK");
-            Log.d(Prefs.TAG, "Acquire wake lock");
-            wakeLock.acquire();
-
-            String commandStr = "";
-            _path = paths[1];
-            ///////////// Set Command using code (overriding the UI EditText) /////
-            //String commandStr = "ffmpeg -y -i /sdcard/videokit/in.mp4 -strict experimental -s 320x240 -r 30 -aspect 3:4 -ab 48000 -ac 2 -ar 22050 -vcodec mpeg4 -b 2097152 /sdcard/videokit/out.mp4";
-            //String[] complexCommand = {"ffmpeg", "-y" ,"-i", "/sdcard/videokit/in.mp4","-strict","experimental","-s", "160x120","-r","25", "-vcodec", "mpeg4", "-b", "150k", "-ab","48000", "-ac", "2", "-ar", "22050", "/sdcard/videokit/out.mp4"};
-            ///////////////////////////////////////////////////////////////////////
-
-            commandStr = "ffmpeg -y -i " + paths[0] + " -strict experimental " + _path;
-            Log.d(":::: Command", commandStr);
-            LoadJNI vk = new LoadJNI();
-            try {
-
-                //vk.run(complexCommand, workFolder, getApplicationContext());
-                vk.run(GeneralUtils.utilConvertToComplex(commandStr), workFolder, getApplicationContext());
-
-                // copying vk.log (internal native log) to the videokit folder
-                GeneralUtils.copyFileToFolder(vkLogPath, demoVideoFolder);
-
-            } catch (Throwable e) {
-                Log.e(Prefs.TAG, "vk run exeption.", e);
-            } finally {
-                if (wakeLock.isHeld())
-                    wakeLock.release();
-                else {
-                    Log.i(Prefs.TAG, "Wake lock is already released, doing nothing");
-                }
-            }
-            Log.i(Prefs.TAG, "doInBackground finished");
-            return Integer.valueOf(0);
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
+//            Log.d(TAG,"Start video compression");
         }
 
         @Override
-        protected void onCancelled() {
-            Log.i(Prefs.TAG, "onCancelled");
-            //progressDialog.dismiss();
-            super.onCancelled();
+        protected String doInBackground(String... path) {
+            return MediaController.getInstance().convertVideo(path[0]);
         }
 
-
         @Override
-        protected void onPostExecute(Integer result) {
-            Log.i(Prefs.TAG, "onPostExecute");
-//            progressDialog.dismiss();
-            super.onPostExecute(result);
-            final String status = GeneralUtils.getReturnCodeFromLog(workFolder + "/vk.log");
-
-            AddVideoActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-//                    Toast.makeText(AddVideoActivity.this, status, Toast.LENGTH_LONG).show();
-//                    if (status.equals("Transcoding Status: Failed")) {
-//                        Toast.makeText(AddVideoActivity.this, "Check: " + workFolder + "vk.log" + " for more information.", Toast.LENGTH_LONG).show();
-//                    }
-
-                    // copying vk.log (internal native log) to the sdcard folder
-                    GeneralUtils.copyFileToFolder(vkLogPath, demoVideoFolder);
+        protected void onPostExecute(String _path) {
+            super.onPostExecute(_path);
+            PB.setVisibility(View.GONE);
+            if (!android.text.TextUtils.isEmpty(_path)) {
+//                Log.d(TAG,"Compression successfully!");
+                File file = new File(_path);
+                long videoLength = file.length() / 1024;
+                if (videoLength <= (5 * 1024L))
                     addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, HOPE_ELEMENT_ID, _path, "video");
-//                    vvPlayVideo.setVideoURI(Uri.parse(_path));
-//
-//
-//
-//                    vvPlayVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//                        @Override
-//                        public void onPrepared(MediaPlayer mediaPlayer) {
-//                            mediaPlayer.start();
-//                        }
-//                    });
-                }
-            });
-
+                else
+                    showAlertMessage();
+            }
         }
-
     }
+
+//    public class TranscdingBackground extends AsyncTask<String, Integer, Integer> {
+//
+//        Activity _act;
+//        String _path = null;
+//        public TranscdingBackground(Activity act) {
+//            _act = act;
+//        }
+//
+//
+//        @Override
+//        protected void onPreExecute() {
+//            demoVideoFolder = Constant.APP_MEDIA_PATH + File.separator + "VIDEOS";
+//
+//            Log.i(Prefs.TAG, getString(R.string.app_name) + " version: " + GeneralUtils.getVersionName(getApplicationContext()));
+//            workFolder = getApplicationContext().getFilesDir().getAbsolutePath() + "/";
+//            Log.i(Prefs.TAG, "workFolder (license and logs location) path: " + workFolder);
+//            vkLogPath = workFolder + "vk.log";
+//            Log.i(Prefs.TAG, "vk log (native log) path: " + vkLogPath);
+//
+//            GeneralUtils.copyLicenseFromAssetsToSDIfNeeded(AddVideoActivity.this, workFolder);
+//            PB.setVisibility(View.VISIBLE);
+//        }
+//
+//        protected Integer doInBackground(String... paths) {
+//            Log.i(Prefs.TAG, "doInBackground started...");
+//
+//            // delete previous log
+//            GeneralUtils.deleteFileUtil(workFolder + "/vk.log");
+//
+//            PowerManager powerManager = (PowerManager) _act.getSystemService(Activity.POWER_SERVICE);
+//            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "VK_LOCK");
+//            Log.d(Prefs.TAG, "Acquire wake lock");
+//            wakeLock.acquire();
+//
+//            String commandStr = "";
+//            _path = paths[1];
+//            ///////////// Set Command using code (overriding the UI EditText) /////
+//            //String commandStr = "ffmpeg -y -i /sdcard/videokit/in.mp4 -strict experimental -s 320x240 -r 30 -aspect 3:4 -ab 48000 -ac 2 -ar 22050 -vcodec mpeg4 -b 2097152 /sdcard/videokit/out.mp4";
+//            //String[] complexCommand = {"ffmpeg", "-y" ,"-i", "/sdcard/videokit/in.mp4","-strict","experimental","-s", "160x120","-r","25", "-vcodec", "mpeg4", "-b", "150k", "-ab","48000", "-ac", "2", "-ar", "22050", "/sdcard/videokit/out.mp4"};
+//            ///////////////////////////////////////////////////////////////////////
+//
+//            commandStr = "ffmpeg -y -i " + paths[0] + " -strict experimental " + _path;
+//            Log.d(":::: Command", commandStr);
+//            LoadJNI vk = new LoadJNI();
+//            try {
+//
+//                //vk.run(complexCommand, workFolder, getApplicationContext());
+//                vk.run(GeneralUtils.utilConvertToComplex(commandStr), workFolder, getApplicationContext());
+//
+//                // copying vk.log (internal native log) to the videokit folder
+//                GeneralUtils.copyFileToFolder(vkLogPath, demoVideoFolder);
+//
+//            } catch (Throwable e) {
+//                Log.e(Prefs.TAG, "vk run exeption.", e);
+//            } finally {
+//                if (wakeLock.isHeld())
+//                    wakeLock.release();
+//                else {
+//                    Log.i(Prefs.TAG, "Wake lock is already released, doing nothing");
+//                }
+//            }
+//            Log.i(Prefs.TAG, "doInBackground finished");
+//            return Integer.valueOf(0);
+//        }
+//
+//        protected void onProgressUpdate(Integer... progress) {
+//        }
+//
+//        @Override
+//        protected void onCancelled() {
+//            Log.i(Prefs.TAG, "onCancelled");
+//            //progressDialog.dismiss();
+//            super.onCancelled();
+//        }
+//
+//
+//        @Override
+//        protected void onPostExecute(Integer result) {
+//            Log.i(Prefs.TAG, "onPostExecute");
+////            progressDialog.dismiss();
+//            super.onPostExecute(result);
+//            final String status = GeneralUtils.getReturnCodeFromLog(workFolder + "/vk.log");
+//
+//            AddVideoActivity.this.runOnUiThread(new Runnable() {
+//                public void run() {
+////                    Toast.makeText(AddVideoActivity.this, status, Toast.LENGTH_LONG).show();
+////                    if (status.equals("Transcoding Status: Failed")) {
+////                        Toast.makeText(AddVideoActivity.this, "Check: " + workFolder + "vk.log" + " for more information.", Toast.LENGTH_LONG).show();
+////                    }
+//
+//                    // copying vk.log (internal native log) to the sdcard folder
+//                    GeneralUtils.copyFileToFolder(vkLogPath, demoVideoFolder);
+//                    addHopeBoxVideoElement(HOPE_TITLE, HOPE_ID, HOPE_ELEMENT_ID, _path, "video");
+////                    vvPlayVideo.setVideoURI(Uri.parse(_path));
+////
+////
+////
+////                    vvPlayVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+////                        @Override
+////                        public void onPrepared(MediaPlayer mediaPlayer) {
+////                            mediaPlayer.start();
+////                        }
+////                    });
+//                }
+//            });
+//
+//        }
+//
+//    }
 //    private class AddHopeBoxVideoElement extends AsyncTask<Void, Integer, String> {
 //
 //        private String HOPE_TITLE, VID_PATH, HOPE_ID, TYPE;

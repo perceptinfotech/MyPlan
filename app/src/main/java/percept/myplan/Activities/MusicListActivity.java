@@ -28,16 +28,19 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.util.TextUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import percept.myplan.Dialogs.dialogOk;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
@@ -62,6 +65,7 @@ public class MusicListActivity extends AppCompatActivity {
     private boolean FROM_EDIT = false;
     private Utils UTILS;
     private CoordinatorLayout REL_COORDINATE;
+    private ProgressBar PB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +95,7 @@ public class MusicListActivity extends AppCompatActivity {
 
         UTILS = new Utils(MusicListActivity.this);
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
+        PB = (ProgressBar) findViewById(R.id.pbMusic);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             checkPermission();
         } else getMusicList();
@@ -214,9 +219,11 @@ public class MusicListActivity extends AppCompatActivity {
 
     private void getMusicList() {
         final String[] columns = {MediaStore.Images.Media.DATA, MediaStore.Audio.Media._ID};
+        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0"
+                + " AND " + MediaStore.Audio.Media.MIME_TYPE + "= 'audio/mpeg'";
         final String orderBy = MediaStore.Images.Media._ID;
         Cursor imagecursor = managedQuery(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, columns, null,
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, columns, selection,
                 null, orderBy);
         int image_column_index = imagecursor.getColumnIndex(MediaStore.Audio.Media._ID);
         this.count = imagecursor.getCount();
@@ -325,11 +332,21 @@ public class MusicListActivity extends AppCompatActivity {
     }
 
     public void addHopeBoxMusicElement(final String title, final String hopeId, final String musicpath, final String type) {
-
+        PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
 //        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopemedia");
         if (!TextUtils.isEmpty(musicpath)) {
+
+            File file = new File(musicpath);
+            long musicLength = file.length() / 1024;
+            if (musicLength <= (5 * 1024L))
             params.put("media", musicpath);
+            else
+            {
+                showAlertMessage();
+                PB.setVisibility(View.GONE);
+                return;
+            }
         }
 
         params.put("sid", Constant.SID);
@@ -345,6 +362,7 @@ public class MusicListActivity extends AppCompatActivity {
                     GET_HOPE_DETAILS = true;
                 }
                 Log.d(":::::: ", response);
+                PB.setVisibility(View.GONE);
                 MusicListActivity.this.finish();
             }
         });
@@ -453,6 +471,7 @@ public class MusicListActivity extends AppCompatActivity {
 
     public class ImageAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
+        private int countSelection = 0;
 
         public ImageAdapter() {
             mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -490,11 +509,11 @@ public class MusicListActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     CheckBox cb = (CheckBox) v;
                     int id = cb.getId();
-                    if (!FROM.equals("")) {
-                        for (int i = 0; i < count; i++) {
-                            thumbnailsselection[i] = false;
-                        }
-                    }
+//                    if (!FROM.equals("")) {
+//                        for (int i = 0; i < count; i++) {
+//                            thumbnailsselection[i] = false;
+//                        }
+//                    }
 //                    if (thumbnailsselection[id]) {
 //                        cb.setChecked(false);
 //                        thumbnailsselection[id] = false;
@@ -503,7 +522,23 @@ public class MusicListActivity extends AppCompatActivity {
 //                        thumbnailsselection[id] = true;
 //                    }
 //                    cb.setChecked(!cb.isChecked());
+//                    thumbnailsselection[id] = cb.isChecked();
+//                    notifyDataSetChanged();
+
+
+                    if (!FROM.equals("")) {
+                        for (int i = 0; i < count; i++) {
+                            thumbnailsselection[i] = false;
+                        }
+                    } else if (cb.isChecked() && countSelection >= 5) {
+                        cb.setChecked(false);
+                        thumbnailsselection[id] = false;
+                        countSelection = 0;
+                        notifyDataSetChanged();
+                        return;
+                    }
                     thumbnailsselection[id] = cb.isChecked();
+                    countSelection = 0;
                     notifyDataSetChanged();
                 }
             });
@@ -520,6 +555,10 @@ public class MusicListActivity extends AppCompatActivity {
             holder.imageview.setImageBitmap(thumbnails[position]);
             holder.checkbox.setChecked(thumbnailsselection[position]);
             holder.id = position;
+            if (position == 0)
+                countSelection = 0;
+            if (thumbnailsselection[position])
+                ++countSelection;
             return convertView;
         }
     }
@@ -529,5 +568,18 @@ public class MusicListActivity extends AppCompatActivity {
         CheckBox checkbox;
         TextView txtview;
         int id;
+    }
+
+    private void showAlertMessage() {
+        dialogOk dialogOk = new dialogOk(MusicListActivity.this,getString(R.string.music_size_bigger)) {
+            @Override
+            public void onClickOk() {
+                dismiss();
+            }
+        };
+        dialogOk.setCancelable(false);
+        dialogOk.setCanceledOnTouchOutside(false);
+        dialogOk.show();
+
     }
 }

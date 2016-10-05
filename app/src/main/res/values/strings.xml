@@ -369,4 +369,7 @@
     <string name="setting_off_location">Geotracking settings off please switch on setting for sharing your location.</string>
     <string name="cover_photo">Cover Photo</string>
     <string name="delete_cover_photo">Are you sure you want to delete Cover Photo?</string>
+    <string name="video_size_bigger">Unable to add this video. Video size must be less than 5 MB. Please choose another video.</string>
+    <string name="music_size_bigger">Unable to add this music. Music size must be less than 5 MB. Please choose another music file.</string>
+    <string name="image_size_bigger">Unable to add this image. Image must be less than 512 KB. Please choose another image.</string>
 </resources>

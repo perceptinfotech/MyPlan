@@ -3,11 +3,17 @@ package percept.myplan.adapters;
 import android.media.MediaPlayer;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.squareup.picasso.Picasso;
+
 import im.ene.lab.flvv.FloppyVideoView;
 import im.ene.lab.flvv.ScaleType;
+import percept.myplan.AppController;
 import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
 
@@ -25,11 +31,13 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
             ScaleType.FIT_CENTER, ScaleType.FIT_XY, ScaleType.FIT_START, ScaleType.FIT_END,
             ScaleType.CENTER, ScaleType.CENTER_CROP, ScaleType.CENTER_INSIDE
     };
+    private ImageLoader imageLoader;
     public FloppyVideoView videoView;
     int scaleTypeIndex = 0;
     int videoIndex = 0;
     private HopeDetail video;
     public LinearLayout llVideoView;
+    private ImageView ivThumbVideo;
 
     public Basic3VideoViewHolder(View itemView) {
         super(itemView);
@@ -38,6 +46,8 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
         dummyView = (TextView) itemView.findViewById(R.id.text);
         videoView = (FloppyVideoView) itemView.findViewById(R.id.video);
         tvCardVideoEdit = (TextView) itemView.findViewById(R.id.tvCardVideoEdit);
+        ivThumbVideo= (ImageView) itemView.findViewById(R.id.ivThumbVideo);
+        imageLoader = AppController.getInstance().getImageLoader();
 
     }
 
@@ -49,6 +59,22 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
 
         this.video = (HopeDetail) item;
         String url = this.video.getMEDIA();
+        dummyView.setText(this.video.getMEDIA_TITLE());
+        imageLoader.get(video.getMEDIA_THUMB(), new ImageLoader.ImageListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+                if (response.getBitmap() != null) {
+                    // load image into imageview
+                    ivThumbVideo.setImageBitmap(response.getBitmap());
+                }
+            }
+        });
 //        videoView.setScaleType(SCALE_TYPES[scaleTypeIndex % SCALE_TYPES.length]);
         videoView.setVideoPath(url);
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -57,6 +83,7 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
                 if (videoView != null) {
                     videoView.start();
                     mp.setLooping(true);
+                    ivThumbVideo.setVisibility(View.GONE);
                 }
             }
         });
@@ -66,6 +93,7 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
                 mediaPlayer.setLooping(true);
             }
         });
+
         videoView.setTag(position);
         tvCardVideoEdit.setTag(position);
         dummyView.setTag(position);

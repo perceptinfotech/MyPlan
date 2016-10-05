@@ -78,7 +78,7 @@
         android:textSize="16sp" />
     <ProgressBar
         android:id="@+id/pbAddStrategyLink"
-        style="?android:attr/progressBarStyle"
+        style="@android:style/Widget.Holo.ProgressBar.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/view"

@@ -156,6 +156,8 @@ public class HopeDetailsActivity extends AppCompatActivity {
             GetHopeDetails();
             GET_HOPE_DETAILS = false;
         }
+        if (mAdapter != null)
+            mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -190,6 +192,7 @@ public class HopeDetailsActivity extends AppCompatActivity {
         intent.putExtra("HOPE_ID", getIntent().getExtras().getString("HOPE_ID"));
         startActivity(intent);
     }
+
     public void playMusicHopeElement(int position) {
         Intent intent = new Intent(HopeDetailsActivity.this, WebViewActivity.class);
         intent.putExtra("URL_MUSIC", LIST_HOPEDETAILS.get(position).getMEDIA());

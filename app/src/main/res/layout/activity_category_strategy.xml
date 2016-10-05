@@ -18,7 +18,7 @@
         android:background="@android:color/white" />
 
     <ProgressBar
-        style="?android:attr/progressBarStyle"
+        style="@android:style/Widget.Holo.ProgressBar.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"

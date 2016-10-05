@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import me.crosswall.photo.pick.PickConfig;
+import percept.myplan.Dialogs.dialogOk;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
@@ -492,7 +493,16 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         PB.setVisibility(View.VISIBLE);
         HashMap<String, String> params = new HashMap<>();
 //        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopemedia");
-        params.put("media", decodeFile(imgpath, 800, 800));
+        String _path = decodeFile(imgpath, 800, 800);
+        File file = new File(_path);
+        long imageLength = file.length() / 1024;
+        if (imageLength > 512) {
+            showAlertMessage();
+            PB.setVisibility(View.GONE);
+            return;
+        }
+
+        params.put("media", _path);
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         params.put(Constant.ID, HOPE_ELEMENT_ID);
@@ -512,7 +522,18 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         });
 
     }
+    private void showAlertMessage() {
+        dialogOk dialogOk = new dialogOk(AddStrategyImageActivity.this,getString(R.string.image_size_bigger)) {
+            @Override
+            public void onClickOk() {
+                dismiss();
+            }
+        };
+        dialogOk.setCancelable(false);
+        dialogOk.setCanceledOnTouchOutside(false);
+        dialogOk.show();
 
+    }
 
 //    private class AddHopeBoxImageElement extends AsyncTask<Void, Integer, String> {
 //
