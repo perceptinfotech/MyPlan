@@ -37,11 +37,11 @@ android:descendantFocusability="blocksDescendants" is added to pass click event 
         card_view:cardCornerRadius="5dp"
         card_view:cardElevation="3dp">
 
-        <RelativeLayout
+       <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
+           <!-- <RelativeLayout
                 android:id="@+id/video"
                 android:layout_width="fill_parent"
                 android:layout_height="225dp"
@@ -61,9 +61,29 @@ android:descendantFocusability="blocksDescendants" is added to pass click event 
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"/>
 
-            </RelativeLayout>
+            </RelativeLayout>-->
 
+            <FrameLayout
+                android:id="@+id/video"
+                android:layout_width="match_parent"
+                android:layout_height="225dp"
+                >
 
+                <ImageView
+                    android:id="@+id/video_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="225dp"
+                    android:scaleType="centerCrop"
+                   />
+
+                <ImageView
+                    android:id="@+id/ivThumbVideo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:src="@drawable/youtube_play" />
+
+            </FrameLayout>
             <TextView
                 android:id="@+id/text"
                 android:layout_width="wrap_content"

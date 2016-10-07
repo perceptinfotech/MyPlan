@@ -6,6 +6,7 @@ import android.media.ThumbnailUtils;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,12 +40,14 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
     int scaleTypeIndex = 0;
     int videoIndex = 0;
     private HopeDetail video;
+    public FrameLayout frameVideo;
     public LinearLayout llVideoView;
     private ImageView ivThumbVideo;
 
     public Basic3VideoViewHolder(View itemView) {
         super(itemView);
 
+        frameVideo= (FrameLayout) itemView.findViewById(R.id.video);
         llVideoView = (LinearLayout) itemView.findViewById(R.id.llVideoView);
         dummyView = (TextView) itemView.findViewById(R.id.text);
         videoView = (ImageView) itemView.findViewById(R.id.video_view);
@@ -74,7 +77,7 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
             public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
                 if (response.getBitmap() != null) {
                     // load image into imageview
-                    ivThumbVideo.setImageBitmap(response.getBitmap());
+                    videoView.setImageBitmap(response.getBitmap());
                 }
             }
         });
@@ -84,6 +87,10 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
                 MediaStore.Images.Thumbnails.MINI_KIND);
 
         videoView.setImageBitmap(thumb);
+
+      /*  frameVideo.addView(hudWidget);
+        hudWidget.bringToFront();*/
+
         //videoView.setVideoPath(url);
       /*  videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override

@@ -11,6 +11,24 @@
 
     <include layout="@layout/app_toolbar"></include>
 
+    <TextView
+        android:id="@+id/tvNewContact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvPhoneList"
+        android:background="@android:color/white"
+        android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:text="@string/addnewcontact"
+        android:textColor="@android:color/black" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="10dp"
+        android:background="@color/sidemenu_seperator" />
 
     <TextView
         android:id="@+id/tvPhoneList"
@@ -22,24 +40,6 @@
         android:gravity="center_vertical"
         android:padding="10dp"
         android:text="@string/addcontactfromphone"
-        android:textColor="@android:color/black" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="10dp"
-        android:background="@color/sidemenu_seperator" />
-
-    <TextView
-        android:id="@+id/tvNewContact"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvPhoneList"
-        android:background="@android:color/white"
-        android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
-        android:gravity="center_vertical"
-        android:padding="10dp"
-        android:text="@string/addnewcontact"
         android:textColor="@android:color/black" />
 
     <View
