@@ -2,6 +2,7 @@ package percept.myplan.Activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
@@ -14,7 +15,7 @@ import percept.myplan.R;
 
 public class SettingNotificationActivity extends AppCompatActivity {
 
-    private Switch SWITCH_NOTIFICATIONS;
+    private SwitchCompat SWITCH_NOTIFICATIONS;
     private Utils utils;
 
     @Override
@@ -29,7 +30,7 @@ public class SettingNotificationActivity extends AppCompatActivity {
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.title_activity_notification));
         utils=new Utils(SettingNotificationActivity.this);
-        SWITCH_NOTIFICATIONS = (Switch) findViewById(R.id.switchNotifications);
+        SWITCH_NOTIFICATIONS = (SwitchCompat) findViewById(R.id.switchNotifications);
         SWITCH_NOTIFICATIONS.setChecked(utils.getBoolPref(Constant.PREF_NOTIFICATION));
 
         SWITCH_NOTIFICATIONS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

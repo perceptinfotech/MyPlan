@@ -312,6 +312,16 @@ public class AddStrategyImageActivity extends AppCompatActivity {
                     }
                 }).start();
                 PB.setVisibility(View.GONE);
+                if (FROM_EDIT) {
+                    tvSelectedText.setVisibility(View.VISIBLE);
+                    imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, StrategyEditActivity.LIST_IMG);
+                    rvPhotos.setAdapter(imageAdapter);
+//                        AddStrategyImageActivity.this.finish();
+                } else {
+                    imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, AddStrategyActivity.LIST_IMG);
+                    rvPhotos.setAdapter(imageAdapter);
+//                        AddStrategyImageActivity.this.finish();
+                }
 //                if (FROM_EDIT) {
 ////                    StrategyEditActivity.LIST_IMG.addAll(data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST));
 //                    StrategyEditActivity.LIST_IMG.addAll(_LIST_IMG);
@@ -442,13 +452,13 @@ public class AddStrategyImageActivity extends AppCompatActivity {
                         if (FROM_EDIT) {
                             StrategyEditActivity.LIST_IMG.add(decodeFile(FILE_PATH,800,800));
                             tvSelectedText.setVisibility(View.VISIBLE);
-                            imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, StrategyEditActivity.LIST_IMG);
-                            rvPhotos.setAdapter(imageAdapter);
+//                            imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, StrategyEditActivity.LIST_IMG);
+//                            rvPhotos.setAdapter(imageAdapter);
 //                        AddStrategyImageActivity.this.finish();
                         } else {
                             AddStrategyActivity.LIST_IMG.add(decodeFile(FILE_PATH,800,800));
-                            imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, AddStrategyActivity.LIST_IMG);
-                            rvPhotos.setAdapter(imageAdapter);
+//                            imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, AddStrategyActivity.LIST_IMG);
+//                            rvPhotos.setAdapter(imageAdapter);
 //                        AddStrategyImageActivity.this.finish();
                         }
                         imageAdapter.notifyDataSetChanged();

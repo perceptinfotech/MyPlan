@@ -1,7 +1,6 @@
 package percept.myplan.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +26,7 @@ public class ImageDeleteAdapter extends RecyclerView.Adapter<ImageDeleteAdapter.
     private List<String> LST_IMG;
     private String path;
     private MyViewHolder holder;
+    private int largeImageCount = 0;
 
     public ImageDeleteAdapter(Context mContext, List<String> hopeList) {
         this.CONTEXT = mContext;
@@ -71,6 +71,7 @@ public class ImageDeleteAdapter extends RecyclerView.Adapter<ImageDeleteAdapter.
 //        });
         File file = new File(path);
         if ((file.length() / 1024) > 512) {
+            ++largeImageCount;
             holder.ivDeleteImg.setImageResource(R.drawable.circle_plus_delete);
         } else {
             holder.ivDeleteImg.setImageResource(R.drawable.circle_plus);
@@ -81,6 +82,16 @@ public class ImageDeleteAdapter extends RecyclerView.Adapter<ImageDeleteAdapter.
     @Override
     public int getItemCount() {
         return LST_IMG.size();
+    }
+
+    public boolean isItemSizeBigger() {
+        if (largeImageCount > 0)
+            return true;
+        return false;
+    }
+
+    public void reset() {
+        largeImageCount = 0;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

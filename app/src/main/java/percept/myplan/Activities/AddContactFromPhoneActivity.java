@@ -771,7 +771,8 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                         ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
                         ContactsContract.Contacts.CUSTOM_RINGTONE
                 };
-                Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+                String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " <> ''";
+                Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, selection, null, null);
                 if (cur.getCount() > 0) {
                     while (cur.moveToNext()) {
                         String _firstName = cur.getString(cur.getColumnIndex(
@@ -800,7 +801,8 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                         _lNameCur.close();
                         while (_fNameCur.moveToNext()) {
                             _fName = _fNameCur.getString(_fNameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
-
+                            if (TextUtils.isEmpty(_fName))
+                                continue;
                             if (!getIntent().hasExtra("FROM_SHARELOC")) {
                                 if (!SINGLE_CHECK) {
                                     if (ADD_TO_HELP_LIST.equals("1")) {
