@@ -338,6 +338,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
 //                imageAdapter.notifyDataSetChanged();
             } else {
                 final List<String> _LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
+
                 if (_LIST_IMG.size() > 0) {
                     // addHopeBoxImageElement(HOPE_TITLE, HOPE_ID, _LIST_IMG.get(0), HOPE_ELEMENT_ID, "image");
                     new Thread(new Runnable() {
@@ -384,6 +385,18 @@ public class AddStrategyImageActivity extends AppCompatActivity {
                 Log.d("::::::: ", _Path);
 
                 rotateImage(_Path);
+
+                if (FROM_EDIT) {
+                    tvSelectedText.setVisibility(View.VISIBLE);
+                    imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, StrategyEditActivity.LIST_IMG);
+                    rvPhotos.setAdapter(imageAdapter);
+//                        AddStrategyImageActivity.this.finish();
+                } else {
+                    imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, AddStrategyActivity.LIST_IMG);
+                    rvPhotos.setAdapter(imageAdapter);
+//                        AddStrategyImageActivity.this.finish();
+                }
+
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }

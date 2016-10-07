@@ -1,6 +1,9 @@
 package percept.myplan.adapters;
 
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
+import android.media.ThumbnailUtils;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -32,7 +35,7 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
             ScaleType.CENTER, ScaleType.CENTER_CROP, ScaleType.CENTER_INSIDE
     };
     private ImageLoader imageLoader;
-    public FloppyVideoView videoView;
+    public ImageView videoView;
     int scaleTypeIndex = 0;
     int videoIndex = 0;
     private HopeDetail video;
@@ -44,7 +47,7 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
 
         llVideoView = (LinearLayout) itemView.findViewById(R.id.llVideoView);
         dummyView = (TextView) itemView.findViewById(R.id.text);
-        videoView = (FloppyVideoView) itemView.findViewById(R.id.video);
+        videoView = (ImageView) itemView.findViewById(R.id.video_view);
         tvCardVideoEdit = (TextView) itemView.findViewById(R.id.tvCardVideoEdit);
         ivThumbVideo= (ImageView) itemView.findViewById(R.id.ivThumbVideo);
         imageLoader = AppController.getInstance().getImageLoader();
@@ -76,8 +79,13 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
             }
         });
 //        videoView.setScaleType(SCALE_TYPES[scaleTypeIndex % SCALE_TYPES.length]);
-        videoView.setVideoPath(url);
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+        Bitmap thumb = ThumbnailUtils.createVideoThumbnail(url,
+                MediaStore.Images.Thumbnails.MINI_KIND);
+
+        videoView.setImageBitmap(thumb);
+        //videoView.setVideoPath(url);
+      /*  videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 if (videoView != null) {
@@ -86,13 +94,13 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
                     //ivThumbVideo.setVisibility(View.GONE);
                 }
             }
-        });
-        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        });*/
+      /*  videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 mediaPlayer.setLooping(true);
             }
-        });
+        });*/
 
         videoView.setTag(position);
         tvCardVideoEdit.setTag(position);

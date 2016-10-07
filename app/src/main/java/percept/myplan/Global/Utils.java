@@ -357,7 +357,7 @@ public class Utils extends Application {
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream(f);
-                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
                 fos.flush();
                 fos.close();
             } catch (FileNotFoundException e) {
