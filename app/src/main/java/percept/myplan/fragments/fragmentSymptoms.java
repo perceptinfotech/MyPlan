@@ -100,9 +100,7 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
         PB = (ProgressBar) _View.findViewById(R.id.pbGetSymptoms);
         REL_COORDINATE = (CoordinatorLayout) _View.findViewById(R.id.snakeBar);
         LIST_SYMPTOM = new ArrayList<>();
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("sid", Constant.SID);
-        params.put("sname", Constant.SNAME);
+
 
         setHasOptionsMenu(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());

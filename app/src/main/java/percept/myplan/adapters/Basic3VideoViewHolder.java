@@ -81,9 +81,9 @@ public class Basic3VideoViewHolder extends Basic3ViewHolder {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 if (videoView != null) {
-                    videoView.start();
-                    mp.setLooping(true);
-                    ivThumbVideo.setVisibility(View.GONE);
+//                    videoView.start();
+//                    mp.setLooping(true);
+                    //ivThumbVideo.setVisibility(View.GONE);
                 }
             }
         });
