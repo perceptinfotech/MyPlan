@@ -1,6 +1,7 @@
 package percept.myplan.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,7 +72,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.MyViewHolder
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView TV_ALARMTITLE, TV_ALARMEDIT, TV_ALARMTIME;
-        public Switch SWITCH_STATUS;
+        public SwitchCompat SWITCH_STATUS;
 
 
         public MyViewHolder(View view) {
@@ -80,7 +81,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.MyViewHolder
             TV_ALARMTITLE = (TextView) view.findViewById(R.id.tvAlarmTitle);
             TV_ALARMEDIT = (TextView) view.findViewById(R.id.tvAlarmEdit);
             TV_ALARMTIME = (TextView) view.findViewById(R.id.tvAlarmTime);
-            SWITCH_STATUS = (Switch) view.findViewById(R.id.switchAlarmStatus);
+            SWITCH_STATUS = (SwitchCompat) view.findViewById(R.id.switchAlarmStatus);
             TV_ALARMEDIT.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

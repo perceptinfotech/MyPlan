@@ -2,6 +2,7 @@ package percept.myplan.Activities;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -33,8 +34,10 @@ public class AddAlarmActivity extends AppCompatActivity {
     private AlarmManager ALARM_MANAGER;
     private String ALARM_SOUND, ALARM_SOUND_NAME, ALARM_NAME, ALARM_REPEAT, ALARM_TIME;
     //    private DatePicker DATE_PICKER;
-    private TimePicker TIME_PICKER;
+//    private TimePicker TIME_PICKER;
     private String repeatIds = "0";
+    public int selectedMinute;
+    public int selectedHour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +59,8 @@ public class AddAlarmActivity extends AppCompatActivity {
         SWITCH_ALARMSNOOZE = (Switch) findViewById(R.id.switchAlarmSnooze);
         EDT_ALARMLABLE = (EditText) findViewById(R.id.edtAlarmLable);
 //        DATE_PICKER = (DatePicker) findViewById(R.id.datePicker);
-        TIME_PICKER = (TimePicker) findViewById(R.id.timePicker);
-        TIME_PICKER.setIs24HourView(true);
+//        TIME_PICKER = (TimePicker) findViewById(R.id.timePicker);
+//        TIME_PICKER.setIs24HourView(true);
 
         if (getIntent().hasExtra("EDIT_ALARM")) {
             EDT_ALARMLABLE.setText(getIntent().getExtras().getString("ALARM_NAME"));
@@ -69,21 +72,27 @@ public class AddAlarmActivity extends AppCompatActivity {
 
             Calendar calendar2 = Calendar.getInstance();
             calendar2.setTimeInMillis(Long.valueOf(getIntent().getExtras().getString("ALARM_TIME")));
-            TIME_PICKER.setCurrentHour(calendar2.get(Calendar.HOUR_OF_DAY)); // or Calendar.HOUR for 12 hour format
-            TIME_PICKER.setCurrentMinute(calendar2.get(Calendar.MINUTE));
+            tvAlarmTime.setText(String.format("%02d : %02d",calendar2.get(Calendar.HOUR_OF_DAY), calendar2.get(Calendar.HOUR_OF_DAY)));
+//            TIME_PICKER.setCurrentHour(calendar2.get(Calendar.HOUR_OF_DAY)); // or Calendar.HOUR for 12 hour format
+//            TIME_PICKER.setCurrentMinute(calendar2.get(Calendar.MINUTE));
         } else {
             Ringtone ringtone = RingtoneManager.getRingtone(AddAlarmActivity.this,
                     Settings.System.DEFAULT_NOTIFICATION_URI);
             TV_ALARMSOUND.setText(ringtone.getTitle(AddAlarmActivity.this));
         }
-        tvAlarmTime.setText(String.format("%02d : %02d", TIME_PICKER.getCurrentHour(), TIME_PICKER.getCurrentMinute()));
+
         String[] repeatIdArr = TextUtils.split(repeatIds, ",");
         if (repeatIdArr.length == 1) {
             TV_ALARMREPEAT.setText(getResources().getStringArray(R.array.alarm_repeat)[Integer.parseInt(repeatIdArr[0])]);
 
         } else
             TV_ALARMREPEAT.setText(getString(R.string.multiple_days));
-
+        tvAlarmTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openTimeDialog();
+            }
+        });
         TV_ALARMSOUND.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,13 +116,13 @@ public class AddAlarmActivity extends AppCompatActivity {
             }
         });
 
-        TIME_PICKER.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
-            @Override
-            public void onTimeChanged(TimePicker timePicker, int hour, int minute) {
-
-                tvAlarmTime.setText(String.format("%02d : %02d", hour, minute));
-            }
-        });
+//        TIME_PICKER.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+//            @Override
+//            public void onTimeChanged(TimePicker timePicker, int hour, int minute) {
+//
+//                tvAlarmTime.setText(String.format("%02d : %02d", hour, minute));
+//            }
+//        });
     }
 
 
@@ -131,8 +140,8 @@ public class AddAlarmActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.action_SaveProfile) {
 
             Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.HOUR_OF_DAY, TIME_PICKER.getCurrentHour());
-            cal.set(Calendar.MINUTE, TIME_PICKER.getCurrentMinute());
+            cal.set(Calendar.HOUR_OF_DAY, selectedHour);
+            cal.set(Calendar.MINUTE, selectedMinute);
 
             Long _Alarmtime = cal.getTimeInMillis();
 
@@ -187,6 +196,26 @@ public class AddAlarmActivity extends AppCompatActivity {
                 break;
 
         }
+    }
+
+    private void openTimeDialog() {
+        Calendar mcurrentTime = Calendar.getInstance();
+        int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+        int minute = mcurrentTime.get(Calendar.MINUTE);
+        TimePickerDialog mTimePicker;
+        mTimePicker = new TimePickerDialog(AddAlarmActivity.this, new TimePickerDialog.OnTimeSetListener() {
+
+
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                AddAlarmActivity.this.selectedHour=selectedHour;
+                AddAlarmActivity.this.selectedMinute=selectedHour;
+                tvAlarmTime.setText(selectedHour + ":" + selectedMinute);
+            }
+        }, hour, minute, false);//Yes 24 hour time
+        mTimePicker.setTitle(getString(R.string.select_time));
+
+        mTimePicker.show();
     }
 
 }

@@ -78,7 +78,7 @@
                         android:textSize="18dp" />
                 </LinearLayout>
 
-                <Switch
+                <android.support.v7.widget.SwitchCompat
                     android:id="@+id/switchAlarmStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -86,6 +86,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_below="@+id/layTop"
                     android:padding="10dp"
+                    android:theme="@style/SCBSwitch"
                     android:layout_marginTop="15dp" />
             </LinearLayout>
 
