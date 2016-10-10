@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.CoordinatorLayout;
@@ -47,7 +48,7 @@ public class CategoryStrategyActivity extends AppCompatActivity {
     private List<InspirationWiseStrategy> LIST_STRATEGY_INSPIRATION;
     private String CATEGORYID;
     private InspirationWiseStrategyAdapter ADAPTER;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
 
     private CoordinatorLayout REL_COORDINATE;
 
@@ -71,7 +72,7 @@ public class CategoryStrategyActivity extends AppCompatActivity {
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         LST_CATEGORY_STRATEGY = (RecyclerView) findViewById(R.id.lstCategoryStrategy);
-        PB = (ProgressBar) findViewById(R.id.pbStrCate);
+
         LIST_STRATEGY_INSPIRATION = new ArrayList<>();
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(CategoryStrategyActivity.this);
@@ -107,16 +108,20 @@ public class CategoryStrategyActivity extends AppCompatActivity {
         params.put("sname", Constant.SNAME);
         params.put("catid", CATEGORYID);
         try {
-            PB.setVisibility(View.VISIBLE);
+            mProgressDialog = new ProgressDialog(CategoryStrategyActivity.this);
+            mProgressDialog.setMessage(getString(R.string.progress_loading));
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+            mProgressDialog.show();
             new General().getJSONContentFromInternetService(CategoryStrategyActivity.this, General.PHPServices.GET_CATEGORY_INSPIRATIONS, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     Log.d(":::: ", response.toString());
                     Gson gson = new Gson();
                     try {
@@ -132,7 +137,7 @@ public class CategoryStrategyActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

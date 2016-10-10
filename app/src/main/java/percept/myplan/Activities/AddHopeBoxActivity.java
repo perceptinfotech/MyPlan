@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -47,7 +48,7 @@ public class AddHopeBoxActivity extends AppCompatActivity {
     private RelativeLayout LAY_SELECTIMG, LAY_SELECTEDIMG;
     private Utils UTILS;
     private CoordinatorLayout REL_COORDINATE;
-    private ProgressBar pbAddHopeBox;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +66,7 @@ public class AddHopeBoxActivity extends AppCompatActivity {
         LAY_SELECTIMG = (RelativeLayout) findViewById(R.id.relSelectImg);
         LAY_SELECTEDIMG = (RelativeLayout) findViewById(R.id.relSelectedImg);
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
-        pbAddHopeBox = (ProgressBar) findViewById(R.id.pbAddHopeBox);
+
 
         LAY_SELECTEDIMG.setVisibility(View.GONE);
 
@@ -119,7 +120,6 @@ public class AddHopeBoxActivity extends AppCompatActivity {
 //            Toast.makeText(AddHopeBoxActivity.this, "Saved Called", Toast.LENGTH_SHORT).show();
 
 //            new AddHopeBox(EDT_FOLDERNAME.getText().toString(), FOLDER_IMG_PATH).execute();
-            if (pbAddHopeBox.getVisibility() == View.GONE)
                 addHopeBox(EDT_FOLDERNAME.getText().toString(), FOLDER_IMG_PATH);
         }
         return false;
@@ -166,7 +166,11 @@ public class AddHopeBoxActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
-        pbAddHopeBox.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(AddHopeBoxActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_uploading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> map = new HashMap<>();
 //        map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopebox");
         map.put("cover", Utils.decodeFile(IMG_PATH, 800, 800));
@@ -180,7 +184,7 @@ public class AddHopeBoxActivity extends AppCompatActivity {
                 Log.d(":::::: ", response);
                 Toast.makeText(AddHopeBoxActivity.this,
                         getResources().getString(R.string.hopeboxadded), Toast.LENGTH_SHORT).show();
-                pbAddHopeBox.setVisibility(View.GONE);
+                mProgressDialog.dismiss();
                 AddHopeBoxActivity.this.finish();
                 ADDED_HOPEBOX = true;
             }

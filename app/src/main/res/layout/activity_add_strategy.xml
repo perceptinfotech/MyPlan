@@ -204,14 +204,7 @@
         android:layout_below="@+id/tvLinks"
         android:background="@color/sidemenu_seperator" />
 
-    <ProgressBar
-        style="@android:style/Widget.Holo.ProgressBar.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/pbAddStrategy"
-        android:visibility="gone"/>
+
 
     <include layout="@layout/lay_internet_lost" />
 </RelativeLayout>

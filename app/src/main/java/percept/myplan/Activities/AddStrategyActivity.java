@@ -3,6 +3,7 @@ package percept.myplan.Activities;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -64,7 +65,7 @@ public class AddStrategyActivity extends AppCompatActivity {
     private String STR_LINK = "", STR_CONTACTID = "";
     private HashMap<String, List<Alarm>> MAP_ALARM;
     private Utils UTILS;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
 
     @Override
@@ -86,7 +87,7 @@ public class AddStrategyActivity extends AppCompatActivity {
 
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
-        PB = (ProgressBar) findViewById(R.id.pbAddStrategy);
+
 
         TV_ALARM = (TextView) findViewById(R.id.tvAlarm);
         TV_IMAGES = (TextView) findViewById(R.id.tvImages);
@@ -199,7 +200,11 @@ public class AddStrategyActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(AddStrategyActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> map = new HashMap<>();
         if (LIST_IMG.size() > 0) {
             for (int i = 0; i < LIST_IMG.size(); i++) {
@@ -230,7 +235,7 @@ public class AddStrategyActivity extends AppCompatActivity {
         new MultiPartParsing(this, map, General.PHPServices.SAVE_STRATEGY, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
-                PB.setVisibility(View.GONE);
+                mProgressDialog.dismiss();
                 try {
                     Log.d(":::::: ", response);
                     String _id = "";

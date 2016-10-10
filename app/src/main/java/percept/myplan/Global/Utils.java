@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -34,6 +35,9 @@ import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
+
+import percept.myplan.Activities.LoginActivity_1;
+import percept.myplan.R;
 
 import static com.google.android.exoplayer.util.Assertions.checkArgument;
 
@@ -48,6 +52,7 @@ public class Utils extends Application {
     private String LOG_TAG = "MYPLAN_LOG";
     private SharedPreferences preferences = null;
     private SharedPreferences.Editor editor = null;
+
 
     /*
      * Parameterized Constructor made because getting fresh context every time
@@ -378,5 +383,6 @@ public class Utils extends Application {
         return strMyImagePath;
 
     }
+
 
 }

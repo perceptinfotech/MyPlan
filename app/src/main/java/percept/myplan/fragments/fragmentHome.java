@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -68,6 +69,7 @@ import java.util.List;
 import java.util.Map;
 
 import percept.myplan.Activities.HelpListActivity;
+import percept.myplan.Activities.LoginActivity_1;
 import percept.myplan.AppController;
 import percept.myplan.Dialogs.dialogSelectPic;
 import percept.myplan.Dialogs.dialogYesNoOption;
@@ -106,10 +108,10 @@ public class fragmentHome extends Fragment {
     private String FILE_PATH = "";
     private Utils utils;
     private CoordinatorLayout REL_COORDINATE;
-    private ProgressBar PB;
     private Utils UTILS;
     private String _phoneNo = "112";
     private Bitmap _tmpBitmap;
+    private ProgressDialog mProgressDialog;
 
     public fragmentHome() {
         // Required empty public constructor
@@ -141,7 +143,6 @@ public class fragmentHome extends Fragment {
         tvCaptureImg = (TextView) _View.findViewById(R.id.tvCaptureImg);
 
         IMG_MOODRATING_CLOSE = (ImageView) _View.findViewById(R.id.imgCloseMoodRating);
-        PB = (ProgressBar) _View.findViewById(R.id.progressBar);
 //        Picasso.with(getActivity()).load(Constant.PROFILE_IMG_LINK).into(IMG_USERPROFILE);
         REL_COORDINATE = (CoordinatorLayout) _View.findViewById(R.id.snakeBar);
 
@@ -227,7 +228,8 @@ public class fragmentHome extends Fragment {
     }
 
     private void getEmergencyContact() {
-        PB.setVisibility(View.VISIBLE);
+
+        showProgress(getString(R.string.progress_loading));
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -236,13 +238,13 @@ public class fragmentHome extends Fragment {
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    dismissProgress();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
-                        PB.setVisibility(View.GONE);
+                        dismissProgress();
                         if (response.getJSONArray(Constant.DATA) != null && response.getJSONArray(Constant.DATA).length() > 0) {
                             ContactDisplay _contactDisplay = new Gson().fromJson(response.getJSONArray(Constant.DATA).get(0)
                                     .toString(), new TypeToken<ContactDisplay>() {
@@ -258,7 +260,7 @@ public class fragmentHome extends Fragment {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            dismissProgress();
         }
     }
 
@@ -603,7 +605,7 @@ public class fragmentHome extends Fragment {
             return;
         }
 
-        PB.setVisibility(View.VISIBLE);
+        showProgress(getString(R.string.progress_uploading));
         HashMap<String, String> params = new HashMap<>();
         if (!TextUtils.isEmpty(FILE_PATH))
             params.put("profile_image", FILE_PATH);
@@ -639,7 +641,7 @@ public class fragmentHome extends Fragment {
     }
 
     private void getProfile() {
-        PB.setVisibility(View.VISIBLE);
+        showProgress(getString(R.string.progress_loading));
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -647,7 +649,7 @@ public class fragmentHome extends Fragment {
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_PROFILE, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    dismissProgress();
                 }
 
                 @Override
@@ -660,7 +662,7 @@ public class fragmentHome extends Fragment {
                                 Picasso.with(getActivity()).load(Constant.PROFILE_IMG_LINK).into(IMG_USERPROFILE);
                                 tvCaptureImg.setVisibility(View.INVISIBLE);
                             }
-                            PB.setVisibility(View.GONE);
+                            dismissProgress();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -669,7 +671,7 @@ public class fragmentHome extends Fragment {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            dismissProgress();
         }
     }
 
@@ -744,5 +746,19 @@ public class fragmentHome extends Fragment {
 //            Log.w("TAG", "-- OOM Error in setting image");
 //        }
 //    }
+public void showProgress(String message){
+    mProgressDialog = new ProgressDialog(getActivity());
+    mProgressDialog.setMessage(getString(R.string.progress_loading));
+    mProgressDialog.setIndeterminate(false);
+    mProgressDialog.setCanceledOnTouchOutside(false);
+    mProgressDialog.show();
+    }
 
+    public void dismissProgress(){
+        if(mProgressDialog.isShowing()){
+            mProgressDialog.dismiss();
+        }
+
+
+    }
 }

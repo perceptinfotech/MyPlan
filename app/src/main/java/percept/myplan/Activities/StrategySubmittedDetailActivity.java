@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,7 +38,7 @@ import static percept.myplan.fragments.fragmentStrategies.ADDED_STRATEGIES;
 public class StrategySubmittedDetailActivity extends AppCompatActivity {
     private RecyclerView RCV_STRATEGIESOTHERS;
     private TextView tvSubmittedByName, tvSubmittedEntries;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
 
     private String USER_ID;
     private ArrayList<StrategyDetails> listStrategyDetails;
@@ -56,7 +57,7 @@ public class StrategySubmittedDetailActivity extends AppCompatActivity {
         mTitle.setText(getResources().getString(R.string.title_activity_strategy_details_other_submitted));
 
         RCV_STRATEGIESOTHERS = (RecyclerView) findViewById(R.id.rcvStrategyiesOthers);
-        PB = (ProgressBar) findViewById(R.id.progressBar);
+
         tvSubmittedByName = (TextView) findViewById(R.id.tvSubmittedByName);
         tvSubmittedEntries = (TextView) findViewById(R.id.tvSubmittedEntries);
 
@@ -69,7 +70,11 @@ public class StrategySubmittedDetailActivity extends AppCompatActivity {
             USER_ID = getIntent().getStringExtra(Constant.USER_ID);
         tvSubmittedByName.setText(getString(R.string.user) + " "
                 + getIntent().getStringExtra(Constant.USER_ID));
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(StrategySubmittedDetailActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -80,7 +85,7 @@ public class StrategySubmittedDetailActivity extends AppCompatActivity {
                     false, false, true, new VolleyResponseListener() {
                         @Override
                         public void onError(VolleyError message) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                         }
 
                         @Override
@@ -94,7 +99,7 @@ public class StrategySubmittedDetailActivity extends AppCompatActivity {
                                 }.getType());
                                 RCV_STRATEGIESOTHERS.setAdapter(new StrategySubmittedOthersAdapter(
                                         StrategySubmittedDetailActivity.this, listStrategyDetails));
-                                PB.setVisibility(View.GONE);
+                                mProgressDialog.dismiss();
                                 if (listStrategyDetails.size() > 1)
                                     tvSubmittedEntries.setText(getString(R.string.submitted) + " " +
                                             listStrategyDetails.size() + " " + getString(R.string.entries));
@@ -129,18 +134,22 @@ public class StrategySubmittedDetailActivity extends AppCompatActivity {
         params.put("sname", Constant.SNAME);
         params.put("id", listStrategyDetails.get(position).getID());
 
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(StrategySubmittedDetailActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         try {
             new General().getJSONContentFromInternetService(StrategySubmittedDetailActivity.this,
                     General.PHPServices.ADD_MYSTRATEGY, params, false, false, true, new VolleyResponseListener() {
                         @Override
                         public void onError(VolleyError message) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                         }
 
                         @Override
                         public void onResponse(JSONObject response) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                             Log.d("::::::: ", response.toString());
                             ADDED_STRATEGIES = true;
                             if (getIntent().hasExtra("FROM_SYMPTOM")) {

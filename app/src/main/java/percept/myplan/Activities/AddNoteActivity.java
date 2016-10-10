@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -35,7 +36,7 @@ public class AddNoteActivity extends AppCompatActivity {
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
     private String HOPE_ELEMENT_ID = "";
 
@@ -64,7 +65,7 @@ public class AddNoteActivity extends AppCompatActivity {
             }
         }
         ED_NOTE = (EditText) findViewById(R.id.edtNote);
-        PB = (ProgressBar) findViewById(R.id.pbAddNote);
+
     }
 
     @Override
@@ -118,7 +119,11 @@ public class AddNoteActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(AddNoteActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -131,7 +136,7 @@ public class AddNoteActivity extends AppCompatActivity {
             new MultiPartParsing(AddNoteActivity.this, params, General.PHPServices.SAVE_HOPE_MEDIA, new AsyncTaskCompletedListener() {
                 @Override
                 public void onTaskCompleted(String response) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     Log.d(":::::: ", response.toString());
                     if (getIntent().hasExtra("FROM_HOPE")) {
                         GET_HOPE_DETAILS = true;
@@ -142,7 +147,7 @@ public class AddNoteActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

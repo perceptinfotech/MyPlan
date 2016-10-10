@@ -3,6 +3,7 @@ package percept.myplan.Activities;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -73,9 +74,9 @@ public class SignUpActivity extends AppCompatActivity {
     private TextView TV_CAPTUREIMG;
     private String FILE_PATH = "", YEAR = "1960";
     private Utils UTILS;
-    private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
     private boolean HAS_PERMISSION = true;
+    private ProgressDialog mProgressDialog;
 //    private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
 //
 //        @Override
@@ -100,7 +101,6 @@ public class SignUpActivity extends AppCompatActivity {
         mTitle.setText(getResources().getString(R.string.app_name));
 
         UTILS = new Utils(SignUpActivity.this);
-        PB = (ProgressBar) findViewById(R.id.progressBar);
         TV_CAPTUREIMG = (TextView) findViewById(R.id.tvCaptureImg);
         IMG_USER = (ImageView) findViewById(R.id.imgUserImage);
         EDT_FIRSTNAME = (EditText) findViewById(R.id.edtFirstName);
@@ -179,7 +179,11 @@ public class SignUpActivity extends AppCompatActivity {
                     if (UTILS.isEmailValid(EDT_EMAIL.getText().toString())) {
 
 
-                        PB.setVisibility(View.VISIBLE);
+                        mProgressDialog = new ProgressDialog(SignUpActivity.this);
+                        mProgressDialog.setMessage(getString(R.string.progress_loading));
+                        mProgressDialog.setIndeterminate(false);
+                        mProgressDialog.setCanceledOnTouchOutside(false);
+                        mProgressDialog.show();
                         signup();
 
                     } else {
@@ -399,13 +403,13 @@ public class SignUpActivity extends AppCompatActivity {
                 @Override
                 public void onError(VolleyError message) {
                     Log.d(":::::::::: ", message.toString());
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
                     Log.d(":::::::::: ", response.toString());
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     try {
                         if (response.has(Constant.DATA)) {
                             if (response.getJSONObject(Constant.DATA).getString(Constant.STATUS).equals("Success")) {
@@ -438,13 +442,13 @@ public class SignUpActivity extends AppCompatActivity {
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        PB.setVisibility(View.GONE);
+                        mProgressDialog.dismiss();
                     }
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

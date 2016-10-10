@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -33,7 +34,7 @@ public class ForgetPwdActivity extends AppCompatActivity {
 
 
     private Button BTN_SEND;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
     private EditText edtForgotPwdEmail;
 
@@ -51,7 +52,7 @@ public class ForgetPwdActivity extends AppCompatActivity {
         mTitle.setText(getResources().getString(R.string.forgetpwdtitle));
 
         edtForgotPwdEmail = (EditText) findViewById(R.id.edtForgotPwdEmail);
-        PB = (ProgressBar) findViewById(R.id.progressBar);
+
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         BTN_SEND = (Button) findViewById(R.id.btnSend);
@@ -81,7 +82,11 @@ public class ForgetPwdActivity extends AppCompatActivity {
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("email", edtForgotPwdEmail.getText().toString().trim());
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(ForgetPwdActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         try {
             new General().getJSONContentFromInternetService(ForgetPwdActivity.this,
                     General.PHPServices.FORGOT_PASSWORD, params, true, false, true, new VolleyResponseListener() {
@@ -89,13 +94,13 @@ public class ForgetPwdActivity extends AppCompatActivity {
                         @Override
                         public void onError(VolleyError message) {
                             Log.d(":::::::::: ", message.toString());
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                         }
 
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.d(":::::::::: ", response.toString());
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                             try {
                                 if (response.has(Constant.DATA)) {
                                     if (response.getJSONObject(Constant.DATA).getString(Constant.STATUS).equals("Success")) {
@@ -108,13 +113,13 @@ public class ForgetPwdActivity extends AppCompatActivity {
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                PB.setVisibility(View.GONE);
+                                mProgressDialog.dismiss();
                             }
                         }
                     });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

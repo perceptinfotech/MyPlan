@@ -3,6 +3,7 @@ package percept.myplan.fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -73,17 +74,15 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
     private SymptomAdapter ADAPTER;
     private Button BTN_DANGERSIGNAL;
     private TextView TV_ADDNEW_SYMPTOM;
-    private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
     private RelativeLayout LAY_INFO;
     private RelativeLayout REL_MAIN;
     private Button BTN_INFO;
     private Button BTN_SHOWINFOINSIDE;
-    private ProgressBar pbHelpVideo;
     private ArrayList<HelpVideos> listHelpVideos;
     private TextView tvTitle1, tvTitle2, tvTitle3, tvTitle4;
     private ImageView ivThumb1, ivThumb2, ivThumb3, ivThumb4;
-
+    private ProgressDialog mProgressDialog;
     public fragmentSymptoms() {
         // Required empty public constructor
     }
@@ -97,7 +96,6 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
         View _View = inflater.inflate(R.layout.fragment_symptoms, container, false);
         LST_SYMPTOM = (RecyclerView) _View.findViewById(R.id.lstSymptom);
         BTN_DANGERSIGNAL = (Button) _View.findViewById(R.id.btnDangerSignal);
-        PB = (ProgressBar) _View.findViewById(R.id.pbGetSymptoms);
         REL_COORDINATE = (CoordinatorLayout) _View.findViewById(R.id.snakeBar);
         LIST_SYMPTOM = new ArrayList<>();
 
@@ -144,7 +142,6 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
         REL_MAIN = (RelativeLayout) _View.findViewById(R.id.relMainLogin);
 
         LAY_INFO.setVisibility(View.GONE);
-        pbHelpVideo = (ProgressBar) _View.findViewById(R.id.pbHelpVideo);
 
         BTN_INFO = (Button) _View.findViewById(R.id.btnShowInfo);
         BTN_SHOWINFOINSIDE = (Button) _View.findViewById(R.id.btnShowInfoInside);
@@ -241,19 +238,19 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
 
     public void GetSymptom() {
         try {
-            PB.setVisibility(View.VISIBLE);
+            showProgress(getString(R.string.progress_loading));
             Map<String, String> params = new HashMap<String, String>();
             params.put("sid", Constant.SID);
             params.put("sname", Constant.SNAME);
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_SYMPTOMS, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                   dismissProgress();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    PB.setVisibility(View.GONE);
+                    dismissProgress();
                     Log.d(":::: ", response.toString());
                     Gson gson = new Gson();
                     try {
@@ -268,7 +265,7 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
                 }
             });
         } catch (Exception e) {
-            PB.setVisibility(View.GONE);
+            dismissProgress();
             e.printStackTrace();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
@@ -301,12 +298,12 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
     }
 
     private void getHelpinfo() {
-        pbHelpVideo.setVisibility(View.VISIBLE);
+        showProgress(getString(R.string.progress_loading));
         try {
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_HELP_INFO, new HashMap<String, String>(), true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    pbHelpVideo.setVisibility(View.GONE);
+                    dismissProgress();
                 }
 
                 @Override
@@ -331,7 +328,7 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
                         Picasso.with(getActivity())
                                 .load("http://img.youtube.com/vi/" + listHelpVideos.get(3).getVideoLink() + "/1.jpg")
                                 .into(ivThumb4);
-                        pbHelpVideo.setVisibility(View.GONE);
+                        dismissProgress();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -415,7 +412,7 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
                         params.put("id",LIST_SYMPTOM.get(position).getId());
 
                         try {
-                            PB.setVisibility(View.VISIBLE);
+                           showProgress(getString(R.string.progress_loading));
                             dismiss();
                             new General().getJSONContentFromInternetService(getActivity(),
                                     General.PHPServices.DELETE_SYMPTOM, params,
@@ -423,19 +420,19 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
 
                                         @Override
                                         public void onError(VolleyError message) {
-                                            PB.setVisibility(View.GONE);
+                                            dismissProgress();
                                             ADAPTER.notifyDataSetChanged();
                                         }
 
                                         @Override
                                         public void onResponse(JSONObject response) {
-                                            PB.setVisibility(View.GONE);
+                                            dismissProgress();
                                             LIST_SYMPTOM.remove(position);
                                             ADAPTER.notifyDataSetChanged();
                                         }
                                     });
                         } catch (Exception e) {
-                            PB.setVisibility(View.GONE);
+                            dismissProgress();
                             e.printStackTrace();
                         }
 
@@ -487,6 +484,20 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
         itemTouchHelper.attachToRecyclerView(LST_SYMPTOM);
     }
 
+    public void showProgress(String message){
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
+    }
 
+    public void dismissProgress(){
+        if(mProgressDialog.isShowing()){
+            mProgressDialog.dismiss();
+        }
+
+
+    }
 
 }

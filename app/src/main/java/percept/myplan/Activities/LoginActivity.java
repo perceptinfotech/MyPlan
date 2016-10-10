@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         ivThumb2 = (ImageView) findViewById(R.id.ivThumb2);
         ivThumb3 = (ImageView) findViewById(R.id.ivThumb3);
         ivThumb4 = (ImageView) findViewById(R.id.ivThumb4);
-        pbHelpVideo = (ProgressBar) findViewById(R.id.pbHelpVideo);
+
         tvTitle1.setOnClickListener(this);
         tvTitle2.setOnClickListener(this);
         tvTitle3.setOnClickListener(this);

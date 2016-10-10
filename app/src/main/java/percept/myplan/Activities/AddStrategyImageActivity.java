@@ -2,6 +2,7 @@ package percept.myplan.Activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -71,7 +72,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
     private String HOPE_ID = "";
     private String HOPE_ELEMENT_ID = "";
     private boolean FROM_EDIT = false;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private Utils UTILS;
     private CoordinatorLayout REL_COORDINATE;
     private RecyclerView rvPhotos;
@@ -109,7 +110,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
 
         TV_CHOOSEEXISTING = (TextView) findViewById(R.id.tvChooseExisting);
         TV_TAKENEW = (TextView) findViewById(R.id.tvTakeNew);
-        PB = (ProgressBar) findViewById(R.id.pbAddImage);
+
         tvSelectedText = (TextView) findViewById(R.id.tvSelectedText);
         tvNoOfImaged = (TextView) findViewById(R.id.tvNoOfImaged);
 
@@ -299,7 +300,11 @@ public class AddStrategyImageActivity extends AppCompatActivity {
 
             if (FROM.equals("") || FROM_EDIT) {
                 final List<String> _LIST_IMG = data.getStringArrayListExtra(PickConfig.EXTRA_STRING_ARRAYLIST);
-                PB.setVisibility(View.VISIBLE);
+                mProgressDialog = new ProgressDialog(AddStrategyImageActivity.this);
+                mProgressDialog.setMessage(getString(R.string.progress_loading));
+                mProgressDialog.setIndeterminate(false);
+                mProgressDialog.setCanceledOnTouchOutside(false);
+                mProgressDialog.show();
 
                 new Thread(new Runnable() {
                     @Override
@@ -311,7 +316,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
 
                     }
                 }).start();
-                PB.setVisibility(View.GONE);
+                mProgressDialog.dismiss();
                 if (FROM_EDIT) {
                     tvSelectedText.setVisibility(View.VISIBLE);
                     imageAdapter = new ImageDeleteAdapter(AddStrategyImageActivity.this, StrategyEditActivity.LIST_IMG);
@@ -513,7 +518,11 @@ public class AddStrategyImageActivity extends AppCompatActivity {
             return;
         }
 
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(AddStrategyImageActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_uploading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> params = new HashMap<>();
 //        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopemedia");
         String _path = decodeFile(imgpath, 800, 800);
@@ -521,7 +530,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         long imageLength = file.length() / 1024;
         if (imageLength > 512) {
             showAlertMessage();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             return;
         }
 
@@ -535,7 +544,7 @@ public class AddStrategyImageActivity extends AppCompatActivity {
         new MultiPartParsing(this, params, General.PHPServices.SAVE_HOPE_MEDIA, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
-                PB.setVisibility(View.GONE);
+                mProgressDialog.dismiss();
                 Log.d(":::::: ", response.toString());
                 if (getIntent().hasExtra("FROM_HOPE")) {
                     GET_HOPE_DETAILS = true;

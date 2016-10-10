@@ -1,6 +1,7 @@
 package percept.myplan.Activities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.CoordinatorLayout;
@@ -56,7 +57,7 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
     private List<String> LIST_SELECTEDID;
     public static boolean GET_STRATEGIES = false;
     Map<String, String> params;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
 
     private CoordinatorLayout REL_COORDINATE;
 
@@ -97,7 +98,7 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
 
         LST_STRATEGY = (RecyclerView) findViewById(R.id.lstStrategy);
         BTN_INSPIRATION = (Button) findViewById(R.id.btnInspiration);
-        PB = (ProgressBar) findViewById(R.id.pbAddStrategyToSymptom);
+
 
         LIST_STRATEGY = new ArrayList<>();
         params = new HashMap<String, String>();
@@ -136,12 +137,16 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
     }
 
     private void getStrategies() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(AddStrategyToSymptomActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         try {
             new General().getJSONContentFromInternetService(AddStrategyToSymptomActivity.this, General.PHPServices.GET_STRATEGIES, params, true, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
@@ -163,14 +168,14 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
                             }
                         }
                     }
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     ADAPTER = new StrategySelectionAdapter(LIST_STRATEGY);
                     LST_STRATEGY.setAdapter(ADAPTER);
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

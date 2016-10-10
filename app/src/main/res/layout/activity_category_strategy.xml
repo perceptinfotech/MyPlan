@@ -17,14 +17,6 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white" />
 
-    <ProgressBar
-        style="@android:style/Widget.Holo.ProgressBar.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/pbStrCate"
-        android:visibility="gone"/>
 
 <include layout="@layout/lay_internet_lost"/>
 </RelativeLayout>

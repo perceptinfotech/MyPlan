@@ -2,6 +2,7 @@ package percept.myplan.Activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -91,7 +92,7 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
     private LatLng addressLatlng;
 
     private Utils utils;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
 
     private ImageView imgRoomPhoto;
@@ -127,7 +128,7 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
 
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
-        PB = (ProgressBar) findViewById(R.id.pbAddRoom);
+
 
 
         utils = new Utils(AddEmergencyRoomActivity.this);
@@ -308,7 +309,11 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(AddEmergencyRoomActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         InputMethodManager inputManager = (InputMethodManager)
                 getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ?
@@ -334,7 +339,7 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
         new MultiPartParsing(AddEmergencyRoomActivity.this, params, General.PHPServices.SAVE_EMERGENCY_ROOM, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
-                PB.setVisibility(View.GONE);
+                mProgressDialog.dismiss();
                 if (emergencyRoom != null) {
                     try {
                         emergencyRoom = new Gson().fromJson(new JSONObject(response).getJSONObject(Constant.DATA).toString(),

@@ -259,6 +259,10 @@
     <string name="share_on">Share On..</string>
     <string name="subject">Subject</string>
     <string name="give_ur_feedback">Give your Feedback</string>
+
+    <string name="progress_uploading">Uploading - please hold on...</string>
+    <string name="progress_loading">Loading - please hold on...</string>
+
     <string-array name="navigation_menu">
         <item>Symptoms</item>
         <item>Strategies</item>

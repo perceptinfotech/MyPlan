@@ -1,6 +1,7 @@
 package percept.myplan.Activities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -48,9 +49,8 @@ public class AddNewSymptomActivity extends AppCompatActivity {
     private RecyclerView LST_SYMPTOMSTRATEGY;
     public static List<SymptomStrategy> LIST_ADDSYMPTOMSTRATEGY;
     private SymptomStrategyAdapter ADAPTER;
-    private ProgressBar PB;
     private CoordinatorLayout REL_COORDINATE;
-
+    private ProgressDialog mProgressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +64,6 @@ public class AddNewSymptomActivity extends AppCompatActivity {
         mTitle.setText(getResources().getString(R.string.title_activity_addsymptom));
 
         TV_ADDSTRATEGY = (TextView) findViewById(R.id.tvAddStrategy);
-        PB = (ProgressBar) findViewById(R.id.pbAddSymptom);
 
         LST_SYMPTOMSTRATEGY = (RecyclerView) findViewById(R.id.lstSymptomStrategy);
         LIST_ADDSYMPTOMSTRATEGY = new ArrayList<>();
@@ -121,7 +120,11 @@ public class AddNewSymptomActivity extends AppCompatActivity {
     }
 
     private void AddNewSymptom() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(AddNewSymptomActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -135,20 +138,20 @@ public class AddNewSymptomActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(AddNewSymptomActivity.this, General.PHPServices.SAVE_SYMPTOM, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
                     fragmentSymptoms.GET_STRATEGY = true;
                     Log.d(":::::", response.toString());
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     AddNewSymptomActivity.this.finish();
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

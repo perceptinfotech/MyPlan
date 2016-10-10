@@ -2,6 +2,7 @@ package percept.myplan.Activities;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -49,7 +50,7 @@ public class LoginActivity_1 extends AppCompatActivity {
     private TextView TV_FORGETPWD;
     private Utils UTILS;
     private EditText EDT_EMAIL;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
     private PinEntryEditText pinEntry;
 
@@ -70,7 +71,7 @@ public class LoginActivity_1 extends AppCompatActivity {
         TV_FORGETPWD = (TextView) findViewById(R.id.tvForgotPwd);
         EDT_EMAIL = (EditText) findViewById(R.id.edtEmail);
         pinEntry = (PinEntryEditText) findViewById(R.id.txt_pin_entry);
-        PB = (ProgressBar) findViewById(R.id.progressBar);
+
 
         if (!UTILS.getPreference(Constant.PREF_EMAIL).equals("")) {
             EDT_EMAIL.setText(UTILS.getPreference(Constant.PREF_EMAIL));
@@ -97,7 +98,7 @@ public class LoginActivity_1 extends AppCompatActivity {
                         LoginCall(str.toString().trim());
                     } catch (Exception e) {
                         e.printStackTrace();
-                        PB.setVisibility(View.GONE);
+                        mProgressDialog.dismiss();
                     }
 
 //                    } else {
@@ -131,20 +132,24 @@ public class LoginActivity_1 extends AppCompatActivity {
         Map<String, String> params = new HashMap<String, String>();
         params.put(Constant.USER_NAME, EDT_EMAIL.getText().toString().trim());
         params.put(Constant.PASSWORD, str.toString().trim());
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(LoginActivity_1.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         try {
             new General().getJSONContentFromInternetService(LoginActivity_1.this, General.PHPServices.LOGIN, params, true, false, true, new VolleyResponseListener() {
 
                 @Override
                 public void onError(VolleyError message) {
                     Log.d(":::::::::: ", message.toString());
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
                     Log.d(":::::::::: ", response.toString());
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     try {
                         if (response.has(Constant.DATA)) {
                             if (response.getJSONObject(Constant.DATA).getString(Constant.STATUS).equals("Success")) {
@@ -183,13 +188,13 @@ public class LoginActivity_1 extends AppCompatActivity {
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        PB.setVisibility(View.GONE);
+                        mProgressDialog.dismiss();
                     }
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

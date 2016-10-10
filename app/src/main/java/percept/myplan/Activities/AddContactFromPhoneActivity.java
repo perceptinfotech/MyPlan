@@ -771,8 +771,7 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                         ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
                         ContactsContract.Contacts.CUSTOM_RINGTONE
                 };
-                String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " <> ''";
-                Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, selection, null, null);
+                Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
                 if (cur.getCount() > 0) {
                     while (cur.moveToNext()) {
                         String _firstName = cur.getString(cur.getColumnIndex(
@@ -822,6 +821,8 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
                             }
                         }
                         _fNameCur.close();
+                        if (TextUtils.isEmpty(_fName))
+                            continue;
                         Cursor emailCur = cr.query(
                                 ContactsContract.CommonDataKinds.Email.CONTENT_URI,
                                 null,

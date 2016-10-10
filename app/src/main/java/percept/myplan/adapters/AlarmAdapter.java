@@ -54,7 +54,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.MyViewHolder
         holder.TV_ALARMTIME.setText(_hour + ":" + _min);
         holder.TV_ALARMEDIT.setTag(position);
         holder.SWITCH_STATUS.setTag(position);
-        holder.SWITCH_STATUS.setChecked(true);
+        holder.SWITCH_STATUS.setChecked(alarm.isStatus());
         if (isFromDetail) {
             holder.TV_ALARMEDIT.setEnabled(false);
             holder.SWITCH_STATUS.setEnabled(false);

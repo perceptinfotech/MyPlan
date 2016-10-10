@@ -32,8 +32,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -81,6 +85,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
     RoundedImageView imgContact;
     private TextView tvAssignPriority, tvContactChar, tvAddRingTone;
+    private ImageView imgAddPhoneNo, imgAddRingTone, imgAddEmail, imgAddUrl, imgAddAddress, imgAssignPriority;
     private EditText edtFirstName, edtLastName, edtCompany, edtAddAddress, edtAddUrl, edtAddEmail, edtAddPhoneNo;
     private ContactDisplay _contactDisplay;
     private String FILE_PATH = "";
@@ -95,12 +100,14 @@ public class AddContactDetailActivity extends AppCompatActivity {
     private TextView mTitle;
     private ProgressBar PB;
     private Uri uri;
+    private LinearLayout llMain;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_detail);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         isForEdit = getIntent().getBooleanExtra("IS_FOR_EDIT", false);
         isEDIT = isForEdit;
 
@@ -116,12 +123,15 @@ public class AddContactDetailActivity extends AppCompatActivity {
         initializeComponent();
         if (getIntent().hasExtra("ADD_TO_HELP")) {
             ADD_TO_HELP_LIST = "1";
-            if (helpCount < 10)
+            if (helpCount < 10) {
                 tvAssignPriority.setText(getString(R.string.help));
+                contact_priority = 1;
+            }
         }
         if (getIntent().hasExtra("FROM_EMERGENCY")) {
             ADD_TO_EMERGENCY = "1";
             tvAssignPriority.setText(getString(R.string.emergency));
+            contact_priority = 2;
         }
 
     }
@@ -141,6 +151,14 @@ public class AddContactDetailActivity extends AppCompatActivity {
         tvContactChar = (TextView) findViewById(R.id.tvContactChar);
         tvAddRingTone = (TextView) findViewById(R.id.tvAddRingTone);
 
+        imgAddPhoneNo = (ImageView) findViewById(R.id.imgAddPhoneNo);
+        imgAddRingTone = (ImageView) findViewById(R.id.imgAddRingTone);
+        imgAddEmail = (ImageView) findViewById(R.id.imgAddEmail);
+        imgAddUrl = (ImageView) findViewById(R.id.imgAddUrl);
+        imgAddAddress = (ImageView) findViewById(R.id.imgAddAddress);
+        imgAssignPriority = (ImageView) findViewById(R.id.imgAssignPriority);
+
+        llMain = (LinearLayout) findViewById(R.id.llMain);
         edtFirstName = (EditText) findViewById(R.id.edtFirstName);
         edtLastName = (EditText) findViewById(R.id.edtLastName);
         edtCompany = (EditText) findViewById(R.id.edtCompany);
@@ -256,8 +274,9 @@ public class AddContactDetailActivity extends AppCompatActivity {
             if (_contactDisplay.getHelplist().equals("1"))
                 tvAssignPriority.setText(getString(R.string.help));
             disableAllCompontent();
-        }
+        } else {
 
+        }
     }
 
     private void disableAllCompontent() {
@@ -288,8 +307,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
         imgContact.setEnabled(true);
         tvAddRingTone.setEnabled(true);
         tvAssignPriority.setEnabled(true);
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInputFromWindow(edtFirstName.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+
     }
 
     @Override
@@ -319,6 +337,19 @@ public class AddContactDetailActivity extends AppCompatActivity {
             saveContact();
             return true;
         } else if (item.getItemId() == R.id.action_edit) {
+            imgAddPhoneNo.setVisibility(View.VISIBLE);
+            imgAddRingTone.setVisibility(View.VISIBLE);
+            imgAddEmail.setVisibility(View.VISIBLE);
+            imgAddUrl.setVisibility(View.VISIBLE);
+            imgAddAddress.setVisibility(View.VISIBLE);
+            imgAssignPriority.setVisibility(View.VISIBLE);
+            setMargins(llMain, 10, 20, 10, 5);
+            setMargins(edtAddPhoneNo, 10, 0, 0, 0);
+            setMargins(tvAddRingTone, 10, 0, 0, 0);
+            setMargins(edtAddEmail, 10, 0, 0, 0);
+            setMargins(edtAddUrl, 10, 0, 0, 0);
+            setMargins(edtAddAddress, 10, 0, 0, 0);
+            setMargins(tvAssignPriority, 10, 0, 0, 0);
             enableAllCompontent();
             invalidateOptionsMenu();
 
@@ -738,6 +769,14 @@ public class AddContactDetailActivity extends AppCompatActivity {
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private void setMargins(View view, int left, int top, int right, int bottom) {
+        if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            p.setMargins(left, top, right, bottom);
+            view.requestLayout();
         }
     }
 

@@ -1,6 +1,7 @@
 package percept.myplan.Activities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -47,7 +48,7 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
     private List<ContactDisplay> LIST_ALLCONTACTS;
     private StrategyContactAdapter ADAPTER;
     private String STR_CONTACTID = "";
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
 
     @Override
@@ -64,7 +65,7 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
         if (getIntent().hasExtra("FROM_SHARELOC"))
             mTitle.setText(getResources().getString(R.string.share_with));
         else mTitle.setText(getResources().getString(R.string.allcontact));
-        PB = (ProgressBar) findViewById(R.id.pbAddStrategyContact);
+
 
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
@@ -87,7 +88,11 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
 
     private void getStrategyContacts() {
 
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(AddStrategyContactActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -95,7 +100,7 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
             new General().getJSONContentFromInternetService(AddStrategyContactActivity.this, General.PHPServices.GET_CONTACTS, params, true, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
@@ -121,7 +126,7 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
                             }
                         }
                     }
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     if (LIST_ALLCONTACTS.size() > 0) {
                         Collections.sort(LIST_ALLCONTACTS);
                         ADAPTER = new StrategyContactAdapter(AddStrategyContactActivity.this, LIST_ALLCONTACTS, false);
@@ -131,7 +136,7 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -174,10 +179,6 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-
-            AddStrategyContactActivity.this.finish();
-            return true;
-        } else if (item.getItemId() == R.id.action_AddStrategyContact) {
             for (ContactDisplay _obj : LIST_ALLCONTACTS) {
                 if (_obj.isSelected()) {
                     if (STR_CONTACTID.equals("")) {
@@ -191,6 +192,23 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
             returnIntent.putExtra("CONTACT_ID", STR_CONTACTID);
             setResult(Activity.RESULT_OK, returnIntent);
             AddStrategyContactActivity.this.finish();
+            return true;
+        } else if (item.getItemId() == R.id.action_AddStrategyContact) {
+//            for (ContactDisplay _obj : LIST_ALLCONTACTS) {
+//                if (_obj.isSelected()) {
+//                    if (STR_CONTACTID.equals("")) {
+//                        STR_CONTACTID += _obj.getId();
+//                    } else {
+//                        STR_CONTACTID += "," + _obj.getId();
+//                    }
+//                }
+//            }
+//            Intent returnIntent = new Intent();
+//            returnIntent.putExtra("CONTACT_ID", STR_CONTACTID);
+//            setResult(Activity.RESULT_OK, returnIntent);
+//            AddStrategyContactActivity.this.finish();
+            Intent intent=new Intent(AddStrategyContactActivity.this,AddContactActivity.class);
+            startActivity(intent);
             return true;
         } else if (item.getItemId() == R.id.action_Next) {
             String strContactNos = "";
