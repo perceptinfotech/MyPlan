@@ -3,6 +3,7 @@ package percept.myplan.Activities;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -98,10 +99,9 @@ public class AddContactDetailActivity extends AppCompatActivity {
     private boolean isForEdit = false;
     private boolean isEDIT = false;
     private TextView mTitle;
-    private ProgressBar PB;
     private Uri uri;
     private LinearLayout llMain;
-
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -169,7 +169,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
 
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
-        PB = (ProgressBar) findViewById(R.id.pbAddContact);
+
 
         findViewById(R.id.lay1).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,7 +204,11 @@ public class AddContactDetailActivity extends AppCompatActivity {
                     @Override
                     protected void onPreExecute() {
                         super.onPreExecute();
-                        PB.setVisibility(View.VISIBLE);
+                        mProgressDialog = new ProgressDialog(AddContactDetailActivity.this);
+                        mProgressDialog.setMessage(getString(R.string.progress_loading));
+                        mProgressDialog.setIndeterminate(false);
+                        mProgressDialog.setCanceledOnTouchOutside(false);
+                        mProgressDialog.show();
                     }
 
                     @Override
@@ -221,7 +225,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
                     @Override
                     protected void onPostExecute(Void aVoid) {
                         super.onPostExecute(aVoid);
-                        PB.setVisibility(View.GONE);
+                       mProgressDialog.dismiss();
                     }
                 }.execute();
 
@@ -474,7 +478,11 @@ public class AddContactDetailActivity extends AppCompatActivity {
         }
 
 
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(AddContactDetailActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         if (contact_priority != 2)
             ADD_TO_HELP_LIST = String.valueOf(contact_priority);
         HashMap<String, String> params = new HashMap<>();
@@ -512,7 +520,7 @@ public class AddContactDetailActivity extends AppCompatActivity {
 
                 }
                 fragmentContacts.GET_CONTACTS = true;
-                PB.setVisibility(View.GONE);
+                mProgressDialog.dismiss();
                 AddContactDetailActivity.this.finish();
             }
         });

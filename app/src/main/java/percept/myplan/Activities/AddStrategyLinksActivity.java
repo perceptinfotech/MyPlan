@@ -1,6 +1,7 @@
 package percept.myplan.Activities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -37,7 +38,7 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
     private String FROM = "";
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
     private String HOPE_ELEMENT_ID = "";
 
@@ -58,7 +59,7 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
 
         BTN_INSERTLINK = (Button) findViewById(R.id.btnInsertLink);
         EDT_LINK = (EditText) findViewById(R.id.edtLink);
-        PB = (ProgressBar) findViewById(R.id.pbAddStrategyLink);
+
 
         BTN_INSERTLINK.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +129,11 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(AddStrategyLinksActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -141,7 +146,7 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
             new MultiPartParsing(AddStrategyLinksActivity.this, params, General.PHPServices.SAVE_HOPE_MEDIA, new AsyncTaskCompletedListener() {
                 @Override
                 public void onTaskCompleted(String response) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     Log.d(":::::: ", response.toString());
                     if (getIntent().hasExtra("FROM_HOPE")) {
                         GET_HOPE_DETAILS = true;
@@ -152,7 +157,7 @@ public class AddStrategyLinksActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

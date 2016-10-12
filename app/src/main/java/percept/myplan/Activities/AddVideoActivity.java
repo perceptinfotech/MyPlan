@@ -2,6 +2,7 @@ package percept.myplan.Activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -65,7 +66,7 @@ public class AddVideoActivity extends AppCompatActivity {
     private String HOPE_TITLE = "";
     private String HOPE_ID = "";
     private String HOPE_ELEMENT_ID = "";
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private boolean HAS_PERMISSION = true;
     private Utils UTILS;
     private CoordinatorLayout REL_COORDINATE;
@@ -103,7 +104,7 @@ public class AddVideoActivity extends AppCompatActivity {
         TV_CHOOSEVIDEO = (TextView) findViewById(R.id.tvChooseExistingVideo);
         TV_RECORDVIDEO = (TextView) findViewById(R.id.tvRecordVideo);
         TV_CHOOSEVIDLINK = (TextView) findViewById(R.id.tvChooseFromLink);
-        PB = (ProgressBar) findViewById(R.id.pbVideos);
+
 
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -377,7 +378,11 @@ public class AddVideoActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(AddVideoActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_uploading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> params = new HashMap<>();
 //        params.put(Constant.URL,getResources().getString(R.string.server_url) + ".saveHopemedia");
         if (!TextUtils.isEmpty(vidpath)) {
@@ -407,7 +412,7 @@ public class AddVideoActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                PB.setVisibility(View.GONE);
+                mProgressDialog.dismiss();
                 Log.d(":::::: ", response);
                 if (getIntent().hasExtra("FROM_HOPE")) {
                     GET_HOPE_DETAILS = true;
@@ -437,7 +442,11 @@ public class AddVideoActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            PB.setVisibility(View.VISIBLE);
+            mProgressDialog = new ProgressDialog(AddVideoActivity.this);
+            mProgressDialog.setMessage(getString(R.string.progress_loading));
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+            mProgressDialog.show();
 //            Log.d(TAG,"Start video compression");
         }
 
@@ -449,7 +458,7 @@ public class AddVideoActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String _path) {
             super.onPostExecute(_path);
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             if (!android.text.TextUtils.isEmpty(_path)) {
 //                Log.d(TAG,"Compression successfully!");
                 File file = new File(_path);

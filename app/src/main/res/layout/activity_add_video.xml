@@ -77,14 +77,6 @@
         android:visibility="gone"
         android:layout_below="@+id/view"/>
 
-    <ProgressBar
-        android:id="@+id/pbVideos"
-        style="@android:style/Widget.Holo.ProgressBar.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:visibility="gone"/>
 
     <include layout="@layout/lay_internet_lost"/>
 </RelativeLayout>

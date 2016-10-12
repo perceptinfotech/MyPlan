@@ -1,6 +1,7 @@
 package percept.myplan.Activities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -38,7 +39,7 @@ public class AssignPriorityActivity extends AppCompatActivity {
     private int con_priority = 0; // 0: Default 1:Help  2:Emergency
     private int _count = 0;
     private CheckBox imgTickHelp, imgTickEmergency;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,7 +58,7 @@ public class AssignPriorityActivity extends AppCompatActivity {
         tvHelp = (TextView) findViewById(R.id.tvHelp);
         imgTickHelp = (CheckBox) findViewById(R.id.imgTickHelp);
         imgTickEmergency = (CheckBox) findViewById(R.id.imgTickEmergency);
-        PB = (ProgressBar) findViewById(R.id.pbPriority);
+
         getContacts();
         if (getIntent().hasExtra(Constant.HELP_COUNT)) {
             _count = getIntent().getIntExtra(Constant.HELP_COUNT, 0);
@@ -140,7 +141,11 @@ public class AssignPriorityActivity extends AppCompatActivity {
     }
 
     private void getContacts() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(AssignPriorityActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -149,7 +154,7 @@ public class AssignPriorityActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(AssignPriorityActivity.this, General.PHPServices.GET_CONTACTS, params, true, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
@@ -160,7 +165,7 @@ public class AssignPriorityActivity extends AppCompatActivity {
                         JSONArray jsonArray = response.getJSONArray(Constant.DATA);
                         if (jsonArray != null)
                             _count = jsonArray.length();
-                        PB.setVisibility(View.GONE);
+                        mProgressDialog.dismiss();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
