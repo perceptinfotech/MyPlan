@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -45,7 +46,7 @@ public class HelpListEditActivity extends AppCompatActivity {
     private TextView TV_ADDHELPLIST;
     private RecyclerView LST_HELP;
     private ContactHelpListAdapter ADPT_CONTACTHELPLIST;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
 
     @Override
@@ -63,7 +64,6 @@ public class HelpListEditActivity extends AppCompatActivity {
 
         TV_ADDHELPLIST = (TextView) findViewById(R.id.tvAddHelpContact);
         LST_HELP = (RecyclerView) findViewById(R.id.lstHelpList);
-        PB = (ProgressBar) findViewById(R.id.pbHelpListEdit);
 
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
@@ -114,7 +114,11 @@ public class HelpListEditActivity extends AppCompatActivity {
 
     private void GetContacts() {
         try {
-            PB.setVisibility(View.VISIBLE);
+            mProgressDialog = new ProgressDialog(HelpListEditActivity.this);
+            mProgressDialog.setMessage(getString(R.string.progress_loading));
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+            mProgressDialog.show();
             Map<String, String> params = new HashMap<String, String>();
             params.put("sid", Constant.SID);
             params.put("sname", Constant.SNAME);
@@ -123,7 +127,7 @@ public class HelpListEditActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(HelpListEditActivity.this, General.PHPServices.GET_CONTACTS, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
@@ -147,7 +151,7 @@ public class HelpListEditActivity extends AppCompatActivity {
                             LIST_HELPCONTACTS.add(_obj);
                         }
                     }
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
 
                     ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
                     LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
@@ -155,7 +159,7 @@ public class HelpListEditActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

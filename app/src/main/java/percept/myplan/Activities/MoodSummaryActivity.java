@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -46,7 +47,7 @@ public class MoodSummaryActivity extends AppCompatActivity {
     private Utils UTILS;
     private int MONTH;
     private int YEAR;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
 
     @Override
@@ -68,7 +69,6 @@ public class MoodSummaryActivity extends AppCompatActivity {
         YEAR = getIntent().getExtras().getInt("YEAR");
         UTILS = new Utils(MoodSummaryActivity.this);
         LST_MOODSUMMARY = (RecyclerView) findViewById(R.id.lstMoodSummay);
-        PB = (ProgressBar) findViewById(R.id.pbMoodSummary);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(MoodSummaryActivity.this);
         LST_MOODSUMMARY.setLayoutManager(mLayoutManager);
         LST_MOODSUMMARY.setItemAnimator(new DefaultItemAnimator());
@@ -78,7 +78,10 @@ public class MoodSummaryActivity extends AppCompatActivity {
     }
 
     private void GetMoodSummary() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(MoodSummaryActivity.this);
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -88,7 +91,7 @@ public class MoodSummaryActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(MoodSummaryActivity.this, General.PHPServices.GET_MOODCALENDER, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
@@ -115,14 +118,14 @@ public class MoodSummaryActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     ADAPTER = new MoodSummaryAdapter(MoodSummaryActivity.this, LIST_MOOD);
                     LST_MOODSUMMARY.setAdapter(ADAPTER);
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

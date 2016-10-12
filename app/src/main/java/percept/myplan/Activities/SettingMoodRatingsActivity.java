@@ -2,6 +2,7 @@ package percept.myplan.Activities;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -58,7 +59,7 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
     private LinearLayout LAY_SIDAS, layMood, llNotificationOne, llNotificationTwo;
     private RecyclerView rcvSidas;
     private ArrayList<SidaSchedule> listSidasSchedule = new ArrayList<>();
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
     private CheckBox chkOneDay, chkTwoDay;
     private TextView tvMoodTimeTitle, tvAlarmOne, tvAlarmTwo;
@@ -82,7 +83,7 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
         SWITCH_SIDAS = (SwitchCompat) findViewById(R.id.switchSidas);
 
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
-        PB = (ProgressBar) findViewById(R.id.progressBar);
+
 
         chkOneDay = (CheckBox) findViewById(R.id.chkOneDay);
         chkTwoDay = (CheckBox) findViewById(R.id.chkTwoDay);
@@ -196,7 +197,11 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
                 break;
             }
         }
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(SettingMoodRatingsActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -218,12 +223,12 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(SettingMoodRatingsActivity.this, General.PHPServices.SAVE_SETTINGS, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     removeAlarms(getApplicationContext());
                     setAlarms();
                     SettingMoodRatingsActivity.this.finish();
@@ -231,7 +236,7 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -250,7 +255,11 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
     }
 
     private void getSetting() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(SettingMoodRatingsActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -259,12 +268,12 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
                     General.PHPServices.GET_SETTINGS, params, true, false, true, new VolleyResponseListener() {
                         @Override
                         public void onError(VolleyError message) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                         }
 
                         @Override
                         public void onResponse(JSONObject response) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                             Log.d(":::GET SETTING", response.toString());
                             try {
                                 if (response.has(Constant.DATA)) {
@@ -326,7 +335,7 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
                     });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

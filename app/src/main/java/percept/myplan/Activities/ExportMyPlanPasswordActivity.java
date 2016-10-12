@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -34,7 +35,7 @@ import percept.myplan.customviews.PinEntryEditText;
 
 public class ExportMyPlanPasswordActivity extends AppCompatActivity {
     private PinEntryEditText editText;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINET;
 
     @Override
@@ -50,7 +51,7 @@ public class ExportMyPlanPasswordActivity extends AppCompatActivity {
         mTitle.setText(getString(R.string.exportmyplan));
 
         editText = (PinEntryEditText) findViewById(R.id.txt_pin_entry);
-        PB = (ProgressBar) findViewById(R.id.progressBar);
+
 
         REL_COORDINET = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
@@ -65,7 +66,7 @@ public class ExportMyPlanPasswordActivity extends AppCompatActivity {
                     exportingPDF(str.toString().trim());
                 } catch (Exception e) {
                     e.printStackTrace();
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
             }
         });
@@ -73,7 +74,11 @@ public class ExportMyPlanPasswordActivity extends AppCompatActivity {
     }
 
     private void exportingPDF(final String pdfPassword) {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(ExportMyPlanPasswordActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -83,13 +88,13 @@ public class ExportMyPlanPasswordActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(ExportMyPlanPasswordActivity.this, General.PHPServices.GET_EXPORT_PDF, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
                     Log.i("::::PDF", response.toString());
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     Toast.makeText(ExportMyPlanPasswordActivity.this, getString(R.string.pdf_success_msg), Toast.LENGTH_LONG).show();
                     ExportMyPlanPasswordActivity.this.finish();
                 }

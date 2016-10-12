@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,7 +19,7 @@ import percept.myplan.R;
 
 public class FullscreenVideoActivity extends AppCompatActivity {
     private VideoView vvPlayVideo;
-    private ProgressBar progressBar;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +39,11 @@ public class FullscreenVideoActivity extends AppCompatActivity {
         String url = getIntent().getStringExtra("URL_MUSIC");
 
         vvPlayVideo = (VideoView) findViewById(R.id.vvPlayVideo);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(FullscreenVideoActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
 
         MediaController mediaController = new MediaController(this);
         mediaController.setAnchorView(vvPlayVideo);
@@ -50,7 +54,7 @@ public class FullscreenVideoActivity extends AppCompatActivity {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
                 vvPlayVideo.start();
-                progressBar.setVisibility(View.GONE);
+                mProgressDialog.dismiss();
             }
         });
     }

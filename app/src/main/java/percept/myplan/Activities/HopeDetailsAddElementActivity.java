@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -35,7 +36,7 @@ public class HopeDetailsAddElementActivity extends AppCompatActivity {
     private HopeDetail hopeDetail;
     private String HOPE_NAME = "";
     private CoordinatorLayout REL_COORDINATE;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +64,7 @@ public class HopeDetailsAddElementActivity extends AppCompatActivity {
         TV_ADDLINK = (TextView) findViewById(R.id.tvChooseHopElementLink);
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
-        PB = (ProgressBar) findViewById(R.id.pbgetHopeDetail);
+
         if (hopeDetail != null)
             EDT_TITLE.setText(hopeDetail.getMEDIA_TITLE());
 
@@ -180,7 +181,11 @@ public class HopeDetailsAddElementActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(HopeDetailsAddElementActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> params = new HashMap<>();
         if (!TextUtils.isEmpty(imgpath))
             params.put("media", imgpath);
@@ -193,7 +198,7 @@ public class HopeDetailsAddElementActivity extends AppCompatActivity {
         new MultiPartParsing(this, params, General.PHPServices.SAVE_HOPE_MEDIA, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
-                PB.setVisibility(View.GONE);
+                mProgressDialog.dismiss();
                 Log.d(":::::: ", response.toString());
 
                 GET_HOPE_DETAILS = true;

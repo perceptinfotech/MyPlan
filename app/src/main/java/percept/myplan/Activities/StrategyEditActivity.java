@@ -3,6 +3,7 @@ package percept.myplan.Activities;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -66,7 +67,7 @@ public class StrategyEditActivity extends AppCompatActivity {
     private HashMap<String, List<Alarm>> MAP_ALARM;
     private Utils UTILS;
     private String STRATEGY_ID;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private List<String> listLink = new ArrayList<>();
 
     private CoordinatorLayout REL_COORDINATE;
@@ -87,7 +88,7 @@ public class StrategyEditActivity extends AppCompatActivity {
         mTitle.setText(getResources().getString(R.string.strategy));
 
         STRATEGY_ID = getIntent().getExtras().getString("STRATEGY_ID");
-        PB = (ProgressBar) findViewById(R.id.pbEditStrategy);
+
         EDT_TITLE = (EditText) findViewById(R.id.edtTitle);
         EDT_TEXT = (EditText) findViewById(R.id.edtText);
 
@@ -230,7 +231,11 @@ public class StrategyEditActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(StrategyEditActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> params = new HashMap<>();
 //        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveStrategy");
         // Adding file data to http body
@@ -257,7 +262,7 @@ public class StrategyEditActivity extends AppCompatActivity {
         new MultiPartParsing(StrategyEditActivity.this, params, General.PHPServices.SAVE_STRATEGY, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
-                PB.setVisibility(View.GONE);
+                mProgressDialog.dismiss();
                 try {
                     Log.d(":::::: ", response);
                     String _id = "";

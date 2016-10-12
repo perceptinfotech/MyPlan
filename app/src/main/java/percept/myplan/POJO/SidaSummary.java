@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 public class SidaSummary {
     @SerializedName("week_number")
     private String Week_Number;
+    @SerializedName("avg_perc")
+    private String avg_perc;
     @SerializedName("avg_score")
     private String Avg_Score;
     @SerializedName("month_number")
@@ -49,5 +51,13 @@ public class SidaSummary {
 
     public void setYear(String year) {
         this.year = year;
+    }
+
+    public String getAvg_perc() {
+        return avg_perc;
+    }
+
+    public void setAvg_perc(String avg_perc) {
+        this.avg_perc = avg_perc;
     }
 }

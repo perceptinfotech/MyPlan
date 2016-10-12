@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -54,7 +55,8 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
     private ContactHelpListAdapter ADPT_CONTACTHELPLIST;
     private List<ContactDisplay> LIST_ALLCONTACTS;
     private ContactHelpListAdapter ADPT_CONTACTLIST;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
+
 
     private CoordinatorLayout REL_COORDINATE;
 
@@ -81,7 +83,7 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
         TV_EDIT_HELPLIST.setVisibility(View.INVISIBLE);
         LST_HELP = (RecyclerView) findViewById(R.id.lstHelpList);
         LST_CONTACTS = (RecyclerView) findViewById(R.id.lstContacts);
-        PB = (ProgressBar) findViewById(R.id.pbCreateQuickMsg);
+
 
         TV_ADD_CONTACT = (TextView) findViewById(R.id.tvAddContact);
 
@@ -180,7 +182,11 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
     }
 
     private void getContacts() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(CreateQuickMsgActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -191,12 +197,12 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(CreateQuickMsgActivity.this, General.PHPServices.GET_CONTACTS, params, true, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     Log.d(":::::::::::::: ", response.toString());
 
                     Gson gson = new Gson();
@@ -226,7 +232,7 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

@@ -1,6 +1,7 @@
 package percept.myplan.Activities;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -61,7 +62,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
     private String STR_NOTE = "";
     private List<Mood> LIST_MOOD, LIST_MOOD_TMP;
     private Button BTN_SEEALLNOTE;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
 
     private CoordinatorLayout REL_COORDINATE;
 
@@ -92,7 +93,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         BTN_SEEALLNOTE = (Button) findViewById(R.id.btnSeeAllNote);
-        PB = (ProgressBar) findViewById(R.id.pbMood);
+
 
         calendarView.setCalendarView(new FlexibleCalendarView.CalendarView() {
             @Override
@@ -215,7 +216,11 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
     }
 
     private void GetMoodCalender() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(MoodActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         eventMap.clear();
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
@@ -226,7 +231,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
             new General().getJSONContentFromInternetService(MoodActivity.this, General.PHPServices.GET_MOODCALENDER, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
@@ -346,13 +351,13 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                             e.printStackTrace();
                         }
                     }
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     calendarView.refresh();
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -492,7 +497,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

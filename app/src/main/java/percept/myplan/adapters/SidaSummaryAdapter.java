@@ -56,13 +56,14 @@ public class SidaSummaryAdapter extends RecyclerView.Adapter<SidaSummaryAdapter.
         ArrayList<PieSlice> LST_PIEDATA = new ArrayList<>();
         PieSlice slice = new PieSlice();
         double avgScore = Float.parseFloat(_mood.getAvg_Score());
-        if (avgScore <= 30) {
+        double avgPer = Float.parseFloat(_mood.getAvg_perc());
+        if (avgPer <= 30) {
             slice.setColor(CONTEXT.getResources().getColor(R.color.pie_color1));
 //            $color = '#04a060';
-        } else if (avgScore > 30 && avgScore <= 42) {
+        } else if (avgPer > 30 && avgPer <= 42) {
             slice.setColor(CONTEXT.getResources().getColor(R.color.pie_color2));
 //            $color = '#fed304';
-        } else if (avgScore > 42) {
+        } else if (avgPer > 42) {
             slice.setColor(CONTEXT.getResources().getColor(R.color.pie_color3));
 //            $color = '#ed1c24';
         }

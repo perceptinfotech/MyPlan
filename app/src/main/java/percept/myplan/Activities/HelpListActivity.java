@@ -1,6 +1,7 @@
 package percept.myplan.Activities;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -54,7 +55,7 @@ public class HelpListActivity extends AppCompatActivity {
     private RecyclerView LST_HELP;
     private ContactHelpListAdapter ADPT_CONTACTHELPLIST;
     private List<ContactDisplay> LIST_ALLCONTACTS;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     final private int REQUEST_CODE_CALL_PERMISSIONS = 123;
     private CoordinatorLayout REL_COORDINATE;
     private String phoneNo = "";
@@ -77,7 +78,7 @@ public class HelpListActivity extends AppCompatActivity {
         TV_ADDHELPLIST = (TextView) findViewById(R.id.tvAddHelpContact);
         TV_EDITHELPLIST = (TextView) findViewById(R.id.tvEditHelpList);
         LST_HELP = (RecyclerView) findViewById(R.id.lstHelpList);
-        PB = (ProgressBar) findViewById(R.id.pbHelpList);
+
         LIST_ALLCONTACTS = new ArrayList<>();
         HELP_CONTACT_NAME = new HashMap<>();
         LIST_HELPCONTACTS = new ArrayList<>();
@@ -152,7 +153,11 @@ public class HelpListActivity extends AppCompatActivity {
     }
 
     private void getContacts() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(HelpListActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -162,7 +167,7 @@ public class HelpListActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(HelpListActivity.this, General.PHPServices.GET_CONTACTS, params, true, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
@@ -174,7 +179,7 @@ public class HelpListActivity extends AppCompatActivity {
                         LIST_ALLCONTACTS = gson.fromJson(response.getJSONArray(Constant.DATA)
                                 .toString(), new TypeToken<List<ContactDisplay>>() {
                         }.getType());
-                        PB.setVisibility(View.GONE);
+                        mProgressDialog.dismiss();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -195,7 +200,7 @@ public class HelpListActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

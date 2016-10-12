@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -41,7 +42,7 @@ public class HopeDetailsActivity extends AppCompatActivity {
     protected RecyclerView.Adapter mAdapter;
     Map<String, String> params;
     private List<HopeDetail> LIST_HOPEDETAILS;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private String HOPE_TITLE;
     private CoordinatorLayout REL_COORDINATE;
     private int deletePosition = -1;
@@ -74,7 +75,6 @@ public class HopeDetailsActivity extends AppCompatActivity {
 
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
-        PB = (ProgressBar) findViewById(R.id.pbgetHopeDetail);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(HopeDetailsActivity.this);
         mRecyclerView.setLayoutManager(layoutManager);
 //        if (layoutManager instanceof LinearLayoutManager) {
@@ -92,16 +92,20 @@ public class HopeDetailsActivity extends AppCompatActivity {
         params.put("sname", Constant.SNAME);
         params.put("id", getIntent().getExtras().getString("HOPE_ID"));
         try {
-            PB.setVisibility(View.VISIBLE);
+            mProgressDialog = new ProgressDialog(HopeDetailsActivity.this);
+            mProgressDialog.setMessage(getString(R.string.progress_loading));
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+            mProgressDialog.show();
             new General().getJSONContentFromInternetService(HopeDetailsActivity.this, General.PHPServices.GET_HOPEBOX, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     Gson gson = new Gson();
                     try {
                         LIST_HOPEDETAILS = gson.fromJson(response.getJSONArray(Constant.DATA)
@@ -121,7 +125,7 @@ public class HopeDetailsActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -214,17 +218,21 @@ public class HopeDetailsActivity extends AppCompatActivity {
         params.put("sname", Constant.SNAME);
         params.put("id", LIST_HOPEDETAILS.get(poition).getID());
         try {
-            PB.setVisibility(View.VISIBLE);
+            mProgressDialog = new ProgressDialog(HopeDetailsActivity.this);
+            mProgressDialog.setMessage(getString(R.string.progress_loading));
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+            mProgressDialog.show();
             new General().getJSONContentFromInternetService(HopeDetailsActivity.this, General.PHPServices.DELETE_HOPE_MEDIA, params,
                     true, false, false, new VolleyResponseListener() {
                         @Override
                         public void onError(VolleyError message) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                         }
 
                         @Override
                         public void onResponse(JSONObject response) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                             try {
                                 if (response.has(Constant.DATA)) {
 
