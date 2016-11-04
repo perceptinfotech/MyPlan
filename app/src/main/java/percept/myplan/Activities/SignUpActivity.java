@@ -48,6 +48,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.Dialogs.dialogSelectPic;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
@@ -91,6 +93,8 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        autoScreenTracking();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -714,5 +718,29 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
     }
 }

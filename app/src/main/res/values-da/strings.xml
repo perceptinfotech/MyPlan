@@ -16,7 +16,7 @@
     <string name="email">E-mail</string>
     <string name="phone_no">Telefonnummer</string>
     <string name="birthday">Fødselsår</string>
-    <string name="choose_pwd">Vælg kodeord - 4 tegn</string>
+    <string name="choose_pwd">Vælg adgangskode - 4 tegn</string>
     <string name="enter">Ok</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -30,8 +30,8 @@
     <string name="title_activity_splash">Forside</string>
     <string name="prototypeby"><![CDATA[Prototype by Weis & Wise]]></string>
     <string name="welcome">Velkommen til Minplan</string>
-    <string name="forgetpwd">Glemt kodeord ?</string>
-    <string name="forgetpwdtitle">Glemt kodeord</string>
+    <string name="forgetpwd">Glemt adgangskode ?</string>
+    <string name="forgetpwdtitle">Glemt adgangskode</string>
     <string name="symptops">Symptomer</string>
     <string name="strategies">Strategier</string>
     <string name="contacts">Kontakter</string>
@@ -44,15 +44,15 @@
     <string name="logout">Log ud</string>
     <string name="title_activity_sign_up_1">Opret bruger</string>
     <string name="tvbirthday">Fødselsdag</string>
-    <string name="password">Kodeord</string>
+    <string name="password">adgangskode</string>
     <string name="insertpersonalimg">Indsæt personligt billede</string>
     <string name="howtosignup">Sådan opretter du en bruger</string>
     <string name="howtosignin">Log på</string>
     <string name="howtostartnewcontact">Sådan opretter du en ny kontakt</string>
     <string name="howtoaddhelp">Sådan tilføjer du hjælp</string>
-    <string name="enterpwd">Indtast kodeord</string>
-    <string name="pwdprotectdata">Kodeordet beskytter din data</string>
-    <string name="enteremailtoreset">Indtast e-mailadresse for at nulstille dit kodeord</string>
+    <string name="enterpwd">Indtast adgangskode</string>
+    <string name="pwdprotectdata">adgangskode beskytter din data</string>
+    <string name="enteremailtoreset">Indtast e-mailadresse for at nulstille dit adgangskode</string>
     <string name="send">Send</string>
     <string name="howareyoufeelingtoday">Hvordan har du det i dag?</string>
     <string name="todaysmoodrating">Dagens humør</string>
@@ -217,14 +217,14 @@
     <string name="click_to_exit">Gå venligst tilbage for at afslutte</string>
     <string name="location_update">Opdatering af lokationer</string>
     <string name="hello">Hej</string>
-    <string name="old_password">Tidligere kodeord</string>
-    <string name="new_password">Nyt kodeord</string>
-    <string name="change_password">Ændre kodeord</string>
+    <string name="old_password">Tidligere adgangskode</string>
+    <string name="new_password">Nyt adgangskode</string>
+    <string name="change_password">Ændre adgangskode</string>
     <string name="add_alarm">Tilføj alarm</string>
     <string name="action_change">Rediger</string>
     <string name="required">Påkrævet</string>
-    <string name="toast_old_password_invalid">Indtast venligst tidligere gyldigt kodeord</string>
-    <string name="toast_new_password_invalid">Indtast venligst nyt gyldigt kodeord</string>
+    <string name="toast_old_password_invalid">Indtast venligst tidligere gyldigt adgangskode</string>
+    <string name="toast_new_password_invalid">Indtast venligst nyt gyldigt adgangskode</string>
     <string name="share_strategy_success">Din strategi er delt.</string>
     <string name="add_ringtone">Tilføj ny ringetone</string>
     <string name="add_email">Tilføj ny e-mail</string>
@@ -249,7 +249,7 @@
     <string name="delete_hope_box_success">Hope box slettet</string>
     <string name="delete_hope_media_success">Hope media tilføjelsen er slettet</string>
     <string name="login_error">Fejl ved log in</string>
-    <string name="forgot_success">En mail er sendt. Tjek venligst din e-mail for at nulstille kodeord.</string>
+    <string name="forgot_success">En mail er sendt. Tjek venligst din e-mail for at nulstille adgangskode.</string>
     <string name="quick_msg">Hurtig besked</string>
     <string name="details">Detaljer</string>
     <string name="share_with">Del</string>

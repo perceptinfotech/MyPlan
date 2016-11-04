@@ -16,7 +16,7 @@
     <string name="email">Email</string>
     <string name="phone_no">Phone Number</string>
     <string name="birthday">Birthday - year</string>
-    <string name="choose_pwd">Choose Password - 4 Digits</string>
+    <string name="choose_pwd">Choose Passcode - 4 Digits</string>
     <string name="enter">Enter</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -25,13 +25,14 @@
     <string name="emergency">Emergency</string>
     <string name="title_activity_add_contact">Contacts</string>
     <string name="addcontactfromphone">Add contact from phonelist</string>
+    <string name="choosefromexisting">Choose existing contact</string>
     <string name="addnewcontact">Add new contact</string>
     <string name="title_activity_add_contact_from_phone">AllContacts</string>
     <string name="title_activity_splash">Splash</string>
     <string name="prototypeby"><![CDATA[Prototype by Weis & Wise]]></string>
     <string name="welcome">Welcome to MyPlan</string>
-    <string name="forgetpwd">Forgot Password ?</string>
-    <string name="forgetpwdtitle">Forgot Password</string>
+    <string name="forgetpwd">Forgot Passcode ?</string>
+    <string name="forgetpwdtitle">Forgot Passcode</string>
     <string name="symptops">Symptoms</string>
     <string name="strategies">Strategies</string>
     <string name="contacts">Contacts</string>
@@ -44,15 +45,15 @@
     <string name="logout">Logout</string>
     <string name="title_activity_sign_up_1">SignUpActivity_1</string>
     <string name="tvbirthday">Birthday</string>
-    <string name="password">Password</string>
+    <string name="password">Passcode</string>
     <string name="insertpersonalimg">Insert Personal Image</string>
     <string name="howtosignup">How to Sign Up</string>
     <string name="howtosignin">How to Sign In</string>
     <string name="howtostartnewcontact">How to start a new contact</string>
     <string name="howtoaddhelp">How to add help</string>
-    <string name="enterpwd">Enter Password</string>
-    <string name="pwdprotectdata">A password protects your data</string>
-    <string name="enteremailtoreset">Enter email to reset your password</string>
+    <string name="enterpwd">Enter Passcode</string>
+    <string name="pwdprotectdata">A Passcode protects your data</string>
+    <string name="enteremailtoreset">Enter email to reset your Passcode</string>
     <string name="send">Send</string>
     <string name="howareyoufeelingtoday">How are you feeling today?</string>
     <string name="todaysmoodrating">Today\'s Mood Rating</string>
@@ -217,14 +218,14 @@
     <string name="click_to_exit">Please click back again to exit</string>
     <string name="location_update">Location Updated</string>
     <string name="hello">Hello</string>
-    <string name="old_password">Old Password</string>
-    <string name="new_password">New Password</string>
-    <string name="change_password">Change Password</string>
+    <string name="old_password">Old Passcode</string>
+    <string name="new_password">New Passcode</string>
+    <string name="change_password">Change Passcode</string>
     <string name="add_alarm">Add Alarm</string>
     <string name="action_change">Change</string>
     <string name="required">Required</string>
-    <string name="toast_old_password_invalid">Please enter valid Old Password</string>
-    <string name="toast_new_password_invalid">Please enter valid New Password</string>
+    <string name="toast_old_password_invalid">Please enter valid Old Passcode</string>
+    <string name="toast_new_password_invalid">Please enter valid New Passcode</string>
     <string name="share_strategy_success">Successfully shared your Strategy.</string>
     <string name="add_ringtone">Add new Ringtone</string>
     <string name="add_email">Add new E-mail</string>
@@ -249,7 +250,7 @@
     <string name="delete_hope_box_success">Hope box deleted successfully</string>
     <string name="delete_hope_media_success">Hope media element deleted successfully</string>
     <string name="login_error">Login Error</string>
-    <string name="forgot_success">Mail sent successfully. Please check your mail for resetting your password.</string>
+    <string name="forgot_success">Mail sent successfully. Please check your mail for resetting your passcode.</string>
     <string name="quick_msg">Quick Message</string>
     <string name="details">Details</string>
     <string name="share_with">Share With</string>
@@ -352,7 +353,7 @@
     <string name="dialog_enable_gps">Enable GPS</string>
     <string name="exit">Exit</string>
     <string name="thank_feedback">Thank you for feedback.</string>
-    <string name="pdf_success_msg">Your PDF has been sent to your e-mail with a password protecting it.</string>
+    <string name="pdf_success_msg">Your PDF has been sent to your e-mail with a passcode protecting it.</string>
     <string name="dialog_gps_msg">Your GPS is turn off on your phone. Do you want to turn od GPS?</string>
     <string name="confimation_call">Are you sure you want to call to this number?</string>
     <string name="strategies_to_symptom">Strategies for this symptom</string>

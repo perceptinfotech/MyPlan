@@ -19,15 +19,6 @@
         android:divider="@color/sidemenu_seperator"
         android:dividerHeight="1dp"></ListView>
 
-    <ProgressBar
-        android:id="@+id/pbMusic"
-        style="@android:style/Widget.Holo.ProgressBar.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:visibility="gone"/>
-
     <include layout="@layout/lay_internet_lost"/>
 
 </RelativeLayout>

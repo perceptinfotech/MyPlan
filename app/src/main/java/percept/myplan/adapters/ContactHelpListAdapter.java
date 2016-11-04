@@ -45,7 +45,7 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
     public void onBindViewHolder(final ContactHelpListHolder holder, int position) {
         ContactDisplay _contact = LIST_HELPCONTACT.get(position);
         if (!TextUtils.isEmpty(_contact.getFirst_name())) {
-            holder.TV_HELPCONTACT.setText(_contact.getFirst_name());
+            holder.TV_HELPCONTACT.setText(_contact.getFirst_name()+" "+_contact.getLast_name());
         } else {
             holder.TV_HELPCONTACT.setText(_contact.getPhone());
         }
@@ -77,7 +77,7 @@ public class ContactHelpListAdapter extends RecyclerView.Adapter<ContactHelpList
                 holder.TV_CONTACTCHAR.setVisibility(View.VISIBLE);
 
             if (!TextUtils.isEmpty(LIST_HELPCONTACT.get(position).getFirst_name())) {
-                holder.TV_CONTACTCHAR.setText(LIST_HELPCONTACT.get(position).getFirst_name().substring(0, 2));
+                holder.TV_CONTACTCHAR.setText(LIST_HELPCONTACT.get(position).getFirst_name().substring(0, 2)+" "+LIST_HELPCONTACT.get(position).getLast_name());
             }
 
 

@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.CustomListener.RecyclerTouchListener;
 import percept.myplan.Interfaces.ClickListener;
 import percept.myplan.POJO.AlarmRepeat;
@@ -83,6 +85,7 @@ public class AlarmRepeatListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_repeat_list);
 
+        autoScreenTracking();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -169,5 +172,29 @@ public class AlarmRepeatListActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.putExtra("ALARM_REPEAT", TextUtils.join(",", listInt));
         setResult(RESULT_OK, intent);
+    }
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
     }
 }

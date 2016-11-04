@@ -1,6 +1,7 @@
 package percept.myplan.fragments;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import percept.myplan.Activities.AddStrategyActivity;
+import percept.myplan.Activities.CreateQuickMsgActivity;
 import percept.myplan.Activities.InspirationCategoryActivity;
 import percept.myplan.Activities.StrategyDetailsOwnActivity;
 import percept.myplan.CustomListener.RecyclerTouchListener;
@@ -58,7 +60,7 @@ public class fragmentStrategies extends Fragment {
     private Button BTN_INSPIRATION;
     private TextView TV_ADDNEWSTRATEGY;
     public static boolean ADDED_STRATEGIES = false;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     Map<String, String> params;
     private CoordinatorLayout REL_COORDINATE;
 
@@ -77,7 +79,6 @@ public class fragmentStrategies extends Fragment {
         LST_STRATEGY = (RecyclerView) _View.findViewById(R.id.lstStrategy);
         BTN_INSPIRATION = (Button) _View.findViewById(R.id.btnInspiration);
         TV_ADDNEWSTRATEGY = (TextView) _View.findViewById(R.id.tvAddNewStrategy);
-        PB = (ProgressBar) _View.findViewById(R.id.pbGetStrategies);
         REL_COORDINATE = (CoordinatorLayout) _View.findViewById(R.id.snakeBar);
         setHasOptionsMenu(true);
         LIST_STRATEGY = new ArrayList<>();
@@ -133,16 +134,20 @@ public class fragmentStrategies extends Fragment {
 
     public void GetStrategy() {
         try {
-            PB.setVisibility(View.VISIBLE);
+            mProgressDialog = new ProgressDialog(getActivity());
+            mProgressDialog.setMessage(getString(R.string.progress_loading));
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+            mProgressDialog.show();
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_STRATEGIES, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     LIST_STRATEGY.clear();
                     Log.d(":::: ", response.toString());
                     Gson gson = new Gson();
@@ -158,7 +163,7 @@ public class fragmentStrategies extends Fragment {
                 }
             });
         } catch (Exception e) {
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             e.printStackTrace();
 
             Snackbar snackbar = Snackbar

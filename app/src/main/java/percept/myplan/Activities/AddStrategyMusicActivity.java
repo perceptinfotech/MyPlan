@@ -19,6 +19,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.List;
 
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.Global.Constant;
 import percept.myplan.POJO.HopeDetail;
 import percept.myplan.R;
@@ -108,7 +109,7 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        AppLifeCycle.getInstance().resumed(this);
     }
 
     @Override
@@ -211,5 +212,18 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
         }
 
 
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
     }
 }

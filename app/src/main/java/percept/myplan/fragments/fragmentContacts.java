@@ -2,6 +2,7 @@ package percept.myplan.fragments;
 
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -48,6 +49,7 @@ import java.util.Map;
 
 import percept.myplan.Activities.AddContactActivity;
 import percept.myplan.Activities.AddContactDetailActivity;
+import percept.myplan.Activities.CreateQuickMsgActivity;
 import percept.myplan.Activities.EmergencyContactActivity;
 import percept.myplan.Activities.HelpListEditActivity;
 import percept.myplan.CustomListener.RecyclerTouchListener;
@@ -81,7 +83,8 @@ public class fragmentContacts extends Fragment {
     private ContactHelpListAdapter ADPT_CONTACTLIST;
     private Utils UTILS;
     private CoordinatorLayout REL_COORDINATE;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
+
 
     public fragmentContacts() {
         // Required empty public constructor
@@ -105,7 +108,6 @@ public class fragmentContacts extends Fragment {
         LST_CONTACTS = (RecyclerView) _View.findViewById(R.id.lstContacts);
 
         REL_COORDINATE = (CoordinatorLayout) _View.findViewById(R.id.snakeBar);
-        PB = (ProgressBar) _View.findViewById(R.id.pbContacts);
 
         LIST_ALLCONTACTS = new ArrayList<>();
         LIST_HELPCONTACTS = new ArrayList<>();
@@ -202,7 +204,11 @@ public class fragmentContacts extends Fragment {
     }
 
     private void GetContacts() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -211,7 +217,7 @@ public class fragmentContacts extends Fragment {
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_CONTACTS, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
@@ -248,7 +254,7 @@ public class fragmentContacts extends Fragment {
 
                     ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
                     LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
             });
         } catch (Exception e) {
@@ -412,7 +418,11 @@ public class fragmentContacts extends Fragment {
 
             @Override
             public void onClickYes() {
-                PB.setVisibility(View.VISIBLE);
+                mProgressDialog = new ProgressDialog(getActivity());
+                mProgressDialog.setMessage(getString(R.string.progress_loading));
+                mProgressDialog.setIndeterminate(false);
+                mProgressDialog.setCanceledOnTouchOutside(false);
+                mProgressDialog.show();
                 HashMap<String, String> params = new HashMap<>();
                 params.put("sid", Constant.SID);
                 params.put("sname", Constant.SNAME);
@@ -424,12 +434,12 @@ public class fragmentContacts extends Fragment {
                     new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.DELETE_CONTACT, params, true, false, true, new VolleyResponseListener() {
                         @Override
                         public void onError(VolleyError message) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                         }
 
                         @Override
                         public void onResponse(JSONObject response) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                             if (isFromHelp) {
                                 LIST_HELPCONTACTS.remove(position);
                             } else {
@@ -440,7 +450,7 @@ public class fragmentContacts extends Fragment {
                         }
                     });
                 } catch (Exception e) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     e.printStackTrace();
                 }
                 dismiss();

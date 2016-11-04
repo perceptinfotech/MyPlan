@@ -15,6 +15,8 @@ import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.R;
 
 public class WebViewActivity extends AppCompatActivity {
@@ -26,6 +28,7 @@ public class WebViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
 
+        autoScreenTracking();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -61,6 +64,7 @@ public class WebViewActivity extends AppCompatActivity {
 
     @Override
     public void onPause() {
+        AppLifeCycle.getInstance().paused(this);
         mWebView.setVisibility(View.GONE);
         mWebView.destroy();
         super.onPause();
@@ -81,5 +85,23 @@ public class WebViewActivity extends AppCompatActivity {
             view.loadUrl(url);
             return super.shouldOverrideUrlLoading(view,url);
         }
+    }
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
     }
 }

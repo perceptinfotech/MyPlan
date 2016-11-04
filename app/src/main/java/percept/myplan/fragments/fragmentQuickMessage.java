@@ -1,6 +1,7 @@
 package percept.myplan.fragments;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -55,7 +56,7 @@ public class fragmentQuickMessage extends Fragment {
     private QuickMessageAdapter ADAPTER;
 
     private TextView TV_ADDNEWMSG;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
 
 
@@ -75,7 +76,7 @@ public class fragmentQuickMessage extends Fragment {
         TV_ADDNEWMSG = (TextView) _view.findViewById(R.id.tvAddNewMessage);
 
         LSTQUICKMSG = (RecyclerView) _view.findViewById(R.id.lstQuickMsg);
-        PB = (ProgressBar) _view.findViewById(R.id.pbMsgList);
+
         REL_COORDINATE = (CoordinatorLayout) _view.findViewById(R.id.snakeBar);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -134,7 +135,11 @@ public class fragmentQuickMessage extends Fragment {
     }
 
     private void getMessages() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -148,7 +153,7 @@ public class fragmentQuickMessage extends Fragment {
                 @Override
                 public void onResponse(JSONObject response) {
                     Log.e("::::", response.toString());
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     try {
                         LIST_QUICKMSG = new Gson().fromJson(response.getJSONArray(Constant.DATA).toString(), new TypeToken<List<QuickMessage>>() {
                         }.getType());
@@ -161,7 +166,7 @@ public class fragmentQuickMessage extends Fragment {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {

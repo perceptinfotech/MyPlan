@@ -1,6 +1,7 @@
 package percept.myplan.fragments;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -37,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import percept.myplan.Activities.AddHopeBoxActivity;
+import percept.myplan.Activities.CreateQuickMsgActivity;
 import percept.myplan.Activities.HopeDetailsActivity;
 import percept.myplan.CustomListener.RecyclerTouchListener;
 import percept.myplan.Dialogs.dialogDeleteAlert;
@@ -59,7 +61,7 @@ public class fragmentHopeBox extends Fragment {
     private RecyclerView LST_HOPE;
     private HopeAdapter ADAPTER;
     private List<Hope> LIST_HOPE;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
     private int deletePosition = -1;
 
@@ -80,7 +82,6 @@ public class fragmentHopeBox extends Fragment {
         LST_HOPE = (RecyclerView) _View.findViewById(R.id.recycler_hope);
         LIST_HOPE = new ArrayList<>();
 
-        PB = (ProgressBar) _View.findViewById(R.id.pbGetHope);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 2);
         LST_HOPE.setLayoutManager(mLayoutManager);
         LST_HOPE.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
@@ -134,17 +135,21 @@ public class fragmentHopeBox extends Fragment {
         params.put("sname", Constant.SNAME);
         params.put("id", hopeBoxId);
         try {
-            PB.setVisibility(View.VISIBLE);
+            mProgressDialog = new ProgressDialog(getActivity());
+            mProgressDialog.setMessage(getString(R.string.progress_loading));
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+            mProgressDialog.show();
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.DELETE_HOPE_BOX, params, true, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     deletePosition = -1;
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     try {
                         if (response.has(Constant.DATA)) {
 
@@ -192,17 +197,21 @@ public class fragmentHopeBox extends Fragment {
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         try {
-            PB.setVisibility(View.VISIBLE);
+            mProgressDialog = new ProgressDialog(getActivity());
+            mProgressDialog.setMessage(getString(R.string.progress_loading));
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+            mProgressDialog.show();
             LIST_HOPE.clear();
             new General().getJSONContentFromInternetService(getActivity(), General.PHPServices.GET_HOPEBOXES, params, true, false, false, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     Gson gson = new Gson();
                     try {
                         LIST_HOPE = gson.fromJson(response.getJSONArray(Constant.DATA)

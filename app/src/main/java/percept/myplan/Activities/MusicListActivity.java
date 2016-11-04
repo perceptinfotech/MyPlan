@@ -2,6 +2,7 @@ package percept.myplan.Activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,6 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.Dialogs.dialogOk;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
@@ -65,13 +68,14 @@ public class MusicListActivity extends AppCompatActivity {
     private boolean FROM_EDIT = false;
     private Utils UTILS;
     private CoordinatorLayout REL_COORDINATE;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_list);
 
+        autoScreenTracking();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -95,7 +99,7 @@ public class MusicListActivity extends AppCompatActivity {
 
         UTILS = new Utils(MusicListActivity.this);
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
-        PB = (ProgressBar) findViewById(R.id.pbMusic);
+
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             checkPermission();
         } else getMusicList();
@@ -332,7 +336,11 @@ public class MusicListActivity extends AppCompatActivity {
     }
 
     public void addHopeBoxMusicElement(final String title, final String hopeId, final String musicpath, final String type) {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(MusicListActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> params = new HashMap<>();
 //        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopemedia");
         if (!TextUtils.isEmpty(musicpath)) {
@@ -344,7 +352,7 @@ public class MusicListActivity extends AppCompatActivity {
             else
             {
                 showAlertMessage();
-                PB.setVisibility(View.GONE);
+                mProgressDialog.dismiss();
                 return;
             }
         }
@@ -362,7 +370,7 @@ public class MusicListActivity extends AppCompatActivity {
                     GET_HOPE_DETAILS = true;
                 }
                 Log.d(":::::: ", response);
-                PB.setVisibility(View.GONE);
+                mProgressDialog.dismiss();
                 MusicListActivity.this.finish();
             }
         });
@@ -581,5 +589,29 @@ public class MusicListActivity extends AppCompatActivity {
         dialogOk.setCanceledOnTouchOutside(false);
         dialogOk.show();
 
+    }
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
     }
 }

@@ -38,6 +38,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
@@ -77,6 +79,7 @@ public class StrategyEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_strategy);
 
+        autoScreenTracking();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -483,7 +486,13 @@ public class StrategyEditActivity extends AppCompatActivity {
             }
         }
     }
-
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
     private void setAlarms(String title, String time, int dayOfWeek, int requestCode, String uri) {
 
         Date date = new Date(Long.parseLong(time));
@@ -518,6 +527,23 @@ public class StrategyEditActivity extends AppCompatActivity {
                     AlarmManager.INTERVAL_DAY * 7, pendingIntent);
         else
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
     }
 }
 

@@ -296,7 +296,8 @@
         <activity
             android:name=".Activities.MoodActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+           />
         <activity
             android:name=".Activities.MoodSummaryActivity"
             android:screenOrientation="portrait"

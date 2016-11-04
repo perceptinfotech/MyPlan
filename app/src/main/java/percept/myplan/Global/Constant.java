@@ -13,9 +13,12 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
+import percept.myplan.POJO.Contact;
 import percept.myplan.receivers.MyReceiver;
 
 /**

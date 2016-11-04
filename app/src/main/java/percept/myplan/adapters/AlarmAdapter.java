@@ -48,10 +48,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.MyViewHolder
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         Alarm alarm = LST_HOPE.get(position);
         holder.TV_ALARMTITLE.setText(alarm.getAlarmName());
-        Date date = new Date(Long.valueOf(alarm.getAlarmTime()));
+       /* Date date = new Date(Long.valueOf(alarm.getAlarmTime()));
         int _hour = date.getHours();
-        int _min = date.getMinutes();
-        holder.TV_ALARMTIME.setText(_hour + ":" + _min);
+        int _min = date.getMinutes();*/
+        holder.TV_ALARMTIME.setText(alarm.getAlarmTime());
         holder.TV_ALARMEDIT.setTag(position);
         holder.SWITCH_STATUS.setTag(position);
         holder.SWITCH_STATUS.setChecked(alarm.isStatus());

@@ -48,9 +48,13 @@
             android:layout_marginRight="15dp"
             android:layout_marginTop="15dp"
             android:background="@drawable/edt_register_border"
+
             android:lines="4"
             android:textColor="@android:color/black"
-            android:visibility="visible" />
+            android:visibility="visible" >
+            <requestFocus></requestFocus>
+            </EditText>
+
 
         <Button
             android:id="@+id/btnSaveNote"

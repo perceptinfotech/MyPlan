@@ -61,13 +61,5 @@
             android:visibility="gone"/>
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/pbMsgList"
-        style="@android:style/Widget.Holo.ProgressBar.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone"/>
-
     <include layout="@layout/lay_internet_lost"/>
 </RelativeLayout>

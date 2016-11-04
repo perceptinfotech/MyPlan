@@ -1,6 +1,7 @@
 package percept.myplan.Activities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -35,6 +36,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.CustomListener.RecyclerTouchListener;
 import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.Global.Constant;
@@ -59,7 +62,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
     private TextView TV_ADDSTRATEGY;
     private boolean isEDIT = false;
     private String STR_STRATEGYID = "";
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
     private Button btnDeleteSymptom;
     private TextView tvStrategiesToSymptom;
@@ -68,6 +71,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_symptom_details);
+        autoScreenTracking();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -91,7 +95,6 @@ public class SymptomDetailsActivity extends AppCompatActivity {
 
         LAY_ADDSTRATEGY = (LinearLayout) findViewById(R.id.layAddStrategy);
         TV_ADDSTRATEGY = (TextView) findViewById(R.id.tvAddStrategy);
-        PB = (ProgressBar) findViewById(R.id.pbSymptomDetail);
         LIST_SYMPTOMSTRATEGY = new ArrayList<>();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(SymptomDetailsActivity.this);
         LST_SYMPTOMSTRATEGY.setLayoutManager(mLayoutManager);
@@ -138,7 +141,11 @@ public class SymptomDetailsActivity extends AppCompatActivity {
                         params.put("id", SYMPTOM_ID);
 
                         try {
-                            PB.setVisibility(View.VISIBLE);
+                            mProgressDialog = new ProgressDialog(SymptomDetailsActivity.this);
+                            mProgressDialog.setMessage(getString(R.string.progress_loading));
+                            mProgressDialog.setIndeterminate(false);
+                            mProgressDialog.setCanceledOnTouchOutside(false);
+                            mProgressDialog.show();
                             dismiss();
                             new General().getJSONContentFromInternetService(SymptomDetailsActivity.this,
                                     General.PHPServices.DELETE_SYMPTOM, params,
@@ -146,18 +153,18 @@ public class SymptomDetailsActivity extends AppCompatActivity {
 
                                         @Override
                                         public void onError(VolleyError message) {
-                                            PB.setVisibility(View.GONE);
+                                            mProgressDialog.dismiss();
                                         }
 
                                         @Override
                                         public void onResponse(JSONObject response) {
-                                            PB.setVisibility(View.GONE);
+                                            mProgressDialog.dismiss();
                                             GET_STRATEGY = true;
                                             SymptomDetailsActivity.this.finish();
                                         }
                                     });
                         } catch (Exception e) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                             e.printStackTrace();
                         }
 
@@ -242,7 +249,11 @@ public class SymptomDetailsActivity extends AppCompatActivity {
     }
 
     private void SaveSymptoms() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(SymptomDetailsActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -261,7 +272,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     GET_STRATEGY = true;
                     Log.d(":::::", response.toString());
                     SymptomDetailsActivity.this.finish();
@@ -269,7 +280,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -288,7 +299,11 @@ public class SymptomDetailsActivity extends AppCompatActivity {
     }
 
     private void GetSymptomDetail() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(SymptomDetailsActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -297,7 +312,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(SymptomDetailsActivity.this, General.PHPServices.GET_SYMPTOM, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
@@ -328,7 +343,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
                         else tvStrategiesToSymptom.setVisibility(View.GONE);
 
                         LST_SYMPTOMSTRATEGY.setAdapter(ADAPTER);
-                        PB.setVisibility(View.GONE);
+                        mProgressDialog.dismiss();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -336,7 +351,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -352,5 +367,28 @@ public class SymptomDetailsActivity extends AppCompatActivity {
             snackbar.show();
         }
     }
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
+    }
 }

@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -22,6 +23,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
@@ -36,12 +39,13 @@ public class SendMessageActivity extends AppCompatActivity {
     private String NUMBER = "";
     private QuickMessage message;
     private CoordinatorLayout REL_COORDINATE;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_message);
+        autoScreenTracking();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -53,7 +57,6 @@ public class SendMessageActivity extends AppCompatActivity {
         BTN_SEND = (Button) findViewById(R.id.btnSendMessage);
         EDT_MSG = (EditText) findViewById(R.id.edtMsg);
         edtNotificationMsg = (EditText) findViewById(R.id.edtNotificationMsg);
-        PB = (ProgressBar) findViewById(R.id.pbAddMsg);
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
 
@@ -127,7 +130,11 @@ public class SendMessageActivity extends AppCompatActivity {
     }
 
     private void saveMessages(final String contactID, final String msg, final String notificationMsg) {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(SendMessageActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -138,18 +145,18 @@ public class SendMessageActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(SendMessageActivity.this, General.PHPServices.SAVE_MESSAGE, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     SendMessageActivity.this.finish();
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -164,5 +171,29 @@ public class SendMessageActivity extends AppCompatActivity {
             textView.setTextColor(Color.YELLOW);
             snackbar.show();
         }
+    }
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
     }
 }

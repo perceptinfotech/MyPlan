@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
@@ -201,7 +202,7 @@ public class AddStrategyActivity extends AppCompatActivity {
             return;
         }
         mProgressDialog = new ProgressDialog(AddStrategyActivity.this);
-        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setMessage(getString(R.string.progress_uploading));
         mProgressDialog.setIndeterminate(false);
         mProgressDialog.setCanceledOnTouchOutside(false);
         mProgressDialog.show();
@@ -526,4 +527,22 @@ public class AddStrategyActivity extends AppCompatActivity {
                 break;
         }
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
+    }
+
 }

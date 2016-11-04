@@ -56,6 +56,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.Utils;
@@ -136,6 +138,8 @@ public class HomeActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        autoScreenTracking();
         UTILS = new Utils(HomeActivity.this);
         if (getIntent().hasExtra("FROM")) {
             String FROM = getIntent().getExtras().getString("FROM", "");
@@ -445,6 +449,7 @@ public class HomeActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
         selectItem(Constant.CURRENT_FRAGMENT);
         if (!UTILS.getBoolPref(Constant.PREF_LOCATION))
             return;
@@ -486,6 +491,7 @@ public class HomeActivity extends AppCompatActivity implements
     @Override
     protected void onPause() {
         super.onPause();
+        AppLifeCycle.getInstance().paused(this);
         // Stop location updates to save battery, but don't disconnect the GoogleApiClient object.
         if (mGoogleApiClient != null)
             if (mGoogleApiClient.isConnected()) {
@@ -817,5 +823,20 @@ public class HomeActivity extends AppCompatActivity implements
                 break;
         }
     }
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
 
+
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
+    }
 }

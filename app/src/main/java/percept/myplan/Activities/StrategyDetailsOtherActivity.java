@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
@@ -37,7 +40,7 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
     private final int REQUEST_CODE_DETAIL_ACTIVITY = 1003;
     Map<String, String> params;
     private String STRATEGY_ID;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private Strategy clsStrategy;
     private TextView TV_DESCRIPTION, TV_USEDBY, TV_SUBMITTEDBY, TV_CATEGORY;
     private Button BTN_ADDTOMYSTRATEGIES;
@@ -46,6 +49,7 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_strategy_details_other);
+        autoScreenTracking();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -54,7 +58,7 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.title_activity_strategy_details_other));
 
-        PB = (ProgressBar) findViewById(R.id.pbGetStrategy);
+
         TV_DESCRIPTION = (TextView) findViewById(R.id.tvDescription);
         TV_USEDBY = (TextView) findViewById(R.id.tvUsedBy);
         TV_SUBMITTEDBY = (TextView) findViewById(R.id.tvSubmittedBy);
@@ -76,18 +80,22 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
         params.put("id", STRATEGY_ID);
 
         try {
-            PB.setVisibility(View.VISIBLE);
+            mProgressDialog = new ProgressDialog(StrategyDetailsOtherActivity.this);
+            mProgressDialog.setMessage(getString(R.string.progress_loading));
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+            mProgressDialog.show();
             new General().getJSONContentFromInternetService(StrategyDetailsOtherActivity.this, General.PHPServices.GET_STRATEGY, params,
                     false, false, true, new VolleyResponseListener() {
                         @Override
                         public void onError(VolleyError message) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                         }
 
                         @Override
                         public void onResponse(JSONObject response) {
 
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                             Log.d(":::: ", response.toString());
                             Gson gson = new Gson();
                             try {
@@ -120,18 +128,22 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
                     @Override
                     public void onClickYes() {
                         dismiss();
-                        PB.setVisibility(View.VISIBLE);
+                        mProgressDialog = new ProgressDialog(StrategyDetailsOtherActivity.this);
+                        mProgressDialog.setMessage(getString(R.string.progress_loading));
+                        mProgressDialog.setIndeterminate(false);
+                        mProgressDialog.setCanceledOnTouchOutside(false);
+                        mProgressDialog.show();
                         try {
                             new General().getJSONContentFromInternetService(StrategyDetailsOtherActivity.this,
                                     General.PHPServices.ADD_MYSTRATEGY, params, false, false, true, new VolleyResponseListener() {
                                         @Override
                                         public void onError(VolleyError message) {
-                                            PB.setVisibility(View.GONE);
+                                            mProgressDialog.dismiss();
                                         }
 
                                         @Override
                                         public void onResponse(JSONObject response) {
-                                            PB.setVisibility(View.GONE);
+                                            mProgressDialog.dismiss();
                                             Log.d("::::::: ", response.toString());
                                             ADDED_STRATEGIES = true;
                                             if (getIntent().hasExtra("FROM_SYMPTOM")) {
@@ -196,5 +208,29 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
                     StrategyDetailsOtherActivity.this.finish();
                 break;
         }
+    }
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
     }
 }

@@ -9,6 +9,10 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.splunk.mint.Mint;
 
+import io.tpa.tpalib.TPA;
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.ext.CrashHandling;
+import io.tpa.tpalib.ext.TpaLog;
 import percept.myplan.Global.LruBitmapCache;
 
 
@@ -34,6 +38,18 @@ public class AppController extends Application {
         mInstance = this;
 
         Mint.initAndStartSession(this, "390c5614");
+
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        .setLogType(TpaLog.Type.BOTH)           // Default
+                        .setCrashHandling(CrashHandling.SILENT) // Default
+                        .enableAnalytics(true)                 // Default
+                        .useShakeFeedback(false, null)          // Default
+                        .updateInterval(60)                     // Default
+                        .useApi14(true)                         // Default
+                        .build();
+
+        TPA.initialize(this, config);
     }
 
     public RequestQueue getRequestQueue() {

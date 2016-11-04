@@ -23,6 +23,8 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.R;
 
 public class AddAlarmActivity extends AppCompatActivity {
@@ -43,6 +45,8 @@ public class AddAlarmActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_alarm);
+
+        autoScreenTracking();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -70,9 +74,9 @@ public class AddAlarmActivity extends AppCompatActivity {
             ALARM_SOUND_NAME = getIntent().getExtras().getString("ALARM_NAME");
             ALARM_SOUND = getIntent().getExtras().getString("ALARM_URI");
 
-            Calendar calendar2 = Calendar.getInstance();
-            calendar2.setTimeInMillis(Long.valueOf(getIntent().getExtras().getString("ALARM_TIME")));
-            tvAlarmTime.setText(String.format("%02d : %02d",calendar2.get(Calendar.HOUR_OF_DAY), calendar2.get(Calendar.HOUR_OF_DAY)));
+//            Calendar calendar2 = Calendar.getInstance();
+//            calendar2.setTimeInMillis(Long.valueOf(getIntent().getExtras().getString("ALARM_TIME")));
+            tvAlarmTime.setText(getIntent().getExtras().getString("ALARM_TIME"));
 //            TIME_PICKER.setCurrentHour(calendar2.get(Calendar.HOUR_OF_DAY)); // or Calendar.HOUR for 12 hour format
 //            TIME_PICKER.setCurrentMinute(calendar2.get(Calendar.MINUTE));
         } else {
@@ -124,7 +128,13 @@ public class AddAlarmActivity extends AppCompatActivity {
 //            }
 //        });
     }
-
+public void autoScreenTracking(){
+    TpaConfiguration config =
+            new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+    // other config settings
+    .enableAutoTrackScreen(true)
+            .build();
+}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -145,13 +155,15 @@ public class AddAlarmActivity extends AppCompatActivity {
 
             Long _Alarmtime = cal.getTimeInMillis();
 
+
+            Log.e("Alarm time","Alarm Time="+_Alarmtime);
             Intent returnIntent = new Intent();
             String _str = "";
             returnIntent.putExtra("ALARM_URI", ALARM_SOUND);
             returnIntent.putExtra("ALARM_SOUND_NAME", ALARM_SOUND_NAME);
             returnIntent.putExtra("ALARM_NAME", EDT_ALARMLABLE.getText().toString());
             returnIntent.putExtra("ALARM_REPEAT", repeatIds);
-            returnIntent.putExtra("ALARM_TIME", String.valueOf(_Alarmtime));
+            returnIntent.putExtra("ALARM_TIME",tvAlarmTime.getText().toString());
             if (getIntent().hasExtra("EDIT_ALARM")) {
                 returnIntent.putExtra("EDIT_ALARM", "EDIT_ALARM");
             }
@@ -210,14 +222,32 @@ public class AddAlarmActivity extends AppCompatActivity {
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 AddAlarmActivity.this.selectedHour=selectedHour;
                 AddAlarmActivity.this.selectedMinute=selectedHour;
-                tvAlarmTime.setText(selectedHour + ":" + selectedMinute);
+               // tvAlarmTime.setText(selectedHour + ":" + selectedMinute);
+
+                tvAlarmTime.setText(String.format("%02d:%02d", selectedHour, selectedMinute));
             }
         }, hour, minute, false);//Yes 24 hour time
         mTimePicker.setTitle(getString(R.string.select_time));
 
         mTimePicker.show();
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
+    }
 }
 
 

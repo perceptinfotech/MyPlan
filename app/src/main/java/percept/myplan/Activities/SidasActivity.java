@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -30,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.VolleyResponseListener;
@@ -45,13 +48,14 @@ public class SidasActivity extends AppCompatActivity {
     private Button BTN_TAKETEST;
     private RecyclerView LST_SIDASUMMARY;
     private List<SidaSummary> LIST_SIDA;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sidas);
+        autoScreenTracking();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,7 +68,6 @@ public class SidasActivity extends AppCompatActivity {
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         LST_SIDASUMMARY = (RecyclerView) findViewById(R.id.lstSidaSummary);
-        PB = (ProgressBar) findViewById(R.id.pbSidas);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(SidasActivity.this);
         LST_SIDASUMMARY.setLayoutManager(mLayoutManager);
         LST_SIDASUMMARY.setItemAnimator(new DefaultItemAnimator());
@@ -83,11 +86,16 @@ public class SidasActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
         GetSida();
     }
 
     private void GetSida() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(SidasActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -95,7 +103,7 @@ public class SidasActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(SidasActivity.this, General.PHPServices.GET_SIDACALENDER, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
@@ -114,14 +122,14 @@ public class SidasActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     ADAPTER = new SidaSummaryAdapter(SidasActivity.this, LIST_SIDA);
                     LST_SIDASUMMARY.setAdapter(ADAPTER);
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -176,5 +184,24 @@ public class SidasActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
     }
 }

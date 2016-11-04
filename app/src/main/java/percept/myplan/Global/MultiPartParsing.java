@@ -62,6 +62,7 @@ public class MultiPartParsing {
             HttpClient httpclient = new DefaultHttpClient();
             String _strURL = context.getResources().getString(R.string.server_url) + new General().getServiceName(servicesName);
             HttpPost httppost = new HttpPost(_strURL);
+
             try {
                 AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
                         new AndroidMultiPartEntity.ProgressListener() {
@@ -97,7 +98,9 @@ public class MultiPartParsing {
                             }
                         }
                     } else
+
                         entity.addPart(key, new StringBody(map.get(key)));
+                    entity.getContentEncoding();
                 }
 
 

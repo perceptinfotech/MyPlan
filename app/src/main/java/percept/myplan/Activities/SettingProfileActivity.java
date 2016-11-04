@@ -2,6 +2,7 @@ package percept.myplan.Activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -45,6 +46,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.Dialogs.dialogSelectPic;
 import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.Global.Constant;
@@ -63,7 +66,7 @@ public class SettingProfileActivity extends AppCompatActivity {
     private final int CHANGE_PASSWORD_REQUEST_CODE = 1;
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
     private EditText EDT_FIRSTNAME, EDT_LASTNAME, EDT_EMAIL;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
     private LinearLayout LL_PASSWORD;
     private TextView TV_PASSWORD;
@@ -118,6 +121,7 @@ public class SettingProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        autoScreenTracking();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -126,7 +130,6 @@ public class SettingProfileActivity extends AppCompatActivity {
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(getResources().getString(R.string.title_activity_profile));
 
-        PB = (ProgressBar) findViewById(R.id.pbSaveProfile);
         REL_COORDINATE = (CoordinatorLayout) findViewById(R.id.snakeBar);
 
         LL_PASSWORD = (LinearLayout) findViewById(R.id.llPassword);
@@ -238,6 +241,7 @@ public class SettingProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
 
 
     }
@@ -255,7 +259,11 @@ public class SettingProfileActivity extends AppCompatActivity {
     }
 
     private void getProfile() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(SettingProfileActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -263,7 +271,7 @@ public class SettingProfileActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(SettingProfileActivity.this, General.PHPServices.GET_PROFILE, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
@@ -294,7 +302,7 @@ public class SettingProfileActivity extends AppCompatActivity {
                                 tvEditProfileCover.setVisibility(View.GONE);
                                 tvDeleteProfileCover.setVisibility(View.GONE);
                             }
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -319,7 +327,11 @@ public class SettingProfileActivity extends AppCompatActivity {
             snackbar.show();
             return;
         }
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(SettingProfileActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
 
 
         HashMap<String, String> params = new HashMap<>();
@@ -353,7 +365,7 @@ public class SettingProfileActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                PB.setVisibility(View.GONE);
+                mProgressDialog.dismiss();
 
 
             }
@@ -515,5 +527,24 @@ public class SettingProfileActivity extends AppCompatActivity {
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
 
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
+    }
 }

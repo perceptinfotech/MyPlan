@@ -19,6 +19,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -44,6 +46,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Interfaces.CustomEvent;
@@ -70,6 +74,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood);
+        autoScreenTracking();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -315,6 +320,8 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                             List<CustomEvent> colorLst = new ArrayList<>();
                             if (_Month == calendarView.getCurrentMonth()) {
                                 String measurement[] = TextUtils.split(_obj.getMEASUREMENT(), "|");
+                                String measures=_obj.getMEASUREMENT();
+
                                 int count = 0;
                                 for (String strMeasurement : measurement) {
 
@@ -341,7 +348,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                                             break;
                                     }
 
-                                    if (count > 1)
+                                    if (count > 5)
                                         break;
                                 }
                                 eventMap.put(_day, colorLst);
@@ -469,12 +476,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         fragmentAddNoteCalender _dialog = new fragmentAddNoteCalender(MoodActivity.this, mood);
         _dialog.setCanceledOnTouchOutside(false);
         _dialog.show();
-        _dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                SubmitTodayMood(mood);
-            }
-        });
+
     }
 
     private void SubmitTodayMood(final String mood) {
@@ -492,7 +494,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
 
                 @Override
                 public void onResponse(JSONObject response) {
-
+                    GetMoodCalender();
                 }
             });
         } catch (Exception e) {
@@ -582,18 +584,23 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             requestWindowFeature(Window.FEATURE_NO_TITLE);
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             setContentView(R.layout.lay_moodratings_savenote);
 
             EDT_NOTE = (EditText) findViewById(R.id.edtNote);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(EDT_NOTE, InputMethodManager.SHOW_IMPLICIT);
             BTN_SAVENOTE = (Button) findViewById(R.id.btnSaveNote);
-
 
             BTN_SAVENOTE.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.d(":::: ", EDT_NOTE.getText().toString());
-                    fragmentAddNoteCalender.this.dismiss();
                     STR_NOTE = EDT_NOTE.getText().toString().trim();
+                    SubmitTodayMood(mood);
+                    fragmentAddNoteCalender.this.dismiss();
+
+
                 }
             });
             findViewById(R.id.imgCloseMoodRating).setOnClickListener(new View.OnClickListener() {
@@ -626,5 +633,29 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
             TV_NOTE = (TextView) findViewById(R.id.tvNote);
             TV_NOTE.setText(NOTE.replace("|", "\n"));
         }
+    }
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
     }
 }

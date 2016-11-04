@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Locale;
 import java.util.Map;
 
 import percept.myplan.Activities.LoginActivity;
@@ -160,6 +161,29 @@ public class General {
         String str = context.getResources().getString(R.string.server_url);
         String _str = str + getServiceName(servicesName);
 
+
+
+        if(getServiceName(servicesName).equalsIgnoreCase(".getSIDASTest")){
+            if(Locale.getDefault().getLanguage().equalsIgnoreCase("da")){
+                _str= _str+"&lang=da";
+            }
+        }if(getServiceName(servicesName).equalsIgnoreCase(".getUserstrategy")){
+            if(Locale.getDefault().getLanguage().equalsIgnoreCase("da")){
+                _str= _str+"&lang=da";
+            }
+        }if(getServiceName(servicesName).equalsIgnoreCase(".getCategories")){
+            if(Locale.getDefault().getLanguage().equalsIgnoreCase("da")){
+                _str= _str+"&lang=da";
+            }
+        }if(getServiceName(servicesName).equalsIgnoreCase(".getCategoryInspirations")){
+            if(Locale.getDefault().getLanguage().equalsIgnoreCase("da")){
+                _str= _str+"&lang=da";
+            }
+        }if(getServiceName(servicesName).equalsIgnoreCase(".getEmergencyrooms")){
+            if(Locale.getDefault().getLanguage().equalsIgnoreCase("da")){
+                _str= _str+"&lang=da";
+            }
+        }
         JSONObject parameters = new JSONObject(params);
 
         Log.d("::::::Params ", parameters.toString());

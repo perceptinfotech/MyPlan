@@ -22,8 +22,16 @@ public class Contact implements Comparable<Contact> {
     private String contactID = "";
     private String WEB_ID = "";
     private boolean isSelected;
-    private boolean originalSelection;
 
+
+
+    private String helplist = "";
+
+    private String emergency = "";
+    private String id = "";
+    private boolean originalSelection;
+    public Contact() {
+    }
 
    /* public Contact(String firstName, String phoneNo, String contactID, boolean isSelected, boolean originalSelection, String web_id) {
         this.firstName = firstName;
@@ -62,6 +70,28 @@ public class Contact implements Comparable<Contact> {
         this.isSelected = isSelected;
         this.contactID = contactID;
         this.originalSelection = originalSelection;
+    }
+    public String getHelplist() {
+        return helplist;
+    }
+
+    public void setHelplist(String helplist) {
+        this.helplist = helplist;
+    }
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getEmergency() {
+        return emergency;
+    }
+
+    public void setEmergency(String emergency) {
+        this.emergency = emergency;
     }
 
     public String getFirstName() {

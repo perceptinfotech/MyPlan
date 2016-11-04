@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.CustomListener.RecyclerTouchListener;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
@@ -53,6 +55,8 @@ public class HelpListEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_list_edit);
+
+        autoScreenTracking();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -77,7 +81,7 @@ public class HelpListEditActivity extends AppCompatActivity {
         TV_ADDHELPLIST.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent _intent = new Intent(HelpListEditActivity.this, AddContactActivity.class);
+                Intent _intent = new Intent(HelpListEditActivity.this, AddHelpContactActivity.class);
                 _intent.putExtra("ADD_TO_HELP", "true");
                 _intent.putExtra(Constant.HELP_COUNT, LIST_HELPCONTACTS.size());
                 startActivity(_intent);
@@ -109,6 +113,7 @@ public class HelpListEditActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
         GetContacts();
     }
 
@@ -194,5 +199,25 @@ public class HelpListEditActivity extends AppCompatActivity {
             startActivity(_intent);
         }
         return false;
+    }
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
     }
 }

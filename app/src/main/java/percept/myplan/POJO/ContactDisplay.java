@@ -27,6 +27,12 @@ public class ContactDisplay implements Comparable<ContactDisplay>, Serializable 
     private String emergency = "";
     private boolean isSelected = false;
 
+
+
+    private boolean originalSelection;
+
+
+    private String OrgName = "";
     public ContactDisplay() {
     }
 
@@ -46,8 +52,20 @@ public class ContactDisplay implements Comparable<ContactDisplay>, Serializable 
 //        this.con_image = con_image;
 //        this.skype = skype;
 //    }
+public boolean isOriginalSelection() {
+    return originalSelection;
+}
 
+    public void setOriginalSelection(boolean originalSelection) {
+        this.originalSelection = originalSelection;
+    }
+    public String getOrgName() {
+        return OrgName;
+    }
 
+    public void setOrgName(String orgName) {
+        OrgName = orgName;
+    }
     public boolean isSelected() {
         return isSelected;
     }

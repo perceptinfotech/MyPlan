@@ -2,6 +2,7 @@ package percept.myplan.Activities;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -41,6 +42,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
@@ -60,7 +63,7 @@ public class SidaTestActivity extends AppCompatActivity {
     private Button BTN_NEXT_QUES;
     private int CURR_QUES = 0, TOTAL_QUES = 0;
     private String STRANSWER = "";
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
     private TextView tvLabelLeft, tvLabelRight;
     private Utils UTILS;
@@ -71,6 +74,7 @@ public class SidaTestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sida_test);
 
+        autoScreenTracking();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -82,7 +86,6 @@ public class SidaTestActivity extends AppCompatActivity {
         TV_TESTQUESTION = (TextView) findViewById(R.id.tvQuestions);
         TV_TESTANSWER = (TextView) findViewById(R.id.tvSidaPoints);
         BTN_NEXT_QUES = (Button) findViewById(R.id.btnNextQues);
-        PB = (ProgressBar) findViewById(R.id.pbSidaTest);
         tvLabelLeft = (TextView) findViewById(R.id.tvLabelLeft);
         tvLabelRight = (TextView) findViewById(R.id.tvLabelRight);
         UTILS = new Utils(SidaTestActivity.this);
@@ -125,10 +128,10 @@ public class SidaTestActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (CURR_QUES + 1 < TOTAL_QUES) {
                     CURR_QUES = CURR_QUES + 1;
-                    TV_TESTQUESTION.setText(LST_SIDAQUES.get(CURR_QUES - 1).getQuestion());
-                    String arr[] = TextUtils.split(LST_SIDAQUES.get(CURR_QUES - 1).getLabelLeft(), " - ");
+                    TV_TESTQUESTION.setText(LST_SIDAQUES.get(CURR_QUES).getQuestion());
+                    String arr[] = TextUtils.split(LST_SIDAQUES.get(CURR_QUES).getLabelLeft(), " - ");
                     tvLabelLeft.setText(arr[1]);
-                    arr = TextUtils.split(LST_SIDAQUES.get(CURR_QUES - 1).getLabelRight(), " - ");
+                    arr = TextUtils.split(LST_SIDAQUES.get(CURR_QUES).getLabelRight(), " - ");
                     tvLabelRight.setText(arr[1]);
                     if (CURR_QUES + 1 == TOTAL_QUES)
                         BTN_NEXT_QUES.setText(getString(R.string.complete_test));// +
@@ -153,17 +156,21 @@ public class SidaTestActivity extends AppCompatActivity {
         try {
             STRANSWER += "," + TV_TESTANSWER.getText().toString();
             params.put("answer", STRANSWER);
-            PB.setVisibility(View.VISIBLE);
+            mProgressDialog = new ProgressDialog(SidaTestActivity.this);
+            mProgressDialog.setMessage(getString(R.string.progress_loading));
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+            mProgressDialog.show();
             new General().getJSONContentFromInternetService(SidaTestActivity.this, General.PHPServices.SUBMIT_SIDATEST, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
                     Log.i(":::SidasTest::", response.toString());
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     try {
                         int score = response.getJSONObject(Constant.DATA).getInt("score");
                         if (score > 15 && score <= 21) {
@@ -187,7 +194,7 @@ public class SidaTestActivity extends AppCompatActivity {
                             infoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                                 @Override
                                 public void onDismiss(DialogInterface dialogInterface) {
-                                    SidaTestActivity.this.finish();
+
                                 }
                             });
                         } else if (score > 21) {
@@ -227,7 +234,7 @@ public class SidaTestActivity extends AppCompatActivity {
                             infoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                                 @Override
                                 public void onDismiss(DialogInterface dialogInterface) {
-                                    SidaTestActivity.this.finish();
+
                                 }
                             });
                         }
@@ -243,7 +250,7 @@ public class SidaTestActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -261,15 +268,21 @@ public class SidaTestActivity extends AppCompatActivity {
     }
 
     private void GetSidaTest() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(SidaTestActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         try {
+           // Locale.getDefault().getLanguage()
+
             new General().getJSONContentFromInternetService(SidaTestActivity.this, General.PHPServices.GET_SIDATEST, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
@@ -296,7 +309,7 @@ public class SidaTestActivity extends AppCompatActivity {
                         tvLabelRight.setText(arr[1]);
                         BTN_NEXT_QUES.setText(getResources().getString(R.string.nextques) +
                                 "(" + String.valueOf(CURR_QUES + 1) + "/" + String.valueOf(TOTAL_QUES) + ")");
-                        PB.setVisibility(View.GONE);
+                        mProgressDialog.dismiss();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -305,7 +318,7 @@ public class SidaTestActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -332,7 +345,11 @@ public class SidaTestActivity extends AppCompatActivity {
     }
 
     private void getEmergencyContact() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(SidaTestActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         Map<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -341,13 +358,13 @@ public class SidaTestActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(SidaTestActivity.this, General.PHPServices.GET_CONTACTS, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
-                        PB.setVisibility(View.GONE);
+                        mProgressDialog.dismiss();
                         if (response.getJSONArray(Constant.DATA) != null && response.getJSONArray(Constant.DATA).length() > 0) {
                             ContactDisplay _contactDisplay = new Gson().fromJson(response.getJSONArray(Constant.DATA).get(0)
                                     .toString(), new TypeToken<ContactDisplay>() {
@@ -446,6 +463,7 @@ public class SidaTestActivity extends AppCompatActivity {
             requestWindowFeature(Window.FEATURE_NO_TITLE);
             setContentView(R.layout.lay_info);
 
+            setCanceledOnTouchOutside(false);
             TV_NOTE = (TextView) findViewById(R.id.tvNote);
             tvInfoBtn1 = (TextView) findViewById(R.id.tvInfoBtn1);
             tvInfoBtn2 = (TextView) findViewById(R.id.tvInfoBtn2);
@@ -490,7 +508,7 @@ public class SidaTestActivity extends AppCompatActivity {
         @Override
         public void setOnDismissListener(OnDismissListener listener) {
             super.setOnDismissListener(listener);
-            SidaTestActivity.this.finish();
+            //SidaTestActivity.this.finish();
         }
 
         public void onClickFirstButton() {
@@ -498,5 +516,29 @@ public class SidaTestActivity extends AppCompatActivity {
 
         public void onClickSecondButton() {
         }
+    }
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
     }
 }

@@ -1,5 +1,6 @@
 package percept.myplan.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -42,6 +43,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.tpa.tpalib.TpaConfiguration;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 import percept.myplan.CustomListener.RecyclerTouchListener;
 import percept.myplan.Dialogs.dialogYesNoOption;
 import percept.myplan.Global.Constant;
@@ -81,7 +84,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     private StrategyLinkAdapter linkAdapter;
     private RecyclerView LST_STRATEGYCONTACT, LST_STRATEGYALARM, lstOwnStrategyMusic, lstOwnStrategyLink;
     private Button BTN_SHARESTRATEGY;
-    private ProgressBar PB;
+    private ProgressDialog mProgressDialog;
     private CoordinatorLayout REL_COORDINATE;
     private TextView tvImages, tvNetwork, tvAlarms, tvMusic, tvLink;
     private View vImages, vNetwork, vAlarms, vMusic, vLink;
@@ -90,6 +93,8 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_strategy_details_own);
+
+        autoScreenTracking();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -149,7 +154,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             }
         });
 
-        PB = (ProgressBar) findViewById(R.id.pbStrategyOwn);
+
 
         EDT_STRATEGYTITLE.setText(getIntent().getExtras().getString("STRATEGY_NAME"));
 
@@ -326,6 +331,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        AppLifeCycle.getInstance().resumed(this);
         /*if (ADDED_STRATEGIES) {
             getStrategy();
         }*/
@@ -337,7 +343,11 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
             @Override
             public void onClickYes() {
-                PB.setVisibility(View.VISIBLE);
+                mProgressDialog = new ProgressDialog(StrategyDetailsOwnActivity.this);
+                mProgressDialog.setMessage(getString(R.string.progress_loading));
+                mProgressDialog.setIndeterminate(false);
+                mProgressDialog.setCanceledOnTouchOutside(false);
+                mProgressDialog.show();
                 HashMap<String, String> params = new HashMap<>();
                 params.put("sid", Constant.SID);
                 params.put("sname", Constant.SNAME);
@@ -346,18 +356,18 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                     new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this, General.PHPServices.DELETE_CONTACT, params, true, false, true, new VolleyResponseListener() {
                         @Override
                         public void onError(VolleyError message) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                         }
 
                         @Override
                         public void onResponse(JSONObject response) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                             LIST_STRATEGYCONTACT.remove(position);
                             ADAPTER.notifyDataSetChanged();
                         }
                     });
                 } catch (Exception e) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                     e.printStackTrace();
                 }
                 dismiss();
@@ -403,7 +413,11 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     }
 
     private void getStrategy() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(StrategyDetailsOwnActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -416,7 +430,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this, General.PHPServices.GET_STRATEGY, params, false, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
 
                 @Override
@@ -529,12 +543,12 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                     }
 
 
-                    PB.setVisibility(View.GONE);
+                    mProgressDialog.dismiss();
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -576,7 +590,11 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     }
 
     private void shareStrategy() {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(StrategyDetailsOwnActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -587,19 +605,19 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
                         @Override
                         public void onError(VolleyError message) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                         }
 
                         @Override
                         public void onResponse(JSONObject response) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                             Toast.makeText(StrategyDetailsOwnActivity.this, getString(R.string.share_strategy_success), Toast.LENGTH_LONG).show();
                             Log.d("::::::share:::::", response.toString());
                         }
                     });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -618,7 +636,11 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     }
 
     public void deleteImages(final int position) {
-        PB.setVisibility(View.VISIBLE);
+        mProgressDialog = new ProgressDialog(StrategyDetailsOwnActivity.this);
+        mProgressDialog.setMessage(getString(R.string.progress_loading));
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
         HashMap<String, String> params = new HashMap<>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -630,19 +652,19 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
                         @Override
                         public void onError(VolleyError message) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                         }
 
                         @Override
                         public void onResponse(JSONObject response) {
-                            PB.setVisibility(View.GONE);
+                            mProgressDialog.dismiss();
                             LIST_IMAGE.remove(position);
                             ADAPTER_IMG.notifyDataSetChanged();
                         }
                     });
         } catch (Exception e) {
             e.printStackTrace();
-            PB.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -671,5 +693,25 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                 ADAPTER_ALARM.notifyDataSetChanged();
                 break;
         }
+    }
+    public void autoScreenTracking(){
+        TpaConfiguration config =
+                new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
+                        // other config settings
+                        .enableAutoTrackScreen(true)
+                        .build();
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppLifeCycle.getInstance().paused(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppLifeCycle.getInstance().stopped(this);
     }
 }
