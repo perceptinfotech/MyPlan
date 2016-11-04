@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
@@ -99,7 +100,7 @@ public class MultiPartParsing {
                         }
                     } else
 
-                        entity.addPart(key, new StringBody(map.get(key)));
+                        entity.addPart(key, new StringBody(map.get(key), Charset.forName("UTF-8")));
                     entity.getContentEncoding();
                 }
 
