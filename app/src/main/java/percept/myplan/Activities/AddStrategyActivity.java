@@ -216,14 +216,18 @@ public class AddStrategyActivity extends AppCompatActivity {
         if (LIST_MUSIC.size() > 0) {
             for (int i = 0; i < LIST_MUSIC.size(); i++) {
                 map.put("video" + (i + 1), LIST_MUSIC.get(i));
+
             }
         }
 //                }
         // Extra parameters if you want to pass to server
 
         //   map.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveStrategy");
+        String str=android.text.TextUtils.join(",", LIST_MUSIC);
+        Log.e("Music List","Music List="+str);
         map.put("sid", Constant.SID);
         map.put("sname", Constant.SNAME);
+        map.put("internal_audio" ,str);
         map.put("image_count", String.valueOf(LIST_IMG.size()));
         map.put("music_count", String.valueOf(LIST_MUSIC.size()));
         map.put(Constant.ID, "");

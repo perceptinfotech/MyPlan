@@ -69,6 +69,17 @@ public class StrategyDetails {
     @SerializedName("user_id")
     private String User_Id;
 
+    @SerializedName("internal_audio")
+    private String InternalAudio;
+
+    public String getInternalAudio() {
+        return InternalAudio;
+    }
+
+    public void setInternalAudio(String internalAudio) {
+        InternalAudio = internalAudio;
+    }
+
     public String getCreatedBy() {
         return CreatedBy;
     }

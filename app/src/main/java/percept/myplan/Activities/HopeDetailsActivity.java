@@ -202,8 +202,9 @@ public class HopeDetailsActivity extends AppCompatActivity {
     }
 
     public void playMusicHopeElement(int position) {
+        Log.e("Internal audio","Internal audio="+LIST_HOPEDETAILS.get(position).getInternalAudio());
         Intent intent = new Intent(HopeDetailsActivity.this, WebViewActivity.class);
-        intent.putExtra("URL_MUSIC", LIST_HOPEDETAILS.get(position).getMEDIA());
+        intent.putExtra("URL_MUSIC", LIST_HOPEDETAILS.get(position).getInternalAudio());
         intent.putExtra(Constant.DATA, LIST_HOPEDETAILS.get(position));
         startActivity(intent);
     }

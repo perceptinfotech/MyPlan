@@ -37,6 +37,17 @@ public class NearestEmergencyRoom implements Serializable {
     @SerializedName("country")
     private String country;
 
+    public String getCreatedby() {
+        return createdby;
+    }
+
+    public void setCreatedby(String createdby) {
+        this.createdby = createdby;
+    }
+
+    @SerializedName("created_by")
+    private String createdby;
+
     public String getId() {
         return id;
     }

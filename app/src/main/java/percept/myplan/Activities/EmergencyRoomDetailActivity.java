@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,7 +13,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,7 +39,7 @@ public class EmergencyRoomDetailActivity extends AppCompatActivity {
     private TextView tvPhoneNo;
     private TextView tvDistance;
     private TextView tvAddress;
-    private TextView mTitle;
+    private TextView mTitle,mEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +55,15 @@ public class EmergencyRoomDetailActivity extends AppCompatActivity {
         mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
 
 
+
         tvPhoneNo = (TextView) findViewById(R.id.tvPhoneNo);
         tvDistance = (TextView) findViewById(R.id.tvDistance);
         tvAddress = (TextView) findViewById(R.id.tvAddress);
+
+        emergencyRoom = (NearestEmergencyRoom) getIntent().getSerializableExtra("EMERGENCY_ROOM_DETAIL");
+        Log.e("User Id","User Id="+Constant.PROFILE_USER_ID);
+        Log.e("Created by Id","Created by Id="+ emergencyRoom.getCreatedby());
+
 
         if (getIntent().hasExtra("EMERGENCY_ROOM_DETAIL")) {
 
@@ -120,6 +130,7 @@ public class EmergencyRoomDetailActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.edit_strategy, menu);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -130,10 +141,13 @@ public class EmergencyRoomDetailActivity extends AppCompatActivity {
                 EmergencyRoomDetailActivity.this.finish();
                 return true;
             case R.id.action_editStrategy:
-                Intent intent = new Intent(EmergencyRoomDetailActivity.this, AddEmergencyRoomActivity.class);
-                intent.putExtra("FROM_EDIT", "true");
-                intent.putExtra(Constant.DATA, emergencyRoom);
-                startActivityForResult(intent, REQ_CODE_EDIT_ROOM);
+                if(Constant.PROFILE_USER_ID.equalsIgnoreCase(emergencyRoom.getCreatedby())){
+                    Intent intent = new Intent(EmergencyRoomDetailActivity.this, AddEmergencyRoomActivity.class);
+                    intent.putExtra("FROM_EDIT", "true");
+                    intent.putExtra(Constant.DATA, emergencyRoom);
+                    startActivityForResult(intent, REQ_CODE_EDIT_ROOM);
+                }
+
                 break;
         }
         return false;

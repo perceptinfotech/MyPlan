@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import percept.myplan.Activities.HomeActivity;
 import percept.myplan.Activities.MoodActivity;
 import percept.myplan.Activities.SidasActivity;
+import percept.myplan.Activities.SidasDetailActivity;
 import percept.myplan.Graph.Bar;
 import percept.myplan.Graph.BarGraph;
 import percept.myplan.Graph.PieGraph;
@@ -64,7 +65,7 @@ public class fragmentMoodRatings extends Fragment {
         TV_SIDAS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(getActivity(), SidasActivity.class), REQ_CODE_SIDAS);
+                startActivityForResult(new Intent(getActivity(), SidasDetailActivity.class), REQ_CODE_SIDAS);
             }
         });
 

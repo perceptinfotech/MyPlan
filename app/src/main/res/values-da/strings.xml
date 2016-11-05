@@ -259,6 +259,15 @@
     <string name="share_on">Del med..</string>
     <string name="subject">Emne</string>
     <string name="give_ur_feedback">Giv din feedback</string>
+
+    <string name="view_calendar">Vis Kalender</string>
+    <string name="take_full_test">Tag den fulde test</string>
+    <string name="Sidas0">0-14 - Du gør det godt.</string>
+    <string name="Sidas15">15-21 - Du har en vanskelig tid lige nu.</string>
+    <string name="Sidas22">22-50 - Du befinder dig i en krise. Søg hjælp nu.</string>
+    <string name="sidas_description">SIDAS består af 5 spørgsmål som måler graden af selvmordstanker. Du kan selv opsætte betingelserne for SIDAS testen under ”Indstillinger”. Dine resultater bliver gemt, så du kan måle dine fremskridt. VIGTIGT: hvis du scorer højt vil du modtage en besked om at søge hjælp. Dette er en automatisk besked så det er vigtigt at du selv handler og følger din kriseplan.</string>
+
+
     <string-array name="navigation_menu">
         <item>Symptomer</item>
         <item>Strategier</item>
@@ -299,14 +308,11 @@
     Det er vigtigt at du følger din kriseplan og reagerer
     </string>
     
-    <string name="test_result_btwn_15to21"> Dine svar viser at du i øjeblikket har det svært.
-      Brug dine strategier og/eller kontakterpersoner til hjælp.
-      Hvis du mangler ideer til en effektiv strategi, kan du få inspiration her.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
-      Husk at du altid kan benytte knappen HJÆLP i  &lt;font color="#47c1b6"&gt;MyPlan&lt;/font&gt;
+     <string name="test_result_btwn_15to21"> Svarene viser at du har det svært lige nu. Kig gerne i dine strategier for hjælp eller kontakt dit netværk. Hvis du mangler ideer til, hvad du ellers kan prøve. Så kik i vores inspirationsbank her. Husk at du kan bruge ’alarm’-knappen i
+      &lt;br/&gt;&lt;/b&gt;&lt;font color="#47c1b6"&gt;MYPLan&lt;/font&gt;
 </string>
-<string name="test_result_greater_21">Dine svar viser at du er i krise. Det er vigtigt at du søger hjælp nu!
-    &lt;br/&gt;&lt;br/&gt;&lt;br/&gt; Følg din kriseplan, brug dit netværk og/eller brug
-    &lt;b&gt;HELP&lt;/b&gt; og &lt;b&gt;EMERGENCY&lt;/b&gt; i &lt;font color="#47c1b6"&gt;MYPLan&lt;/font&gt;
+<string name="test_result_greater_21">Svarene viser at du befinder dig i en krise. Det er vigtigt at søge hjælp nu. Involver dit netværk eller bruge ’alarm’-knappen i
+     &lt;br/&gt;&lt;/b&gt;&lt;font color="#47c1b6"&gt;MYPLan&lt;/font&gt;
 </string>
     <string name="test_result_less_15">&lt;br/&gt;&lt;br/&gt;&lt;h2&gt;Tillykke!&lt;/h2&gt;din score ligger under grænseværdien!&lt;br/&gt;&lt;br/&gt;</string>
 

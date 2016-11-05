@@ -349,6 +349,8 @@ public class MusicListActivity extends AppCompatActivity {
             long musicLength = file.length() / 1024;
             if (musicLength <= (5 * 1024L))
             params.put("media", musicpath);
+
+
             else
             {
                 showAlertMessage();
@@ -356,9 +358,24 @@ public class MusicListActivity extends AppCompatActivity {
                 return;
             }
         }
+        if (!TextUtils.isEmpty(musicpath)) {
 
+            File file = new File(musicpath);
+            long musicLength = file.length() / 1024;
+            if (musicLength <= (5 * 1024L))
+                params.put("internal_audio",musicpath);
+
+
+            else
+            {
+                showAlertMessage();
+                mProgressDialog.dismiss();
+                return;
+            }
+        }
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
+
         params.put(Constant.ID, HOPE_ELEMENT_ID);
         params.put(Constant.HOPE_ID, hopeId);
         params.put(Constant.HOPE_TITLE, title);

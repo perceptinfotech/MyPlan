@@ -289,6 +289,13 @@
             android:name=".Activities.SidasActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+            android:name=".Activities.SidasDetailActivity"
+            android:label="@string/title_activity_send_message"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <activity
             android:name=".Activities.ImageDetailActivity"
             android:screenOrientation="portrait"

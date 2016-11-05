@@ -34,6 +34,19 @@ public class HopeDetail implements Serializable{
     private String MEDIA_TITLE;
     @SerializedName("media_thumb")
     private String MEDIA_THUMB = "";
+    @SerializedName("internal_audio")
+    private String InternalAudio;
+
+
+    public String getInternalAudio() {
+        return InternalAudio;
+    }
+
+    public void setInternalAudio(String internalAudio) {
+        InternalAudio = internalAudio;
+    }
+
+
 
     public HopeDetail(String MUSIC, String ID, String HOPE_ID, String LINK, String STATE,
                       String ORDERING, String MEDIA, String NOTE, String VIDEO, String MEDIA_TITLE, String type) {

@@ -253,8 +253,10 @@ public class StrategyEditActivity extends AppCompatActivity {
             }
         }
         // Extra parameters if you want to pass to server
+        String str=android.text.TextUtils.join(",", listMusic);
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
+        params.put("internal_audio" ,str);
         params.put("image_count", String.valueOf(listImg.size()));
         params.put("music_count", String.valueOf(listMusic.size()));
         params.put(Constant.ID, STRATEGY_ID);

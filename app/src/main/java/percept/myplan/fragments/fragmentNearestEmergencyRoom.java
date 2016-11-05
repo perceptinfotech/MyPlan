@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -155,11 +156,22 @@ public class fragmentNearestEmergencyRoom extends Fragment {
                 googleMap = mMap;
 
                 // For showing a move to my location button
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+              /*  if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     activity.buildGoogleApiClient();
-                    return;
+
+                }*/
+                if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+                        PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                                PackageManager.PERMISSION_GRANTED) {
+                    googleMap.setMyLocationEnabled(true);
+                    googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+                } else {
+                    ActivityCompat.requestPermissions(getActivity(), new String[] {
+                                    Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION }, 1);
                 }
-                googleMap.setMyLocationEnabled(true);
+               // googleMap.setMyLocationEnabled(true);
 
                 // For dropping a marker at a point on the Map
 
@@ -180,7 +192,8 @@ public class fragmentNearestEmergencyRoom extends Fragment {
                         NearestEmergencyRoom emergencyRoom = (NearestEmergencyRoom) marker.getTag();
                         View view = View.inflate(getActivity(), R.layout.lay_marker_infowindow, null);
                         ImageView ivRoomThumb = (ImageView) view.findViewById(R.id.ivRoomThumb);
-                        Picasso.with(getActivity()).load(emergencyRoom.getImageThumb()).into(ivRoomThumb);
+                        Log.e("Image thumb","Image Thumb="+emergencyRoom.getImageThumb());
+                       // Picasso.with(getActivity()).load(emergencyRoom.getImageThumb()).into(ivRoomThumb);
                         TextView tvEmergencyRoomName = (TextView) view.findViewById(R.id.tvEmergencyRoomName);
                         tvEmergencyRoomName.setText(emergencyRoom.getRoomName());
                         TextView tvEmergencyRoomNo = (TextView) view.findViewById(R.id.tvEmergencyRoomNo);

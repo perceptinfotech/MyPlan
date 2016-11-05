@@ -264,6 +264,15 @@
     <string name="progress_uploading">Uploading - please hold on...</string>
     <string name="progress_loading">Loading - please hold on...</string>
 
+
+    <string name="view_calendar">View Calendar</string>
+    <string name="take_full_test">Take Full Test</string>
+    <string name="Sidas0">0-14 - You are doing well.</string>
+    <string name="Sidas15">15-21 - You are having a difficult time right now.</string>
+    <string name="Sidas22">22-50 - You are having a crisis. Seek help.</string>
+    <string name="sidas_description">The SIDAS is designed to screen individuals in the community for presence of suicidal thoughts and assess the severity of these thoughts. It consists of five times, each targeting an attribute of suicidal thoughts: frequency, controllability, closeness to attempt, level of distress associated with the thoughts and impact on daily functioning. Responses are measured on a 10-point scale. Items are coded so that a higher total score reflects more severe suicidal thoughts.</string>
+
+
     <string-array name="navigation_menu">
         <item>Symptoms</item>
         <item>Strategies</item>

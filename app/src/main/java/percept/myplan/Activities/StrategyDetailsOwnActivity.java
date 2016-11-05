@@ -505,8 +505,8 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                     }
 
 
-                    if (!TextUtils.isEmpty(clsStrategy.getVideos())) {
-                        String _images = clsStrategy.getVideos();
+                    if (!TextUtils.isEmpty(clsStrategy.getInternalAudio())) {
+                        String _images = clsStrategy.getInternalAudio();
                         String[] _arrImg = _images.split(",");
                         for (int i = 0; i < _arrImg.length; i++) {
                             listMusic.add(_arrImg[i]);

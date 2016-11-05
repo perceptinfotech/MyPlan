@@ -72,14 +72,9 @@ public class SidasActivity extends AppCompatActivity {
         LST_SIDASUMMARY.setLayoutManager(mLayoutManager);
         LST_SIDASUMMARY.setItemAnimator(new DefaultItemAnimator());
         LIST_SIDA = new ArrayList<>();
-        BTN_TAKETEST = (Button) findViewById(R.id.btnTakeSidasTest);
 
-        BTN_TAKETEST.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityForResult(new Intent(SidasActivity.this, SidaTestActivity.class), REQ_CODE_TEST);
-            }
-        });
+
+
 
     }
 
