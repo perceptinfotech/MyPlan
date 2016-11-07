@@ -194,7 +194,7 @@ public class LoginActivity_1 extends AppCompatActivity {
                         mProgressDialog.dismiss();
                     }
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

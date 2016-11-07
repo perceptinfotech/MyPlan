@@ -88,6 +88,8 @@ public class ExportMyPlanPasswordActivity extends AppCompatActivity {
         params.put("password", pdfPassword.toString().trim());
 
         try {
+            if (!General.checkInternetConnection(ExportMyPlanPasswordActivity.this))
+                return;
             new General().getJSONContentFromInternetService(ExportMyPlanPasswordActivity.this, General.PHPServices.GET_EXPORT_PDF, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
@@ -101,8 +103,9 @@ public class ExportMyPlanPasswordActivity extends AppCompatActivity {
                     Toast.makeText(ExportMyPlanPasswordActivity.this, getString(R.string.pdf_success_msg), Toast.LENGTH_LONG).show();
                     ExportMyPlanPasswordActivity.this.finish();
                 }
-            });
+            },"");
         } catch (Exception e) {
+            mProgressDialog.dismiss();
             e.printStackTrace();
             Snackbar snackbar = Snackbar.make(REL_COORDINET, getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE);
             snackbar.setAction(getString(R.string.retry), new View.OnClickListener() {

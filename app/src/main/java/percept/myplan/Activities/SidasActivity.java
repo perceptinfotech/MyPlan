@@ -121,7 +121,7 @@ public class SidasActivity extends AppCompatActivity {
                     ADAPTER = new SidaSummaryAdapter(SidasActivity.this, LIST_SIDA);
                     LST_SIDASUMMARY.setAdapter(ADAPTER);
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

@@ -161,7 +161,7 @@ public class fragmentStrategies extends Fragment {
                     ADAPTER = new StrategyAdapter(LIST_STRATEGY);
                     LST_STRATEGY.setAdapter(ADAPTER);
                 }
-            });
+            },"");
         } catch (Exception e) {
             mProgressDialog.dismiss();
             e.printStackTrace();
@@ -199,6 +199,8 @@ public class fragmentStrategies extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_addStrategy) {
+            if (!General.checkInternetConnection(getActivity()))
+                return false;
             Intent _intent = new Intent(getActivity().getApplicationContext(), AddStrategyActivity.class);
             startActivity(_intent);
 

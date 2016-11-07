@@ -234,7 +234,7 @@ public class CreateQuickMsgActivity extends AppCompatActivity {
                     ADPT_CONTACTLIST = new ContactHelpListAdapter(LIST_CONTACTS, "CONTACT");
                     LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

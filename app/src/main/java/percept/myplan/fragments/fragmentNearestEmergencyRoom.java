@@ -260,6 +260,8 @@ public class fragmentNearestEmergencyRoom extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_addContact) {
+            if (!General.checkInternetConnection(getActivity()))
+                return false;
             startActivityForResult(new Intent(getActivity(), AddEmergencyRoomActivity.class), REQ_CODE_ADD_ROOM);
 
             return true;
@@ -300,7 +302,7 @@ public class fragmentNearestEmergencyRoom extends Fragment {
                             }
 
                         }
-                    });
+                    },"");
         } catch (Exception e) {
             e.printStackTrace();
         }

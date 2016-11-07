@@ -130,6 +130,8 @@ public class fragmentHopeBox extends Fragment {
     }
 
     private void deleteHopeBox(String hopeBoxId) {
+        if (!General.checkInternetConnection(getActivity()))
+            return;
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -166,10 +168,10 @@ public class fragmentHopeBox extends Fragment {
                         e.printStackTrace();
                     }
                 }
-            });
+            },hopeBoxId);
         } catch (Exception e) {
             e.printStackTrace();
-
+            mProgressDialog.dismiss();
             final Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -224,10 +226,10 @@ public class fragmentHopeBox extends Fragment {
                     ADAPTER = new HopeAdapter(getActivity(), LIST_HOPE);
                     LST_HOPE.setAdapter(ADAPTER);
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
-
+            mProgressDialog.dismiss();
             final Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
@@ -258,6 +260,8 @@ public class fragmentHopeBox extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_addContact) {
+            if (!General.checkInternetConnection(getActivity()))
+                return false;
             Intent _intent = new Intent(getActivity().getApplicationContext(), AddHopeBoxActivity.class);
             startActivity(_intent);
 

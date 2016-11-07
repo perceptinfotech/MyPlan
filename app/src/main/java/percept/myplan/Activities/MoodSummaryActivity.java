@@ -126,7 +126,7 @@ public class MoodSummaryActivity extends AppCompatActivity {
                     ADAPTER = new MoodSummaryAdapter(MoodSummaryActivity.this, LIST_MOOD);
                     LST_MOODSUMMARY.setAdapter(ADAPTER);
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

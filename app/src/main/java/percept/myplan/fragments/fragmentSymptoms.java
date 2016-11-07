@@ -228,6 +228,8 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_addContact) {
+            if (!General.checkInternetConnection(getActivity()))
+                return false;
             Intent _intent = new Intent(getActivity().getApplicationContext(), AddNewSymptomActivity.class);
             startActivity(_intent);
 
@@ -263,7 +265,7 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
                     ADAPTER = new SymptomAdapter(LIST_SYMPTOM);
                     LST_SYMPTOM.setAdapter(ADAPTER);
                 }
-            });
+            },"");
         } catch (Exception e) {
             dismissProgress();
             e.printStackTrace();
@@ -333,8 +335,9 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
                         e.printStackTrace();
                     }
                 }
-            });
+            },"");
         } catch (Exception e) {
+            dismissProgress();
             e.printStackTrace();
         }
     }
@@ -406,6 +409,8 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
 
                     @Override
                     public void onClickYes() {
+                        if (!General.checkInternetConnection(getActivity()))
+                            return;
                         HashMap<String, String> params = new HashMap<>();
                         params.put("sid",Constant.SID);
                         params.put("sname",Constant.SNAME);
@@ -430,7 +435,7 @@ public class fragmentSymptoms extends Fragment implements View.OnClickListener {
                                             LIST_SYMPTOM.remove(position);
                                             ADAPTER.notifyDataSetChanged();
                                         }
-                                    });
+                                    },LIST_SYMPTOM.get(position).getId());
                         } catch (Exception e) {
                             dismissProgress();
                             e.printStackTrace();

@@ -92,6 +92,8 @@ public class ForgetPwdActivity extends AppCompatActivity {
         mProgressDialog.setCanceledOnTouchOutside(false);
         mProgressDialog.show();
         try {
+            if (!General.checkInternetConnection(ForgetPwdActivity.this))
+                return;
             new General().getJSONContentFromInternetService(ForgetPwdActivity.this,
                     General.PHPServices.FORGOT_PASSWORD, params, true, false, true, new VolleyResponseListener() {
 
@@ -120,7 +122,7 @@ public class ForgetPwdActivity extends AppCompatActivity {
                                 mProgressDialog.dismiss();
                             }
                         }
-                    });
+                    },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

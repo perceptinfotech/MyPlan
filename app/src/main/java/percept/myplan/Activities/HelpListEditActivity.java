@@ -161,7 +161,7 @@ public class HelpListEditActivity extends AppCompatActivity {
                     ADPT_CONTACTHELPLIST = new ContactHelpListAdapter(LIST_HELPCONTACTS, "HELP");
                     LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

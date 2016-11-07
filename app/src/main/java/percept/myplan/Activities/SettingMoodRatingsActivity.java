@@ -184,6 +184,8 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
         }
         else if (item.getItemId()==R.id.action_saveNote)
         {
+            if (!General.checkInternetConnection(SettingMoodRatingsActivity.this))
+                return false;
             saveSetting();
         }
         return false;
@@ -236,7 +238,7 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
                     setAlarms();
                     SettingMoodRatingsActivity.this.finish();
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();
@@ -335,7 +337,7 @@ public class SettingMoodRatingsActivity extends AppCompatActivity {
                             rcvSidas.setAdapter(new SidaScheduleAdapter(SettingMoodRatingsActivity.this, listSidasSchedule));
 
                         }
-                    });
+                    },"Settings");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

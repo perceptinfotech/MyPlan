@@ -206,7 +206,7 @@ public class HelpListActivity extends AppCompatActivity {
                     LST_HELP.setAdapter(ADPT_CONTACTHELPLIST);
 
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

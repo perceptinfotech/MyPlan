@@ -135,6 +135,8 @@ public class SymptomDetailsActivity extends AppCompatActivity {
 
                     @Override
                     public void onClickYes() {
+                        if (!General.checkInternetConnection(SymptomDetailsActivity.this))
+                            return;
                         HashMap<String, String> params = new HashMap<>();
                         params.put("sid", Constant.SID);
                         params.put("sname", Constant.SNAME);
@@ -162,7 +164,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
                                             GET_STRATEGY = true;
                                             SymptomDetailsActivity.this.finish();
                                         }
-                                    });
+                                    },SYMPTOM_ID);
                         } catch (Exception e) {
                             mProgressDialog.dismiss();
                             e.printStackTrace();
@@ -249,6 +251,8 @@ public class SymptomDetailsActivity extends AppCompatActivity {
     }
 
     private void SaveSymptoms() {
+        if (!General.checkInternetConnection(SymptomDetailsActivity.this))
+            return;
         mProgressDialog = new ProgressDialog(SymptomDetailsActivity.this);
         mProgressDialog.setMessage(getString(R.string.progress_loading));
         mProgressDialog.setIndeterminate(false);
@@ -277,7 +281,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
                     Log.d(":::::", response.toString());
                     SymptomDetailsActivity.this.finish();
                 }
-            });
+            },SYMPTOM_ID);
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();
@@ -348,7 +352,7 @@ public class SymptomDetailsActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-            });
+            },SYMPTOM_ID);
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

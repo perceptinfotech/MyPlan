@@ -449,7 +449,7 @@ public class SignUpActivity extends AppCompatActivity {
                         mProgressDialog.dismiss();
                     }
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

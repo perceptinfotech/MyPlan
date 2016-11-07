@@ -124,7 +124,7 @@ public class HopeDetailsActivity extends AppCompatActivity {
                     mRecyclerView.setHasFixedSize(false);
                     mRecyclerView.setAdapter(mAdapter);
                 }
-            });
+            },getIntent().getExtras().getString("HOPE_ID"));
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();
@@ -180,7 +180,8 @@ public class HopeDetailsActivity extends AppCompatActivity {
             HopeDetailsActivity.this.finish();
             return true;
         } else if (item.getItemId() == R.id.action_InsertHopeElement) {
-
+            if (!General.checkInternetConnection(HopeDetailsActivity.this))
+                return false;
             Intent _intent = new Intent(HopeDetailsActivity.this, HopeDetailsAddElementActivity.class);
             _intent.putExtra("HOPE_NAME", getIntent().getExtras().getString("HOPE_TITLE"));
             _intent.putExtra("HOPE_ID", getIntent().getExtras().getString("HOPE_ID"));
@@ -193,6 +194,8 @@ public class HopeDetailsActivity extends AppCompatActivity {
     }
 
     public void editHopeElement(int position) {
+        if (!General.checkInternetConnection(HopeDetailsActivity.this))
+            return;
         Intent intent = new Intent(HopeDetailsActivity.this, HopeDetailsAddElementActivity.class);
         intent.putExtra("IS_FOR_EDIT", true);
         intent.putExtra(Constant.DATA, LIST_HOPEDETAILS.get(position));
@@ -202,6 +205,8 @@ public class HopeDetailsActivity extends AppCompatActivity {
     }
 
     public void playMusicHopeElement(int position) {
+        if (!General.checkInternetConnection(HopeDetailsActivity.this))
+            return;
         Log.e("Internal audio","Internal audio="+LIST_HOPEDETAILS.get(position).getInternalAudio());
         Intent intent = new Intent(HopeDetailsActivity.this, WebViewActivity.class);
         intent.putExtra("URL_MUSIC", LIST_HOPEDETAILS.get(position).getInternalAudio());
@@ -210,6 +215,8 @@ public class HopeDetailsActivity extends AppCompatActivity {
     }
 
     public void playVideoHopeElement(int position) {
+        if (!General.checkInternetConnection(HopeDetailsActivity.this))
+            return;
         Intent intent = new Intent(HopeDetailsActivity.this, FullscreenVideoActivity.class);
         intent.putExtra("URL_MUSIC", LIST_HOPEDETAILS.get(position).getMEDIA());
         intent.putExtra(Constant.DATA, LIST_HOPEDETAILS.get(position));
@@ -217,6 +224,8 @@ public class HopeDetailsActivity extends AppCompatActivity {
     }
 
     public void deleteHopeElement(int poition) {
+        if (!General.checkInternetConnection(HopeDetailsActivity.this))
+            return;
         deletePosition = poition;
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
@@ -252,8 +261,9 @@ public class HopeDetailsActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
-                    });
+                    },LIST_HOPEDETAILS.get(poition).getID());
         } catch (Exception e) {
+            mProgressDialog.dismiss();
             e.printStackTrace();
 
             final Snackbar snackbar = Snackbar

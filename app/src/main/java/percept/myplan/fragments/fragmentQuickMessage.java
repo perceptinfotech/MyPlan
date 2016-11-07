@@ -126,6 +126,8 @@ public class fragmentQuickMessage extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_Quickmsg) {
+            if (!General.checkInternetConnection(getActivity()))
+                return false;
             Intent _intent = new Intent(getActivity().getApplicationContext(), CreateQuickMsgActivity.class);
             startActivity(_intent);
 
@@ -163,7 +165,7 @@ public class fragmentQuickMessage extends Fragment {
                         e.printStackTrace();
                     }
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

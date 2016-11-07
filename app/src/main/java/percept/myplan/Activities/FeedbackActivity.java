@@ -60,6 +60,8 @@ public class FeedbackActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
             case R.id.action_send:
+                if (!General.checkInternetConnection(FeedbackActivity.this))
+                    return false;
                 if (isValidate())
                     sendFeedback();
                 break;
@@ -97,6 +99,7 @@ public class FeedbackActivity extends AppCompatActivity {
         params.put("subject", edtFeebbackSubject.getText().toString());
         params.put("description", edtFeebbackDetail.getText().toString());
         try {
+
             new General().getJSONContentFromInternetService(FeedbackActivity.this, General.PHPServices.GIVE_FEEDBACK, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
@@ -108,7 +111,7 @@ public class FeedbackActivity extends AppCompatActivity {
                     Toast.makeText(FeedbackActivity.this, getString(R.string.thank_feedback), Toast.LENGTH_LONG).show();
                     FeedbackActivity.this.finish();
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
         }

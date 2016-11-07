@@ -14,6 +14,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -146,42 +148,51 @@ public class General {
         }
     }
 
-    public String getJSONContentFromInternetService(final Context context, PHPServices servicesName,
+    public String getJSONContentFromInternetService(final Context context, final PHPServices servicesName,
                                                     Map<String, String> params,
                                                     Boolean checkInternetConnectivity,
                                                     Boolean encryptedDataTransfer, Boolean forceNetwork,
-                                                    final VolleyResponseListener volleyResponseListener)
+                                                    final VolleyResponseListener volleyResponseListener, final String storeId)
             throws Exception {
 
 
         // CHeck internet connection
         if (checkInternetConnectivity == true && !checkInternetConnection(context)) {
-            throw new Exception(context.getResources().getString(R.string.err_network_not_available));
+            Utils utils = new Utils(context);
+            String offlineData = utils.getPreference(servicesName.name() + storeId);
+            if (!offlineData.trim().equals("")) {
+                JSONObject jsonObject = new JSONObject(offlineData);
+                volleyResponseListener.onResponse(jsonObject);
+            } else
+                throw new Exception(context.getResources().getString(R.string.err_network_not_available));
         }
         String str = context.getResources().getString(R.string.server_url);
         String _str = str + getServiceName(servicesName);
 
 
-
-        if(getServiceName(servicesName).equalsIgnoreCase(".getSIDASTest")){
-            if(Locale.getDefault().getLanguage().equalsIgnoreCase("da")){
-                _str= _str+"&lang=da";
+        if (getServiceName(servicesName).equalsIgnoreCase(".getSIDASTest")) {
+            if (Locale.getDefault().getLanguage().equalsIgnoreCase("da")) {
+                _str = _str + "&lang=da";
             }
-        }if(getServiceName(servicesName).equalsIgnoreCase(".getUserstrategy")){
-            if(Locale.getDefault().getLanguage().equalsIgnoreCase("da")){
-                _str= _str+"&lang=da";
+        }
+        if (getServiceName(servicesName).equalsIgnoreCase(".getUserstrategy")) {
+            if (Locale.getDefault().getLanguage().equalsIgnoreCase("da")) {
+                _str = _str + "&lang=da";
             }
-        }if(getServiceName(servicesName).equalsIgnoreCase(".getCategories")){
-            if(Locale.getDefault().getLanguage().equalsIgnoreCase("da")){
-                _str= _str+"&lang=da";
+        }
+        if (getServiceName(servicesName).equalsIgnoreCase(".getCategories")) {
+            if (Locale.getDefault().getLanguage().equalsIgnoreCase("da")) {
+                _str = _str + "&lang=da";
             }
-        }if(getServiceName(servicesName).equalsIgnoreCase(".getCategoryInspirations")){
-            if(Locale.getDefault().getLanguage().equalsIgnoreCase("da")){
-                _str= _str+"&lang=da";
+        }
+        if (getServiceName(servicesName).equalsIgnoreCase(".getCategoryInspirations")) {
+            if (Locale.getDefault().getLanguage().equalsIgnoreCase("da")) {
+                _str = _str + "&lang=da";
             }
-        }if(getServiceName(servicesName).equalsIgnoreCase(".getEmergencyrooms")){
-            if(Locale.getDefault().getLanguage().equalsIgnoreCase("da")){
-                _str= _str+"&lang=da";
+        }
+        if (getServiceName(servicesName).equalsIgnoreCase(".getEmergencyrooms")) {
+            if (Locale.getDefault().getLanguage().equalsIgnoreCase("da")) {
+                _str = _str + "&lang=da";
             }
         }
         JSONObject parameters = new JSONObject(params);
@@ -194,12 +205,14 @@ public class General {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(":::::::::::: ", response.toString());
-
+                        Utils utils = new Utils(context);
+                        String str = servicesName.name();
+                        utils.setPreference(servicesName.name() + storeId, response.toString());
                         try {
                             if (response.get("data") instanceof JSONObject && response.getJSONObject("data").has("message")) {
                                 if (response.getJSONObject("data").get("message").equals("Your session is expired.")) {
                                     //Uncomment call for Session code.
-                                    Intent removeAlarmIntent=new Intent("MyPlan.Remove.Alarm");
+                                    Intent removeAlarmIntent = new Intent("MyPlan.Remove.Alarm");
                                     context.sendBroadcast(removeAlarmIntent);
                                     Intent intent = new Intent(context.getApplicationContext(), LoginActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

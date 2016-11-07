@@ -136,6 +136,8 @@ public class AddNewSymptomActivity extends AppCompatActivity {
         params.put("id", "");
 
         try {
+            if (!General.checkInternetConnection(AddNewSymptomActivity.this))
+                return;
             new General().getJSONContentFromInternetService(AddNewSymptomActivity.this, General.PHPServices.SAVE_SYMPTOM, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
@@ -149,7 +151,7 @@ public class AddNewSymptomActivity extends AppCompatActivity {
                     mProgressDialog.dismiss();
                     AddNewSymptomActivity.this.finish();
                 }
-            });
+            },STR_STRATEGYID);
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

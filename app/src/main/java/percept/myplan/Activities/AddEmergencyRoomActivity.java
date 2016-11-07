@@ -275,6 +275,25 @@ public class AddEmergencyRoomActivity extends AppCompatActivity {
             AddEmergencyRoomActivity.this.finish();
             return true;
         } else if (item.getItemId() == R.id.action_Save) {
+            if (!utils.isNetConnected()) {
+                Snackbar snackbar = Snackbar
+                        .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                saveEmergencyRoom();
+                            }
+                        });
+                // Changing message text color
+                snackbar.setActionTextColor(Color.RED);
+                // Changing action button text color
+                View sbView = snackbar.getView();
+                TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+                textView.setTextColor(Color.YELLOW);
+
+                snackbar.show();
+                return false;
+            }
             if (isValidate())
                 saveEmergencyRoom();
             return true;

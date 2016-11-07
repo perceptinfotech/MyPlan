@@ -138,7 +138,7 @@ public class CategoryStrategyActivity extends AppCompatActivity {
                     ADAPTER = new InspirationWiseStrategyAdapter(LIST_STRATEGY_INSPIRATION);
                     LST_CATEGORY_STRATEGY.setAdapter(ADAPTER);
                 }
-            });
+            },CATEGORYID);
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

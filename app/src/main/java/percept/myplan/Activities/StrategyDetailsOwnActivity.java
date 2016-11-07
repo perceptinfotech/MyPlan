@@ -225,7 +225,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                             }
 
                         }
-                    });
+                    },LIST_STRATEGYCONTACT.get(position).getID());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -343,6 +343,8 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
             @Override
             public void onClickYes() {
+                if (!General.checkInternetConnection(StrategyDetailsOwnActivity.this))
+                    return;
                 mProgressDialog = new ProgressDialog(StrategyDetailsOwnActivity.this);
                 mProgressDialog.setMessage(getString(R.string.progress_loading));
                 mProgressDialog.setIndeterminate(false);
@@ -365,7 +367,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                             LIST_STRATEGYCONTACT.remove(position);
                             ADAPTER.notifyDataSetChanged();
                         }
-                    });
+                    },"");
                 } catch (Exception e) {
                     mProgressDialog.dismiss();
                     e.printStackTrace();
@@ -427,7 +429,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             LIST_STRATEGYCONTACT.clear();
             listMusic.clear();
             listLink.clear();
-            new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this, General.PHPServices.GET_STRATEGY, params, false, false, true, new VolleyResponseListener() {
+            new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this, General.PHPServices.GET_STRATEGY, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
                     mProgressDialog.dismiss();
@@ -545,7 +547,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
                     mProgressDialog.dismiss();
                 }
-            });
+            },"own_"+STRATEGY_ID);
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();
@@ -590,6 +592,8 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     }
 
     private void shareStrategy() {
+        if (!General.checkInternetConnection(StrategyDetailsOwnActivity.this))
+            return;
         mProgressDialog = new ProgressDialog(StrategyDetailsOwnActivity.this);
         mProgressDialog.setMessage(getString(R.string.progress_loading));
         mProgressDialog.setIndeterminate(false);
@@ -614,7 +618,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                             Toast.makeText(StrategyDetailsOwnActivity.this, getString(R.string.share_strategy_success), Toast.LENGTH_LONG).show();
                             Log.d("::::::share:::::", response.toString());
                         }
-                    });
+                    },STRATEGY_ID);
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();
@@ -636,6 +640,8 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     }
 
     public void deleteImages(final int position) {
+        if (!General.checkInternetConnection(StrategyDetailsOwnActivity.this))
+            return;
         mProgressDialog = new ProgressDialog(StrategyDetailsOwnActivity.this);
         mProgressDialog.setMessage(getString(R.string.progress_loading));
         mProgressDialog.setIndeterminate(false);
@@ -661,7 +667,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                             LIST_IMAGE.remove(position);
                             ADAPTER_IMG.notifyDataSetChanged();
                         }
-                    });
+                    },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

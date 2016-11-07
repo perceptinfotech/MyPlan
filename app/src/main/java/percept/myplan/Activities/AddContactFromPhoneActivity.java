@@ -1303,8 +1303,9 @@ public class AddContactFromPhoneActivity extends AppCompatActivity implements
 
                     mProgressDialog.dismiss();
                 }
-            });
+            },"");
         } catch (Exception e) {
+            mProgressDialog.dismiss();
             e.printStackTrace();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)

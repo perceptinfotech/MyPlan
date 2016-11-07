@@ -142,6 +142,8 @@ public class SendMessageActivity extends AppCompatActivity {
         params.put("msg", msg);
         params.put("n_msg", notificationMsg);
         try {
+            if (!General.checkInternetConnection(SendMessageActivity.this))
+                return;
             new General().getJSONContentFromInternetService(SendMessageActivity.this, General.PHPServices.SAVE_MESSAGE, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
@@ -153,7 +155,7 @@ public class SendMessageActivity extends AppCompatActivity {
                     mProgressDialog.dismiss();
                     SendMessageActivity.this.finish();
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

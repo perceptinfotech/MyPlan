@@ -127,7 +127,7 @@ public class InspirationCategoryActivity extends AppCompatActivity {
                     ADAPTER = new InspirationCategoryAdapter(LIST_CATEGORY);
                     LST_INSPIRATION_CATEGORY.setAdapter(ADAPTER);
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

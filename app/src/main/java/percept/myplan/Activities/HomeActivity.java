@@ -224,7 +224,7 @@ public class HomeActivity extends AppCompatActivity implements
                         public void onResponse(JSONObject response) {
                             Constant.PROFILE_USER_ID= UTILS.getPreference(Constant.PREF_USER_ID);
                         }
-                    });
+                    },"");
         } catch (Exception e) {
             e.printStackTrace();
 //            Snackbar snackbar = Snackbar
@@ -759,7 +759,7 @@ public class HomeActivity extends AppCompatActivity implements
         savedInstanceState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY, mRequestingLocationUpdates);
         savedInstanceState.putParcelable(LOCATION_KEY, mCurrentLocation);
         savedInstanceState.putString(LAST_UPDATED_TIME_STRING_KEY, mLastUpdateTime);
-        super.onSaveInstanceState(savedInstanceState);
+//        super.onSaveInstanceState(savedInstanceState);
     }
 
 

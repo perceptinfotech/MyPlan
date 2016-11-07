@@ -3,6 +3,7 @@ package percept.myplan.Activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -74,6 +75,90 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
             STRATEGY_ID = getIntent().getExtras().getString("STRATEGY_ID");
             mTitle.setText(getIntent().getExtras().getString("STRATEGY_NAME"));
         }
+        getStrategyDetailsOther();
+
+        BTN_ADDTOMYSTRATEGIES.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!General.checkInternetConnection(StrategyDetailsOtherActivity.this))
+                    return;
+                dialogYesNoOption _dialogDate = new dialogYesNoOption(StrategyDetailsOtherActivity.this) {
+                    @Override
+                    public void onClickYes() {
+                        dismiss();
+                        mProgressDialog = new ProgressDialog(StrategyDetailsOtherActivity.this);
+                        mProgressDialog.setMessage(getString(R.string.progress_loading));
+                        mProgressDialog.setIndeterminate(false);
+                        mProgressDialog.setCanceledOnTouchOutside(false);
+                        mProgressDialog.show();
+                        try {
+                            new General().getJSONContentFromInternetService(StrategyDetailsOtherActivity.this,
+                                    General.PHPServices.ADD_MYSTRATEGY, params, true, false, true, new VolleyResponseListener() {
+                                        @Override
+                                        public void onError(VolleyError message) {
+                                            mProgressDialog.dismiss();
+                                        }
+
+                                        @Override
+                                        public void onResponse(JSONObject response) {
+                                            mProgressDialog.dismiss();
+                                            Log.d("::::::: ", response.toString());
+                                            ADDED_STRATEGIES = true;
+                                            if (getIntent().hasExtra("FROM_SYMPTOM")) {
+                                                GET_STRATEGIES = true;
+                                            }
+                                            if (getIntent().hasExtra("FROM_SYMPTOM_INSPI")) {
+                                                GET_STRATEGIES = true;
+                                            }
+                                            StrategyDetailsOtherActivity.this.finish();
+
+                                        }
+                                    }, "");
+                        } catch (Exception e) {
+                            mProgressDialog.dismiss();
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onClickNo() {
+                        dismiss();
+                    }
+                };
+                _dialogDate.setCanceledOnTouchOutside(false);
+                _dialogDate.show();
+
+            }
+        });
+        TV_SUBMITTEDBY.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (clsStrategy != null) {
+                    Intent intent = new Intent(StrategyDetailsOtherActivity.this, StrategySubmittedDetailActivity.class);
+                    intent.putExtra(Constant.USER_ID, clsStrategy.getCreatedBy());
+                    intent.putExtra(Constant.CREATED_BY_NAME, clsStrategy.getCreatedByName());
+                    if (getIntent().hasExtra("FROM_SYMPTOM")) {
+                        intent.putExtra("FROM_SYMPTOM", getIntent().getExtras().getString("FROM_SYMPTOM"));
+                    }
+                    if (getIntent().hasExtra("FROM_SYMPTOM_INSPI")) {
+                        intent.putExtra("FROM_SYMPTOM_INSPI", getIntent().getExtras().getString("FROM_SYMPTOM_INSPI"));
+                    }
+                    startActivityForResult(intent, REQUEST_CODE_DETAIL_ACTIVITY);
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            StrategyDetailsOtherActivity.this.finish();
+            return true;
+        }
+        return false;
+    }
+
+    public void getStrategyDetailsOther() {
         params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -86,7 +171,7 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
             mProgressDialog.setCanceledOnTouchOutside(false);
             mProgressDialog.show();
             new General().getJSONContentFromInternetService(StrategyDetailsOtherActivity.this, General.PHPServices.GET_STRATEGY, params,
-                    false, false, true, new VolleyResponseListener() {
+                    true, false, true, new VolleyResponseListener() {
                         @Override
                         public void onError(VolleyError message) {
                             mProgressDialog.dismiss();
@@ -115,88 +200,11 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
                             else
                                 TV_CATEGORY.setText(clsStrategy.getCategoryName());
                         }
-                    });
+                    }, "other_" + STRATEGY_ID);
         } catch (Exception e) {
+            mProgressDialog.dismiss();
             e.printStackTrace();
         }
-
-        BTN_ADDTOMYSTRATEGIES.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                dialogYesNoOption _dialogDate = new dialogYesNoOption(StrategyDetailsOtherActivity.this) {
-                    @Override
-                    public void onClickYes() {
-                        dismiss();
-                        mProgressDialog = new ProgressDialog(StrategyDetailsOtherActivity.this);
-                        mProgressDialog.setMessage(getString(R.string.progress_loading));
-                        mProgressDialog.setIndeterminate(false);
-                        mProgressDialog.setCanceledOnTouchOutside(false);
-                        mProgressDialog.show();
-                        try {
-                            new General().getJSONContentFromInternetService(StrategyDetailsOtherActivity.this,
-                                    General.PHPServices.ADD_MYSTRATEGY, params, false, false, true, new VolleyResponseListener() {
-                                        @Override
-                                        public void onError(VolleyError message) {
-                                            mProgressDialog.dismiss();
-                                        }
-
-                                        @Override
-                                        public void onResponse(JSONObject response) {
-                                            mProgressDialog.dismiss();
-                                            Log.d("::::::: ", response.toString());
-                                            ADDED_STRATEGIES = true;
-                                            if (getIntent().hasExtra("FROM_SYMPTOM")) {
-                                                GET_STRATEGIES = true;
-                                            }
-                                            if (getIntent().hasExtra("FROM_SYMPTOM_INSPI")) {
-                                                GET_STRATEGIES = true;
-                                            }
-                                            StrategyDetailsOtherActivity.this.finish();
-
-                                        }
-                                    });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onClickNo() {
-                        dismiss();
-                    }
-                };
-                _dialogDate.setCanceledOnTouchOutside(false);
-                _dialogDate.show();
-
-            }
-        });
-        TV_SUBMITTEDBY.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(StrategyDetailsOtherActivity.this, StrategySubmittedDetailActivity.class);
-                intent.putExtra(Constant.USER_ID, clsStrategy.getCreatedBy());
-                intent.putExtra(Constant.CREATED_BY_NAME, clsStrategy.getCreatedByName());
-                if (getIntent().hasExtra("FROM_SYMPTOM")) {
-                    intent.putExtra("FROM_SYMPTOM", getIntent().getExtras().getString("FROM_SYMPTOM"));
-                }
-                if (getIntent().hasExtra("FROM_SYMPTOM_INSPI")) {
-                    intent.putExtra("FROM_SYMPTOM_INSPI", getIntent().getExtras().getString("FROM_SYMPTOM_INSPI"));
-                }
-                startActivityForResult(intent, REQUEST_CODE_DETAIL_ACTIVITY);
-
-
-            }
-        });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            StrategyDetailsOtherActivity.this.finish();
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -209,13 +217,15 @@ public class StrategyDetailsOtherActivity extends AppCompatActivity {
                 break;
         }
     }
-    public void autoScreenTracking(){
+
+    public void autoScreenTracking() {
         TpaConfiguration config =
                 new TpaConfiguration.Builder("d3baf5af-0002-4e72-82bd-9ed0c66af31c", "https://weiswise.tpa.io/")
                         // other config settings
                         .enableAutoTrackScreen(true)
                         .build();
     }
+
     @Override
     public void onResume() {
         super.onResume();

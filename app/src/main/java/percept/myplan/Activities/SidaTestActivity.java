@@ -154,6 +154,8 @@ public class SidaTestActivity extends AppCompatActivity {
 
     private void SubmitSidaTest() {
         try {
+            if (!General.checkInternetConnection(SidaTestActivity.this))
+                return;
             STRANSWER += "," + TV_TESTANSWER.getText().toString();
             params.put("answer", STRANSWER);
             mProgressDialog = new ProgressDialog(SidaTestActivity.this);
@@ -247,7 +249,7 @@ public class SidaTestActivity extends AppCompatActivity {
 
 //                    SidaTestActivity.this.finish();
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();
@@ -315,7 +317,7 @@ public class SidaTestActivity extends AppCompatActivity {
                     }
 
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();
@@ -377,8 +379,9 @@ public class SidaTestActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-            });
+            },"_2");
         } catch (Exception e) {
+            mProgressDialog.dismiss();
             e.printStackTrace();
         }
     }

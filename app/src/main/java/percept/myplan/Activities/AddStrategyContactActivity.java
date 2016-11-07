@@ -137,7 +137,7 @@ public class AddStrategyContactActivity extends AppCompatActivity implements Sti
                         LST_CONTACTS.setAdapter(ADAPTER);
                     }
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

@@ -257,7 +257,7 @@ public class fragmentHome extends Fragment {
                         e.printStackTrace();
                     }
                 }
-            });
+            },"_2");
         } catch (Exception e) {
             e.printStackTrace();
             dismissProgress();
@@ -668,7 +668,7 @@ public class fragmentHome extends Fragment {
                         }
                     }
                 }
-            });
+            },"Profile");
         } catch (Exception e) {
             e.printStackTrace();
             dismissProgress();

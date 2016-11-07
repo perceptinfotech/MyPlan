@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -190,6 +191,8 @@ public class SettingProfileActivity extends AppCompatActivity {
 
                     @Override
                     public void onClickYes() {
+                        if (!General.checkInternetConnection(SettingProfileActivity.this))
+                            return;
                         HashMap<String, String> params = new HashMap<>();
                         params.put("sid", Constant.SID);
                         params.put("sname", Constant.SNAME);
@@ -210,7 +213,7 @@ public class SettingProfileActivity extends AppCompatActivity {
                                     ivProfileCover.setVisibility(View.GONE);
                                     dismiss();
                                 }
-                            });
+                            },"");
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -308,8 +311,9 @@ public class SettingProfileActivity extends AppCompatActivity {
                         }
                     }
                 }
-            });
+            },"");
         } catch (Exception e) {
+            mProgressDialog.dismiss();
             e.printStackTrace();
         }
     }
@@ -324,6 +328,13 @@ public class SettingProfileActivity extends AppCompatActivity {
                             SaveProfile();
                         }
                     });
+            // Changing message text color
+            snackbar.setActionTextColor(Color.RED);
+
+            // Changing action button text color
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
             snackbar.show();
             return;
         }

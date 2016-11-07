@@ -361,7 +361,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                     mProgressDialog.dismiss();
                     calendarView.refresh();
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();
@@ -486,6 +486,8 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
         params.put("note", STR_NOTE);
         params.put("measurement", mood);
         try {
+            if (!General.checkInternetConnection(MoodActivity.this))
+                return;
             new General().getJSONContentFromInternetService(MoodActivity.this, General.PHPServices.ADD_MOOD, params, true, false, true, new VolleyResponseListener() {
                 @Override
                 public void onError(VolleyError message) {
@@ -496,7 +498,7 @@ public class MoodActivity extends AppCompatActivity implements FlexibleCalendarV
                 public void onResponse(JSONObject response) {
                     GetMoodCalender();
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();

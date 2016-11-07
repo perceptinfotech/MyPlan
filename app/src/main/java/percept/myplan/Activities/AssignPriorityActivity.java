@@ -176,8 +176,9 @@ public class AssignPriorityActivity extends AppCompatActivity {
 
 
                 }
-            });
+            },"_1");
         } catch (Exception e) {
+            mProgressDialog.dismiss();
             e.printStackTrace();
         }
     }

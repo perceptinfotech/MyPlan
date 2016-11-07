@@ -256,8 +256,9 @@ public class fragmentContacts extends Fragment {
                     LST_CONTACTS.setAdapter(ADPT_CONTACTLIST);
                     mProgressDialog.dismiss();
                 }
-            });
+            },"");
         } catch (Exception e) {
+            mProgressDialog.dismiss();
             e.printStackTrace();
             Snackbar snackbar = Snackbar
                     .make(REL_COORDINATE, getResources().getString(R.string.nointernet), Snackbar.LENGTH_INDEFINITE)
@@ -308,6 +309,8 @@ public class fragmentContacts extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_addContact) {
+            if (!General.checkInternetConnection(getActivity()))
+                return false;
             Intent _intent = new Intent(getActivity().getApplicationContext(), AddContactActivity.class);
             _intent.putExtra("HELP_COUNT", LIST_HELPCONTACTS.size());
             startActivity(_intent);
@@ -418,6 +421,8 @@ public class fragmentContacts extends Fragment {
 
             @Override
             public void onClickYes() {
+                if (!General.checkInternetConnection(getActivity()))
+                    return;
                 mProgressDialog = new ProgressDialog(getActivity());
                 mProgressDialog.setMessage(getString(R.string.progress_loading));
                 mProgressDialog.setIndeterminate(false);
@@ -448,7 +453,7 @@ public class fragmentContacts extends Fragment {
                             ADPT_CONTACTLIST.notifyDataSetChanged();
                             ADPT_CONTACTHELPLIST.notifyDataSetChanged();
                         }
-                    });
+                    },"");
                 } catch (Exception e) {
                     mProgressDialog.dismiss();
                     e.printStackTrace();

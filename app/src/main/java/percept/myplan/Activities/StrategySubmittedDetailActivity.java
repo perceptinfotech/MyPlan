@@ -84,7 +84,7 @@ public class StrategySubmittedDetailActivity extends AppCompatActivity {
         try {
             new General().getJSONContentFromInternetService(StrategySubmittedDetailActivity.this,
                     General.PHPServices.GET_USER_STRATEGY, params,
-                    false, false, true, new VolleyResponseListener() {
+                    true, false, true, new VolleyResponseListener() {
                         @Override
                         public void onError(VolleyError message) {
                             mProgressDialog.dismiss();
@@ -115,8 +115,9 @@ public class StrategySubmittedDetailActivity extends AppCompatActivity {
                             }
 
                         }
-                    });
+                    },USER_ID);
         } catch (Exception e) {
+            mProgressDialog.dismiss();
             e.printStackTrace();
         }
     }
@@ -131,6 +132,8 @@ public class StrategySubmittedDetailActivity extends AppCompatActivity {
     }
 
     public void addMyStrategy(int position) {
+        if (!General.checkInternetConnection(StrategySubmittedDetailActivity.this))
+            return;
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
@@ -143,7 +146,7 @@ public class StrategySubmittedDetailActivity extends AppCompatActivity {
         mProgressDialog.show();
         try {
             new General().getJSONContentFromInternetService(StrategySubmittedDetailActivity.this,
-                    General.PHPServices.ADD_MYSTRATEGY, params, false, false, true, new VolleyResponseListener() {
+                    General.PHPServices.ADD_MYSTRATEGY, params, true, false, true, new VolleyResponseListener() {
                         @Override
                         public void onError(VolleyError message) {
                             mProgressDialog.dismiss();
@@ -164,8 +167,9 @@ public class StrategySubmittedDetailActivity extends AppCompatActivity {
                             StrategySubmittedDetailActivity.this.finish();
 
                         }
-                    });
+                    },"");
         } catch (Exception e) {
+            mProgressDialog.dismiss();
             e.printStackTrace();
         }
     }

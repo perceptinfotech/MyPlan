@@ -175,7 +175,7 @@ public class AddStrategyToSymptomActivity extends AppCompatActivity {
                     ADAPTER = new StrategySelectionAdapter(LIST_STRATEGY);
                     LST_STRATEGY.setAdapter(ADAPTER);
                 }
-            });
+            },"");
         } catch (Exception e) {
             e.printStackTrace();
             mProgressDialog.dismiss();
