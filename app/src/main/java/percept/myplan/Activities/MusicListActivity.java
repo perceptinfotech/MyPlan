@@ -365,8 +365,8 @@ public class MusicListActivity extends AppCompatActivity {
             /*File file = new File(musicpath);
             long musicLength = file.length() / 1024;
             if (musicLength <= (5 * 1024L))*/
-
             if (musicpath.length()!=0) {
+            /*if (musicpath.length()!=0) {*/
                 params.put("internal_audio", musicpath);
                 Log.d("msi", musicpath);
 
