@@ -80,7 +80,7 @@ public class MultiPartParsing {
             SchemeRegistry registry = new SchemeRegistry();
             SSLSocketFactory socketFactory = SSLSocketFactory.getSocketFactory();
             socketFactory.setHostnameVerifier((X509HostnameVerifier) hostnameVerifier);
-            registry.register(new Scheme("https", socketFactory, 443));
+            registry.register(new Scheme("http", socketFactory, 443));
             SingleClientConnManager mgr = new SingleClientConnManager(client.getParams(), registry);
             HttpClient httpclient = new DefaultHttpClient(mgr, client.getParams());
 
@@ -105,8 +105,7 @@ public class MultiPartParsing {
                 Log.d("::::::Params ", new JSONObject(map).toString());
                 for (String key : map.keySet()) {
 
-                    if (key.contains("image") || key.contains("video") ||
-                            key.contains("audio") || key.contains("cover") || key.contains("media")) {
+                    if (key.contains("image") || key.contains("video")|| key.contains("cover") || key.contains("media")) {
                         if (key.equals("media_title")) {
                             entity.addPart(key, new StringBody(map.get(key)));
                         } else if (Pattern.matches("[0-9]+", map.get(key)))

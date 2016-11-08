@@ -249,11 +249,11 @@ public class StrategyEditActivity extends AppCompatActivity {
         }
         if (listMusic.size() > 0) {
             for (int i = 0; i < listMusic.size(); i++) {
-                params.put("videos" + (i + 1), listMusic.get(i));
+               // params.put("videos" + (i + 1), listMusic.get(i));
             }
         }
         // Extra parameters if you want to pass to server
-        String str=android.text.TextUtils.join(",", listMusic);
+     /*   String str=android.text.TextUtils.join(",", listMusic);
         params.put("sid", Constant.SID);
         params.put("sname", Constant.SNAME);
         params.put("internal_audio" ,str);
@@ -263,7 +263,24 @@ public class StrategyEditActivity extends AppCompatActivity {
         params.put(Constant.TITLE, title);
         params.put(Constant.DESC, text);
         params.put(Constant.CONTACTID, STR_CONTACTID);
+        params.put(Constant.LINK, STR_LINK);*/
+
+
+        String str=android.text.TextUtils.join(",", listMusic);
+        params.put(Constant.DESC, text);
+        params.put("internal_audio" ,str);
+        params.put("image_count", String.valueOf(listImg.size()));
+        params.put(Constant.ID, STRATEGY_ID);
         params.put(Constant.LINK, STR_LINK);
+        params.put("sid", Constant.SID);
+        params.put(Constant.CONTACTID, STR_CONTACTID);
+        params.put("sname", Constant.SNAME);
+        params.put(Constant.TITLE, title);
+        Log.d("param",params.toString());
+
+
+
+
         new MultiPartParsing(StrategyEditActivity.this, params, General.PHPServices.SAVE_STRATEGY, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
