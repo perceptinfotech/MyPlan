@@ -343,30 +343,34 @@ public class MusicListActivity extends AppCompatActivity {
         mProgressDialog.show();
         HashMap<String, String> params = new HashMap<>();
 //        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveHopemedia");
-        if (!TextUtils.isEmpty(musicpath)) {
+        if (!type.equals("music")) {
 
-            File file = new File(musicpath);
+         /*   File file = new File(musicpath);
             long musicLength = file.length() / 1024;
-            if (musicLength <= (5 * 1024L))
-            params.put("media", musicpath);
+            if (musicLength <= (5 * 1024L))*/
+            if (!TextUtils.isEmpty(musicpath)) {
+                if (musicpath.length() != 0) {
+                    params.put("media", musicpath);
+                    Log.d("msi", musicpath);
 
-
-            else
-            {
-                showAlertMessage();
-                mProgressDialog.dismiss();
-                return;
+                } else {
+                    showAlertMessage();
+                    mProgressDialog.dismiss();
+                    return;
+                }
             }
         }
         if (!TextUtils.isEmpty(musicpath)) {
 
-            File file = new File(musicpath);
+            /*File file = new File(musicpath);
             long musicLength = file.length() / 1024;
-            if (musicLength <= (5 * 1024L))
-                params.put("internal_audio",musicpath);
+            if (musicLength <= (5 * 1024L))*/
 
+            if (musicpath.length()!=0) {
+                params.put("internal_audio", musicpath);
+                Log.d("msi", musicpath);
 
-            else
+            }else
             {
                 showAlertMessage();
                 mProgressDialog.dismiss();
