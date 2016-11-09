@@ -40,6 +40,7 @@ import java.util.List;
 
 import io.tpa.tpalib.TpaConfiguration;
 import io.tpa.tpalib.lifecycle.AppLifeCycle;
+import percept.myplan.Dialogs.dialogOk;
 import percept.myplan.Global.Constant;
 import percept.myplan.Global.General;
 import percept.myplan.Global.MultiPartParsing;
@@ -200,6 +201,20 @@ public class StrategyEditActivity extends AppCompatActivity {
             StrategyEditActivity.this.finish();
             return true;
         } else if (item.getItemId() == R.id.action_saveStrategy) {
+
+
+
+            if(EDT_TITLE.getText().length()==0){
+          dialogOk _dialoglert=new dialogOk(StrategyEditActivity.this, getString(R.string.enter_titile)) {
+                    @Override
+                    public void onClickOk() {
+                        dismiss();
+                    }
+                };
+                _dialoglert.setCancelable(false);
+                _dialoglert.setCanceledOnTouchOutside(false);
+                _dialoglert.show();
+            }else {
             InputMethodManager inputManager = (InputMethodManager)
                     getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
@@ -208,6 +223,8 @@ public class StrategyEditActivity extends AppCompatActivity {
             addStrategy(EDT_TITLE.getText().toString().trim(), EDT_TEXT.getText().toString().trim(),
                     STR_CONTACTID, LIST_IMG, LIST_MUSIC, TextUtils.join(",", listLink));
             return true;
+
+            }
         }
         return false;
     }
@@ -242,33 +259,25 @@ public class StrategyEditActivity extends AppCompatActivity {
         HashMap<String, String> params = new HashMap<>();
 //        params.put(Constant.URL, getResources().getString(R.string.server_url) + ".saveStrategy");
         // Adding file data to http body
+
+        //add data own audio data
+        listMusic.addAll(StrategyDetailsOwnActivity.LISTMUSIC);
+        if (listMusic.size() > 0) {
+            for (int i = 0; i < listMusic.size(); i++) {
+                //params.put("videos" + (i + 1), listMusic.get(i));
+            }
+        }
         if (listImg.size() > 0) {
             for (int i = 0; i < listImg.size(); i++) {
                 params.put("image" + (i + 1), listImg.get(i));
             }
         }
-        if (listMusic.size() > 0) {
-            for (int i = 0; i < listMusic.size(); i++) {
-               // params.put("videos" + (i + 1), listMusic.get(i));
-            }
-        }
         // Extra parameters if you want to pass to server
-     /*   String str=android.text.TextUtils.join(",", listMusic);
-        params.put("sid", Constant.SID);
-        params.put("sname", Constant.SNAME);
-        params.put("internal_audio" ,str);
-        params.put("image_count", String.valueOf(listImg.size()));
-        params.put("music_count", String.valueOf(listMusic.size()));
-        params.put(Constant.ID, STRATEGY_ID);
-        params.put(Constant.TITLE, title);
-        params.put(Constant.DESC, text);
-        params.put(Constant.CONTACTID, STR_CONTACTID);
-        params.put(Constant.LINK, STR_LINK);*/
-
-
-        String str=android.text.TextUtils.join(",", listMusic);
+        String str= TextUtils.join(",", listMusic);
         params.put(Constant.DESC, text);
         params.put("internal_audio" ,str);
+
+
         params.put("image_count", String.valueOf(listImg.size()));
         params.put(Constant.ID, STRATEGY_ID);
         params.put(Constant.LINK, STR_LINK);
@@ -276,17 +285,23 @@ public class StrategyEditActivity extends AppCompatActivity {
         params.put(Constant.CONTACTID, STR_CONTACTID);
         params.put("sname", Constant.SNAME);
         params.put(Constant.TITLE, title);
-        Log.d("param",params.toString());
+        Log.d("paramstargies",params.toString());
 
-
-
-
+//
+//
+//
+//        params.put("music_count", String.valueOf(listMusic.size()));
+//
+//
+//
+//
+//
         new MultiPartParsing(StrategyEditActivity.this, params, General.PHPServices.SAVE_STRATEGY, new AsyncTaskCompletedListener() {
             @Override
             public void onTaskCompleted(String response) {
                 mProgressDialog.dismiss();
                 try {
-                    Log.d(":::::: ", response);
+                    Log.d("::::::Response Stragies", response);
                     String _id = "";
                     JSONObject _object = new JSONObject(response);
                     JSONObject _ObjData = _object.getJSONObject(Constant.DATA);

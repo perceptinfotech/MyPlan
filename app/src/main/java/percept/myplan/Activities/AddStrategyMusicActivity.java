@@ -9,6 +9,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.tpa.tpalib.lifecycle.AppLifeCycle;
@@ -33,6 +35,7 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
     private String HOPE_ID = "";
     private String HOPE_ELEMENT_ID = "";
     private boolean FROM_EDIT = false;
+    public List<String> listmusic; //change by ketan
     private RecyclerView rvMusic;
     private SelectedMusicListAdapter selectedMusicListAdapter;
 
@@ -104,6 +107,11 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
             }
         });
 
+        // change by ketan
+        // before edit show strategies  music List
+        selectedMusicListAdapter=new SelectedMusicListAdapter(StrategyDetailsOwnActivity.LISTMUSIC);
+        rvMusic.setAdapter(selectedMusicListAdapter);
+
     }
 
     @Override
@@ -125,13 +133,20 @@ public class AddStrategyMusicActivity extends AppCompatActivity {
                 } else AddStrategyMusicActivity.this.finish();
                 break;
             case REQ_CODE_MUSIC_LIST:
-                if (resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {// change Method
                     if (FROM.equals("") || FROM_EDIT) {
                         if (FROM_EDIT) {
-                            selectedMusicListAdapter = new SelectedMusicListAdapter(StrategyEditActivity.LIST_MUSIC);
+                            listmusic=new ArrayList<>();
+                            listmusic.addAll(StrategyEditActivity.LIST_MUSIC);
+                            listmusic.addAll(StrategyDetailsOwnActivity.LISTMUSIC);
+
+//                      selectedMusicListAdapter = new SelectedMusicListAdapter(StrategyEditActivity.LIST_MUSIC);
+                            selectedMusicListAdapter = new SelectedMusicListAdapter(listmusic);
+                            Log.d("strategylist",StrategyEditActivity.LIST_MUSIC.toString());
                             rvMusic.setAdapter(selectedMusicListAdapter);
                         } else {
-                            selectedMusicListAdapter = new SelectedMusicListAdapter(AddStrategyActivity.LIST_MUSIC);
+//                            selectedMusicListAdapter = new SelectedMusicListAdapter(AddStrategyActivity.LIST_MUSIC);
+                            selectedMusicListAdapter=new SelectedMusicListAdapter(StrategyDetailsOwnActivity.LISTMUSIC);
                             rvMusic.setAdapter(selectedMusicListAdapter);
                         }
                     }

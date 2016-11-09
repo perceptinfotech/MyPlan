@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -17,6 +18,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.LoginFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -37,6 +39,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,7 +74,8 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
     private final int SET_ALARM = 15;
     Map<String, String> params;
     private RecyclerView LST_OWNSTRATEGYIMG;
-    private List<String> LIST_IMAGE, listMusic, listLink;
+    private List<String> LIST_IMAGE, listLink;
+    public static List<String> LISTMUSIC;
     private ImageAdapter ADAPTER_IMG;
     private String STRATEGY_ID;
     private Utils UTILS;
@@ -182,7 +186,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         LST_STRATEGYALARM.setItemAnimator(new DefaultItemAnimator());
 
         LIST_IMAGE = new ArrayList<>();
-        listMusic = new ArrayList<>();
+        LISTMUSIC = new ArrayList<>();
         listLink = new ArrayList<>();
 
         LST_STRATEGYCONTACT.addOnItemTouchListener(new RecyclerTouchListener(StrategyDetailsOwnActivity.this, LST_STRATEGYCONTACT, new ClickListener() {
@@ -238,13 +242,45 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             }
         }));
 
+        lstOwnStrategyLink.addOnItemTouchListener(new RecyclerTouchListener(StrategyDetailsOwnActivity.this,
+                lstOwnStrategyLink, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Intent intent = new Intent(StrategyDetailsOwnActivity.this, WebViewActivity.class);
+                intent.putExtra("URL_MUSIC",LISTMUSIC.get(position));
+                startActivity(intent);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+
         lstOwnStrategyMusic.addOnItemTouchListener(new RecyclerTouchListener(StrategyDetailsOwnActivity.this,
                 lstOwnStrategyMusic, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Intent intent = new Intent(StrategyDetailsOwnActivity.this, WebViewActivity.class);
-                intent.putExtra("URL_MUSIC", listMusic.get(position));
-                startActivity(intent);
+
+
+                Intent _intent = new Intent(StrategyDetailsOwnActivity.this, AudioviewActivity.class);
+                _intent.putExtra("Audio",LISTMUSIC.get(position).toString());
+                startActivity(_intent);
+               /* MediaPlayer mp = new MediaPlayer();
+
+                String path=LISTMUSIC.get(positio
+                try {
+                    mp.setDataSource(path);
+                    mp.prepare();
+                    mp.start();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("error audio",e.toString());
+                }*/
+
+//                Toast.makeText(getApplicationContext(),lstOwnStrategyMusic.,Toast.LENGTH_LONG).show();
+
+
             }
 
             @Override
@@ -266,6 +302,10 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
 
             }
         }));
+
+
+
+
 //        initSwipe(LST_STRATEGYCONTACT);
 
     }
@@ -427,7 +467,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
         try {
             LIST_IMAGE.clear();
             LIST_STRATEGYCONTACT.clear();
-            listMusic.clear();
+            LISTMUSIC.clear();
             listLink.clear();
             new General().getJSONContentFromInternetService(StrategyDetailsOwnActivity.this, General.PHPServices.GET_STRATEGY, params, true, false, true, new VolleyResponseListener() {
                 @Override
@@ -511,12 +551,13 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
                         String _images = clsStrategy.getInternalAudio();
                         String[] _arrImg = _images.split(",");
                         for (int i = 0; i < _arrImg.length; i++) {
-                            listMusic.add(_arrImg[i]);
+                            LISTMUSIC.add(_arrImg[i]);
                         }
 
+                        Log.d("data",LISTMUSIC.toString());
 
-                        if (listMusic != null && listMusic.size() > 0) {
-                            musicAdapter = new StrategyMusicAdapter(listMusic);
+                        if (LISTMUSIC != null && LISTMUSIC.size() > 0) {
+                            musicAdapter = new StrategyMusicAdapter(LISTMUSIC);
                             lstOwnStrategyMusic.setAdapter(musicAdapter);
                             tvMusic.setVisibility(View.VISIBLE);
                             vMusic.setVisibility(View.VISIBLE);
@@ -579,6 +620,7 @@ public class StrategyDetailsOwnActivity extends AppCompatActivity {
             StrategyDetailsOwnActivity.this.finish();
         } else if (item.getItemId() == R.id.action_editStrategy) {
             if (clsStrategy != null) {
+
                 Intent _intent = new Intent(StrategyDetailsOwnActivity.this, StrategyEditActivity.class);
                 _intent.putExtra("STRATEGY_ID", STRATEGY_ID);
                 _intent.putExtra("STRATEGY_TITLE", EDT_STRATEGYTITLE.getText().toString());
