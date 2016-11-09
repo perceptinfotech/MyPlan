@@ -366,7 +366,9 @@
             android:name=".Activities.FullscreenVideoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
-
+        <activity android:name=".Activities.AudioviewActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
